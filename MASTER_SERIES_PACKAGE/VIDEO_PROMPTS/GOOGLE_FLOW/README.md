@@ -20,7 +20,7 @@ Las rutas de imagen parten de MASTER_SERIES_PACKAGE. Estado de archivos comproba
 |---|---|---|---|---|
 | [EP01_SH01](EP01_SH01_GOOGLE_FLOW.txt) | `SHOT_REFERENCES/COAT_START.png` | Disponible | 6 s | 5 s |
 | [EP01_SH02](EP01_SH02_GOOGLE_FLOW.txt) | `SHOT_REFERENCES/INES_TABLE.png` | Disponible | 6 s | 6 s |
-| [EP01_SH03](EP01_SH03_GOOGLE_FLOW.txt) | `SHOT_REFERENCES/SALT_DROP.png` | Pendiente | 6 s | 5 s |
+| [EP01_SH03](EP01_SH03_GOOGLE_FLOW.txt) | `SHOT_REFERENCES/SALT_DROP.png` | Disponible | 6 s | 5 s |
 | [EP01_SH04](EP01_SH04_GOOGLE_FLOW.txt) | `SHOT_REFERENCES/ALBA_DOOR.png` | Disponible | 8 s | 8 s |
 | [EP01_SH05](EP01_SH05_GOOGLE_FLOW.txt) | `SHOT_REFERENCES/KEY_HAND.png` | Pendiente | 6 s | 6 s |
 | [EP01_SH06](EP01_SH06_GOOGLE_FLOW.txt) | `SHOT_REFERENCES/COAT_COLLAR.png` | Pendiente | 8 s | 7 s |
@@ -29,7 +29,7 @@ Las rutas de imagen parten de MASTER_SERIES_PACKAGE. Estado de archivos comproba
 | [EP02_SH01](EP02_SH01_GOOGLE_FLOW.txt) | `SHOT_REFERENCES/SALT_USED.png` | Pendiente | 6 s | 5 s |
 | [EP02_SH02](EP02_SH02_GOOGLE_FLOW.txt) | `SHOT_REFERENCES/INES_TABLE.png` | Disponible | 8 s | 7 s |
 | [EP02_SH03](EP02_SH03_GOOGLE_FLOW.txt) | `SHOT_REFERENCES/RECORDER.png` | Pendiente | 6 s | 5 s |
-| [EP02_SH04](EP02_SH04_GOOGLE_FLOW.txt) | `SHOT_REFERENCES/SALT_DROP.png` | Pendiente | 8 s | 8 s |
+| [EP02_SH04](EP02_SH04_GOOGLE_FLOW.txt) | `SHOT_REFERENCES/SALT_DROP.png` | Disponible | 8 s | 8 s |
 | [EP02_SH05](EP02_SH05_GOOGLE_FLOW.txt) | `SHOT_REFERENCES/ALBA_DOOR.png` | Disponible | 6 s | 6 s |
 | [EP02_SH06](EP02_SH06_GOOGLE_FLOW.txt) | `SHOT_REFERENCES/RECORDER.png` | Pendiente | 8 s | 7 s |
 | [EP02_SH07](EP02_SH07_GOOGLE_FLOW.txt) | `SHOT_REFERENCES/SALT_USED.png` | Pendiente | 6 s | 6 s |
@@ -38,7 +38,7 @@ Las rutas de imagen parten de MASTER_SERIES_PACKAGE. Estado de archivos comproba
 | [EP03_SH02](EP03_SH02_GOOGLE_FLOW.txt) | `SHOT_REFERENCES/ALBA_DOOR.png` | Disponible | 8 s | 7 s |
 | [EP03_SH03](EP03_SH03_GOOGLE_FLOW.txt) | `SHOT_REFERENCES/REPORT_TOP.png` | Pendiente | 6 s | 6 s |
 | [EP03_SH04](EP03_SH04_GOOGLE_FLOW.txt) | `SHOT_REFERENCES/INES_TABLE.png` | Disponible | 8 s | 8 s |
-| [EP03_SH05](EP03_SH05_GOOGLE_FLOW.txt) | `SHOT_REFERENCES/SALT_DROP.png` | Pendiente | 6 s | 5 s |
+| [EP03_SH05](EP03_SH05_GOOGLE_FLOW.txt) | `SHOT_REFERENCES/SALT_DROP.png` | Disponible | 6 s | 5 s |
 | [EP03_SH06](EP03_SH06_GOOGLE_FLOW.txt) | `SHOT_REFERENCES/COAT_COLLAR.png` | Pendiente | 8 s | 8 s |
 | [EP03_SH07](EP03_SH07_GOOGLE_FLOW.txt) | `SHOT_REFERENCES/ALBA_DOOR.png` | Disponible | 6 s | 6 s |
 | [EP03_SH08](EP03_SH08_GOOGLE_FLOW.txt) | `SHOT_REFERENCES/TWO_SHOT.png` | Pendiente | 8 s | 8 s |
@@ -54,7 +54,7 @@ Las rutas de imagen parten de MASTER_SERIES_PACKAGE. Estado de archivos comproba
 | [EP05_SH02](EP05_SH02_GOOGLE_FLOW.txt) | `SHOT_REFERENCES/ALBA_DOOR.png` | Disponible | 8 s | 7 s |
 | [EP05_SH03](EP05_SH03_GOOGLE_FLOW.txt) | `SHOT_REFERENCES/PHONE.png` | Pendiente | 6 s | 6 s |
 | [EP05_SH04](EP05_SH04_GOOGLE_FLOW.txt) | `SHOT_REFERENCES/INES_TABLE.png` | Disponible | 8 s | 8 s |
-| [EP05_SH05](EP05_SH05_GOOGLE_FLOW.txt) | `SHOT_REFERENCES/SALT_DROP.png` | Pendiente | 6 s | 5 s |
+| [EP05_SH05](EP05_SH05_GOOGLE_FLOW.txt) | `SHOT_REFERENCES/SALT_DROP.png` | Disponible | 6 s | 5 s |
 | [EP05_SH06](EP05_SH06_GOOGLE_FLOW.txt) | `SHOT_REFERENCES/COAT_COLLAR.png` | Pendiente | 8 s | 8 s |
 | [EP05_SH07](EP05_SH07_GOOGLE_FLOW.txt) | `SHOT_REFERENCES/RECORDER.png` | Pendiente | 6 s | 6 s |
 | [EP05_SH08](EP05_SH08_GOOGLE_FLOW.txt) | `SHOT_REFERENCES/SALT_USED.png` | Pendiente | 8 s | 8 s |
