@@ -2,6 +2,10 @@
 
 Primera prueba: EP01_SH01. Este checklist cubre los 48 planos. Primero leer START_HERE.md y FREE_VIDEO_TOOLS_CURRENT.md. Todos los archivos TXT de prompts contienen solo instrucciones pegables; ajustes y referencias están en tarjetas separadas. No subir hojas de contacto ni confundir referencia con fotograma inicial.
 
+## Alternativa: Google Flow
+
+Los 48 planos tienen una versión en [VIDEO_PROMPTS/GOOGLE_FLOW](VIDEO_PROMPTS/GOOGLE_FLOW/README.md), con imagen inicial, duración de generación y recorte. Sigue esa guía si eliges Flow; los pasos por herramienta de abajo corresponden al flujo original. Para el plano 2: [prompt de Flow](VIDEO_PROMPTS/GOOGLE_FLOW/EP01_SH02_GOOGLE_FLOW.txt), imagen `SHOT_REFERENCES/INES_TABLE.png`, 6 segundos útiles.
+
 ## EP01_SH01 · El abrigo · 5 s útiles
 1. Abrir Kling oficial y seleccionar Image-to-Video, modelo **Kling VIDEO 3.0**. Si falta acceso, usar respaldo de la tarjeta; no comprar automáticamente.
 2. 9:16. Duración **5 s**. Resolución objetivo 1080 vertical; preview 720-class si es la disponible. Single-shot; audio desactivado.

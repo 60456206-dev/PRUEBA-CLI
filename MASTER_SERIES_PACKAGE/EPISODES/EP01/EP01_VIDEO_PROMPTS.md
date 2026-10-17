@@ -20,6 +20,8 @@ AUDIO: OFF when available, otherwise mute model soundtrack in edit.
 PROMPT: VIDEO_PROMPTS/KLING/EP01_SH01_KLING.txt (contains ONLY text to paste).
 HAILUO PROMPT: VIDEO_PROMPTS/HAILUO/EP01_SH01_HAILUO.txt
 WAN PROMPT: VIDEO_PROMPTS/WAN/EP01_SH01_WAN.txt
+GOOGLE FLOW PROMPT: VIDEO_PROMPTS/GOOGLE_FLOW/EP01_SH01_GOOGLE_FLOW.txt
+GOOGLE FLOW DURATION: generate 6 s; use first 5 s. See VIDEO_PROMPTS/GOOGLE_FLOW/README.md.
 EXPECTED END FRAME: Empty collar visible, coat still.
 CONTINUITY: Preserve exact identity, costume, architecture, object count and lighting from the starting image. State S1: do not restore previously dissolved salt. No cuts, no extra people, no speech or lip movements.
 SAL STATE: S1
@@ -66,6 +68,8 @@ AUDIO: OFF when available, otherwise mute model soundtrack in edit.
 PROMPT: VIDEO_PROMPTS/KLING/EP01_SH02_KLING.txt (contains ONLY text to paste).
 HAILUO PROMPT: VIDEO_PROMPTS/HAILUO/EP01_SH02_HAILUO.txt
 WAN PROMPT: VIDEO_PROMPTS/WAN/EP01_SH02_WAN.txt
+GOOGLE FLOW PROMPT: VIDEO_PROMPTS/GOOGLE_FLOW/EP01_SH02_GOOGLE_FLOW.txt
+GOOGLE FLOW DURATION: generate 6 s; use first 6 s. See VIDEO_PROMPTS/GOOGLE_FLOW/README.md.
 EXPECTED END FRAME: Eyes fixed left; shoulders settle.
 CONTINUITY: Preserve exact identity, costume, architecture, object count and lighting from the starting image. State S1: do not restore previously dissolved salt. No cuts, no extra people, no speech or lip movements.
 SAL STATE: S1
@@ -111,6 +115,8 @@ AUDIO: OFF when available, otherwise mute model soundtrack in edit.
 PROMPT: VIDEO_PROMPTS/KLING/EP01_SH03_KLING.txt (contains ONLY text to paste).
 HAILUO PROMPT: VIDEO_PROMPTS/HAILUO/EP01_SH03_HAILUO.txt
 WAN PROMPT: VIDEO_PROMPTS/WAN/EP01_SH03_WAN.txt
+GOOGLE FLOW PROMPT: VIDEO_PROMPTS/GOOGLE_FLOW/EP01_SH03_GOOGLE_FLOW.txt
+GOOGLE FLOW DURATION: generate 6 s; use first 5 s. See VIDEO_PROMPTS/GOOGLE_FLOW/README.md.
 EXPECTED END FRAME: One wet patch; remaining salt intact.
 CONTINUITY: Preserve exact identity, costume, architecture, object count and lighting from the starting image. State S1: do not restore previously dissolved salt. No cuts, no extra people, no speech or lip movements.
 SAL STATE: S1
@@ -157,6 +163,8 @@ AUDIO: OFF when available, otherwise mute model soundtrack in edit.
 PROMPT: VIDEO_PROMPTS/KLING/EP01_SH04_KLING.txt (contains ONLY text to paste).
 HAILUO PROMPT: VIDEO_PROMPTS/HAILUO/EP01_SH04_HAILUO.txt
 WAN PROMPT: VIDEO_PROMPTS/WAN/EP01_SH04_WAN.txt
+GOOGLE FLOW PROMPT: VIDEO_PROMPTS/GOOGLE_FLOW/EP01_SH04_GOOGLE_FLOW.txt
+GOOGLE FLOW DURATION: generate 8 s; use first 8 s. See VIDEO_PROMPTS/GOOGLE_FLOW/README.md.
 EXPECTED END FRAME: Chin lowered, eyes fixed right.
 CONTINUITY: Preserve exact identity, costume, architecture, object count and lighting from the starting image. State S1: do not restore previously dissolved salt. No cuts, no extra people, no speech or lip movements.
 SAL STATE: S1
@@ -203,6 +211,8 @@ AUDIO: OFF when available, otherwise mute model soundtrack in edit.
 PROMPT: VIDEO_PROMPTS/KLING/EP01_SH05_KLING.txt (contains ONLY text to paste).
 HAILUO PROMPT: VIDEO_PROMPTS/HAILUO/EP01_SH05_HAILUO.txt
 WAN PROMPT: VIDEO_PROMPTS/WAN/EP01_SH05_WAN.txt
+GOOGLE FLOW PROMPT: VIDEO_PROMPTS/GOOGLE_FLOW/EP01_SH05_GOOGLE_FLOW.txt
+GOOGLE FLOW DURATION: generate 6 s; use first 6 s. See VIDEO_PROMPTS/GOOGLE_FLOW/README.md.
 EXPECTED END FRAME: Key hidden inside closed hand.
 CONTINUITY: Preserve exact identity, costume, architecture, object count and lighting from the starting image. State S1: do not restore previously dissolved salt. No cuts, no extra people, no speech or lip movements.
 SAL STATE: S1
@@ -248,6 +258,8 @@ AUDIO: OFF when available, otherwise mute model soundtrack in edit.
 PROMPT: VIDEO_PROMPTS/KLING/EP01_SH06_KLING.txt (contains ONLY text to paste).
 HAILUO PROMPT: VIDEO_PROMPTS/HAILUO/EP01_SH06_HAILUO.txt
 WAN PROMPT: VIDEO_PROMPTS/WAN/EP01_SH06_WAN.txt
+GOOGLE FLOW PROMPT: VIDEO_PROMPTS/GOOGLE_FLOW/EP01_SH06_GOOGLE_FLOW.txt
+GOOGLE FLOW DURATION: generate 8 s; use first 7 s. See VIDEO_PROMPTS/GOOGLE_FLOW/README.md.
 EXPECTED END FRAME: Hollow collar unchanged; no body appears.
 CONTINUITY: Preserve exact identity, costume, architecture, object count and lighting from the starting image. State S1: do not restore previously dissolved salt. No cuts, no extra people, no speech or lip movements.
 SAL STATE: S1
@@ -294,6 +306,8 @@ AUDIO: OFF when available, otherwise mute model soundtrack in edit.
 PROMPT: VIDEO_PROMPTS/KLING/EP01_SH07_KLING.txt (contains ONLY text to paste).
 HAILUO PROMPT: VIDEO_PROMPTS/HAILUO/EP01_SH07_HAILUO.txt
 WAN PROMPT: VIDEO_PROMPTS/WAN/EP01_SH07_WAN.txt
+GOOGLE FLOW PROMPT: VIDEO_PROMPTS/GOOGLE_FLOW/EP01_SH07_GOOGLE_FLOW.txt
+GOOGLE FLOW DURATION: generate 6 s; use first 6 s. See VIDEO_PROMPTS/GOOGLE_FLOW/README.md.
 EXPECTED END FRAME: Recognition without a smile.
 CONTINUITY: Preserve exact identity, costume, architecture, object count and lighting from the starting image. State S1: do not restore previously dissolved salt. No cuts, no extra people, no speech or lip movements.
 SAL STATE: S1
@@ -339,6 +353,8 @@ AUDIO: OFF when available, otherwise mute model soundtrack in edit.
 PROMPT: VIDEO_PROMPTS/KLING/EP01_SH08_KLING.txt (contains ONLY text to paste).
 HAILUO PROMPT: VIDEO_PROMPTS/HAILUO/EP01_SH08_HAILUO.txt
 WAN PROMPT: VIDEO_PROMPTS/WAN/EP01_SH08_WAN.txt
+GOOGLE FLOW PROMPT: VIDEO_PROMPTS/GOOGLE_FLOW/EP01_SH08_GOOGLE_FLOW.txt
+GOOGLE FLOW DURATION: generate 8 s; use first 8 s. See VIDEO_PROMPTS/GOOGLE_FLOW/README.md.
 EXPECTED END FRAME: Coat at rest, no second breath.
 CONTINUITY: Preserve exact identity, costume, architecture, object count and lighting from the starting image. State S1: do not restore previously dissolved salt. No cuts, no extra people, no speech or lip movements.
 SAL STATE: S1
