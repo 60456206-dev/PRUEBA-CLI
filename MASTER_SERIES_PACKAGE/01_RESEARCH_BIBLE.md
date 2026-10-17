@@ -1,4 +1,4 @@
-# RESEARCH BIBLE · LA SAL QUE QUEDA
+ll# RESEARCH BIBLE · LA SAL QUE QUEDA
 Consulta pública: 17 octubre 2026. Investigación de desarrollo, no experimento de audiencia. Las fuentes antiguas sirven para principios estables; precios y capacidades se consultaron de nuevo. No se afirma haber visto obras completas ni probado modelos de vídeo. No se han instalado skills adicionales: imagegen, navegación y herramientas locales cubren la tarea sin dependencias de terceros.
 
 ## Fuentes y límites
