@@ -1,0 +1,95 @@
+{
+  "COAT_START": [
+    "SHOT_REFERENCES/COAT_START.png",
+    [],
+    "PROPS/COAT_MASTER.png",
+    "Abrigo vacío entero; sal inicial. Cuello hueco y tres botones."
+  ],
+  "COAT_END": [
+    "SHOT_REFERENCES/COAT_END.png",
+    [],
+    "PROPS/COAT_MASTER.png",
+    "Abrigo vacío húmedo sin sal visible en borde."
+  ],
+  "COAT_COLLAR": [
+    "SHOT_REFERENCES/COAT_COLLAR.png",
+    [],
+    "PROPS/COAT_MASTER.png",
+    "Cuello abierto, ningún cuerpo. El borde inferior queda fuera de campo."
+  ],
+  "INES_TABLE": [
+    "SHOT_REFERENCES/INES_TABLE.png",
+    [
+      "INES"
+    ],
+    "",
+    "Inés a la mesa, mirada izquierda; boca cerrada; fondo cal, nada de perchas detrás de cabeza."
+  ],
+  "ALBA_DOOR": [
+    "SHOT_REFERENCES/ALBA_DOOR.png",
+    [
+      "ALBA"
+    ],
+    "",
+    "Alba delante de puerta norte, mirada derecha; encuadre de pecho."
+  ],
+  "SALT_DROP": [
+    "SHOT_REFERENCES/SALT_DROP.png",
+    [],
+    "PROPS/COAT_MASTER.png",
+    "Borde óxido con zona blanca y zona húmeda contigua; pipeta inmóvil encima."
+  ],
+  "SALT_USED": [
+    "SHOT_REFERENCES/SALT_USED.png",
+    [],
+    "PROPS/COAT_MASTER.png",
+    "Lana húmeda oscura y sal intacta en lateral fuera del punto usado."
+  ],
+  "KEY_HAND": [
+    "SHOT_REFERENCES/KEY_HAND.png",
+    [
+      "ALBA"
+    ],
+    "PROPS/KEY_MASTER.png",
+    "Una llave de hierro negro en palma, puño de cárdigan hueso."
+  ],
+  "KEY_TABLE": [
+    "SHOT_REFERENCES/KEY_TABLE.png",
+    [],
+    "PROPS/KEY_MASTER.png",
+    "Llave sobre plano mecánico simple sin texto generado importante."
+  ],
+  "REPORT_TOP": [
+    "SHOT_REFERENCES/REPORT_TOP.png",
+    [],
+    "PROPS/REPORT_MASTER.svg",
+    "Papel sobre mesa, texto crítico se superpone en edición desde SVG."
+  ],
+  "REPORT_FULL": [
+    "SHOT_REFERENCES/REPORT_FULL.png",
+    [],
+    "PROPS/REPORT_MASTER.svg",
+    "Página completa; nombre de Inés visible mediante overlay preparado."
+  ],
+  "RECORDER": [
+    "SHOT_REFERENCES/RECORDER.png",
+    [],
+    "PROPS/RECORDER_MASTER.png",
+    "Grabadora negra compacta sobre mesa; LED se corrige en post si necesario."
+  ],
+  "PHONE": [
+    "SHOT_REFERENCES/PHONE.png",
+    [],
+    "PROPS/PHONE_SCREEN.svg",
+    "Teléfono negro frontal cenital; pantalla se reemplaza con overlays suministrados."
+  ],
+  "TWO_SHOT": [
+    "SHOT_REFERENCES/TWO_SHOT.png",
+    [
+      "INES",
+      "ALBA"
+    ],
+    "PROPS/COAT_MASTER.png",
+    "Inés derecha junto mesa, Alba posterior en puerta, abrigo entre ellas."
+  ]
+}

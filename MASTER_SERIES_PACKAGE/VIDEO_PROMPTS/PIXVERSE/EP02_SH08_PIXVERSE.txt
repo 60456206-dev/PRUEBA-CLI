@@ -1,0 +1,1 @@
+Animate only the main subject: The old paper remains flat on the table. Only a faint shadow shifts at its lower edge. Preserve all geometry. Keep the original vertical composition and lighting. Camera stays nearly still. No transitions or added objects. End at rest. Preserve the supplied first-frame identity.

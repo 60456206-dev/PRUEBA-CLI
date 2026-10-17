@@ -1,0 +1,1340 @@
+[
+  {
+    "title": "El abrigo",
+    "question": "¿Quién respira dentro de una prenda vacía?",
+    "answer": "La voz pertenece a Mara, la hermana muerta de Inés.",
+    "next": "¿Está viva o queda algo de ella?",
+    "change": "Inés abandona el inventario para escuchar.",
+    "shots": [
+      {
+        "asset": "COAT_START",
+        "d": 5,
+        "scale": "wide vertical",
+        "lens": 50,
+        "camera": "locked",
+        "action": "El pecho del abrigo hueco se eleva una vez. Ninguna cabeza ocupa el cuello.",
+        "english": "The empty coat chest gently expands by two centimeters, then falls once. Sleeves stay limp; hanger stays fixed.",
+        "end": "Empty collar visible, coat still.",
+        "purpose": "Hacer visible la anomalía antes del diálogo.",
+        "lines": [],
+        "priority": "A",
+        "state": "S1",
+        "primary": "Kling VIDEO 3.0",
+        "previous": null,
+        "id": "EP01_SH01",
+        "episode": "EP01",
+        "scene": "SC01",
+        "start": 0,
+        "endtime": 5
+      },
+      {
+        "asset": "INES_TABLE",
+        "d": 6,
+        "scale": "medium close-up",
+        "lens": 85,
+        "camera": "slow push-in 8 cm",
+        "action": "Inés retira el pincel húmedo de fuera de campo y deja de respirar un instante.",
+        "english": "Ines lowers her gaze briefly, then fixes it off-screen left. Her lips remain closed; one shallow breath lifts her shoulders.",
+        "end": "Eyes fixed left; shoulders settle.",
+        "purpose": "Anclar fenómeno a una persona.",
+        "lines": [
+          [
+            1,
+            3,
+            "ALBA OFF",
+            "¿Qué has hecho?"
+          ]
+        ],
+        "priority": "B",
+        "state": "S1",
+        "primary": "MiniMax-Hailuo-2.3",
+        "previous": null,
+        "id": "EP01_SH02",
+        "episode": "EP01",
+        "scene": "SC01",
+        "start": 5,
+        "endtime": 11
+      },
+      {
+        "asset": "SALT_DROP",
+        "d": 5,
+        "scale": "macro insert",
+        "lens": 100,
+        "camera": "locked",
+        "action": "Gota suspendida sobre un borde ya húmedo; el pincel sale del plano.",
+        "english": "A single clear droplet falls from the glass pipette onto the white salt crust. Only a coin-sized patch darkens.",
+        "end": "One wet patch; remaining salt intact.",
+        "purpose": "Explicar causa física mínima.",
+        "lines": [
+          [
+            0.5,
+            3,
+            "INÉS OFF",
+            "Solo agua. Para quitar la sal."
+          ]
+        ],
+        "priority": "A",
+        "state": "S1",
+        "primary": "Kling VIDEO 3.0",
+        "previous": null,
+        "id": "EP01_SH03",
+        "episode": "EP01",
+        "scene": "SC01",
+        "start": 11,
+        "endtime": 16
+      },
+      {
+        "asset": "ALBA_DOOR",
+        "d": 8,
+        "scale": "medium",
+        "lens": 50,
+        "camera": "locked",
+        "action": "Alba no mira a Inés. Mira el abrigo. Su mano baja fuera de cuadro.",
+        "english": "Alba looks off-screen right, lowers her chin slightly and keeps her mouth closed. Her hands remain below frame.",
+        "end": "Chin lowered, eyes fixed right.",
+        "purpose": "Mostrar reconocimiento anterior al de Inés.",
+        "lines": [
+          [
+            0.5,
+            4,
+            "INÉS OFF",
+            "Lleva doce años en una bolsa."
+          ]
+        ],
+        "priority": "B",
+        "state": "S1",
+        "primary": "Kling VIDEO 3.0",
+        "previous": null,
+        "id": "EP01_SH04",
+        "episode": "EP01",
+        "scene": "SC01",
+        "start": 16,
+        "endtime": 24
+      },
+      {
+        "asset": "KEY_HAND",
+        "d": 6,
+        "scale": "insert",
+        "lens": 85,
+        "camera": "locked",
+        "action": "La mano de Alba se cierra alrededor de una llave negra.",
+        "english": "The older woman slowly closes her fingers over the single black iron key resting in her palm. Keep all five fingers distinct.",
+        "end": "Key hidden inside closed hand.",
+        "purpose": "Sembrar llave mediante ironía dramática.",
+        "lines": [],
+        "priority": "A",
+        "state": "S1",
+        "primary": "Kling VIDEO 3.0",
+        "previous": null,
+        "id": "EP01_SH05",
+        "episode": "EP01",
+        "scene": "SC01",
+        "start": 24,
+        "endtime": 30
+      },
+      {
+        "asset": "COAT_COLLAR",
+        "d": 7,
+        "scale": "close-up",
+        "lens": 85,
+        "camera": "slow push-in 5 cm",
+        "action": "El cuello vacío permanece abierto. Se oye una voz a la altura del tejido.",
+        "english": "The empty rust coat collar remains completely hollow. One small fold trembles and settles.",
+        "end": "Hollow collar unchanged; no body appears.",
+        "purpose": "Entregar prueba acústica.",
+        "lines": [
+          [
+            1,
+            5,
+            "MARA / TELA",
+            "Inés. Quédate donde estás."
+          ]
+        ],
+        "priority": "A",
+        "state": "S1",
+        "primary": "Kling VIDEO 3.0",
+        "previous": null,
+        "id": "EP01_SH06",
+        "episode": "EP01",
+        "scene": "SC01",
+        "start": 30,
+        "endtime": 37
+      },
+      {
+        "asset": "INES_TABLE",
+        "d": 6,
+        "scale": "close-up",
+        "lens": 85,
+        "camera": "locked",
+        "action": "Inés reconoce la voz. Su mandíbula afloja; no sonríe.",
+        "english": "Ines holds her gaze left. Her jaw relaxes slightly, her lower eyelids tighten; mouth stays closed.",
+        "end": "Recognition without a smile.",
+        "purpose": "Reconocimiento sin diálogo explicativo.",
+        "lines": [
+          [
+            1,
+            3,
+            "ALBA OFF",
+            "No la escuches."
+          ]
+        ],
+        "priority": "B",
+        "state": "S1",
+        "primary": "MiniMax-Hailuo-2.3",
+        "previous": null,
+        "id": "EP01_SH07",
+        "episode": "EP01",
+        "scene": "SC01",
+        "start": 37,
+        "endtime": 43
+      },
+      {
+        "asset": "COAT_START",
+        "d": 8,
+        "scale": "medium wide",
+        "lens": 50,
+        "camera": "locked",
+        "action": "La manga vacía permanece a la altura de una mano que ya no está.",
+        "english": "The empty coat hangs motionless. A tiny residual sway fades without another breathing cycle.",
+        "end": "Coat at rest, no second breath.",
+        "purpose": "Identificar relación y abrir esperanza peligrosa.",
+        "lines": [
+          [
+            0.5,
+            3,
+            "INÉS OFF",
+            "Es mi hermana."
+          ],
+          [
+            4,
+            6,
+            "INÉS OFF",
+            "Es Mara."
+          ]
+        ],
+        "priority": "A",
+        "state": "S1",
+        "primary": "Kling VIDEO 3.0",
+        "previous": null,
+        "id": "EP01_SH08",
+        "episode": "EP01",
+        "scene": "SC01",
+        "start": 43,
+        "endtime": 51
+      }
+    ],
+    "duration": 51
+  },
+  {
+    "title": "Una sola vez",
+    "question": "¿Puede responder Mara?",
+    "answer": "No: es un registro finito que una grabadora sí conserva.",
+    "next": "¿Quién cerró cuando aún había gente?",
+    "change": "Inés guarda una prueba reproducible.",
+    "shots": [
+      {
+        "asset": "SALT_USED",
+        "d": 5,
+        "scale": "extreme close-up",
+        "lens": 100,
+        "camera": "locked",
+        "action": "Inés moja de nuevo la zona limpia. No sucede nada.",
+        "english": "One drop lands on an already dark wet patch of wool. No salt appears, no fabric inflation occurs.",
+        "end": "Wet patch remains silent.",
+        "purpose": "Pagar de inmediato duda sobre comunicación.",
+        "lines": [
+          [
+            0.5,
+            3,
+            "INÉS OFF",
+            "Mara. ¿Me oyes?"
+          ]
+        ],
+        "priority": "A",
+        "state": "S1",
+        "primary": "Kling VIDEO 3.0",
+        "previous": null,
+        "id": "EP02_SH01",
+        "episode": "EP02",
+        "scene": "SC01",
+        "start": 0,
+        "endtime": 5
+      },
+      {
+        "asset": "INES_TABLE",
+        "d": 7,
+        "scale": "medium close-up",
+        "lens": 50,
+        "camera": "locked",
+        "action": "Inés espera una respuesta y mira hacia la grabadora.",
+        "english": "Ines waits, then moves only her eyes downward toward the table. Her lips remain closed.",
+        "end": "Eyes lowered toward recorder.",
+        "purpose": "Hacer duelo de la falsa esperanza.",
+        "lines": [
+          [
+            1,
+            4,
+            "ALBA OFF",
+            "No vuelve. Ya no está."
+          ]
+        ],
+        "priority": "B",
+        "state": "S1",
+        "primary": "Kling VIDEO 3.0",
+        "previous": null,
+        "id": "EP02_SH02",
+        "episode": "EP02",
+        "scene": "SC01",
+        "start": 5,
+        "endtime": 12
+      },
+      {
+        "asset": "RECORDER",
+        "d": 5,
+        "scale": "insert",
+        "lens": 85,
+        "camera": "locked",
+        "action": "Un dedo pulsa el botón de grabación.",
+        "english": "A single index finger presses the recorder record button once, then leaves frame. The recorder stays fixed on the wood.",
+        "end": "Recorder running; red status light.",
+        "purpose": "Preparar solución antes del final.",
+        "lines": [],
+        "priority": "B",
+        "state": "S1",
+        "primary": "Kling VIDEO 3.0",
+        "previous": null,
+        "id": "EP02_SH03",
+        "episode": "EP02",
+        "scene": "SC01",
+        "start": 12,
+        "endtime": 17
+      },
+      {
+        "asset": "SALT_DROP",
+        "d": 8,
+        "scale": "macro",
+        "lens": 100,
+        "camera": "locked",
+        "action": "Una gota toca sal intacta junto a la zona gastada.",
+        "english": "A clear drop touches untouched salt beside a damp patch. A small white edge dissolves gradually into the wool.",
+        "end": "Two adjacent wet zones with dry salt beyond.",
+        "purpose": "Demostrar consumo por zonas.",
+        "lines": [
+          [
+            1,
+            6,
+            "MARA / TELA",
+            "Son las seis y diez. Han cerrado. Seguimos aquí."
+          ]
+        ],
+        "priority": "A",
+        "state": "S2",
+        "primary": "Kling VIDEO 3.0",
+        "previous": null,
+        "id": "EP02_SH04",
+        "episode": "EP02",
+        "scene": "SC01",
+        "start": 17,
+        "endtime": 25
+      },
+      {
+        "asset": "ALBA_DOOR",
+        "d": 6,
+        "scale": "close-up",
+        "lens": 85,
+        "camera": "locked",
+        "action": "Dos golpes y un arrastre metálico. Alba aprieta la mandíbula.",
+        "english": "Alba hears a sound off-screen and tightens her jaw once. Keep her mouth closed and posture still.",
+        "end": "Jaw tense, gaze right.",
+        "purpose": "Hacer reconocible el motivo de la compuerta.",
+        "lines": [],
+        "priority": "B",
+        "state": "S2",
+        "primary": "MiniMax-Hailuo-2.3",
+        "previous": null,
+        "id": "EP02_SH05",
+        "episode": "EP02",
+        "scene": "SC01",
+        "start": 25,
+        "endtime": 31
+      },
+      {
+        "asset": "RECORDER",
+        "d": 7,
+        "scale": "insert",
+        "lens": 85,
+        "camera": "locked",
+        "action": "El mismo sonido se oye desde el pequeño altavoz de la grabadora.",
+        "english": "The recorder stays perfectly still. Its status light changes from red to green once. No camera movement.",
+        "end": "Playback status green.",
+        "purpose": "Probar que el sonido puede copiarse.",
+        "lines": [
+          [
+            1,
+            6,
+            "MARA / PLAYBACK",
+            "Son las seis y diez. Han cerrado. Seguimos aquí."
+          ]
+        ],
+        "priority": "A",
+        "state": "S2",
+        "primary": "Kling VIDEO 3.0",
+        "previous": null,
+        "id": "EP02_SH06",
+        "episode": "EP02",
+        "scene": "SC01",
+        "start": 31,
+        "endtime": 38
+      },
+      {
+        "asset": "SALT_USED",
+        "d": 6,
+        "scale": "macro",
+        "lens": 100,
+        "camera": "locked",
+        "action": "La sal consumida no reaparece. El resto del borde espera.",
+        "english": "The wet wool patch remains dark and motionless. Focus moves gently from the used patch to the intact white salt beside it.",
+        "end": "Dry salt in focus, used patch soft.",
+        "purpose": "Cerrar regla con imagen.",
+        "lines": [
+          [
+            0.5,
+            4,
+            "INÉS OFF",
+            "La tela se calla. La grabación no."
+          ]
+        ],
+        "priority": "B",
+        "state": "S2",
+        "primary": "Kling VIDEO 3.0",
+        "previous": null,
+        "id": "EP02_SH07",
+        "episode": "EP02",
+        "scene": "SC01",
+        "start": 38,
+        "endtime": 44
+      },
+      {
+        "asset": "REPORT_TOP",
+        "d": 8,
+        "scale": "top-down insert",
+        "lens": 50,
+        "camera": "locked",
+        "action": "El informe fija evacuación completa a las 18:00. Una grabación habla diez minutos después.",
+        "english": "The old paper remains flat on the table. Only a faint shadow shifts at its lower edge. Preserve all geometry.",
+        "end": "Report flat, upper section fully visible.",
+        "purpose": "Contradecir oficialmente el accidente.",
+        "lines": [
+          [
+            1,
+            6,
+            "INÉS OFF",
+            "Aquí pone que a las seis ya no quedaba nadie."
+          ]
+        ],
+        "priority": "A",
+        "state": "S2",
+        "primary": "Kling VIDEO 3.0",
+        "previous": null,
+        "id": "EP02_SH08",
+        "episode": "EP02",
+        "scene": "SC01",
+        "start": 44,
+        "endtime": 52
+      }
+    ],
+    "duration": 52
+  },
+  {
+    "title": "La llave",
+    "question": "¿Quién controlaba la compuerta?",
+    "answer": "Alba figura como responsable y conserva la llave.",
+    "next": "¿Qué estaba protegiendo?",
+    "change": "Inés convierte sospecha en acusación directa.",
+    "shots": [
+      {
+        "asset": "KEY_TABLE",
+        "d": 5,
+        "scale": "overhead insert",
+        "lens": 85,
+        "camera": "locked",
+        "action": "Una llave negra está sobre el dibujo de una compuerta.",
+        "english": "The single black iron key lies still across a simple mechanical drawing on paper. Subtle focus settles on its asymmetric teeth.",
+        "end": "Key teeth sharp.",
+        "purpose": "Objeto concreto sustituye explicación.",
+        "lines": [],
+        "priority": "A",
+        "state": "S2",
+        "primary": "Kling VIDEO 3.0",
+        "previous": null,
+        "id": "EP03_SH01",
+        "episode": "EP03",
+        "scene": "SC01",
+        "start": 0,
+        "endtime": 5
+      },
+      {
+        "asset": "ALBA_DOOR",
+        "d": 7,
+        "scale": "medium",
+        "lens": 50,
+        "camera": "locked",
+        "action": "Alba mantiene la salida a su espalda.",
+        "english": "Alba stands rigidly before the green door, eyes directed right. Her mouth stays closed; cardigan does not change.",
+        "end": "She still occupies the doorway.",
+        "purpose": "La madre retiene control espacial.",
+        "lines": [
+          [
+            1,
+            5,
+            "INÉS OFF",
+            "¿Por qué guardabas la llave de la compuerta?"
+          ]
+        ],
+        "priority": "B",
+        "state": "S2",
+        "primary": "Kling VIDEO 3.0",
+        "previous": null,
+        "id": "EP03_SH02",
+        "episode": "EP03",
+        "scene": "SC01",
+        "start": 5,
+        "endtime": 12
+      },
+      {
+        "asset": "REPORT_TOP",
+        "d": 6,
+        "scale": "POV insert",
+        "lens": 50,
+        "camera": "locked",
+        "action": "Bajo la hora aparece responsable: Alba Vidal. La zona de firmas queda fuera de cuadro.",
+        "english": "Keep the paper completely flat. Camera makes a very small controlled downward move, stopping before the lower signature area.",
+        "end": "Responsibility row centered; signatures not shown.",
+        "purpose": "Vincular llave y documento sin ocultación arbitraria.",
+        "lines": [
+          [
+            0.5,
+            4,
+            "ALBA OFF",
+            "Yo llevaba las llaves. Eso ya lo sabes."
+          ]
+        ],
+        "priority": "B",
+        "state": "S2",
+        "primary": "Kling VIDEO 3.0",
+        "previous": null,
+        "id": "EP03_SH03",
+        "episode": "EP03",
+        "scene": "SC01",
+        "start": 12,
+        "endtime": 18
+      },
+      {
+        "asset": "INES_TABLE",
+        "d": 8,
+        "scale": "close-up",
+        "lens": 85,
+        "camera": "slow push-in 8 cm",
+        "action": "Inés aparta la mirada del borde inferior del acta antes de levantarla hacia Alba.",
+        "english": "Ines looks down briefly, swallows once, then looks off-screen left. Keep lips closed.",
+        "end": "Eyes left, throat settled.",
+        "purpose": "Sembrar la vergüenza de su firma.",
+        "lines": [
+          [
+            1,
+            4,
+            "ALBA OFF",
+            "No busques solo mi nombre."
+          ]
+        ],
+        "priority": "B",
+        "state": "S2",
+        "primary": "Kling VIDEO 3.0",
+        "previous": null,
+        "id": "EP03_SH04",
+        "episode": "EP03",
+        "scene": "SC01",
+        "start": 18,
+        "endtime": 26
+      },
+      {
+        "asset": "SALT_DROP",
+        "d": 5,
+        "scale": "macro",
+        "lens": 100,
+        "camera": "locked",
+        "action": "Inés libera otro fragmento con una gota.",
+        "english": "A drop touches a narrow unused white salt strip. A small patch turns dark; the surrounding wool stays still.",
+        "end": "Third wet zone, remaining central strip white.",
+        "purpose": "La protagonista investiga activamente.",
+        "lines": [],
+        "priority": "B",
+        "state": "S3",
+        "primary": "Kling VIDEO 3.0",
+        "previous": null,
+        "id": "EP03_SH05",
+        "episode": "EP03",
+        "scene": "SC01",
+        "start": 26,
+        "endtime": 31
+      },
+      {
+        "asset": "COAT_COLLAR",
+        "d": 8,
+        "scale": "close-up",
+        "lens": 85,
+        "camera": "locked",
+        "action": "Mara reconoce a quien está al otro lado de la puerta.",
+        "english": "The hollow coat collar stays open. A tiny vibration moves down one lapel and stops.",
+        "end": "Lapel still, collar empty.",
+        "purpose": "Acusación desde evidencia, no intuición.",
+        "lines": [
+          [
+            1,
+            6,
+            "MARA / TELA",
+            "Mamá. Te oigo al otro lado. Abre."
+          ]
+        ],
+        "priority": "A",
+        "state": "S3",
+        "primary": "Kling VIDEO 3.0",
+        "previous": null,
+        "id": "EP03_SH06",
+        "episode": "EP03",
+        "scene": "SC01",
+        "start": 31,
+        "endtime": 39
+      },
+      {
+        "asset": "ALBA_DOOR",
+        "d": 6,
+        "scale": "close-up",
+        "lens": 85,
+        "camera": "locked",
+        "action": "Alba cierra los ojos una vez, pero no niega.",
+        "english": "Alba closes her eyes slowly, holds them shut for one second, then opens them without moving her head. Mouth closed.",
+        "end": "Eyes open, gaze lowered.",
+        "purpose": "Negativa ya imposible.",
+        "lines": [],
+        "priority": "B",
+        "state": "S3",
+        "primary": "MiniMax-Hailuo-2.3",
+        "previous": null,
+        "id": "EP03_SH07",
+        "episode": "EP03",
+        "scene": "SC01",
+        "start": 39,
+        "endtime": 45
+      },
+      {
+        "asset": "TWO_SHOT",
+        "d": 8,
+        "scale": "two-shot in depth",
+        "lens": 35,
+        "camera": "locked",
+        "action": "Inés y Alba quedan separadas por el abrigo. Inés no se acerca.",
+        "english": "The two women remain still on opposite sides of the empty coat. The younger woman subtly raises her chin. No one crosses the room.",
+        "end": "Coat separates both women; door behind Alba.",
+        "purpose": "Convertir hallazgo en pregunta moral.",
+        "lines": [
+          [
+            1,
+            4,
+            "INÉS OFF",
+            "La oíste."
+          ],
+          [
+            5,
+            7,
+            "INÉS OFF",
+            "Y no abriste."
+          ]
+        ],
+        "priority": "A",
+        "state": "S3",
+        "primary": "Kling VIDEO 3.0",
+        "previous": null,
+        "id": "EP03_SH08",
+        "episode": "EP03",
+        "scene": "SC01",
+        "start": 45,
+        "endtime": 53
+      }
+    ],
+    "duration": 53
+  },
+  {
+    "title": "La otra hija",
+    "question": "¿Por qué Alba cerró?",
+    "answer": "Quiso proteger la sala donde estaba Inés y luego falseó lo ocurrido.",
+    "next": "¿Qué responsabilidad tiene la hija salvada?",
+    "change": "La confesión destruye el relato familiar del accidente.",
+    "shots": [
+      {
+        "asset": "KEY_HAND",
+        "d": 5,
+        "scale": "insert",
+        "lens": 85,
+        "camera": "locked",
+        "action": "La mano se abre: la llave deja una marca en la palma.",
+        "english": "The older woman slowly opens her closed hand to reveal the black key. Keep the key supported by the palm, fingers anatomically distinct.",
+        "end": "Palm open; key visible.",
+        "purpose": "Invertir el gesto secreto de EP01.",
+        "lines": [],
+        "priority": "A",
+        "state": "S3",
+        "primary": "Kling VIDEO 3.0",
+        "previous": null,
+        "id": "EP04_SH01",
+        "episode": "EP04",
+        "scene": "SC01",
+        "start": 0,
+        "endtime": 5
+      },
+      {
+        "asset": "INES_TABLE",
+        "d": 8,
+        "scale": "close-up",
+        "lens": 85,
+        "camera": "locked",
+        "action": "Inés recibe una confesión fuera de campo.",
+        "english": "Ines stays very still and looks left. Her breathing pauses then resumes quietly. Mouth closed.",
+        "end": "Eyes fixed left.",
+        "purpose": "Escuchar costo antes de juzgar.",
+        "lines": [
+          [
+            0.5,
+            6.5,
+            "ALBA OFF",
+            "El agua iba hacia la sala norte. Tú estabas allí."
+          ]
+        ],
+        "priority": "A",
+        "state": "S3",
+        "primary": "Kling VIDEO 3.0",
+        "previous": null,
+        "id": "EP04_SH02",
+        "episode": "EP04",
+        "scene": "SC01",
+        "start": 5,
+        "endtime": 13
+      },
+      {
+        "asset": "TWO_SHOT",
+        "d": 7,
+        "scale": "wide in depth",
+        "lens": 35,
+        "camera": "locked",
+        "action": "Alba pone una mano en la puerta actual, sin cerrarla.",
+        "english": "Alba rests her fingertips against the green door beside her. Ines remains still near the table. The coat never moves.",
+        "end": "Alba touches door; Ines distant.",
+        "purpose": "Presente encarna la decisión pasada.",
+        "lines": [
+          [
+            0.5,
+            5,
+            "ALBA OFF",
+            "Cerré para que no te alcanzara."
+          ]
+        ],
+        "priority": "B",
+        "state": "S3",
+        "primary": "Kling VIDEO 3.0",
+        "previous": null,
+        "id": "EP04_SH03",
+        "episode": "EP04",
+        "scene": "SC01",
+        "start": 13,
+        "endtime": 20
+      },
+      {
+        "asset": "ALBA_DOOR",
+        "d": 8,
+        "scale": "close-up",
+        "lens": 85,
+        "camera": "slow push-in 8 cm",
+        "action": "Alba escucha la pregunta que no quería oír.",
+        "english": "Alba looks right; her eyelids tighten and her chin lowers a few millimeters. Lips closed, no tears falling.",
+        "end": "Chin slightly down, eyes wet but controlled.",
+        "purpose": "Separar motivo de justificación.",
+        "lines": [
+          [
+            1,
+            5,
+            "INÉS OFF",
+            "¿Sabías que Mara seguía dentro?"
+          ]
+        ],
+        "priority": "A",
+        "state": "S3",
+        "primary": "Kling VIDEO 3.0",
+        "previous": null,
+        "id": "EP04_SH04",
+        "episode": "EP04",
+        "scene": "SC01",
+        "start": 20,
+        "endtime": 28
+      },
+      {
+        "asset": "INES_TABLE",
+        "d": 5,
+        "scale": "close-up",
+        "lens": 85,
+        "camera": "locked",
+        "action": "Inés recibe el sí, sin apartar la mirada.",
+        "english": "Ines keeps looking left. One small muscle near her jaw tightens. No head turn, no speaking.",
+        "end": "Gaze sustained.",
+        "purpose": "Dar respuesta sin cliffhanger falso.",
+        "lines": [
+          [
+            1,
+            2,
+            "ALBA OFF",
+            "Sí."
+          ]
+        ],
+        "priority": "A",
+        "state": "S3",
+        "primary": "Kling VIDEO 3.0",
+        "previous": null,
+        "id": "EP04_SH05",
+        "episode": "EP04",
+        "scene": "SC01",
+        "start": 28,
+        "endtime": 33
+      },
+      {
+        "asset": "COAT_COLLAR",
+        "d": 8,
+        "scale": "close-up",
+        "lens": 85,
+        "camera": "locked",
+        "action": "El cuello vacío ocupa el lugar de la tercera persona.",
+        "english": "The coat collar remains hollow and completely motionless. Hold the frame without camera motion.",
+        "end": "Empty collar unchanged.",
+        "purpose": "No convertir a Mara en argumento de ninguna.",
+        "lines": [
+          [
+            1,
+            4,
+            "ALBA OFF",
+            "No podía perderos a las dos."
+          ],
+          [
+            5,
+            7,
+            "INÉS OFF",
+            "La perdiste tú. A mí me mentiste."
+          ]
+        ],
+        "priority": "B",
+        "state": "S3",
+        "primary": "Kling VIDEO 3.0",
+        "previous": null,
+        "id": "EP04_SH06",
+        "episode": "EP04",
+        "scene": "SC01",
+        "start": 33,
+        "endtime": 41
+      },
+      {
+        "asset": "ALBA_DOOR",
+        "d": 6,
+        "scale": "medium close-up",
+        "lens": 50,
+        "camera": "locked",
+        "action": "Alba baja los ojos hacia el informe fuera de campo.",
+        "english": "Alba slowly lowers her gaze toward the table, keeping her mouth closed.",
+        "end": "Gaze downward.",
+        "purpose": "Transferir pregunta hacia responsabilidad de Inés.",
+        "lines": [],
+        "priority": "B",
+        "state": "S3",
+        "primary": "MiniMax-Hailuo-2.3",
+        "previous": null,
+        "id": "EP04_SH07",
+        "episode": "EP04",
+        "scene": "SC01",
+        "start": 41,
+        "endtime": 47
+      },
+      {
+        "asset": "REPORT_FULL",
+        "d": 8,
+        "scale": "overhead insert",
+        "lens": 50,
+        "camera": "locked",
+        "action": "La firma de Inés aparece al pie del acta.",
+        "english": "The complete old report lies flat. A soft foreground shadow retreats, exposing the lower section. No fingers cover the signature area.",
+        "end": "Whole page visible.",
+        "purpose": "Pagar pista de firma y abrir decisión final.",
+        "lines": [
+          [
+            1,
+            6,
+            "ALBA OFF",
+            "Yo cerré la puerta. Tú firmaste que no quedaba nadie."
+          ]
+        ],
+        "priority": "A",
+        "state": "S3",
+        "primary": "Kling VIDEO 3.0",
+        "previous": null,
+        "id": "EP04_SH08",
+        "episode": "EP04",
+        "scene": "SC01",
+        "start": 47,
+        "endtime": 55
+      }
+    ],
+    "duration": 55
+  },
+  {
+    "title": "Mi firma",
+    "question": "¿Entregará Inés una prueba que también la acusa?",
+    "answer": "Reconoce que firmó sin comprobar y decide conservar la página completa.",
+    "next": "¿Quedará tiempo de registrar lo que falta antes de consumir la sal?",
+    "change": "Inés pasa de acusadora a testigo implicada.",
+    "shots": [
+      {
+        "asset": "REPORT_FULL",
+        "d": 5,
+        "scale": "extreme close-up insert",
+        "lens": 85,
+        "camera": "locked",
+        "action": "Nombre y frase falsa comparten cuadro.",
+        "english": "Hold the paper flat and still. Keep the signature and evacuation statement unobstructed. No new marks appear.",
+        "end": "Signature unobstructed.",
+        "purpose": "La protagonista no puede salir del documento.",
+        "lines": [
+          [
+            0.5,
+            3,
+            "INÉS OFF",
+            "Me dijiste que habías comprobado."
+          ]
+        ],
+        "priority": "A",
+        "state": "S3",
+        "primary": "Kling VIDEO 3.0",
+        "previous": null,
+        "id": "EP05_SH01",
+        "episode": "EP05",
+        "scene": "SC01",
+        "start": 0,
+        "endtime": 5
+      },
+      {
+        "asset": "ALBA_DOOR",
+        "d": 7,
+        "scale": "close-up",
+        "lens": 85,
+        "camera": "locked",
+        "action": "Alba escucha la admisión; esta vez no interviene.",
+        "english": "Alba holds a quiet gaze right. Her shoulders drop slightly. Mouth closed.",
+        "end": "Shoulders lowered.",
+        "purpose": "No absolver a Inés con desconocimiento.",
+        "lines": [
+          [
+            0.5,
+            5.5,
+            "INÉS OFF",
+            "Y yo firmé. Sin mirar. Me acuerdo."
+          ]
+        ],
+        "priority": "B",
+        "state": "S3",
+        "primary": "Kling VIDEO 3.0",
+        "previous": null,
+        "id": "EP05_SH02",
+        "episode": "EP05",
+        "scene": "SC01",
+        "start": 5,
+        "endtime": 12
+      },
+      {
+        "asset": "PHONE",
+        "d": 6,
+        "scale": "top-down insert",
+        "lens": 50,
+        "camera": "locked",
+        "action": "El móvil muestra una foto recortada sin la firma.",
+        "english": "The black smartphone lies motionless on the wooden table. Keep its rectangular screen and all edges rigid.",
+        "end": "Phone remains fixed.",
+        "purpose": "Materializar tentación de editar verdad.",
+        "lines": [
+          [
+            1,
+            4,
+            "ALBA OFF",
+            "Puedes mandar solo la grabación."
+          ]
+        ],
+        "priority": "A",
+        "state": "S3",
+        "primary": "Kling VIDEO 3.0",
+        "previous": null,
+        "id": "EP05_SH03",
+        "episode": "EP05",
+        "scene": "SC01",
+        "start": 12,
+        "endtime": 18
+      },
+      {
+        "asset": "INES_TABLE",
+        "d": 8,
+        "scale": "close-up",
+        "lens": 85,
+        "camera": "slow push-in 8 cm",
+        "action": "Inés mira el recorte. Después levanta los ojos hacia el abrigo.",
+        "english": "Ines looks down, then slowly raises her gaze off-screen left. Her lips stay closed, no smile.",
+        "end": "Gaze meets coat height.",
+        "purpose": "Elegir escuchar a Mara antes de salvarse.",
+        "lines": [],
+        "priority": "B",
+        "state": "S3",
+        "primary": "Kling VIDEO 3.0",
+        "previous": null,
+        "id": "EP05_SH04",
+        "episode": "EP05",
+        "scene": "SC01",
+        "start": 18,
+        "endtime": 26
+      },
+      {
+        "asset": "SALT_DROP",
+        "d": 5,
+        "scale": "macro",
+        "lens": 100,
+        "camera": "locked",
+        "action": "La última franja blanca recibe agua, con la grabadora ya encendida fuera de campo.",
+        "english": "A single drop spreads along the last narrow white salt edge. Keep all earlier patches dark.",
+        "end": "Last salt strip beginning to dissolve.",
+        "purpose": "Iniciar registro final sin mecanismo nuevo.",
+        "lines": [],
+        "priority": "A",
+        "state": "S3",
+        "primary": "Kling VIDEO 3.0",
+        "previous": null,
+        "id": "EP05_SH05",
+        "episode": "EP05",
+        "scene": "SC01",
+        "start": 26,
+        "endtime": 31
+      },
+      {
+        "asset": "COAT_COLLAR",
+        "d": 8,
+        "scale": "close-up",
+        "lens": 85,
+        "camera": "locked",
+        "action": "La voz ya no habla a una persona: cuenta a quienes están allí.",
+        "english": "The empty coat collar makes one final very small pulse, then settles. No body or face appears.",
+        "end": "Collar motionless after pulse.",
+        "purpose": "Reformular el mensaje como voluntad colectiva.",
+        "lines": [
+          [
+            0.5,
+            6,
+            "MARA / TELA",
+            "Somos siete. Si alguien oye esto, que no quite a ninguno."
+          ]
+        ],
+        "priority": "A",
+        "state": "S3",
+        "primary": "Kling VIDEO 3.0",
+        "previous": null,
+        "id": "EP05_SH06",
+        "episode": "EP05",
+        "scene": "SC01",
+        "start": 31,
+        "endtime": 39
+      },
+      {
+        "asset": "RECORDER",
+        "d": 6,
+        "scale": "insert",
+        "lens": 85,
+        "camera": "locked",
+        "action": "La luz roja continúa. Inés no detiene el registro.",
+        "english": "The recorder remains still with its red recording light steadily illuminated. No hand enters.",
+        "end": "Recording continues.",
+        "purpose": "Decisión expresada como no cortar.",
+        "lines": [
+          [
+            1,
+            4,
+            "INÉS OFF",
+            "La página entera. Y mi nombre."
+          ]
+        ],
+        "priority": "B",
+        "state": "S3",
+        "primary": "Kling VIDEO 3.0",
+        "previous": null,
+        "id": "EP05_SH07",
+        "episode": "EP05",
+        "scene": "SC01",
+        "start": 39,
+        "endtime": 45
+      },
+      {
+        "asset": "SALT_USED",
+        "d": 8,
+        "scale": "macro",
+        "lens": 100,
+        "camera": "slow pull-out 5 cm",
+        "action": "Desaparece el último borde de cristales. La grabación sigue fuera de campo.",
+        "english": "The final tiny white crystals dissolve into the wet wool. Pull back only five centimeters, keeping the same fabric patch centered.",
+        "end": "No white crystals in this patch; wet wool still.",
+        "purpose": "Peligro concreto: fuente finita, registro ya activo.",
+        "lines": [
+          [
+            1,
+            4,
+            "MARA / TELA",
+            "Voy a decir los nombres."
+          ]
+        ],
+        "priority": "A",
+        "state": "S4",
+        "primary": "Kling VIDEO 3.0",
+        "previous": null,
+        "id": "EP05_SH08",
+        "episode": "EP05",
+        "scene": "SC01",
+        "start": 45,
+        "endtime": 53
+      }
+    ],
+    "duration": 53
+  },
+  {
+    "title": "Los siete",
+    "question": "¿Qué queda cuando se termina la última voz?",
+    "answer": "El registro completo y la responsabilidad de quienes lo entregan.",
+    "next": "¿Cómo vivirán madre e hija después de decir la verdad?",
+    "change": "Inés entrega audio, acta íntegra y declaración propia.",
+    "shots": [
+      {
+        "asset": "RECORDER",
+        "d": 8,
+        "scale": "insert",
+        "lens": 85,
+        "camera": "locked",
+        "action": "Desde la grabadora que sigue registrando se oyen los primeros cuatro nombres de Mara.",
+        "english": "The recorder stays still on the table, red light steady. No hand touches it.",
+        "end": "Recording light remains red.",
+        "purpose": "Recompensar promesa de contar personas.",
+        "lines": [
+          [
+            0.5,
+            6.5,
+            "MARA / TELA",
+            "Elena Ríos. Tomás Vera. Luz Arce. Bruno Sol."
+          ]
+        ],
+        "priority": "A",
+        "state": "S4",
+        "primary": "Kling VIDEO 3.0",
+        "previous": "EP05_SH07",
+        "id": "EP06_SH01",
+        "episode": "EP06",
+        "scene": "SC01",
+        "start": 0,
+        "endtime": 8
+      },
+      {
+        "asset": "COAT_END",
+        "d": 7,
+        "scale": "medium wide",
+        "lens": 50,
+        "camera": "locked",
+        "action": "Se oye el final de la lista; el abrigo deja de moverse para siempre.",
+        "english": "The empty damp coat hangs completely still. No inflation, no swaying, no salt reappears.",
+        "end": "Coat still and silent.",
+        "purpose": "Nombrar hermana dentro del colectivo.",
+        "lines": [
+          [
+            0.5,
+            6,
+            "MARA / TELA",
+            "Celia Paz. Samuel Costa. Y yo, Mara Vidal."
+          ]
+        ],
+        "priority": "A",
+        "state": "S4",
+        "primary": "Kling VIDEO 3.0",
+        "previous": null,
+        "id": "EP06_SH02",
+        "episode": "EP06",
+        "scene": "SC01",
+        "start": 8,
+        "endtime": 15
+      },
+      {
+        "asset": "PHONE",
+        "d": 6,
+        "scale": "top-down insert",
+        "lens": 50,
+        "camera": "locked",
+        "action": "El recorte desaparece; ahora se ve página completa y tres adjuntos.",
+        "english": "The black smartphone remains perfectly still on the wood. Preserve screen boundaries for later compositing.",
+        "end": "Screen unobstructed.",
+        "purpose": "Clímax: entregar también la firma.",
+        "lines": [
+          [
+            0.5,
+            5,
+            "INÉS OFF",
+            "Firmé sin comprobar. Adjuntaré mi declaración."
+          ]
+        ],
+        "priority": "A",
+        "state": "S4",
+        "primary": "Kling VIDEO 3.0",
+        "previous": null,
+        "id": "EP06_SH03",
+        "episode": "EP06",
+        "scene": "SC01",
+        "start": 15,
+        "endtime": 21
+      },
+      {
+        "asset": "ALBA_DOOR",
+        "d": 7,
+        "scale": "medium close-up",
+        "lens": 50,
+        "camera": "locked",
+        "action": "Alba se aparta unos centímetros del eje de la puerta.",
+        "english": "Alba makes one small sideways step, fifteen centimeters, clearing the door center. Mouth closed, gaze right.",
+        "end": "Door center clear; Alba beside it.",
+        "purpose": "Devolver decisión y salida a Inés.",
+        "lines": [
+          [
+            1,
+            4,
+            "INÉS OFF",
+            "No voy a quitar tu nombre."
+          ]
+        ],
+        "priority": "B",
+        "state": "S4",
+        "primary": "Kling VIDEO 3.0",
+        "previous": null,
+        "id": "EP06_SH04",
+        "episode": "EP06",
+        "scene": "SC01",
+        "start": 21,
+        "endtime": 28
+      },
+      {
+        "asset": "PHONE",
+        "d": 5,
+        "scale": "insert",
+        "lens": 85,
+        "camera": "locked",
+        "action": "La pantalla cambia a entrega confirmada; no hay celebración.",
+        "english": "Keep phone, table and lighting absolutely motionless. No finger enters frame.",
+        "end": "Screen steady for sent confirmation overlay.",
+        "purpose": "Acción irreversible, no simple intención.",
+        "lines": [],
+        "priority": "A",
+        "state": "S4",
+        "primary": "Kling VIDEO 3.0",
+        "previous": null,
+        "id": "EP06_SH05",
+        "episode": "EP06",
+        "scene": "SC01",
+        "start": 28,
+        "endtime": 33
+      },
+      {
+        "asset": "KEY_TABLE",
+        "d": 7,
+        "scale": "insert",
+        "lens": 85,
+        "camera": "locked",
+        "action": "La llave queda junto al acta. Alba ya no la oculta.",
+        "english": "The key rests on the paper. An older hand slowly withdraws out of frame, leaving the key behind.",
+        "end": "Key alone on document.",
+        "purpose": "Confesión se vuelve trazable.",
+        "lines": [
+          [
+            1,
+            5,
+            "ALBA OFF",
+            "Deja el mío también. ¿Puedo quedarme?"
+          ]
+        ],
+        "priority": "B",
+        "state": "S4",
+        "primary": "Kling VIDEO 3.0",
+        "previous": null,
+        "id": "EP06_SH06",
+        "episode": "EP06",
+        "scene": "SC01",
+        "start": 33,
+        "endtime": 40
+      },
+      {
+        "asset": "INES_TABLE",
+        "d": 6,
+        "scale": "close-up",
+        "lens": 85,
+        "camera": "locked",
+        "action": "Inés mira a su madre sin sonrisa. Le permite quedarse sin absolverla.",
+        "english": "Ines keeps her gaze left, eyes moist, chin level. She exhales once through her nose, mouth closed.",
+        "end": "Steady eyes, no smile.",
+        "purpose": "Cierre emocional con condición concreta.",
+        "lines": [
+          [
+            0.5,
+            4,
+            "MARA / PLAYBACK",
+            "Y yo, Mara Vidal."
+          ]
+        ],
+        "priority": "B",
+        "state": "S4",
+        "primary": "MiniMax-Hailuo-2.3",
+        "previous": null,
+        "id": "EP06_SH07",
+        "episode": "EP06",
+        "scene": "SC01",
+        "start": 40,
+        "endtime": 46
+      },
+      {
+        "asset": "COAT_END",
+        "d": 9,
+        "scale": "wide",
+        "lens": 35,
+        "camera": "slow pull-out 10 cm",
+        "action": "El abrigo inmóvil y las otras seis prendas permanecen. La voz está en la grabadora.",
+        "english": "Slow controlled pull back ten centimeters from the completely still empty coat. Keep room geometry and the six other coats fixed.",
+        "end": "Seven empty garments, room quiet.",
+        "purpose": "Cierre de duelo; memoria fuera del objeto.",
+        "lines": [
+          [
+            0.5,
+            3,
+            "INÉS OFF",
+            "Si no apagas eso."
+          ]
+        ],
+        "priority": "A",
+        "state": "S4",
+        "primary": "Kling VIDEO 3.0",
+        "previous": null,
+        "id": "EP06_SH08",
+        "episode": "EP06",
+        "scene": "SC01",
+        "start": 46,
+        "endtime": 55
+      }
+    ],
+    "duration": 55
+  }
+]
