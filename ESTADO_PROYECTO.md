@@ -37,3 +37,21 @@ Este archivo conserva el contexto dentro del repositorio; no supone memoria auto
 - Modificado solo el prompt Flow de EP01_SH03: desprendimiento → contacto → disolución localizada → reposo; cámara fija y foco estable. Notas en VIDEO_PROMPTS/GOOGLE_FLOW/EP01_SH03_NOTAS.md. Demás prompts intactos.
 - Imagen existente revisada y conservada: gota y pipeta legibles, humedad dominante. Sin nueva generación. Se mantiene pipeta del material activo aunque el guion antiguo menciona pincel.
 - Pendiente: prueba en Flow y revisión del vídeo; prompt propuesto, no aceptado ni validado mediante generación.
+
+- Acuerdo posterior: usuario autoriza probar automatización de navegador con su Google AI Plus institucional, empezando solo por EP01_SH03: una generación y revisión antes de otra, aceptar imperfecciones menores si comunica la acción, parar ante límites y no comprar créditos. El usuario debe iniciar sesión directamente en Google.
+- Conexión pendiente: en esta sesión no hay herramienta de navegador compartido/control de escritorio disponible ni DISPLAY configurado. No se ha abierto un formulario, iniciado sesión ni conectado la cuenta. Un enlace abierto en el navegador personal no comparte esa sesión con el agente.
+
+- Usuario usa Linux. Preparado tools/flow-local/iniciar.sh y paquete FLOW-LINUX-INICIO.zip: abre navegador local Chrome/Chromium con perfil fuera del repo y ayuda con imagen/prompt EP01_SH03. No pide credenciales, no expone depuración ni conecta al agente remoto. Generación y descarga siguen manuales; automatización remota pendiente.
+- Verificado: sintaxis Bash/Python, preparación de archivos y ZIP. No probado login institucional ni navegador gráfico (entorno sin escritorio).
+
+## Escritorio remoto en Codespaces · 2026-10-21
+
+- Preparado y arrancado `tools/flow-codespaces/escritorio.py`: Chromium + TigerVNC + noVNC, DISPLAY=:42. Navegador situado en formulario oficial accounts.google.com para Flow; revisado visualmente antes de introducir datos. Usuario aún no autenticado.
+- Acceso: https://effective-space-bassoon-6vg6rvr59xv6crgg5-6080.app.github.dev/vnc.html?autoconnect=1&resize=scale . Puerto 6080: respuesta externa sin autenticar redirige a login GitHub. Mantener privado. VNC 5942 solo loopback con contraseña (comprobado que no ofrece acceso anónimo).
+- Clave del escritorio: usuario la consulta con `cat ~/.local/share/master-series-flow-codespaces/clave.txt`. Perfil, clave, logs y Xauthority fuera del repo, directorio 0700. No hay puerto CDP. Agente puede usar xdotool/Xlib con DISPLAY=:42 y XAUTHORITY=~/.local/share/master-series-flow-codespaces/Xauthority.
+- Limitación real: namespaces del sandbox de Chromium fallan en este contenedor; se usa --no-sandbox y se informó al usuario. No se eluden restricciones de Google/institución.
+- Verificados arranque, HTTP 200 noVNC, autenticación VNC, loopback, redirección GitHub, formulario Google y sintaxis. Scripts instalar/iniciar/estado/detener documentados. El ZIP local anterior no era solución para Codespaces; este escritorio lo sustituye para el acceso.
+- Pendiente: usuario inicia sesión y avisa; no inspeccionar ni capturar mientras introduce credenciales. Luego probar una generación EP01_SH03 y revisar según tolerancia acordada. Todavía no validada automatización de Flow ni gastadas generaciones.
+
+- Comprobación tras aviso «ya entré»: se logró activar la pestaña de Flow mediante clic remoto y ver el proyecto `df0139d1-e7fe-4650-8b3c-99aa3a94162b`, interfaz en español e insignia PLUS. Control de ratón confirmado; identidad del correo y saldo no comprobados. No se generó vídeo.
+- Durante la prueba hubo cambios simultáneos de pestaña y apareció otro formulario Google vacío. Se detuvo la interacción para no interferir con el usuario. No dar por verificada escritura en Flow ni automatización completa. Antes de continuar, dejar el navegador libre en Flow; no capturar durante entrada de credenciales.

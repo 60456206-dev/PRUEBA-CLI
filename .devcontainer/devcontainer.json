@@ -3,5 +3,15 @@
   "image": "mcr.microsoft.com/devcontainers/base:debian",
   "features": {
     "ghcr.io/devcontainers/features/sshd:1": {}
+  },
+  "portsAttributes": {
+    "6080": {
+      "label": "Escritorio Flow (mantener privado)",
+      "onAutoForward": "notify"
+    },
+    "5942": {
+      "label": "VNC interno - NO reenviar",
+      "onAutoForward": "ignore"
+    }
   }
 }
