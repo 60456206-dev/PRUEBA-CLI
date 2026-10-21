@@ -1,9 +1,11 @@
 # Dónde nos quedamos
 
-Actualizado: 2026-10-20.
+Actualizado: 2026-10-21.
 
 ## Trabajo activo: juego PULSO
 
+- Compartir PULSO: el 21/10 el usuario pidió hacerlo público; Sites confirmó acceso `public` (revisión 2). Enlace para compartir: https://pulso-local-rhythm.marco36gonzales.chatgpt.site
+- Generado `PULSO-para-compartir.zip` con `dist/`, README y package.json para compartir el juego descargable.
 - Nuevo pedido: juego que permite cargar música local y sincroniza las notas con su ritmo. Implementado en `pulso/`, sin dependencias de ejecución; inicio local: `cd pulso && npm start` (Python 3, puerto 4173).
 - Generado: interfaz en español, cuatro carriles D/F/J/K y táctiles, detector de ataques reales, BPM estimado, tres dificultades, demo original, pausa/reinicio, calibración ±250 ms, resultados y récords locales. El audio se procesa en el navegador y no se sube.
 - Revisado: 6 pruebas automáticas de audio y sintaxis correctas; QA en Chromium con carga WAV, errores de audio, silencio, pausa/reanudación, resultados y móvil. Prueba con reloj real: 24/24 perfectas, 100% y 4200 puntos incluyendo pausa. Capturas de escritorio/móvil revisadas; sin desbordamiento a 320/390/1440 px. Corregido inicio pendiente al abrir ayuda y scroll al juego en móvil.
