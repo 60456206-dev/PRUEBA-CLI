@@ -2,7 +2,7 @@
 
 Actualizado: 2026-10-21.
 
-## Trabajo activo: juego PULSO
+## Juego PULSO (trabajo anterior)
 
 - Compartir PULSO: el 21/10 el usuario pidió hacerlo público; Sites confirmó acceso `public` (revisión 2). Enlace para compartir: https://pulso-local-rhythm.marco36gonzales.chatgpt.site
 - Generado `PULSO-para-compartir.zip` con `dist/`, README y package.json para compartir el juego descargable.
@@ -30,3 +30,10 @@ Este archivo conserva el contexto dentro del repositorio; no supone memoria auto
 
 
 - Plano activo: EP01_SH03. Prompt de Flow disponible en `VIDEO_PROMPTS/GOOGLE_FLOW/EP01_SH03_GOOGLE_FLOW.txt`. Imagen inicial `SHOT_REFERENCES/SALT_DROP.png` creada con image_gen usando COAT_START.png y ARCHIVE_MASTER.png como referencias. Revisada visualmente: macro del borde óxido, sal, zona húmeda S1 y una gota todavía adherida a la pipeta. Imagen propuesta para usar; vídeo del plano 3 aún pendiente. Prompt de imagen guardado en SHOT_REFERENCES/SALT_DROP_GENERATION.md. Generar 6 s y usar 5 s en montaje.
+
+## Trabajo activo retomado: MASTER SERIES · EP01_SH03 · Google Flow
+
+- 2026-10-21: el usuario informa que obtiene sal sin la acción esperada. Revisados guion, tarjeta, prompt e imagen; no visto el vídeo fallido.
+- Modificado solo el prompt Flow de EP01_SH03: desprendimiento → contacto → disolución localizada → reposo; cámara fija y foco estable. Notas en VIDEO_PROMPTS/GOOGLE_FLOW/EP01_SH03_NOTAS.md. Demás prompts intactos.
+- Imagen existente revisada y conservada: gota y pipeta legibles, humedad dominante. Sin nueva generación. Se mantiene pipeta del material activo aunque el guion antiguo menciona pincel.
+- Pendiente: prueba en Flow y revisión del vídeo; prompt propuesto, no aceptado ni validado mediante generación.
