@@ -1,6 +1,16 @@
 # Dónde nos quedamos
 
-Actualizado: 2026-10-17.
+Actualizado: 2026-10-20.
+
+## Trabajo activo: juego PULSO
+
+- Nuevo pedido: juego que permite cargar música local y sincroniza las notas con su ritmo. Implementado en `pulso/`, sin dependencias de ejecución; inicio local: `cd pulso && npm start` (Python 3, puerto 4173).
+- Generado: interfaz en español, cuatro carriles D/F/J/K y táctiles, detector de ataques reales, BPM estimado, tres dificultades, demo original, pausa/reinicio, calibración ±250 ms, resultados y récords locales. El audio se procesa en el navegador y no se sube.
+- Revisado: 6 pruebas automáticas de audio y sintaxis correctas; QA en Chromium con carga WAV, errores de audio, silencio, pausa/reanudación, resultados y móvil. Prueba con reloj real: 24/24 perfectas, 100% y 4200 puntos incluyendo pausa. Capturas de escritorio/móvil revisadas; sin desbordamiento a 320/390/1440 px. Corregido inicio pendiente al abrir ayuda y scroll al juego en móvil.
+- Publicado privado mediante Sites: https://pulso-local-rhythm.marco36gonzales.chatgpt.site . Identidad persistida en `pulso/.openai/hosting.json`; fuente publicada `d6e15d294dbc601ab39b864f081ceaa2f3ab6846`. El código editable se conserva en el repositorio; Git de publicación se preparó por separado en `/tmp/pulso-site-source-z9iaycl2` para no modificar el Git principal.
+- Pendiente: prueba y aceptación del usuario con su propia música. El mapa depende de los ataques detectados y funciona mejor con percusión clara; no se ha prometido transcripción musical exacta.
+
+## Contexto audiovisual anterior
 
 - Proyecto: `MASTER_SERIES_PACKAGE`. Estamos generando vídeos desde imágenes para el episodio 1: 8 planos, 51 segundos previstos. La temporada tiene 48 planos.
 - Usuario: está en Perú, es estudiante y no tiene GPU dedicada. Prefiere opciones gratuitas desde el navegador. Hemos investigado PixVerse, Hailuo, Google Flow y demos de Wan; verificar ofertas vigentes antes de prometer créditos.

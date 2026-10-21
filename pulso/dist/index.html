@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10120f">
+  <meta name="description" content="Tu música, tu siguiente récord. Carga una canción y juega un mapa de notas creado a partir de su ritmo. Audio local, cuatro carriles y mucha energía.">
+  <title>PULSO — Juega tu música</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23d4ff48'/%3E%3Cpath d='M10 34h10l6-17 10 32 7-15h11' fill='none' stroke='%2310120f' stroke-width='5'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="./" aria-label="Pulso, inicio"><svg class="brand-mark" width="33" height="33" viewBox="0 0 36 36" aria-hidden="true"><path d="M2 20h8l5-13 7 23 5-10h7" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linejoin="round"/></svg><span class="brand-name">PULSO<span>®</span></span></a>
+      <span class="brand-tagline">LOCAL RHYTHM CLUB</span>
+      <div class="top-actions"><span class="status-pill"><i class="status-dot"></i> 100% en tu navegador</span><button class="icon-button" id="help-button" aria-label="Cómo jugar" title="Cómo jugar">?</button></div>
+    </header>
+    <main>
+      <section class="intro">
+        <div><p class="eyebrow"><span>DALE AL PLAY.</span> ENCUENTRA TU FLOW.</p><h1>Tu música.<br><span>Tu siguiente récord.</span></h1></div>
+        <p class="intro-copy">Convierte esa canción que no puedes<br class="desktop-break"> dejar de escuchar en tu próxima partida.<br><span>Cuatro teclas. Todo el ritmo.</span></p>
+      </section>
+      <div class="studio">
+        <section class="play-panel" aria-label="Zona de juego">
+          <div class="arena-top"><div><span class="live-label"><i class="status-dot"></i><span id="game-state">LISTO PARA EL RITMO</span></span><h2 class="arena-heading" id="arena-title">Tu próxima sesión</h2></div><div class="arena-tools"><span id="bpm-badge">— BPM</span><span class="arena-mode" id="mode-badge">NORMAL</span></div></div>
+          <div class="scorebar"><div class="metric"><span class="metric-label">PUNTUACIÓN</span><strong id="score">000000</strong></div><div class="metric"><span class="metric-label">COMBO</span><strong id="combo">0<span>×</span></strong></div><div class="metric"><span class="metric-label">PRECISIÓN</span><strong id="accuracy">—<span>%</span></strong></div></div>
+          <div class="arena" id="arena">
+            <canvas id="game-canvas" aria-label="Notas musicales descendiendo por cuatro carriles. Pulsa D, F, J y K cuando lleguen a la línea inferior."></canvas>
+            <div class="arena-overlay" id="arena-overlay"><div class="overlay-inner"><span class="overlay-kicker">LA PISTA ES TUYA</span><h2>Siente el beat.</h2><p>Carga tu canción o entra en calor<br>con nuestra sesión de prueba.</p><button class="primary-button" id="overlay-play"><span aria-hidden="true">▶</span> Probar una sesión</button><span class="overlay-footnote">Auriculares recomendados</span></div></div>
+            <div class="judgement" id="judgement" aria-hidden="true"></div><div class="combo-pop" id="combo-pop" aria-hidden="true"></div><div class="countdown" id="countdown" hidden></div>
+            <div class="lane-controls" aria-label="Teclas de juego"><button class="lane-key" data-lane="0" aria-label="Pulsar carril D"><span>D</span><small>01</small></button><button class="lane-key" data-lane="1" aria-label="Pulsar carril F"><span>F</span><small>02</small></button><button class="lane-key" data-lane="2" aria-label="Pulsar carril J"><span>J</span><small>03</small></button><button class="lane-key" data-lane="3" aria-label="Pulsar carril K"><span>K</span><small>04</small></button></div>
+          </div>
+          <div class="playback-bar"><button id="pause-button" class="icon-button" aria-label="Pausar partida" title="Pausar · espacio" disabled>Ⅱ</button><div class="playback-track"><span class="track-title" id="playing-title">La siguiente canción la eliges tú</span><div class="progress-track" role="progressbar" aria-label="Progreso de la canción" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="progress-fill"></div></div></div><span class="track-time" id="track-time">0:00 / 0:00</span><button id="restart-button" class="icon-button" title="Reiniciar partida" aria-label="Reiniciar partida" disabled>↺</button></div>
+        </section>
+        <aside class="control-panel" aria-label="Configura tu partida">
+          <section class="control-section"><div class="section-heading"><span class="section-number">01</span><h2>Elige tu sonido</h2><span class="local-tag">LOCAL</span></div>
+            <div class="dropzone" id="dropzone"><input class="file-input" id="audio-file" type="file" accept="audio/*,.mp3,.wav,.ogg,.m4a,.flac,.aac" aria-label="Seleccionar canción local"><svg class="upload-icon" viewBox="0 0 40 40" width="36" height="36" aria-hidden="true"><path d="M20 26V7m-7 7 7-7 7 7M8 26v7h24v-7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><h3>Arrastra tu canción aquí</h3><p>MP3, WAV, OGG, M4A y FLAC</p><button class="secondary-button" id="browse-button">Explorar archivos <span aria-hidden="true">↗</span></button></div>
+            <p class="audio-status" id="audio-status" role="status" aria-live="polite">Tu música se queda en tu dispositivo.</p>
+            <div class="track-card"><div class="cover-art" aria-hidden="true"><svg viewBox="0 0 48 48" width="42" height="42"><circle cx="24" cy="24" r="18" fill="none" stroke="currentColor"/><circle cx="24" cy="24" r="12" fill="none" stroke="currentColor"/><circle cx="24" cy="24" r="4" fill="currentColor"/><path d="m7 9 34 30" stroke="currentColor"/></svg></div><div class="track-meta"><strong id="selected-title">Neon Afterhours</strong><small id="selected-meta">Pista de prueba · electrónica</small></div><button id="demo-button" class="icon-button" aria-label="Cargar pista de prueba Neon Afterhours" title="Cargar pista de prueba">↗</button></div>
+          </section>
+          <section class="control-section"><div class="section-heading"><span class="section-number">02</span><h2>Encuentra tu nivel</h2></div><div class="difficulty-switch" role="group" aria-label="Dificultad"><button data-difficulty="easy" aria-pressed="false">Suave</button><button data-difficulty="normal" class="active" aria-pressed="true">Normal</button><button data-difficulty="hard" aria-pressed="false">Intenso</button></div><p class="difficulty-hint" id="difficulty-hint">Sigue el ritmo. Entra en la zona.</p></section>
+          <section class="control-section settings-section"><div class="section-heading"><span class="section-number">03</span><h2>A tu ritmo</h2></div><div class="setting-row"><label for="volume">Volumen</label><output id="volume-value" for="volume">70%</output></div><input id="volume" type="range" min="0" max="100" value="70"><div class="setting-row offset-row"><label for="offset">Sincronización <span title="Ajusta cuándo llega cada nota. Un valor positivo la retrasa respecto al audio.">↔</span></label><output id="offset-value" for="offset">0 ms</output></div><input id="offset" type="range" min="-250" max="250" step="5" value="0"><p class="setting-caption">Ajusta si el audio y tus pulsaciones se sienten desfasados.</p></section>
+          <button id="start-button" class="primary-button full-width"><span aria-hidden="true">▶</span> Empezar sesión <kbd>ENTER</kbd></button><p class="privacy-note"><svg width="12" height="14" viewBox="0 0 12 14" aria-hidden="true"><path d="M2 6V4a4 4 0 0 1 8 0v2M1 6h10v7H1z" fill="none" stroke="currentColor"/></svg> Sin subidas. Sin cuentas. Solo música.</p>
+        </aside>
+      </div>
+      <div class="bottom-strip"><div class="tip"><span class="tip-number">↗</span><div><strong>TU BIBLIOTECA, TU JUEGO</strong><p>Carga un archivo y descubre su ritmo.</p></div></div><div class="tip"><span class="tip-number">⌘</span><div><strong>CUATRO TECLAS, CERO EXCUSAS</strong><p><kbd>D</kbd> <kbd>F</kbd> <kbd>J</kbd> <kbd>K</kbd> o toca los carriles.</p></div></div><div class="tip"><span class="tip-number">◎</span><div><strong>ENCUENTRA EL MOMENTO</strong><p>Pulsa cuando la nota toque la línea.</p></div></div></div>
+    </main>
+    <footer class="footer"><span>PULSO <span class="footer-separator">/</span> HECHO PARA SENTIRLO.</span><span>Tu canción favorita tiene otro nivel. <span aria-hidden="true">↗</span></span></footer>
+  </div>
+  <div class="modal-backdrop" id="help-modal" hidden><section class="modal" role="dialog" aria-modal="true" aria-labelledby="help-title"><button class="close-modal icon-button" data-close="help-modal" aria-label="Cerrar ayuda">×</button><p class="eyebrow">EL RITMO LO PONES TÚ</p><h2 id="help-title">Así se juega.</h2><ol class="help-list"><li><strong>Elige una canción.</strong> Carga tu archivo local o prueba Neon Afterhours.</li><li><strong>Sigue las notas.</strong> Pulsa D, F, J o K cuando lleguen a la línea. En móvil, toca los botones de cada carril.</li><li><strong>Construye tu combo.</strong> Perfecto: ±65 ms. Bien: ±135 ms. Una nota perdida rompe la racha.</li></ol><p>Espacio pausa o continúa. La dificultad cambia la cantidad de notas. El mapa sigue los golpes detectados; funciona mejor con percusión marcada. Si usas Bluetooth, ajusta la sincronización.</p><button class="primary-button full-width" data-close="help-modal">A por el récord <span aria-hidden="true">↗</span></button></section></div>
+  <div class="modal-backdrop" id="results-modal" hidden><section class="modal results-modal" role="dialog" aria-modal="true" aria-labelledby="results-title"><button class="close-modal icon-button" data-close="results-modal" aria-label="Cerrar resultados">×</button><p class="eyebrow">SESIÓN COMPLETADA</p><div class="result-rank" id="result-rank">A</div><h2 id="results-title">Ese es tu ritmo.</h2><p id="result-track"></p><div class="results-grid"><div><span>PUNTUACIÓN</span><strong id="result-score">0</strong></div><div><span>PRECISIÓN</span><strong id="result-accuracy">0%</strong></div><div><span>MEJOR COMBO</span><strong id="result-combo">0×</strong></div><div><span>RÉCORD LOCAL</span><strong id="result-best">0</strong></div></div><p id="result-breakdown"></p><div class="modal-actions"><button class="secondary-button" data-close="results-modal">Cambiar canción</button><button class="primary-button" id="replay-button">Otra ronda ↗</button></div></section></div>
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+  <script type="module" src="./main.js"></script>
+</body>
+</html>
