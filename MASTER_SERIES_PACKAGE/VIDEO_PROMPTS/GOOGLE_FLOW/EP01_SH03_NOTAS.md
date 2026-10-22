@@ -1,6 +1,6 @@
 # EP01_SH03 · revisión exclusiva para Google Flow
 
-2026-10-21. Propuesta revisada; aún no probada generando en Flow.
+2026-10-22. Segunda propuesta tras revisar el vídeo del usuario; esta nueva redacción aún no se ha probado en Flow.
 
 ## Intención y uso
 
@@ -11,7 +11,11 @@ Mostrar la causa física mínima: agua que toca sal y humedece lana. La respirac
 - Generar 6 s si la interfaz lo permite; usar 5 s. Si ofrece una duración mayor, recortar el reposo final. Los tiempos escritos son orientación, no control exacto.
 - Cámara fija y foco estable: el movimiento narrativo es la caída y absorción. Evitar órbita, zoom y cambio de foco para poder comparar el antes y después.
 
-## Diagnóstico
+## Ajuste tras revisar el vídeo · 2026-10-22
+
+El vídeo muestra contacto, pero el agua se estira y escurre en varias formas/gotas; la disolución no se distingue bien. Se eliminan la elongación explícita y la escala de una moneda. Se pide separación completa con aire visible, punta vacía después de una única caída y absorción inmediata en un área de pocos granos. Hipótesis de mejora, no garantía. Clip anterior conservado como candidato, no aceptado como definitivo.
+
+## Diagnóstico inicial · anterior a la revisión del vídeo
 
 El prompt anterior describía poco el contacto y la disolución, entre restricciones genéricas. La imagen contiene una mancha húmeda dominante que puede sugerir una acción ya terminada. Es una hipótesis: no se ha visto el vídeo fallido del usuario. Se conserva porque la gota, la punta y la sal objetivo se distinguen. El nuevo texto localiza el cambio debajo de la punta, junto a la humedad existente. La imagen también se utiliza en otros episodios y no se ha reemplazado.
 

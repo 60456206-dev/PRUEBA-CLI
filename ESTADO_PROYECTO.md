@@ -55,3 +55,12 @@ Este archivo conserva el contexto dentro del repositorio; no supone memoria auto
 
 - Comprobación tras aviso «ya entré»: se logró activar la pestaña de Flow mediante clic remoto y ver el proyecto `df0139d1-e7fe-4650-8b3c-99aa3a94162b`, interfaz en español e insignia PLUS. Control de ratón confirmado; identidad del correo y saldo no comprobados. No se generó vídeo.
 - Durante la prueba hubo cambios simultáneos de pestaña y apareció otro formulario Google vacío. Se detuvo la interacción para no interferir con el usuario. No dar por verificada escritura en Flow ni automatización completa. Antes de continuar, dejar el navegador libre en Flow; no capturar durante entrada de credenciales.
+
+## Revisión del plano 3 · 2026-10-22
+
+- Generado por el usuario: `MASTER_SERIES_PACKAGE/shots/Water_droplet_wetting_salt-cover…_20261022131844.mp4` (720×1280, 24 fps, unos 10 s, con audio).
+- Revisado visualmente mediante muestras de todo el clip cada 0,25 s y comparación con SALT_DROP.png. Mantiene composición, lana óxido, luz y cámara estable. El agua entra en contacto con la sal, pero se estira y escurre en varias formas/gotas durante los primeros ~4 s; la disolución y el aumento de humedad no quedan claramente legibles. Después domina el reposo.
+- Valoración: utilizable con concesiones para comunicar agua sobre sal; no cumple plenamente la acción acordada de una sola gota absorbida con disolución localizada visible. Recomendación: conservar como candidato, no marcar definitivo. Un recorte a 5 s mejora duración, no corrige el comportamiento del agua. Audio no evaluado.
+- Pendiente: decisión del usuario sobre aceptar esta imperfección o generar otra versión. No se han recortado, renombrado ni sustituido vídeos.
+
+- 2026-10-22: ajustado el prompt de EP01_SH03 a petición del usuario: una gota compacta con separación completa, punta vacía, absorción inmediata y cambio localizado de pocos granos. Eliminadas elongación explícita y escala de moneda. Notas actualizadas. Nueva redacción propuesta, aún no generada ni validada; clip previo conservado como candidato.
