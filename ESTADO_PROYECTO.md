@@ -1,6 +1,6 @@
 # Dónde nos quedamos
 
-Actualizado: 2026-10-21.
+Actualizado: 2026-10-22.
 
 ## Juego PULSO (trabajo anterior)
 
@@ -64,3 +64,11 @@ Este archivo conserva el contexto dentro del repositorio; no supone memoria auto
 - Pendiente: decisión del usuario sobre aceptar esta imperfección o generar otra versión. No se han recortado, renombrado ni sustituido vídeos.
 
 - 2026-10-22: ajustado el prompt de EP01_SH03 a petición del usuario: una gota compacta con separación completa, punta vacía, absorción inmediata y cambio localizado de pocos granos. Eliminadas elongación explícita y escala de moneda. Notas actualizadas. Nueva redacción propuesta, aún no generada ni validada; clip previo conservado como candidato.
+
+## Plano 3 aceptado y cerrado · 2026-10-22
+
+- Usuario informa que las nuevas pruebas no mejoraron el resultado y elige conservar el shot existente; autoriza renombrar y recortar.
+- Generado: `MASTER_SERIES_PACKAGE/shots/EP01_SH03_FLOW_5S.mp4`, tramo 0–5 s del clip elegido. Original conservado y renombrado a `EP01_SH03_FLOW_ORIGINAL_10S.mp4`.
+- Revisado: 5 s exactos, 720×1280, 24 fps, 120 fotogramas; decodificación completa sin errores y muestras visuales cada 0,5 s. Mantiene composición y continuidad; persisten el agua estirada/escurrida y la disolución poco legible ya conocidas. Audio conservado, no evaluado.
+- Aceptado: versión existente por decisión del usuario, con esas concesiones; nombres `_FINAL` aplazados hasta completar los planos.
+- Siguiente plano activo: EP01_SH04 (8 s), referencia prevista `SHOT_REFERENCES/ALBA_DOOR.png` y prompt `VIDEO_PROMPTS/GOOGLE_FLOW/EP01_SH04_GOOGLE_FLOW.txt`. Pendiente preparar/revisar sus materiales antes de generar.
