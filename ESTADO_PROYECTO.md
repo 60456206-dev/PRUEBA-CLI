@@ -72,3 +72,19 @@ Este archivo conserva el contexto dentro del repositorio; no supone memoria auto
 - Revisado: 5 s exactos, 720×1280, 24 fps, 120 fotogramas; decodificación completa sin errores y muestras visuales cada 0,5 s. Mantiene composición y continuidad; persisten el agua estirada/escurrida y la disolución poco legible ya conocidas. Audio conservado, no evaluado.
 - Aceptado: versión existente por decisión del usuario, con esas concesiones; nombres `_FINAL` aplazados hasta completar los planos.
 - Siguiente plano activo: EP01_SH04 (8 s), referencia prevista `SHOT_REFERENCES/ALBA_DOOR.png` y prompt `VIDEO_PROMPTS/GOOGLE_FLOW/EP01_SH04_GOOGLE_FLOW.txt`. Pendiente preparar/revisar sus materiales antes de generar.
+
+## Retomar generación directa en Flow · 2026-10-23
+
+- Usuario pide continuar con el agente operando Flow; siguiente plano EP01_SH04, una generación y revisión antes de otra, sin comprar créditos.
+- Revisados prompt y ALBA_DOOR.png: referencia compatible con mirada a derecha, boca cerrada y manos fuera de cuadro. No se generaron imágenes ni vídeos nuevos.
+- Escritorio reactivado y control local comprobado. Flow redirige al inicio de sesión oficial de Google; pendiente que el usuario acceda de nuevo y avise antes de continuar. No inspeccionar ni capturar durante credenciales.
+- A petición del usuario, borradas las cookies de google.com y sus subdominios (incluido Flow) del navegador compartido; verificado que quedan 0 en ese ámbito. Pendiente nuevo inicio de sesión del usuario.
+- Usuario indica que el acceso por escritorio compartido no funciona y pide otra vía. No insistir en noVNC. Búsqueda de plugins sin integración específica de Google Flow. Alternativa por concretar: navegador en su equipo Linux y automatización local; el lanzador local existente no conecta por sí solo con este agente. Pendiente comprobar si el usuario puede abrir Flow directamente en su navegador habitual.
+- Usuario confirma que puede entrar a Flow y abrir sus proyectos desde su navegador habitual. El acceso local funciona según su reporte; aún no hay conexión entre ese navegador y el agente. Pendiente identificar navegador para preparar una vía de automatización compatible. El lanzador existente crea otro perfil y no reutiliza la sesión habitual; no presentarlo como conexión resuelta.
+
+## Conexión Firefox local · 2026-10-23
+
+- Usuario confirma Firefox con Flow accesible y GitHub CLI (`gh`) instalado en su computadora Linux.
+- Generados `tools/flow-firefox/` y `FLOW-FIREFOX-LOCAL.zip`: extensión temporal para una pestaña Flow + túnel privado SSH de GitHub. No abre otro perfil ni transfiere cookies; clave fuera del repo, sin claves en el ZIP. No requiere puertos públicos.
+- Revisados: sintaxis Python/JS/Bash, ZIP y 7 pruebas de autenticación, origen, ausencia de órdenes al conectar, entrega única y caducidad. Puente arrancado en 127.0.0.1:8765; estado desconectado, 0 órdenes. No probado Firefox real ni túnel desde el equipo del usuario.
+- Pendiente: usuario descarga/extrae ZIP, ejecuta conectar-linux.sh en su terminal local, carga extension/manifest.json temporalmente, introduce la clave del puente y conecta desde su proyecto Flow. Después verificar lectura/captura, carga PNG y texto antes de generar EP01_SH04. Una generación y revisión antes de otra, sin comprar créditos.

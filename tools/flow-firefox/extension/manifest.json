@@ -1,0 +1,10 @@
+{
+  "manifest_version": 2,
+  "name": "Flow · conexión local",
+  "version": "0.1.0",
+  "description": "Control temporal de una pestaña de Flow por un túnel privado local.",
+  "permissions": ["activeTab", "http://127.0.0.1/*", "https://flow.google.com/*", "https://labs.google/fx/*"],
+  "background": {"scripts": ["background.js"]},
+  "browser_action": {"default_title": "Conectar o detener Flow", "default_popup": "popup.html"},
+  "browser_specific_settings": {"gecko": {"id": "flow-local@master-series.invalid"}}
+}
