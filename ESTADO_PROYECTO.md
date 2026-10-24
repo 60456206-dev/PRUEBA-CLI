@@ -184,3 +184,16 @@ Este archivo conserva el contexto dentro del repositorio; no supone memoria auto
 - Generada con image_gen `SHOT_REFERENCES/COAT_REST_S1.png` (941×1672) a partir de COAT_START (edición) y SALT_DROP (material húmedo). Original intacto. Prompt y revisión en `SHOT_REFERENCES/COAT_REST_S1_GENERATION.md`.
 - Revisada visualmente: zona oscura localizada en bajo izquierdo, menos sal, abrigo vacío y tres botones, escenario y luz compatibles. Hay variaciones menores de textura y distribución de sal también fuera de la zona editada; no idéntica píxel a píxel. Valorada utilizable; aceptación del usuario pendiente.
 - Tarjeta e instrucciones de imagen EP01_SH08 enlazadas a nueva variante. Prompt Flow ajustado: movimiento residual mínimo 0–2 s, reposo 2–8 s, cámara fija, sin nueva respiración ni cambios de humedad/sal. Materiales preparados para prueba; vídeo pendiente, sin validación temporal.
+
+## Segunda revisión EP01_SH06 · 2026-10-24
+
+- Revisado nuevo `shots/Empty_wool_coat_hanging_still_20261024092342.mp4`: 8 s, 720×1280, 24 fps, 192 fotogramas; decodificación completa sin errores. Muestras generales cada 0,25 s y detalle de solapa/pliegue cada 0,5 s, comparadas con COAT_COLLAR.png. Audio presente, no escuchado.
+- Mejora respecto al anterior: abrigo vacío, luz/color/escenario coherentes y sin levantamiento amplio de cuello/solapas. Persisten pequeñas variaciones de forma/posición de solapas y paño a lo largo de la toma; no se distingue claramente un único temblor localizado entre 1–3 s seguido de reposo desde 3 s.
+- Valoración: mejor candidato visual, utilizable con concesión como plano de atmósfera; no validado como cumplimiento completo de la acción narrativa. Recortar a 7 s no hace más legible ese gesto. Pendiente aceptación del usuario; originales intactos, sin recorte ni renombrado. Revisión activa de plano 6; materiales de planos 7 y 8 siguen preparados.
+
+## Plano 6 elegido y recortado · 2026-10-24
+
+- Usuario acepta el nuevo candidato con las diferencias informadas y autoriza recorte y limpieza de vídeos sobrantes del plano 6. Generado `shots/EP01_SH06_FLOW_7S.mp4`, tramo 0–7 s, elegido para montaje.
+- Verificados 7 s exactos, 720×1280, 24 fps, 168 fotogramas y decodificación completa sin errores; muestras visuales cada 0,5 s revisadas. Conserva continuidad y las pequeñas variaciones del paño ya informadas; el gesto localizado sigue poco legible. Audio conservado, no escuchado.
+- Eliminados tras verificar el recorte los originales `Empty_wool_coat_hanging_still_20261024092342.mp4` y `Hollow_coat_collar_trembles_20261024014807.mp4`, por autorización del usuario. Referencias, prompts y otros planos conservados.
+- Siguiente plano activo: EP01_SH07. Confirmado que reutiliza `SHOT_REFERENCES/INES_TABLE.png` del plano 2; vídeo pendiente.
