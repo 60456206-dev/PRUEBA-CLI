@@ -223,3 +223,9 @@ Este archivo conserva el contexto dentro del repositorio; no supone memoria auto
 - Usuario acepta explícitamente plano 8 como oficial con diferencias informadas. Renombrado a `shots/EP01_SH08_FLOW_8S.mp4`, sin recorte ni recodificación; SHA-256 idéntico antes/después. Los ocho planos del episodio 1 tienen versión elegida; montaje/audio final todavía pendientes.
 - Consulta sobre «plano 09»: la numeración reinicia por episodio; el siguiente (noveno global) es EP02_SH01, 5 s de montaje, generar 6 s en Flow. Acción prevista: gota sobre zona de lana ya húmeda, sin aparición de sal ni inflación.
 - Tarjeta y prompt Flow existen. Falta `SHOT_REFERENCES/SALT_USED.png`: comprobados archivos, Git e historial de todas las referencias para ese nombre, sin resultados. No listo para generar; pendiente preparar/revisar esa imagen y comprobar prompt con ella. No se generó imagen en esta consulta. Siguiente plano propuesto: EP02_SH01.
+
+## Imagen EP02_SH01 preparada · 2026-10-24
+
+- Generada con image_gen integrado `SHOT_REFERENCES/SALT_USED.png` (941×1672), editando SALT_DROP con COAT_REST_S1 como referencia de continuidad. Originales intactos; prompt completo y revisión en SALT_USED_GENERATION.md.
+- Revisada visualmente: macro del mismo borde óxido, luz y fondo coherentes, pipeta/gota única dirigida a centro húmedo sin sal; cristales laterales conservados con pequeñas variaciones de distribución y textura. Imagen utilizable como propuesta, no idéntica a la referencia; aceptación del usuario pendiente.
+- Precisado prompt Flow EP02_SH01 para una gota desprendida y absorbida en zona usada, punta vacía, sal lateral constante y reposo final sin inflación. Materiales preparados para generar 6 s y usar 5 s; vídeo y validación temporal pendientes. Plano activo EP02_SH01.
