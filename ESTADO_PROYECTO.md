@@ -229,3 +229,17 @@ Este archivo conserva el contexto dentro del repositorio; no supone memoria auto
 - Generada con image_gen integrado `SHOT_REFERENCES/SALT_USED.png` (941×1672), editando SALT_DROP con COAT_REST_S1 como referencia de continuidad. Originales intactos; prompt completo y revisión en SALT_USED_GENERATION.md.
 - Revisada visualmente: macro del mismo borde óxido, luz y fondo coherentes, pipeta/gota única dirigida a centro húmedo sin sal; cristales laterales conservados con pequeñas variaciones de distribución y textura. Imagen utilizable como propuesta, no idéntica a la referencia; aceptación del usuario pendiente.
 - Precisado prompt Flow EP02_SH01 para una gota desprendida y absorbida en zona usada, punta vacía, sal lateral constante y reposo final sin inflación. Materiales preparados para generar 6 s y usar 5 s; vídeo y validación temporal pendientes. Plano activo EP02_SH01.
+
+## Revisión EP02_SH01 · 2026-10-24
+
+- Revisado `shots/Water_drop_landing_on_wool_20261024100233.mp4`: 720×1280, 24 fps, 144 fotogramas (6 s de vídeo; contenedor 6,016 s), audio presente no escuchado. Decodificación completa sin errores. Muestras generales y detalle de pipeta/paño cada 0,25 s comparados con SALT_USED.png.
+- Conserva encuadre, lana óxido, luz, zona húmeda y sal lateral reconocible; sin inflación ni respuesta del abrigo. Primera gota se desprende hacia 1,5–1,75 s, queda como volumen brillante sobre la tela y escurre hacia el bajo aproximadamente entre 2–4 s. Hacia 3,5 s se aprecia otra gota desde la punta. Final más quieto desde ~4,25 s.
+- Valoración: utilizable con concesiones para narrar que vuelve a mojar la zona y no ocurre respuesta; no cumple una sola gota absorbida localmente sin escurrimiento. Recomendado conservar según tolerancia previa, explicando diferencias. Tramo 0–5 s mantiene acción y breve reposo, pero no corrige agua ni segunda gota.
+- Pendiente elección del usuario; sin recortar, renombrar ni eliminar. Plano activo EP02_SH01.
+
+## EP02_SH01 elegido y EP02_SH02 preparado · 2026-10-24
+
+- Usuario acepta conservar EP02_SH01 y autoriza ajuste: generado `shots/EP02_SH01_FLOW_5S.mp4`, tramo 0–5 s. Verificados 5 s exactos, 720×1280, 24 fps, 120 fotogramas y decodificación completa sin errores. Muestras cada 0,5 s revisadas; conserva escurrimiento y segunda gota ya aceptados. Audio conservado, no escuchado. Original de 6 s conservado; no se solicitó borrarlo.
+- Plano activo EP02_SH02. INES_TABLE.png existente y revisada visualmente: rostro, camisa, luz, mirada inicial izquierda y labios cerrados adecuados. Se reutiliza según tarjeta; no hace falta generar otra imagen.
+- Ajustado solo prompt Flow para conservar encuadre real, esperar 0–2 s, bajar solo mirada 2–5 s y mantenerla 5–8 s, sin sonrisa ni giro. Grabadora/mesa fuera de campo; eliminadas instrucciones de sal ajenas al plano y encuadre que podía provocar recomposición.
+- Materiales listos para prueba: generar 8 s y usar 7 s tras revisión. Prompt revisado en texto; vídeo pendiente de generar/validar.
