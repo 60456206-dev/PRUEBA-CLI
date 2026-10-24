@@ -290,3 +290,9 @@ Este archivo conserva el contexto dentro del repositorio; no supone memoria auto
 
 - Por petición del usuario, actualizado prompt Flow: una gota 1–2 s; disolución localizada visible 2–5 s mediante reducción/transparencia/desaparición de cristales y exposición de lana oscura; reposo 5–8 s. Punta vacía, sin escurrimiento ni agua abultada, sal circundante y humedad anterior constantes. Cámara/foco fijos.
 - Conservada SALT_DROP.png como inicio y vídeo anterior como candidato. Notas en VIDEO_PROMPTS/GOOGLE_FLOW/EP02_SH04_NOTAS.md. Texto revisado; nueva prueba y revisión de vídeo pendientes, no se ha generado otra versión.
+
+## Segunda revisión EP02_SH04 · 2026-10-24
+
+- Revisado nuevo `shots/Water_droplet_dissolving_salt_cr…_20261024111339.mp4`: 8 s, 720×1280, 24 fps, 192 fotogramas; decodificación completa sin errores. Muestras generales y detalle cada 0,25 s, cotejados con SALT_DROP y revisión anterior. Audio presente, no escuchado.
+- Conserva composición, material y luz. Se aprecia algo más de lana oscura expuesta en la parte inferior de la zona tratada, pero la sal directamente bajo la punta permanece mayormente blanca; disolución localizada todavía poco clara. Repite gotas, con agua abultada/escurrida entre ~1–4 s y otra descarga hacia ~6,75 s, rompiendo reposo final.
+- Valoración: mejora parcial del cambio de superficie, no cumplimiento del objetivo de una sola gota y disolución legible. Utilizable solo con concesiones como agua sobre sal; no recomendado marcar oficial para demostrar consumo de una nueva zona. Un recorte antes de la última gota no corrige el resto y acorta los 8 s previstos. Ambos candidatos conservados, sin modificaciones. Pendiente decisión del usuario.
