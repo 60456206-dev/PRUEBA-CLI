@@ -153,3 +153,11 @@ Este archivo conserva el contexto dentro del repositorio; no supone memoria auto
 - Usuario autoriza recortar la versión revisada. Generado `MASTER_SERIES_PACKAGE/shots/EP01_SH05_FLOW_6S.mp4`, tramo 0–6 s; versión elegida para montaje. Original de 8 s conservado con su nombre, sin autorización de borrado.
 - Verificados 6 s exactos, 720×1280, 24 fps, 144 fotogramas y decodificación completa sin errores. Revisadas muestras del recorte cada 0,5 s: conserva cierre y reposo final; persiste pulgar lateral ya informado. Audio conservado, no escuchado.
 - Confirmado en disco: `SHOT_REFERENCES/COAT_COLLAR.png` ya generada y revisada para EP01_SH06. Siguiente plano activo: EP01_SH06, materiales disponibles, vídeo pendiente. No hace falta volver a generar la imagen.
+
+## Preparación de EP01_SH07 · 2026-10-24
+
+- Usuario pide continuar con plano 7 y generar imagen solo si falta. `SHOT_REFERENCES/INES_TABLE.png` existe y fue revisada visualmente: mirada izquierda, labios cerrados, camisa pizarra, fondo cal y luz coherentes. Se reutiliza la referencia del plano 2 según tarjeta; no se generó otra imagen.
+- Diferencia documentada: imagen de encuadre medio, más abierto que el close-up mencionado en el prompt previo. Ajustado solo prompt Flow de EP01_SH07 para conservar encuadre real, cámara fija y gesto mínimo de reconocimiento sin sonrisa; retiradas instrucciones de sal ajenas al plano. Duración objetivo 6 s; si la herramienta entrega 8 s, revisar y recortar después.
+- Materiales revisados y disponibles para prueba; vídeo del plano 7 pendiente. Aceptación/revisión del vídeo del plano 6 sigue pendiente; avanzar preparación no lo marca definitivo.
+
+- 2026-10-24: por petición explícita del usuario, eliminado el original de 8 s del plano 5 (`shots/Woman_closing_hand_over_key_20261024012556.mp4`). Conservado `shots/EP01_SH05_FLOW_6S.mp4`, recorte elegido y revisado; duración de 6 s comprobada antes de borrar.
