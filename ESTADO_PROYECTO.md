@@ -197,3 +197,16 @@ Este archivo conserva el contexto dentro del repositorio; no supone memoria auto
 - Verificados 7 s exactos, 720×1280, 24 fps, 168 fotogramas y decodificación completa sin errores; muestras visuales cada 0,5 s revisadas. Conserva continuidad y las pequeñas variaciones del paño ya informadas; el gesto localizado sigue poco legible. Audio conservado, no escuchado.
 - Eliminados tras verificar el recorte los originales `Empty_wool_coat_hanging_still_20261024092342.mp4` y `Hollow_coat_collar_trembles_20261024014807.mp4`, por autorización del usuario. Referencias, prompts y otros planos conservados.
 - Siguiente plano activo: EP01_SH07. Confirmado que reutiliza `SHOT_REFERENCES/INES_TABLE.png` del plano 2; vídeo pendiente.
+
+## Revisión EP01_SH07 · 2026-10-24
+
+- Recibido `shots/Woman_showing_recognition_in_video_20261024093349.mp4`. Vídeo: 720×1280, 24 fps, 144 fotogramas (6 s); contenedor 6,016 s con audio. Decodificación completa sin errores; audio no escuchado.
+- Revisadas muestras generales cada 0,25 s y rostro ampliado cada 0,5 s, comparadas con INES_TABLE.png. Conserva apariencia, camisa, luz y escenario; labios cerrados, sin deformaciones evidentes en muestras. Expresión cambia de forma contenida y se mantiene al final.
+- Diferencias: hacia 3–4 s aparece una leve sonrisa y la mirada/cabeza se orientan algo más al frente. El prompt pedía seriedad sin sonrisa y sin giro. Valoración: utilizable con esas concesiones, recomendado conservar según tolerancia previa, pero no cumplimiento literal; matiz más cálido que el reconocimiento serio previsto.
+- Pendiente aceptación del usuario. No necesita recorte narrativo (ya tiene 6 s de vídeo); original intacto, sin renombrado ni borrado. Plano 7 sigue activo.
+
+## Preparación confirmada EP01_SH08 · 2026-10-24
+
+- Tras el «okey» del usuario a la recomendación del plano 7, se continúa con EP01_SH08; vídeo del 7 conservado con su nombre, sin limpieza adicional solicitada.
+- Comprobados en disco tarjeta, prompt Flow y COAT_REST_S1.png; imagen revisada de nuevo: abrigo vacío, tres botones y zona oscura en bajo izquierdo, coherentes con el cierre previsto. Se mantienen las variaciones menores de textura/sal documentadas.
+- Plano 8 listo para generar 8 s en Flow: movimiento residual mínimo 0–2 s, reposo 2–8 s, cámara fija y humedad/sal constantes. Vídeo aún pendiente de generación y revisión.
