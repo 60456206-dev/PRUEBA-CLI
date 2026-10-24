@@ -210,3 +210,16 @@ Este archivo conserva el contexto dentro del repositorio; no supone memoria auto
 - Tras el «okey» del usuario a la recomendación del plano 7, se continúa con EP01_SH08; vídeo del 7 conservado con su nombre, sin limpieza adicional solicitada.
 - Comprobados en disco tarjeta, prompt Flow y COAT_REST_S1.png; imagen revisada de nuevo: abrigo vacío, tres botones y zona oscura en bajo izquierdo, coherentes con el cierre previsto. Se mantienen las variaciones menores de textura/sal documentadas.
 - Plano 8 listo para generar 8 s en Flow: movimiento residual mínimo 0–2 s, reposo 2–8 s, cámara fija y humedad/sal constantes. Vídeo aún pendiente de generación y revisión.
+
+## Plano 7 renombrado y revisión EP01_SH08 · 2026-10-24
+
+- Plano 7 elegido tras conformidad del usuario: renombrado a `shots/EP01_SH07_FLOW_6S.mp4`; SHA-256 idéntico antes/después. Sin recorte ni recodificación; conserva vídeo de 6 s y audio original (contenedor 6,016 s), con leve sonrisa/giro ya informados.
+- Revisado `shots/Hanging_wool_coat_still_fabric_20261024094402.mp4`: 8 s exactos, 720×1280, 24 fps, 192 fotogramas, decodificación completa sin errores. Muestras generales cada 0,25 s y bajo ampliado cada 0,5 s, comparadas con COAT_REST_S1.png. Audio presente, no escuchado.
+- Conserva abrigo vacío, tres botones, escenario/luz y zona oscura en bajo izquierdo con sal alrededor. No se observa una nueva inflación/respiración en las muestras. Movimiento inicial visible de paño y mangas, más amplio que el mínimo pedido; después se reduce, aunque persisten leves variaciones y no hay inmovilidad absoluta desde 2 s.
+- Valoración: utilizable como cierre con esa concesión; recomendado conservar, sin afirmar cumplimiento literal del reposo. No requiere recorte (8 s previstos). Aceptación del usuario pendiente; original del plano 8 intacto, sin renombrar ni borrar. Plano activo: EP01_SH08.
+
+## Plano 8 oficial y siguiente plano · 2026-10-24
+
+- Usuario acepta explícitamente plano 8 como oficial con diferencias informadas. Renombrado a `shots/EP01_SH08_FLOW_8S.mp4`, sin recorte ni recodificación; SHA-256 idéntico antes/después. Los ocho planos del episodio 1 tienen versión elegida; montaje/audio final todavía pendientes.
+- Consulta sobre «plano 09»: la numeración reinicia por episodio; el siguiente (noveno global) es EP02_SH01, 5 s de montaje, generar 6 s en Flow. Acción prevista: gota sobre zona de lana ya húmeda, sin aparición de sal ni inflación.
+- Tarjeta y prompt Flow existen. Falta `SHOT_REFERENCES/SALT_USED.png`: comprobados archivos, Git e historial de todas las referencias para ese nombre, sin resultados. No listo para generar; pendiente preparar/revisar esa imagen y comprobar prompt con ella. No se generó imagen en esta consulta. Siguiente plano propuesto: EP02_SH01.
