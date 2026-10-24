@@ -172,3 +172,15 @@ Este archivo conserva el contexto dentro del repositorio; no supone memoria auto
 
 - A petición del usuario, actualizado prompt Flow y añadidas `VIDEO_PROMPTS/GOOGLE_FLOW/EP01_SH06_NOTAS.md`: cámara fija, reposo 0–1 s, temblor mínimo de un pliegue bajo solapa izquierda de imagen entre 1–3 s y reposo hasta 8 s. Cuello, bordes de solapas y percha inmóviles. Conservada COAT_COLLAR.png.
 - Nueva propuesta revisada en texto, pendiente prueba en Flow y revisión visual. Usar 7 s en montaje si el resultado cumple; vídeo previo intacto.
+
+## Comprobación EP01_SH08 · 2026-10-24
+
+- Imagen `SHOT_REFERENCES/COAT_START.png` y prompt Flow existentes; duración prevista 8 s. Imagen revisada: abrigo vacío, tres botones, escenario/luz coherentes.
+- No listo del todo por continuidad: la tarjeta reutiliza el master con sal inicial, mientras el plano 8 exige S1 (zona inferior izquierda humedecida/disuelta tras plano 3). Esa zona no está claramente representada en COAT_START. Pendiente preparar variante específica del plano 8 que conserve master y refleje el cambio localizado; no sobrescribir COAT_START.
+- Prompt también combina inmovilidad inicial con balanceo residual; conviene precisar un movimiento mínimo que se extingue y reposo, sin otra respiración. Solo comprobación: sin nueva generación ni modificaciones de prompt. Planos 6 y 7 aún pendientes de validación de vídeo.
+
+## Variante EP01_SH08 preparada · 2026-10-24
+
+- Generada con image_gen `SHOT_REFERENCES/COAT_REST_S1.png` (941×1672) a partir de COAT_START (edición) y SALT_DROP (material húmedo). Original intacto. Prompt y revisión en `SHOT_REFERENCES/COAT_REST_S1_GENERATION.md`.
+- Revisada visualmente: zona oscura localizada en bajo izquierdo, menos sal, abrigo vacío y tres botones, escenario y luz compatibles. Hay variaciones menores de textura y distribución de sal también fuera de la zona editada; no idéntica píxel a píxel. Valorada utilizable; aceptación del usuario pendiente.
+- Tarjeta e instrucciones de imagen EP01_SH08 enlazadas a nueva variante. Prompt Flow ajustado: movimiento residual mínimo 0–2 s, reposo 2–8 s, cámara fija, sin nueva respiración ni cambios de humedad/sal. Materiales preparados para prueba; vídeo pendiente, sin validación temporal.

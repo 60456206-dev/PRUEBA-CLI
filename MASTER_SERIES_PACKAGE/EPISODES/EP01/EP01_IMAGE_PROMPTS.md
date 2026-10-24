@@ -58,8 +58,8 @@ Use supplied character master(s) CHARACTERS/INES_MASTER.png as identity only and
 
 ## EP01_SH08
 
-USE EXISTING: `SHOT_REFERENCES/COAT_START.png`.
+USE EXISTING: `SHOT_REFERENCES/COAT_REST_S1.png`.
 
 Solo si falla el asset, regenerar con referencias y este prompt completo:
 
-Use supplied character master(s) none as identity only and LOCATIONS/ARCHIVE_MASTER.png as environment. Create one 9:16 photorealistic cinema start frame. Abrigo vacío entero; sal inicial. Cuello hueco y tres botones. medium wide, 50mm feel. The action has NOT completed: The empty coat hangs motionless. A tiny residual sway fades without another breathing cycle. Show a physically plausible starting pose. Preserve light direction and wardrobe; state S1. No captions or invented letters; document and phone text is composited separately.
+Use supplied character master(s) none as identity only and LOCATIONS/ARCHIVE_MASTER.png as environment. Create one 9:16 photorealistic cinema start frame. Abrigo vacío entero; estado S1, pequeña zona húmeda oscura con menos sal en el bajo izquierdo de imagen, resto de sal conservado. Cuello hueco y tres botones. medium wide, 50mm feel. The action has NOT completed: The empty coat hangs motionless. A tiny residual sway fades without another breathing cycle. Show a physically plausible starting pose. Preserve light direction and wardrobe; state S1. No captions or invented letters; document and phone text is composited separately.
