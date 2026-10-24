@@ -1,6 +1,6 @@
 # Dónde nos quedamos
 
-Actualizado: 2026-10-22.
+Actualizado: 2026-10-24.
 
 ## Juego PULSO (trabajo anterior)
 
@@ -88,3 +88,7 @@ Este archivo conserva el contexto dentro del repositorio; no supone memoria auto
 - Generados `tools/flow-firefox/` y `FLOW-FIREFOX-LOCAL.zip`: extensión temporal para una pestaña Flow + túnel privado SSH de GitHub. No abre otro perfil ni transfiere cookies; clave fuera del repo, sin claves en el ZIP. No requiere puertos públicos.
 - Revisados: sintaxis Python/JS/Bash, ZIP y 7 pruebas de autenticación, origen, ausencia de órdenes al conectar, entrega única y caducidad. Puente arrancado en 127.0.0.1:8765; estado desconectado, 0 órdenes. No probado Firefox real ni túnel desde el equipo del usuario.
 - Pendiente: usuario descarga/extrae ZIP, ejecuta conectar-linux.sh en su terminal local, carga extension/manifest.json temporalmente, introduce la clave del puente y conecta desde su proyecto Flow. Después verificar lectura/captura, carga PNG y texto antes de generar EP01_SH04. Una generación y revisión antes de otra, sin comprar créditos.
+
+## Limpieza del plano 3 · 2026-10-24
+
+- Por petición del usuario, eliminado `MASTER_SERIES_PACKAGE/shots/EP01_SH03_FLOW_ORIGINAL_10S.mp4` (sin recortar). Se conserva `EP01_SH03_FLOW_5S.mp4`, versión recortada, revisada y aceptada. Plano activo: EP01_SH04.
