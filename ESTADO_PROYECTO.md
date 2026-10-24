@@ -97,3 +97,29 @@ Este archivo conserva el contexto dentro del repositorio; no supone memoria auto
 
 - Usuario reporta bloqueo de políticas en Flow. Simplificado `VIDEO_PROMPTS/GOOGLE_FLOW/EP01_SH04_GOOGLE_FLOW.txt`: mujer adulta en puerta, mirada a derecha, leve descenso de barbilla, labios cerrados y cámara fija durante 8 s. Eliminadas instrucciones ajenas a la toma (sal S1, gravedad) y redundancias. Referencia conservada.
 - Revisado el texto; pendiente prueba en Flow. Causa del bloqueo desconocida; no se garantiza que la reformulación lo resuelva. Sin nueva generación.
+
+## Nuevo proyecto: TikTok Radar · 2026-10-24
+
+- Usuario pide proyecto separado para una idea de vídeo por día, investigada al escribir «mano, ¿qué vídeo creamos hoy?», con título, imágenes, prompts de vídeo y audio.
+- Creado `TIKTOK_RADAR/README.md`: flujo de investigación con fuentes y hora, selección de un tema, guion, storyboard, generación/revisión de imágenes y aprendizaje con métricas reales. Documento revisado; sin primera entrega ni automatización en segundo plano.
+- Propuestos, aún no aceptados: español latinoamericano y foco Perú. Duración actual de trabajo: 20–30 s, objetivo 25 s, por prioridad del usuario de vídeos cortos y producción rápida. Pendiente nicho/audiencia. MASTER SERIES conserva EP01_SH04 pendiente de prueba del prompt reformulado.
+
+- Ajustado `TIKTOK_RADAR/README.md`: producción ágil con 3–4 escenas, hasta 4 imágenes base y 1–2 planos generados en vídeo cuando aporten valor; estructura de 25 s y narración orientativa de 45–60 palabras. Texto revisado; sin vídeo generado ni tiempo de producción validado.
+
+## Revisión de EP01_SH04 · 2026-10-24
+
+- Recibido `MASTER_SERIES_PACKAGE/shots/Woman_lowers_chin_in_doorway_20261024010019.mp4`: 8 s, 720×1280, 24 fps, con pista de audio. Decodificación completa sin errores.
+- Revisado visualmente con muestras generales cada 0,5 s y rostro cada 0,25 s, comparado con ALBA_DOOR.png. Conserva apariencia, ropa, puerta, luz y encuadre; mirada a derecha, labios cerrados y manos fuera de cuadro. Ligero descenso de barbilla acompañado de giro hacia derecha; aparece leve sonrisa al principio y luego mantiene la pose. Sin deformaciones evidentes en las muestras. Audio no escuchado.
+- Valoración: utilizable, recomendado conservar con esas pequeñas variaciones respecto al prompt. Pendiente aceptación del usuario; no renombrado, recortado ni marcado definitivo. Este plano sigue siendo de MASTER SERIES (8 s), independiente de las duraciones de TikTok Radar.
+
+## Plano 4 definitivo · 2026-10-24
+
+- Usuario acepta EP01_SH04 como definitivo y autoriza recorte solo si hace falta. Renombrado a `MASTER_SERIES_PACKAGE/shots/EP01_SH04_FLOW_8S.mp4`; sufijo `_FINAL` sigue aplazado según acuerdo previo.
+- No necesita recorte: 8 s exactos, 720×1280, 24 fps y 192 fotogramas. Integridad verificada por SHA-256 antes/después del renombrado; contenido y audio intactos. Revisión visual anterior aceptada con leve giro/sonrisa; audio aún no evaluado.
+- Siguiente plano activo: EP01_SH05, 6 s, referencia prevista `SHOT_REFERENCES/KEY_HAND.png` y prompt `VIDEO_PROMPTS/GOOGLE_FLOW/EP01_SH05_GOOGLE_FLOW.txt`. Pendiente revisión/preparación de materiales.
+
+## Comprobación de materiales EP01_SH05 · 2026-10-24
+
+- Prompt Flow existente: `VIDEO_PROMPTS/GOOGLE_FLOW/EP01_SH05_GOOGLE_FLOW.txt`; acción de 6 s: Alba cierra la mano sobre una llave de hierro negro.
+- No listo para generar: falta la imagen inicial `SHOT_REFERENCES/KEY_HAND.png`. Comprobados archivos del repositorio, estado de Git, archivos versionados e historial de todas las referencias para KEY_HAND; no encontrada ni recuperable en ese historial consultado.
+- Pendiente crear y revisar la imagen con continuidad de Alba y diseño de llave; revisar referencias disponibles antes de generar. Prompt aún contiene instrucciones de sal ajenas a la toma y pide cinco dedos distintos durante el cierre: conviene simplificarlo para permitir oclusión natural. No se generaron imágenes ni se modificó el prompt en esta comprobación.
