@@ -265,3 +265,28 @@ Este archivo conserva el contexto dentro del repositorio; no supone memoria auto
 - Final propuesto: grabadora negra única, botón rojo y LED separado apagado, índice suspendido antes de pulsar, puño pizarra, mesa de madera. Diferencias: nuevo diseño de controles (sin master independiente), lámpara al fondo izquierdo por nuevo ángulo y luz cálida más acusada. Utilizable con esas diferencias; aceptación y vídeo pendientes.
 - Prompt Flow EP02_SH03 adaptado al botón/LED visibles: pulsación 0–2 s, retirada hasta 3 s, reposo hasta 6 s; usar 5 s en montaje. Materiales listos para prueba. Futuros planos de grabadora sin mano requieren variante/fotograma revisado.
 - Usuario autoriza commit y push de trabajo actual, incluidos recorte elegido EP02_SH02 y borrados autorizados de originales EP02_SH01/02. Sincronización remota se comprobará tras el envío.
+
+## Revisión EP02_SH03 · 2026-10-24
+
+- Revisado `shots/Finger_pressing_recorder_button_20261024103351.mp4`: 720×1280, 24 fps, 144 fotogramas (6 s de vídeo; contenedor 6,016 s), audio presente no escuchado. Decodificación completa sin errores. Muestras generales y detalle botón/LED cada 0,25 s comparados con RECORDER.png ya revisada.
+- Acción legible: dedo contacta botón hacia 0,5–0,75 s, mantiene pulsación, LED separado se enciende rojo hacia 1,5 s; mano se retira aproximadamente 2,25–3 s. Después grabadora sola con LED rojo estable y pantalla oscura. Sin segunda pulsación ni deformaciones evidentes en las muestras; materiales, vestuario y luz compatibles.
+- Valoración: cumple la acción principal, recomendado conservar. Pulsación algo sostenida y pequeñas variaciones de encuadre/textura sin impedir lectura. Usar primeros 5 s conserva acción y unos 2 s de reposo. Pendiente aceptación/recorte; original intacto, sin renombrar ni borrar. Plano activo EP02_SH03.
+
+## EP02_SH03 oficial y comprobación EP02_SH04 · 2026-10-24
+
+- Usuario acepta EP02_SH03 como oficial y autoriza recorte/borrado. Generado `shots/EP02_SH03_FLOW_5S.mp4` (0–5 s). Verificados 5 s exactos, 720×1280, 24 fps, 120 fotogramas, decodificación completa sin errores y muestras visuales cada 0,5 s. Conserva pulsación, retirada y LED rojo final; audio conservado, no escuchado.
+- Eliminado original `shots/Finger_pressing_recorder_button_20261024103351.mp4` tras verificación. Versión oficial sin sufijo FINAL, según convención vigente.
+- Siguiente plano EP02_SH04: tarjeta, prompt Flow y SALT_DROP.png existentes. Imagen revisada de nuevo: pipeta con gota adherida sobre sal intacta contigua a zona húmeda, lana óxido/luz/encuadre compatibles. Se reutiliza según tarjeta; no hace falta nueva imagen. Distribución de cristales no idéntica a SALT_USED, variación ya conocida de las referencias.
+- Materiales disponibles para prueba de 8 s: gota sobre sal intacta, disolución localizada y segunda zona húmeda junto a la anterior. Falta generar y revisar vídeo, especialmente gota única y disolución legible; prompt existente no modificado en esta comprobación.
+
+## Revisión EP02_SH04 · 2026-10-24
+
+- Revisado `shots/Drop_dissolving_into_wool_salt_20261024104932.mp4`: 8 s, 720×1280, 24 fps, 192 fotogramas, decodificación completa sin errores. Muestras generales y detalle pipeta/sal cada 0,25 s comparados con SALT_DROP.png. Audio presente, no escuchado.
+- Conserva macro, lana óxido, iluminación y zona húmeda anterior. Agua toca la zona salada, pero hay descargas repetidas (aprox. 1,25, 2 y 3,5 s), volúmenes brillantes/abultados sobre la tela y escurrimiento hasta ~6 s. Después queda más quieto.
+- Hay cambios locales de brillo y textura, pero la reducción de sal y una segunda zona húmeda diferenciada no resultan claramente legibles. Valoración: candidato utilizable con concesiones como agua sobre sal, no validado para demostrar consumo de una nueva zona, que es la función de este plano. Recomendable nueva prueba si esa regla debe entenderse visualmente; recorte no corrige la acción y ya tiene los 8 s previstos.
+- Pendiente decisión del usuario; archivo intacto, sin renombrar, recortar ni borrar. Plano activo EP02_SH04. Cambios previamente staged respetados.
+
+## Reformulación EP02_SH04 · 2026-10-24
+
+- Por petición del usuario, actualizado prompt Flow: una gota 1–2 s; disolución localizada visible 2–5 s mediante reducción/transparencia/desaparición de cristales y exposición de lana oscura; reposo 5–8 s. Punta vacía, sin escurrimiento ni agua abultada, sal circundante y humedad anterior constantes. Cámara/foco fijos.
+- Conservada SALT_DROP.png como inicio y vídeo anterior como candidato. Notas en VIDEO_PROMPTS/GOOGLE_FLOW/EP02_SH04_NOTAS.md. Texto revisado; nueva prueba y revisión de vídeo pendientes, no se ha generado otra versión.
