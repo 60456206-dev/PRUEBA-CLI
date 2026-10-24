@@ -129,3 +129,27 @@ Este archivo conserva el contexto dentro del repositorio; no supone memoria auto
 - Generada con image_gen y guardada `MASTER_SERIES_PACKAGE/SHOT_REFERENCES/KEY_HAND.png`, 941×1672, vertical. Referencias: ALBA_DOOR, ALBA_MASTER y ARCHIVE_MASTER. Prompt y revisión en `SHOT_REFERENCES/KEY_HAND_GENERATION.md`.
 - Revisada visualmente: una mano abierta, cinco dedos legibles, una llave negra apoyada en palma, tamaño compatible con ocultarla al cerrar; cárdigan hueso, vestido topo y puerta verde coherentes. Diferencia menor: muñeca entra desde arriba-izquierda en lugar de abajo; no impide la acción. KEY_MASTER no encontrado; diseño de llave propuesto, no cotejado con master previo.
 - Simplificado prompt Flow de EP01_SH05 para esta imagen: cierre natural con oclusión de dedos y llave, reposo hasta 6 s; retiradas referencias a sal y conteo visible de dedos durante cierre. Materiales preparados para prueba; imagen revisada, aún no aceptada expresamente por usuario y vídeo pendiente.
+
+## Comprobación de EP01_SH06 · 2026-10-24
+
+- Usuario consulta preparación del plano 6. Prompt Flow y tarjeta existentes: primer plano del cuello hueco del abrigo óxido; un pequeño pliegue tiembla y se asienta, acercamiento leve. Generar 8 s y usar 7 s.
+- No listo: falta `SHOT_REFERENCES/COAT_COLLAR.png`. Comprobados archivos, estado de Git, índice e historial de todas las referencias para ese nombre; no encontrada. Disponible `COAT_START.png` como referencia para preparar la imagen y mantener continuidad. No se generó imagen ni se cambió el prompt.
+- Pendiente crear/revisar imagen inicial del plano 6. La consulta no implica aceptación del vídeo del plano 5, que sigue pendiente.
+
+## Imagen inicial EP01_SH06 generada · 2026-10-24
+
+- Generada con image_gen y guardada `MASTER_SERIES_PACKAGE/SHOT_REFERENCES/COAT_COLLAR.png` (941×1672), usando COAT_START.png como referencia. Prompt y revisión en `SHOT_REFERENCES/COAT_COLLAR_GENERATION.md`.
+- Revisada visualmente: cuello abierto sin cuerpo, forro y percha visibles, lana óxido, luz lateral izquierda y puerta verde coherentes; bajo con sal fuera de campo. Diferencias: etiqueta interior sin texto legible, ojal y costuras más definidos, percha reinterpretada con mayor grosor. Utilizable como propuesta; no réplica exacta del master.
+- Materiales del plano 6 disponibles para prueba en Flow: generar 8 s y usar 7 s. Prompt de vídeo existente conservado. Imagen generada/revisada, aceptación del usuario y validación en vídeo pendientes; plano 5 no marcado aceptado.
+
+## Revisión del vídeo EP01_SH05 · 2026-10-24
+
+- Recibido `MASTER_SERIES_PACKAGE/shots/Woman_closing_hand_over_key_20261024012556.mp4`: 8 s, 720×1280, 24 fps, 192 fotogramas, pista de audio presente. Decodificación completa sin errores; audio no escuchado.
+- Revisadas muestras de todo el clip cada 0,25 s y detalles ampliados cada 0,5 s, comparadas con KEY_HAND.png. Se ve la llave inicial y el cierre progresivo; el aro todavía asoma aproximadamente entre 2,5 y 3 s, después queda oculto. Hacia 5 s la mano mantiene la pose. Vestuario, puerta y luz compatibles.
+- Diferencia: el pulgar queda más lateral que sobre los dedos; cierre menos firme que el prompt. Valoración: acción principal legible y versión utilizable, recomendación conservar y usar 0–6 s. Recorte y aceptación del usuario pendientes; archivo original intacto, no renombrado ni marcado definitivo.
+
+## Plano 5 elegido y recortado · 2026-10-24
+
+- Usuario autoriza recortar la versión revisada. Generado `MASTER_SERIES_PACKAGE/shots/EP01_SH05_FLOW_6S.mp4`, tramo 0–6 s; versión elegida para montaje. Original de 8 s conservado con su nombre, sin autorización de borrado.
+- Verificados 6 s exactos, 720×1280, 24 fps, 144 fotogramas y decodificación completa sin errores. Revisadas muestras del recorte cada 0,5 s: conserva cierre y reposo final; persiste pulgar lateral ya informado. Audio conservado, no escuchado.
+- Confirmado en disco: `SHOT_REFERENCES/COAT_COLLAR.png` ya generada y revisada para EP01_SH06. Siguiente plano activo: EP01_SH06, materiales disponibles, vídeo pendiente. No hace falta volver a generar la imagen.
