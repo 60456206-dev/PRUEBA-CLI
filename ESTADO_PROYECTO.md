@@ -123,3 +123,9 @@ Este archivo conserva el contexto dentro del repositorio; no supone memoria auto
 - Prompt Flow existente: `VIDEO_PROMPTS/GOOGLE_FLOW/EP01_SH05_GOOGLE_FLOW.txt`; acción de 6 s: Alba cierra la mano sobre una llave de hierro negro.
 - No listo para generar: falta la imagen inicial `SHOT_REFERENCES/KEY_HAND.png`. Comprobados archivos del repositorio, estado de Git, archivos versionados e historial de todas las referencias para KEY_HAND; no encontrada ni recuperable en ese historial consultado.
 - Pendiente crear y revisar la imagen con continuidad de Alba y diseño de llave; revisar referencias disponibles antes de generar. Prompt aún contiene instrucciones de sal ajenas a la toma y pide cinco dedos distintos durante el cierre: conviene simplificarlo para permitir oclusión natural. No se generaron imágenes ni se modificó el prompt en esta comprobación.
+
+## Imagen inicial EP01_SH05 preparada · 2026-10-24
+
+- Generada con image_gen y guardada `MASTER_SERIES_PACKAGE/SHOT_REFERENCES/KEY_HAND.png`, 941×1672, vertical. Referencias: ALBA_DOOR, ALBA_MASTER y ARCHIVE_MASTER. Prompt y revisión en `SHOT_REFERENCES/KEY_HAND_GENERATION.md`.
+- Revisada visualmente: una mano abierta, cinco dedos legibles, una llave negra apoyada en palma, tamaño compatible con ocultarla al cerrar; cárdigan hueso, vestido topo y puerta verde coherentes. Diferencia menor: muñeca entra desde arriba-izquierda en lugar de abajo; no impide la acción. KEY_MASTER no encontrado; diseño de llave propuesto, no cotejado con master previo.
+- Simplificado prompt Flow de EP01_SH05 para esta imagen: cierre natural con oclusión de dedos y llave, reposo hasta 6 s; retiradas referencias a sal y conteo visible de dedos durante cierre. Materiales preparados para prueba; imagen revisada, aún no aceptada expresamente por usuario y vídeo pendiente.

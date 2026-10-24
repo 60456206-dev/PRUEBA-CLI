@@ -1,0 +1,13 @@
+# EP01_SH05 · imagen inicial
+
+Generada el 2026-10-24 con la herramienta integrada image_gen. Archivo: `KEY_HAND.png`. Referencias: ALBA_DOOR.png (continuidad inmediata), ALBA_MASTER.png (piel y vestuario), ARCHIVE_MASTER.png (ambiente y luz).
+
+## Prompt utilizado
+
+Use case: photorealistic-natural. Create one cinematic vertical 9:16 start-frame image for EP01_SH05. Reference 1 ALBA_DOOR is the primary wardrobe, color and doorway lighting continuity reference; reference 2 ALBA_MASTER establishes the same 66-year-old woman's skin and bone knitted cardigan with ribbed cuffs over a taupe dress; reference 3 ARCHIVE_MASTER is environmental palette and diffuse window-light reference only, do not reproduce the coat or furniture. New close insert composition, natural 85mm lens perspective: only Alba's single bare hand and wrist emerging from the bone cardigan cuff, palm facing upward and slightly toward camera, naturally open fingers ready to curl inward. A single small old black iron skeleton key rests fully supported across the center of the palm, short enough to be completely hidden when the hand closes (about 5 cm), simple oval bow, straight shaft and modest rectangular bit. Clearly readable entire key, matte worn iron, no keyring. Anatomically correct mature hand with exactly four fingers and one thumb, natural joints, wrinkles and restrained age spots; no jewelry. Action has NOT begun: palm open, fingers relaxed and separated just enough to read, not gripping or pinching the key. Hand and key in sharp focus occupying the central area with comfortable room for fingers to close; wrist enters lower frame. Softly defocused taupe dress and dark green doorway behind, consistent with Alba standing at the doorway in reference 1. Soft daylight from camera left, restrained neutral warm palette and realistic skin. No face, second hand, extra objects, salt, text, labels, borders, collage or watermarks. Preserve photorealism and the existing knitted sleeve design. Output a single portrait 9:16 image.
+
+## Revisión visual
+
+Palma abierta con cuatro dedos y pulgar distinguibles, una llave negra completa apoyada en la mano y espacio para cerrarla. Textura de piel madura, manga de punto hueso, vestido topo y puerta verde compatibles con referencias. Sin joyas, texto ni objetos extra visibles. La muñeca entra arriba-izquierda, no por abajo como se pidió; variación compositiva utilizable. La llave es una propuesta nueva: no se encontró KEY_MASTER en archivos ni historial consultado. Su diseño deberá mantenerse en planos posteriores.
+
+Estado: generada y revisada, propuesta para Flow; aceptación del usuario y validación del movimiento en vídeo pendientes. Prompt Flow actualizado para cierre con oclusión natural, 6 segundos.
