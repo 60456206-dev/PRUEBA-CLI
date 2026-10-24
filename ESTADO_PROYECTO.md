@@ -92,3 +92,8 @@ Este archivo conserva el contexto dentro del repositorio; no supone memoria auto
 ## Limpieza del plano 3 · 2026-10-24
 
 - Por petición del usuario, eliminado `MASTER_SERIES_PACKAGE/shots/EP01_SH03_FLOW_ORIGINAL_10S.mp4` (sin recortar). Se conserva `EP01_SH03_FLOW_5S.mp4`, versión recortada, revisada y aceptada. Plano activo: EP01_SH04.
+
+## Ajuste del prompt del plano 4 · 2026-10-24
+
+- Usuario reporta bloqueo de políticas en Flow. Simplificado `VIDEO_PROMPTS/GOOGLE_FLOW/EP01_SH04_GOOGLE_FLOW.txt`: mujer adulta en puerta, mirada a derecha, leve descenso de barbilla, labios cerrados y cámara fija durante 8 s. Eliminadas instrucciones ajenas a la toma (sal S1, gravedad) y redundancias. Referencia conservada.
+- Revisado el texto; pendiente prueba en Flow. Causa del bloqueo desconocida; no se garantiza que la reformulación lo resuelva. Sin nueva generación.
