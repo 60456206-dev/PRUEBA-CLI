@@ -1,9 +1,19 @@
-# EP02_SH04 · segunda prueba Flow
+# EP02_SH04 · prueba con inicio y final
 
-2026-10-24. Usar SALT_DROP.png; generar 8 s.
+2026-10-24. Generar 8 s. Los dos candidatos previos se conservan; ninguno aceptado como oficial.
 
-El candidato anterior repite gotas y muestra agua abultada/escurrida; la disolución no resulta legible. Se conserva intacto.
+## Archivos y orden
 
-Nuevo prompt: reposo 0–1 s, una gota 1–2 s, cristales que disminuyen y dejan lana oscura visible 2–5 s, reposo 5–8 s. Se restringe el cambio a un pequeño grupo bajo la punta y se conserva la sal circundante y la humedad anterior. Cámara/foco fijos; punta vacía tras la gota.
+1. Inicio: `SHOT_REFERENCES/SALT_DROP.png` (existente, reutilizada sin modificar).
+2. Final: `SHOT_REFERENCES/EP02_SH04_END_S2.png` (generada y revisada).
+3. Prompt para pegar: `EP02_SH04_GOOGLE_FLOW.txt`.
 
-Revisar en el resultado la pérdida real y localizada de cristales blancos, no solo brillo de agua sobre ellos; mantener visible el resultado hasta el final. Redacción propuesta, todavía no probada ni validada en vídeo. No garantiza que Flow reproduzca la física correctamente.
+Usar las imágenes en sus respectivos campos de fotograma inicial y final si el modo seleccionado los ofrece. No cargarlas como dos escenas ni como referencias intercambiables. Disponibilidad del modo en la cuenta/interfaz actual pendiente de comprobar; este trabajo no incluye una generación en Flow.
+
+Acción: reposo 0–1 s, una gota 1–2 s, disolución localizada 2–5 s, estado final sostenido 5–8 s. El prompt asigna explícitamente el papel de ambas imágenes y pide una transición física continua.
+
+## Revisión
+
+Final sin gota, con lana oscura expuesta bajo la punta, humedad anterior y sal exterior conservadas. Pequeñas variaciones de fibras, cristales y contorno de punta; zonas húmedas contiguas visualmente unidas. Véase `SHOT_REFERENCES/EP02_SH04_END_S2_GENERATION.md` para prompt de imagen y revisión.
+
+Validar en el vídeo: una sola gota, pérdida local de cristales en vez de simple cambio de brillo, ausencia de escurrimiento y reposo final. Las dos imágenes orientan el resultado, pero no garantizan la física ni la continuidad temporal. Prompt revisado en texto; prueba de vídeo y aceptación pendientes.

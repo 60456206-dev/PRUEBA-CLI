@@ -296,3 +296,15 @@ Este archivo conserva el contexto dentro del repositorio; no supone memoria auto
 - Revisado nuevo `shots/Water_droplet_dissolving_salt_cr…_20261024111339.mp4`: 8 s, 720×1280, 24 fps, 192 fotogramas; decodificación completa sin errores. Muestras generales y detalle cada 0,25 s, cotejados con SALT_DROP y revisión anterior. Audio presente, no escuchado.
 - Conserva composición, material y luz. Se aprecia algo más de lana oscura expuesta en la parte inferior de la zona tratada, pero la sal directamente bajo la punta permanece mayormente blanca; disolución localizada todavía poco clara. Repite gotas, con agua abultada/escurrida entre ~1–4 s y otra descarga hacia ~6,75 s, rompiendo reposo final.
 - Valoración: mejora parcial del cambio de superficie, no cumplimiento del objetivo de una sola gota y disolución legible. Utilizable solo con concesiones como agua sobre sal; no recomendado marcar oficial para demostrar consumo de una nueva zona. Un recorte antes de la última gota no corrige el resto y acorta los 8 s previstos. Ambos candidatos conservados, sin modificaciones. Pendiente decisión del usuario.
+
+## Corrección: dos referencias solo para EP02_SH04 · 2026-10-24
+
+- Usuario aclara que las dos imágenes son únicamente para EP02_SH04, que está dando problemas, no para EP02_SH05. La atribución anterior fue un malentendido; plano 5 sin cambios.
+- Plano activo EP02_SH04. Propuesta: inicio SALT_DROP.png y final derivado con disolución localizada legible, lana húmeda expuesta, misma composición, humedad anterior y sal circundante conservadas.
+- Pendiente preparar/revisar ambas imágenes e incorporar sus funciones al prompt según modo de entrada disponible. No se generaron imágenes ni se modificó el prompt. Ambos vídeos candidatos conservados, sin aceptación oficial.
+
+## EP02_SH04 · pareja de referencias preparada · 2026-10-24
+
+- Usuario autoriza preparar imágenes y prompt. Inicio: SALT_DROP.png reutilizada intacta. Final generado mediante image_gen integrado: SHOT_REFERENCES/EP02_SH04_END_S2.png; prompt completo y revisión en EP02_SH04_END_S2_GENERATION.md.
+- Revisado visualmente: punta vacía, reducción clara del grupo blanco bajo la punta y lana oscura expuesta junto a humedad previa; conserva encuadre, luz y depósitos exteriores. Variaciones menores en fibras, cristales y contorno de punta; las zonas húmedas contiguas se unen visualmente. Propuesta utilizable, todavía no aceptada por usuario.
+- Prompt Flow actualizado para roles inicio/final, una gota 1–2 s, disolución 2–5 s y reposo 5–8 s. Tarjeta y notas enlazan la pareja. Falta comprobar modo con campos inicial/final en interfaz actual, generar vídeo y revisar continuidad temporal. No se ha generado en Flow ni modificado los dos candidatos anteriores. Plano activo EP02_SH04; EP02_SH05 intacto.
