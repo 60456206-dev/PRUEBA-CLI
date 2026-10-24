@@ -243,3 +243,25 @@ Este archivo conserva el contexto dentro del repositorio; no supone memoria auto
 - Plano activo EP02_SH02. INES_TABLE.png existente y revisada visualmente: rostro, camisa, luz, mirada inicial izquierda y labios cerrados adecuados. Se reutiliza según tarjeta; no hace falta generar otra imagen.
 - Ajustado solo prompt Flow para conservar encuadre real, esperar 0–2 s, bajar solo mirada 2–5 s y mantenerla 5–8 s, sin sonrisa ni giro. Grabadora/mesa fuera de campo; eliminadas instrucciones de sal ajenas al plano y encuadre que podía provocar recomposición.
 - Materiales listos para prueba: generar 8 s y usar 7 s tras revisión. Prompt revisado en texto; vídeo pendiente de generar/validar.
+
+## Limpieza EP02_SH01 y revisión EP02_SH02 · 2026-10-24
+
+- Por petición explícita, eliminado `shots/Water_drop_landing_on_wool_20261024100233.mp4` tras comprobar duración de 5 s y decodificación completa del elegido `EP02_SH01_FLOW_5S.mp4`. Recorte conservado.
+- Revisado `shots/Woman_lowering_gaze_in_video_20261024101744.mp4`: 8 s, 720×1280, 24 fps, 192 fotogramas; decodificación completa sin errores. Muestras generales cada 0,25 s y rostro cada 0,5 s, comparadas con INES_TABLE.png revisada. Audio presente, no escuchado.
+- Acción legible: parte mirando izquierda, baja la mirada aproximadamente entre 1,5–4 s y la mantiene hasta el final. Expresión seria, labios cerrados; apariencia, ropa, fondo y luz coherentes, sin deformaciones evidentes en las muestras.
+- Diferencia: acompaña el gesto con leve descenso y giro de cabeza hacia el frente; el prompt pedía mover solo ojos. Empieza algo antes de los 2 s previstos. Valoración: utilizable y recomendado conservar con esas concesiones; primeros 7 s contienen acción y reposo suficiente.
+- Pendiente aceptación y recorte del plano 2; vídeo intacto, sin renombrar ni eliminar. Plano activo EP02_SH02.
+
+## EP02_SH02 elegido y comprobación EP02_SH03 · 2026-10-24
+
+- Usuario acepta plano 2 y autoriza recorte y borrado del original. Generado `shots/EP02_SH02_FLOW_7S.mp4` (0–7 s), elegido para montaje. Verificados 7 s exactos, 720×1280, 24 fps, 168 fotogramas, decodificación completa y muestras visuales cada 0,5 s. Conserva mirada baja y reposo, con leve movimiento de cabeza ya aceptado; audio conservado, no escuchado.
+- Eliminado `shots/Woman_lowering_gaze_in_video_20261024101744.mp4` después de verificar el recorte.
+- Siguiente plano EP02_SH03: tarjeta y prompt Flow existentes; acción de dedo que pulsa una vez grabación y sale, grabadora fija con indicador rojo final. Generar 6 s para usar 5 s.
+- No listo: faltan `SHOT_REFERENCES/RECORDER.png` y `PROPS/RECORDER_MASTER.png`, sin resultados en archivos ni historial Git consultado para RECORDER. Pendiente definir imagen de grabadora coherente con archivo/luz, generar y revisar; después ajustar prompt a imagen concreta. No se generó imagen en esta comprobación.
+
+## Imagen EP02_SH03 preparada y envío Git · 2026-10-24
+
+- Generada con image_gen y guardada `SHOT_REFERENCES/RECORDER.png` (941×1672); referencias ARCHIVE_MASTER e INES_MASTER. Dos resultados revisados visualmente: corregido objeto negro adicional al fondo. Prompt/revisión en RECORDER_GENERATION.md.
+- Final propuesto: grabadora negra única, botón rojo y LED separado apagado, índice suspendido antes de pulsar, puño pizarra, mesa de madera. Diferencias: nuevo diseño de controles (sin master independiente), lámpara al fondo izquierdo por nuevo ángulo y luz cálida más acusada. Utilizable con esas diferencias; aceptación y vídeo pendientes.
+- Prompt Flow EP02_SH03 adaptado al botón/LED visibles: pulsación 0–2 s, retirada hasta 3 s, reposo hasta 6 s; usar 5 s en montaje. Materiales listos para prueba. Futuros planos de grabadora sin mano requieren variante/fotograma revisado.
+- Usuario autoriza commit y push de trabajo actual, incluidos recorte elegido EP02_SH02 y borrados autorizados de originales EP02_SH01/02. Sincronización remota se comprobará tras el envío.
