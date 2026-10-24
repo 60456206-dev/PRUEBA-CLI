@@ -161,3 +161,14 @@ Este archivo conserva el contexto dentro del repositorio; no supone memoria auto
 - Materiales revisados y disponibles para prueba; vídeo del plano 7 pendiente. Aceptación/revisión del vídeo del plano 6 sigue pendiente; avanzar preparación no lo marca definitivo.
 
 - 2026-10-24: por petición explícita del usuario, eliminado el original de 8 s del plano 5 (`shots/Woman_closing_hand_over_key_20261024012556.mp4`). Conservado `shots/EP01_SH05_FLOW_6S.mp4`, recorte elegido y revisado; duración de 6 s comprobada antes de borrar.
+
+## Sincronización Git y revisión EP01_SH06 · 2026-10-24
+
+- Resuelta divergencia local/remota mediante merge sin conflictos y push normal (`07af865`), sin force push. El commit remoto incorporaba el vídeo del plano 6 que aún no estaba en disco.
+- Revisado `shots/Hollow_coat_collar_trembles_20261024014807.mp4`: 8 s, 720×1280, 24 fps, 192 fotogramas; decodificación completa correcta. Muestras visuales de todo el clip cada 0,5 s comparadas con referencia ya revisada. Audio presente, no escuchado.
+- Mantiene abrigo vacío, paleta y escenario. Diferencia relevante: entre ~0,5–2,5 s se levantan y doblan ampliamente cuello y solapas, en vez de temblar un pequeño pliegue. Después se asienta con acercamiento progresivo. No cumple plenamente el movimiento sutil acordado; no marcar definitivo. Recortar a 7 s no elimina esa diferencia. Pendiente decisión del usuario entre aceptar movimiento más marcado o nueva generación; original intacto.
+
+## Reformulación EP01_SH06 · 2026-10-24
+
+- A petición del usuario, actualizado prompt Flow y añadidas `VIDEO_PROMPTS/GOOGLE_FLOW/EP01_SH06_NOTAS.md`: cámara fija, reposo 0–1 s, temblor mínimo de un pliegue bajo solapa izquierda de imagen entre 1–3 s y reposo hasta 8 s. Cuello, bordes de solapas y percha inmóviles. Conservada COAT_COLLAR.png.
+- Nueva propuesta revisada en texto, pendiente prueba en Flow y revisión visual. Usar 7 s en montaje si el resultado cumple; vídeo previo intacto.
