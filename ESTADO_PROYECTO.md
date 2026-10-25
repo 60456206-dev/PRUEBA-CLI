@@ -1,6 +1,6 @@
 # Dónde nos quedamos
 
-Actualizado: 2026-10-24.
+Actualizado: 2026-10-25.
 
 ## Juego PULSO (trabajo anterior)
 
@@ -308,3 +308,15 @@ Este archivo conserva el contexto dentro del repositorio; no supone memoria auto
 - Usuario autoriza preparar imágenes y prompt. Inicio: SALT_DROP.png reutilizada intacta. Final generado mediante image_gen integrado: SHOT_REFERENCES/EP02_SH04_END_S2.png; prompt completo y revisión en EP02_SH04_END_S2_GENERATION.md.
 - Revisado visualmente: punta vacía, reducción clara del grupo blanco bajo la punta y lana oscura expuesta junto a humedad previa; conserva encuadre, luz y depósitos exteriores. Variaciones menores en fibras, cristales y contorno de punta; las zonas húmedas contiguas se unen visualmente. Propuesta utilizable, todavía no aceptada por usuario.
 - Prompt Flow actualizado para roles inicio/final, una gota 1–2 s, disolución 2–5 s y reposo 5–8 s. Tarjeta y notas enlazan la pareja. Falta comprobar modo con campos inicial/final en interfaz actual, generar vídeo y revisar continuidad temporal. No se ha generado en Flow ni modificado los dos candidatos anteriores. Plano activo EP02_SH04; EP02_SH05 intacto.
+
+## Revisión EP02_SH04 con pareja de referencias · 2026-10-25
+
+- Revisado nuevo `shots/Water_droplet_dissolving_salt_cr…_20261024191634.mp4`, identificado como la prueba más reciente tras preparar inicio/final. Comparado visualmente con SALT_DROP.png y EP02_SH04_END_S2.png: muestras cada 0,25 s y detalle inicial cada 0,125 s. 8 s, 720×1280, 24 fps, 192 fotogramas; decodificación completa sin errores. Audio no escuchado.
+- Mejora clara: el grupo blanco bajo la pipeta disminuye hasta dejar lana oscura expuesta hacia 5 s; final estable y compatible con referencia S2, con encuadre/luz/material conservados. Ahora se comunica consumo de sal en la nueva zona.
+- Concesiones: dos descargas visibles aproximadamente a 1,1 y 2 s; agua temporalmente abultada/brillante sobre sal antes de absorberse. No cumple literalmente gota única ni absorción inmediata, pero se recomienda conservar como candidato utilizable por cumplir el cambio de superficie principal.
+- Pendiente aceptación del usuario; no marcado oficial, recortado, renombrado ni borrado. Plano activo EP02_SH04.
+
+## EP02_SH04 oficial · 2026-10-25
+
+- Usuario acepta como oficial `shots/Water_droplet_dissolving_salt_cr…_20261024191634.mp4` (8 s), ya generado y revisado visualmente. Aceptadas las dos descargas y el agua temporalmente abultada; la reducción de sal y el final estable cumplen la acción principal.
+- Elección registrada para montaje. Archivo conservado con su nombre y duración actuales; candidatos anteriores conservados. EP02_SH04 cerrado; siguiente plano pendiente: EP02_SH05.
