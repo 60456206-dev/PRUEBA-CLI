@@ -440,3 +440,9 @@ Este archivo conserva el contexto dentro del repositorio; no supone memoria auto
 
 - Usuario informa resultado demasiado estático y pide modificar prompt. Flow actualizado: acercamiento cenital suave de ~10 % hacia «Evacuación completa: 18:00», frenado y reposo 7–8 s; título/línea completos y nítidos. Solo cámara se mueve, papel/texto/luz constantes. Sustituye cámara fija para Flow; referencia conservada.
 - Tarjeta y notas actualizadas. Texto revisado; nueva generación y revisión pendientes. No se evaluó un vídeo nuevo en esta petición.
+
+## Revisión candidato EP02_SH08 · 2026-10-26
+
+- Revisado `shots/Camera_zooms_in_on_report_20261025234500.mp4`: 8 s exactos, 720×1280, 24 fps, 192 fotogramas; decodificación completa correcta. Contacto cada 0,5 s y lectura ampliada cotejada con REPORT_TOP.png y prompt. Audio presente, no escuchado.
+- El acercamiento hace el plano más dinámico y el dato «Evacuación completa: 18:00» se mantiene legible durante buena parte del clip. Sin embargo, el zoom es mucho más fuerte que el 10 % pedido: hacia el final recorta el título y deja la línea/documento demasiado pegados o cortados por los bordes. El contenido no muestra letras reescritas, pero se pierde el contexto de informe completo en el cierre.
+- Recomendación: no oficializar este candidato todavía; recortar el acercamiento a un máximo aproximado del 10 % en edición desde REPORT_TOP.png, manteniendo visibles encabezado y hora. No hace falta otra generación libre. Archivo intacto, pendiente elección del usuario.
