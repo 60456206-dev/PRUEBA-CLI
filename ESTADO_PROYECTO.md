@@ -398,3 +398,15 @@ Este archivo conserva el contexto dentro del repositorio; no supone memoria auto
 
 - Usuario confirma que el vídeo enviado era equivocado y solicita eliminarlo: retirado `shots/Woman_reacting_to_sound_20261025225448.mp4`. Su revisión no permite concluir que el prompt del plano 06 falló; no correspondía al vídeo que se quería revisar. EP02_SH06 sigue pendiente del vídeo correcto.
 - Prompt simplificado del 06 propuesto en conversación, aún no aplicado al archivo. Referencia y prompt del 07 preparados; referencia del plano 01 conservada en shotlist.
+
+## Revisión vídeo correcto EP02_SH06 · 2026-10-26
+
+- Revisado `shots/Recorder_LED_changes_to_green_20261025230346.mp4` frente a EP02_SH06_START_RED.png y prompt: muestras generales cada 0,5 s y detalle grabadora cada 0,25 s durante todo el clip. 8 s exactos, 720×1280, 24 fps, 192 fotogramas; decodificación completa correcta. Audio presente, no escuchado.
+- Cumple acción visual: pequeño LED rojo cambia a verde alrededor de 3,5 s y permanece verde hasta final; botón grande sigue rojo y pantalla oscura. Grabadora/cámara estables, sin manos ni personas; conserva mesa, encuadre y luz de referencia. Sin diferencias relevantes observadas en las muestras.
+- Recomendación: conservar y oficializar usando tramo 0–7 s para montaje, sin nueva generación. Pendiente aceptación del usuario; archivo intacto, no renombrado ni recortado. EP02_SH07 continúa listo para prueba con referencia S2.
+
+## EP02_SH06 oficial y comprobación EP02_SH08 · 2026-10-26
+
+- Usuario acepta plano 06. Preparado `shots/EP02_SH06_FINAL.mp4`, tramo 0–7 s, H.264/AAC: 7 s exactos, 720×1280, 24 fps, 168 frames. Decodificación completa y muestras visuales correctas; mantiene cambio LED rojo a verde y reposo final. Audio conservado, no escuchado. Original de 8 s eliminado tras verificar; tarjeta actualizada.
+- Consulta activa EP02_SH08: prompt Flow y tarjeta existentes, generar/usar 8 s. Informe quieto sobre mesa, cámara cenital fija y sombra leve. Guion requiere que el informe establezca evacuación completa a las 18:00.
+- No listo para generar: REPORT_TOP.png y PROPS/REPORT_MASTER.svg referenciados no localizados en disco ni historial Git consultado (búsqueda global de REPORT/informe). Falta preparar y revisar referencia del informe con dato horario legible; el prompt actual no especifica ese texto. Sin vídeo EP02_SH08 en shots. EP02_SH07 sigue pendiente de vídeo.
