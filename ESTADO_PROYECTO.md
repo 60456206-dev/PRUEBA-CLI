@@ -470,3 +470,9 @@ Este archivo conserva el contexto dentro del repositorio; no supone memoria auto
 - Usuario pide intro basada en `ANIMACIONES_SVG/Sin título.png`, más saturación, negro puro y vapor conservado; aclara que el movimiento de engranajes es esencial.
 - Generados `ENGRANAJES_INTRO_V1.svg`, `VISTA_PREVIA.html`, generador y README en esa carpeta. SVG híbrido con PNG integrado, saturación 1,38, vapor animado y giro opuesto oscilante ±1,4°/±1,9° en 12 s; no rotación completa ni vectorización pura. Referencia intacta.
 - Revisado visualmente en Chromium en extremos del movimiento: composición/texturas conservadas, ligera suavidad/duplicación de bordes por recortes superpuestos. Propuesta V1, pendiente de aceptación y ajustes; no integrada en app. Proyectos audiovisuales anteriores sin cambios.
+
+## Animación SVG · cámara y móvil · 2026-10-26
+
+- Usuario pide cámara con aceleración/desaceleración y formato móvil. Generada ENGRANAJES_INTRO_V2.svg, autónoma, 1080×1920 (9:16); V1 y referencia conservadas. Vista previa y generador apuntan a V2.
+- Cámara: acercamiento 4 % y desplazamiento leve hacia arriba, regreso en bucle de 12 s; curva suave de aceleración/frenado en ambos trayectos. Conserva giro, vapor y saturación. Movimiento reducido desactiva cámara.
+- Revisado XML y capturas Chromium a 390×693 en inicio y máximo acercamiento: ruedas completas, más aire negro vertical. Persiste suavidad/duplicación periférica propia de los recortes de V1. No probado en dispositivo físico. V2 propuesta, aceptación pendiente.

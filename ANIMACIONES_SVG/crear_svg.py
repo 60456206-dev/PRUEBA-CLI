@@ -2,9 +2,9 @@ from pathlib import Path
 import base64
 p=Path(__file__).resolve().parent
 source=base64.b64encode((p/'Sin título.png').read_bytes()).decode()
-svg='''<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1024" height="1536" style="width:100%;height:100%" viewBox="0 0 1024 1536" role="img" aria-labelledby="title desc">
+svg='''<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1080" height="1920" style="width:100%;height:100%" viewBox="0 0 1080 1920" role="img" aria-labelledby="title desc">
 <title id="title">Cristal y ámbar — introducción animada</title>
-<desc id="desc">Engranajes originales con colores intensificados sobre negro puro. Giro opuesto de ida y vuelta y vapor de hielo seco en movimiento suave y reflejos pulsantes. Imagen PNG integrada; no es vectorización pura.</desc>
+<desc id="desc">Engranajes originales con colores intensificados sobre negro puro. Giro opuesto de ida y vuelta y vapor de hielo seco en movimiento suave y reflejos pulsantes. Cámara con acercamiento y regreso acelerados y frenados suavemente, en formato móvil 9:16. Imagen PNG integrada; no es vectorización pura.</desc>
 <defs>
 <image id="original" width="1024" height="1536" xlink:href="data:image/png;base64,SOURCE"/>
 <path id="iceShape" d="M185 407L304 376 353 444 393 438 414 369 478 391 494 486 527 508 574 484 617 554 589 622 605 669 638 700 610 789 569 807 545 868 558 941 489 984 456 960 424 1022 356 1025 325 950 277 925 222 974 179 942 193 859 166 814 74 820 61 753 124 696 125 651 63 601 87 541 139 503 204 533 222 503 199 465Z"/><path id="metalShape" d="M669 609L747 592 774 646 803 654 825 607 879 637 883 709 916 737 946 717 978 782 947 837 960 880 987 907 973 981 931 1005 936 1066 874 1108 822 1084 790 1094 750 1133 679 1095 677 1048 634 1012 590 1021 555 959 577 909 566 864 542 844 556 784 609 777 627 743 595 704 628 665 667 681 680 651Z"/>
@@ -32,10 +32,16 @@ svg='''<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/19
 <style>
 .intro{animation:appear 2.2s cubic-bezier(.16,1,.3,1) both}
 @keyframes appear{from{opacity:0}to{opacity:1}}
-@media(prefers-reduced-motion:reduce){.intro{animation:none}.moving{display:none}}
+@media(prefers-reduced-motion:reduce){.intro{animation:none}.moving{display:none}.camera{transform:none}}
 </style>
-<rect width="1024" height="1536" fill="#000000"/>
+<rect width="1080" height="1920" fill="#000000"/>
 <g class="intro">
+<g transform="translate(540 960)">
+<g class="camera">
+<animateTransform attributeName="transform" type="scale" values="1;1.04;1" dur="12s" repeatCount="indefinite" calcMode="spline" keyTimes="0;.5;1" keySplines=".42 0 .58 1;.42 0 .58 1"/>
+<g class="camera">
+<animateTransform attributeName="transform" type="translate" values="0 0;-4 -16;0 0" dur="12s" repeatCount="indefinite" calcMode="spline" keyTimes="0;.5;1" keySplines=".42 0 .58 1;.42 0 .58 1"/>
+<g transform="translate(-512 -768)">
 <g filter="url(#color)"><use xlink:href="#original"/>
 <g class="moving" mask="url(#smoke)"><g filter="url(#vapor)"><use xlink:href="#original"/></g></g>
 <g class="moving"><animateTransform attributeName="transform" type="rotate" values="-1.4 350 700;1.4 350 700;-1.4 350 700" dur="12s" repeatCount="indefinite" calcMode="spline" keyTimes="0;.5;1" keySplines=".42 0 .58 1;.42 0 .58 1"/><g mask="url(#iceClip)"><use xlink:href="#original"/></g></g>
@@ -44,5 +50,5 @@ svg='''<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/19
 <g class="moving" style="mix-blend-mode:screen">
 <ellipse cx="280" cy="650" rx="170" ry="300" fill="url(#light)" opacity=".12"><animate attributeName="opacity" values=".12;.44;.12" dur="6s" repeatCount="indefinite"/></ellipse>
 <ellipse cx="807" cy="878" rx="130" ry="215" fill="url(#light)" opacity=".3"><animate attributeName="opacity" values=".3;.08;.3" dur="6s" repeatCount="indefinite"/></ellipse>
-</g></g></svg>'''.replace('SOURCE',source)
-(p/'ENGRANAJES_INTRO_V1.svg').write_text(svg)
+</g></g></g></g></g></g></svg>'''.replace('SOURCE',source)
+(p/'ENGRANAJES_INTRO_V2.svg').write_text(svg)
