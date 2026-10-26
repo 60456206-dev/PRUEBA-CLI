@@ -1,4 +1,6 @@
-# El plátano que se compró una cáscara nueva
+# DESCARTADA · El plátano que se compró una cáscara nueva
+
+Descartada por el usuario: confundió estilo animado con temática de frutas y no partió de investigación de tendencias. Se conserva únicamente como registro, no para producción.
 
 Propuesta de ficción original · 25 s · 9:16 · animación 3D caricaturesca.
 Estado: idea, guion y prompts redactados y revisados; sin imágenes ni vídeos generados, sin aceptación del usuario ni prueba en Flow. Material totalmente independiente de MASTER SERIES. No se presenta como tendencia verificada.

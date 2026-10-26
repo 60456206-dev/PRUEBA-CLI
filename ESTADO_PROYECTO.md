@@ -342,3 +342,27 @@ Este archivo conserva el contexto dentro del repositorio; no supone memoria auto
 - Usuario confirma que la reformulación es para EP02_SH05 (plano 05 del episodio 2). Prompt Flow simplificado conservando escucha fuera de campo, mandíbula tensa una vez, boca cerrada, mirada derecha y cámara fija; eliminadas sal/lente y contradicción de encuadre. Texto revisado, prueba en Flow y vídeo pendientes; causa del bloqueo desconocida. Notas en EP02_SH05_NOTAS.md. Plano activo EP02_SH05; EP02_SH04 sigue oficial.
 - TikTok Radar: independencia total, prohibido reutilizar material de MASTER SERIES. Estilo animado, interpretado como microseries de frutas, nada realista; prompts para Flow e iniciativa en selección de ideas. README actualizado. Solicitud actual solo idea/prompts, sin generar imágenes o vídeos.
 - Propuesta guardada en TIKTOK_RADAR/entregas/2026-10-26/IDEA_Y_PROMPTS_FLOW.md: «El plátano que se compró una cáscara nueva», ficción original de 25 s con cuatro planos, guion y prompts Flow. Texto revisado; sin activos generados, prueba ni aceptación.
+
+## Corrección del usuario sobre TikTok Radar · 2026-10-26
+
+- Solo tomar el estilo de animación de las series citadas, no temática de frutas ni frutinovelas. Cada idea debe surgir de investigación profunda de contenido viral actual en TikTok y otras redes al momento de la solicitud, con fuentes y señales verificables; no ficción aleatoria. Mantener independencia total de MASTER SERIES y prompts para Flow.
+- README corregido; propuesta del plátano marcada descartada, conservada solo como registro. No hay todavía investigación de tendencias ni propuesta válida que la sustituya. Esta aclaración no genera nuevos activos. EP02_SH05 conserva prompt reformulado, pendiente prueba en Flow.
+
+## TikTok Radar · primera propuesta investigada · 2026-10-26 UTC / 25 Perú
+
+- Investigación pública de tendencias realizada; comparados Ghost Photoshoot, entrada lenta Pray For Me, What iPad y transición de ventilador. Elegido «Tu disfraz de Halloween ya está en tu cama», explicación animada del regreso estacional de las fotos de fantasmas, no ficción aleatoria. Fuentes y límites en TIKTOK_RADAR/entregas/2026-10-25_01/INVESTIGACION.md.
+- Evidencia principalmente secundaria de octubre; TikTok bloqueó vídeos y Creative Center no expuso ranking, Instagram limitó acceso. No verificada viralidad actual en Perú ni crecimiento en últimas 48 h; ventana ampliada a octubre. Propuesta editorial con limitaciones explícitas, revalidar si se retrasa más allá de Halloween.
+- Guion de 25 s, cuatro escenas, dirección animada original, voz y cuatro prompts Flow (dos principales y dos opcionales) en PROPUESTA.md y PROMPTS_FLOW/. Textos revisados; sin imágenes, voz o vídeos generados ni aceptación. MASTER SERIES intacto. Propuesta del plátano sigue descartada.
+
+## Oficialización corregida · 2026-10-26
+
+- EP02_SH04: `shots/EP02_SH04_FINAL.mp4`, versión elegida 20261024191634. 8 s exactos, 720×1280, 24 fps, 192 frames. Decodificación completa y muestras visuales correctas; no necesita recorte. Renombrado sin recodificar, hash idéntico 7354e06e06829771a5118fecfeda7d959995e89cdf066105485c53f49da8c560. Audio conservado, no escuchado. Concesiones aceptadas intactas.
+- Eliminados sus dos descartes 20261024104932 y 20261024111339; tarjeta actualizada.
+- Regla permanente en AGENTS.md: Cuando el usuario diga «oficializar», «es oficial» o «me quedo con esa versión», preparar el vídeo elegido: comprobar identidad, ajustar a duración de montaje si corresponde, verificar duración/decodificación y continuidad, renombrar `EPxx_SHxx_FINAL.mp4`, actualizar tarjeta y estado y eliminar vídeos descartados del mismo plano tras verificar el oficial. No borrar otros planos ni referencias. Sustituye el acuerdo anterior de aplazar nombres finales.
+- TikTok Radar: referencias Ghost Photoshoot solicitadas, en generación. Sin vídeo nuevo.
+
+## Referencias TikTok Radar listas · 2026-10-26
+
+- Generadas con image_gen y revisadas individualmente: `TIKTOK_RADAR/entregas/2026-10-25_01/REFERENCIAS/01_CAMA.png`, `02_PERSONAJE.png`, `04_LAVANDERIA.png` (941×1672). Prompts exactos y revisión en esa carpeta. Plano 03 usará fotograma del futuro clip 02.
+- Paleta/diseño coherentes; lavandería añade decoración, materiales más detallados/brillantes que mate estricto y leves variaciones de gafas/pliegues. Propuestas listas para prueba, no aceptadas todavía. Sin material de MASTER SERIES.
+- No hay herramienta directa de generación de vídeo disponible en esta sesión; no generado vídeo ni voz. Flow pendiente.
