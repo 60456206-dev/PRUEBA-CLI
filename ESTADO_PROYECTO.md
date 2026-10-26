@@ -446,3 +446,14 @@ Este archivo conserva el contexto dentro del repositorio; no supone memoria auto
 - Revisado `shots/Camera_zooms_in_on_report_20261025234500.mp4`: 8 s exactos, 720×1280, 24 fps, 192 fotogramas; decodificación completa correcta. Contacto cada 0,5 s y lectura ampliada cotejada con REPORT_TOP.png y prompt. Audio presente, no escuchado.
 - El acercamiento hace el plano más dinámico y el dato «Evacuación completa: 18:00» se mantiene legible durante buena parte del clip. Sin embargo, el zoom es mucho más fuerte que el 10 % pedido: hacia el final recorta el título y deja la línea/documento demasiado pegados o cortados por los bordes. El contenido no muestra letras reescritas, pero se pierde el contexto de informe completo en el cierre.
 - Recomendación: no oficializar este candidato todavía; recortar el acercamiento a un máximo aproximado del 10 % en edición desde REPORT_TOP.png, manteniendo visibles encabezado y hora. No hace falta otra generación libre. Archivo intacto, pendiente elección del usuario.
+
+## Retoma y verificación EP02_SH08 · 2026-10-26
+
+- Encontrados vídeo `shots/EP02_SH08_FINAL.mp4` y script `tools/render_ep02_sh08.py` ya registrados en aa69921, sin revisión registrada en el resumen.
+- Revisado: 8 s exactos, 720×1280, 24 fps, 192 frames, sin audio; decodificación completa correcta. Muestras cada segundo frente a REPORT_TOP.png: zoom controlado del 10 %, título y hora completos y estables, reposo final. Bordes laterales del papel cerca del encuadre al final; texto con margen. Movimiento desde imagen fija, sin sombra animada.
+- Recomendación: conservar y oficializar esta edición. Pese al nombre FINAL existente, aceptación explícita pendiente según contexto disponible. Candidato Flow conservado. Plano activo EP02_SH08.
+
+## EP02_SH08 oficial y siguiente plano · 2026-10-26
+
+- Usuario oficializa la edición revisada `shots/EP02_SH08_FINAL.mp4`: 8 s exactos, 720×1280, 24 fps, 192 frames, sin audio. Verificación técnica y visual completada al retomar; título/hora conservados con acercamiento del 10 %. Tarjeta actualizada y descarte Flow 20261025234500 eliminado.
+- Plano activo: EP03_SH01, llave negra sobre dibujo de compuerta; montaje 5 s (Flow generar 6 s). Guion, tarjeta y prompt leídos. KEY_TABLE.png y KEY_MASTER.png no localizados en disco ni historial consultado; existe KEY_HAND.png para continuidad. Pendiente preparar y revisar imagen inicial antes de generar vídeo.
