@@ -366,3 +366,18 @@ Este archivo conserva el contexto dentro del repositorio; no supone memoria auto
 - Generadas con image_gen y revisadas individualmente: `TIKTOK_RADAR/entregas/2026-10-25_01/REFERENCIAS/01_CAMA.png`, `02_PERSONAJE.png`, `04_LAVANDERIA.png` (941×1672). Prompts exactos y revisión en esa carpeta. Plano 03 usará fotograma del futuro clip 02.
 - Paleta/diseño coherentes; lavandería añade decoración, materiales más detallados/brillantes que mate estricto y leves variaciones de gafas/pliegues. Propuestas listas para prueba, no aceptadas todavía. Sin material de MASTER SERIES.
 - No hay herramienta directa de generación de vídeo disponible en esta sesión; no generado vídeo ni voz. Flow pendiente.
+
+## Revisión EP02_SH05 · 2026-10-26
+
+- Revisado `shots/Woman_reacting_to_sound_20261025222022.mp4` frente a ALBA_DOOR.png y prompt Flow: muestras generales cada 0,5 s y rostro cada 0,25 s. Vídeo 720×1280, 24 fps, 144 fotogramas (6 s de imagen; contenedor 6,016 s), decodificación completa sin errores. Audio presente, no escuchado.
+- Conserva personaje, vestuario, puerta, luz, encuadre y mirada a derecha; cámara estable. Se aprecia reacción de atención/sorpresa con leve giro de cabeza y cambio de cejas.
+- Diferencia principal: abre los labios hacia 1,5 s y los mantiene separados durante buena parte del resto. No se distingue claramente el único apretón de mandíbula con boca cerrada pedido. Utilizable con concesión como reacción a un sonido, no cumplimiento literal de la actuación. Recortar no soluciona la acción conservando los 6 s.
+- Recomendación: candidato válido si se acepta sorpresa en vez de tensión contenida; nueva prueba si boca cerrada/mandíbula son imprescindibles. Pendiente elección del usuario; sin renombrar, recortar ni eliminar. EP02_SH06 sigue con imagen y prompt listos, vídeo pendiente.
+
+- Acuerdo 2026-10-26: cada evaluación de vídeo debe cerrar con una recomendación concreta y justificada, con una opción preferida. Guardado en AGENTS.md; no equivale a aceptación del usuario.
+
+## EP02_SH05 oficial · 2026-10-26
+
+- Usuario acepta la versión revisada, incluida boca entreabierta y reacción de sorpresa. Preparado `shots/EP02_SH05_FINAL.mp4`: 6 s exactos, 720×1280, 24 fps, 144 fotogramas. Vídeo copiado sin recodificación; hash del flujo de vídeo idéntico al original revisado. Audio ajustado de 6,016 a 6 s y recodificado AAC, no escuchado. Decodificación completa correcta.
+- Eliminado el duplicado original `Woman_reacting_to_sound_20261025222022.mp4` después de verificar. No hay otros candidatos de este plano en shots. Tarjeta actualizada; EP02_SH05 cerrado.
+- Siguiente plano activo: EP02_SH06, imagen y prompt preparados; generación y revisión de vídeo pendientes.

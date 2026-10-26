@@ -9,3 +9,7 @@ Por petición del usuario, revisa visualmente cada imagen generada antes de entr
 ## Oficialización de vídeos
 
 Cuando el usuario diga «oficializar», «es oficial» o «me quedo con esa versión», preparar el vídeo elegido: comprobar identidad, ajustar a duración de montaje si corresponde, verificar duración/decodificación y continuidad, renombrar `EPxx_SHxx_FINAL.mp4`, actualizar tarjeta y estado y eliminar vídeos descartados del mismo plano tras verificar el oficial. No borrar otros planos ni referencias. Sustituye el acuerdo anterior de aplazar nombres finales.
+
+## Recomendación al evaluar vídeos
+
+Terminar cada evaluación de vídeo con una recomendación clara: conservar/oficializar, ajustar o volver a generar, indicando brevemente el motivo y las concesiones relevantes. Dar una opción preferida, no solo alternativas condicionales. La recomendación no sustituye la aceptación del usuario ni autoriza por sí sola oficializar o borrar archivos.
