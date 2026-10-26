@@ -381,3 +381,20 @@ Este archivo conserva el contexto dentro del repositorio; no supone memoria auto
 - Usuario acepta la versión revisada, incluida boca entreabierta y reacción de sorpresa. Preparado `shots/EP02_SH05_FINAL.mp4`: 6 s exactos, 720×1280, 24 fps, 144 fotogramas. Vídeo copiado sin recodificación; hash del flujo de vídeo idéntico al original revisado. Audio ajustado de 6,016 a 6 s y recodificado AAC, no escuchado. Decodificación completa correcta.
 - Eliminado el duplicado original `Woman_reacting_to_sound_20261025222022.mp4` después de verificar. No hay otros candidatos de este plano en shots. Tarjeta actualizada; EP02_SH05 cerrado.
 - Siguiente plano activo: EP02_SH06, imagen y prompt preparados; generación y revisión de vídeo pendientes.
+
+## Comprobación EP02_SH07 · 2026-10-26
+
+- Consulta activa EP02_SH07: tarjeta y prompt Flow existen, generar/usar 6 s; cambio de foco desde lana húmeda a sal seca contigua, sin nueva gota ni movimiento de objetos.
+- SALT_USED.png revisada frente al final de EP02_SH04_FINAL.mp4: la referencia antigua muestra gota adherida y distinta distribución de sal/humedad. No lista para continuidad estricta del estado S2 aceptado.
+- Recomendación: preparar inicio desde último fotograma del plano 04 oficial (punta vacía, sal consumida conservada) y precisar en prompt que solo cambia foco, pipeta inmóvil y sin gotas. Fotograma temporal inspeccionado, no incorporado al proyecto ni modificado prompt. Preparación pendiente; EP02_SH06 sigue pendiente de vídeo.
+
+## Revisión candidato EP02_SH06 y preparación EP02_SH07 · 2026-10-26
+
+- Vídeo nuevo identificado como `shots/Woman_reacting_to_sound_20261025225448.mp4`, aportado para plano 06: 720×1280, 24 fps, 144 frames (6 s de imagen, contenedor 6,016 s), decodificación completa correcta. Revisado visualmente cada 0,5 s; audio no escuchado.
+- No cumple EP02_SH06: empieza en grabadora con indicador rojizo, cámara se desplaza hacia una mujer y pierde grabadora; no se observa transición verificable del LED a verde ni final de reproducción. Dura 6 s frente a 7 s de montaje previstos. Recomendación: regenerar usando EP02_SH06_START_RED.png y prompt específico del 06, comprobar no usar el prompt de reacción del 05. No se conoce configuración usada en Flow. Archivo conservado, sin oficializar.
+- EP02_SH07: creada `SHOT_REFERENCES/EP02_SH07_START_S2.png` desde último fotograma del 04 oficial, sin IA/retoque; revisada visualmente, continuidad exacta del estado consumido, punta vacía. Tarjeta, shotlist y prompt Flow actualizados. Solo cambio de foco, sin gotas ni movimiento de objetos; generar/usar 6 s. Referencia lista para prueba, vídeo pendiente. SALT_USED.png intacta para otros planos.
+
+## Retirada de vídeo equivocado · 2026-10-26
+
+- Usuario confirma que el vídeo enviado era equivocado y solicita eliminarlo: retirado `shots/Woman_reacting_to_sound_20261025225448.mp4`. Su revisión no permite concluir que el prompt del plano 06 falló; no correspondía al vídeo que se quería revisar. EP02_SH06 sigue pendiente del vídeo correcto.
+- Prompt simplificado del 06 propuesto en conversación, aún no aplicado al archivo. Referencia y prompt del 07 preparados; referencia del plano 01 conservada en shotlist.
