@@ -410,3 +410,15 @@ Este archivo conserva el contexto dentro del repositorio; no supone memoria auto
 - Usuario acepta plano 06. Preparado `shots/EP02_SH06_FINAL.mp4`, tramo 0–7 s, H.264/AAC: 7 s exactos, 720×1280, 24 fps, 168 frames. Decodificación completa y muestras visuales correctas; mantiene cambio LED rojo a verde y reposo final. Audio conservado, no escuchado. Original de 8 s eliminado tras verificar; tarjeta actualizada.
 - Consulta activa EP02_SH08: prompt Flow y tarjeta existentes, generar/usar 8 s. Informe quieto sobre mesa, cámara cenital fija y sombra leve. Guion requiere que el informe establezca evacuación completa a las 18:00.
 - No listo para generar: REPORT_TOP.png y PROPS/REPORT_MASTER.svg referenciados no localizados en disco ni historial Git consultado (búsqueda global de REPORT/informe). Falta preparar y revisar referencia del informe con dato horario legible; el prompt actual no especifica ese texto. Sin vídeo EP02_SH08 en shots. EP02_SH07 sigue pendiente de vídeo.
+
+## Revisión EP02_SH07 y referencia EP02_SH08 · 2026-10-26
+
+- Revisado `shots/Shifting_focus_from_wool_patch_20261025230845.mp4`: 720×1280, 24 fps, 144 frames (6 s de imagen, contenedor 6,016 s), decodificación completa correcta. Muestras generales y detalle cada 0,5 s comparadas con EP02_SH07_START_S2.png. Audio presente, no escuchado.
+- El foco cambia, pero alrededor de 2,5–3 s aparece una superficie de madera con sal adicional bajo la tela y cambia encuadre/relación espacial. Enfoca esa sal nueva en vez de conservar exclusivamente los cristales sobre la lana. No cumple cámara/objetos inmóviles ni continuidad. Recomendación: repetir, explicitando que el foco termina en la sal existente adherida a la misma lana, sin mesa ni cristales nuevos. Archivo intacto; no aceptado ni oficializado.
+- EP02_SH08: generada `SHOT_REFERENCES/REPORT_TOP.png` con image_gen integrada, referencia de madera/luz EP02_SH06_START_RED.png. Revisada: hoja cenital plana, texto exacto y legible «INFORME DE EVACUACIÓN», «Evacuación completa: 18:00», «No quedaba nadie en el edificio.». Madera compatible en estilo, veta distinta del plano de grabadora; papel envejecido con pliegues leves. Imagen propuesta lista para prueba, no aceptada todavía.
+- Prompt Flow del 08 actualizado para preservar texto/geometría durante 8 s y mover solo sombra inferior. Tarjeta corregida para no depender del SVG inexistente. Prompt de imagen/procedencia/revisión en REPORT_TOP_GENERATION.md. Vídeo del 08 pendiente; si Flow deforma texto, usar imagen fija en montaje.
+
+## Reformulación EP02_SH07 · 2026-10-26
+
+- A petición del usuario, prompt Flow actualizado: foco hacia cristales existentes sobre la misma lana, debajo/derecha de zona húmeda; eliminado «lower foreground». Inicio 0–1 s, foco óptico leve 1–4 s, reposo 4–6 s. Fondo/encuadre/escala intactos, sin mesa nueva, sal añadida, caída de tela ni gotas.
+- Tarjeta y notas actualizadas; EP02_SH07_START_S2.png conservada. Texto revisado, prueba pendiente. Vídeo anterior intacto, no oficial.
