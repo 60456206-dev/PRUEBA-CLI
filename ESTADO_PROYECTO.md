@@ -336,3 +336,9 @@ Este archivo conserva el contexto dentro del repositorio; no supone memoria auto
 - Preparada SHOT_REFERENCES/EP02_SH06_START_RED.png: extracción del último fotograma (4,958333 s) del EP02_SH03 oficial, 720×1280, sin IA ni retoque. Revisada visualmente: grabadora sola, LED rojo encendido, botón rojo separado y pantalla oscura; continuidad directa de mesa/luz/objetos del vídeo aceptado. Conserva su detalle 720p y pequeñas variaciones respecto a RECORDER.png.
 - Tarjeta y prompt Flow actualizados para esta imagen y cambio exclusivo del LED a verde, sin manos. Generar 8 s, usar 7 s. Procedencia/revisión en EP02_SH06_START_RED_GENERATION.md.
 - Plano activo EP02_SH06: imagen revisada lista para prueba; aceptación y vídeo pendientes. EP02_SH05 sigue pendiente de vídeo/revisión.
+
+## EP02_SH05 y separación de TikTok Radar · 2026-10-26
+
+- Usuario confirma que la reformulación es para EP02_SH05 (plano 05 del episodio 2). Prompt Flow simplificado conservando escucha fuera de campo, mandíbula tensa una vez, boca cerrada, mirada derecha y cámara fija; eliminadas sal/lente y contradicción de encuadre. Texto revisado, prueba en Flow y vídeo pendientes; causa del bloqueo desconocida. Notas en EP02_SH05_NOTAS.md. Plano activo EP02_SH05; EP02_SH04 sigue oficial.
+- TikTok Radar: independencia total, prohibido reutilizar material de MASTER SERIES. Estilo animado, interpretado como microseries de frutas, nada realista; prompts para Flow e iniciativa en selección de ideas. README actualizado. Solicitud actual solo idea/prompts, sin generar imágenes o vídeos.
+- Propuesta guardada en TIKTOK_RADAR/entregas/2026-10-26/IDEA_Y_PROMPTS_FLOW.md: «El plátano que se compró una cáscara nueva», ficción original de 25 s con cuatro planos, guion y prompts Flow. Texto revisado; sin activos generados, prueba ni aceptación.
