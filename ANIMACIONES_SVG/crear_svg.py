@@ -44,8 +44,8 @@ svg='''<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/19
 <g transform="translate(-512 -768)">
 <g filter="url(#color)"><use xlink:href="#original"/>
 <g class="moving" mask="url(#smoke)"><g filter="url(#vapor)"><use xlink:href="#original"/></g></g>
-<g class="moving"><animateTransform attributeName="transform" type="rotate" values="-1.4 350 700;1.4 350 700;-1.4 350 700" dur="12s" repeatCount="indefinite" calcMode="spline" keyTimes="0;.5;1" keySplines=".42 0 .58 1;.42 0 .58 1"/><g mask="url(#iceClip)"><use xlink:href="#original"/></g></g>
-<g class="moving"><animateTransform attributeName="transform" type="rotate" values="1.9 795 867;-1.9 795 867;1.9 795 867" dur="12s" repeatCount="indefinite" calcMode="spline" keyTimes="0;.5;1" keySplines=".42 0 .58 1;.42 0 .58 1"/><g mask="url(#metalClip)"><use xlink:href="#original"/></g></g>
+<g class="moving"><animateTransform attributeName="transform" type="rotate" values="-1.4 350 700;1.4 350 700;-1.4 350 700" dur="4s" repeatCount="indefinite" calcMode="spline" keyTimes="0;.5;1" keySplines=".42 0 .58 1;.42 0 .58 1"/><g mask="url(#iceClip)"><use xlink:href="#original"/></g></g>
+<g class="moving"><animateTransform attributeName="transform" type="rotate" values="1.9 795 867;-1.9 795 867;1.9 795 867" dur="4s" repeatCount="indefinite" calcMode="spline" keyTimes="0;.5;1" keySplines=".42 0 .58 1;.42 0 .58 1"/><g mask="url(#metalClip)"><use xlink:href="#original"/></g></g>
 </g>
 <g class="moving" style="mix-blend-mode:screen">
 <ellipse cx="280" cy="650" rx="170" ry="300" fill="url(#light)" opacity=".12"><animate attributeName="opacity" values=".12;.44;.12" dur="6s" repeatCount="indefinite"/></ellipse>

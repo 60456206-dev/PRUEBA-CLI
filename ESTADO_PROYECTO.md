@@ -476,3 +476,5 @@ Este archivo conserva el contexto dentro del repositorio; no supone memoria auto
 - Usuario pide cámara con aceleración/desaceleración y formato móvil. Generada ENGRANAJES_INTRO_V2.svg, autónoma, 1080×1920 (9:16); V1 y referencia conservadas. Vista previa y generador apuntan a V2.
 - Cámara: acercamiento 4 % y desplazamiento leve hacia arriba, regreso en bucle de 12 s; curva suave de aceleración/frenado en ambos trayectos. Conserva giro, vapor y saturación. Movimiento reducido desactiva cámara.
 - Revisado XML y capturas Chromium a 390×693 en inicio y máximo acercamiento: ruedas completas, más aire negro vertical. Persiste suavidad/duplicación periférica propia de los recortes de V1. No probado en dispositivo físico. V2 propuesta, aceptación pendiente.
+
+- Ajuste SVG V2 posterior: usuario pide más velocidad en engranajes. Ciclo de giro reducido de 12 a 4 s (3× velocidad), misma amplitud y suavizado; cámara/vapor intactos. SVG regenerado, duraciones comprobadas y captura Chromium a 2 s revisada: ruedas completas, persiste ligera duplicación de bordes. Propuesta actualizada, pendiente aceptación.
