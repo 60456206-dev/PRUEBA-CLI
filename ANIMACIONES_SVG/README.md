@@ -1,3 +1,15 @@
+# Engranajes · V3 frontal · propuesta actual
+
+Abrir `VISTA_PREVIA.html` o `ENGRANAJES_INTRO_V3.svg`. Lienzo móvil 1080×1920, 9:16, autónomo y vectorial. Regenerar con `python3 ANIMACIONES_SVG/crear_svg_frontal.py`.
+
+- Ruedas frontales de hielo azul y metal ámbar, giro opuesto. Diseño gráfico nuevo: no conserva el acabado fotográfico/cristal volumétrico del PNG. V1, V2 y referencia conservadas.
+- Aceleración angular constante por ciclo: θ=360(t/4)² y −450(t/4)² grados, 0≤t≤4 s. A 2 s recorren 90° y −112,5°. Se reinicia la velocidad cada 4 s; no es aceleración ilimitada ni velocidad constante.
+- Estelas estilizadas de vapor: rotación vinculada a cada rueda, desplazamiento y opacidad animados con turbulencia. No simulación física de hielo seco.
+- Cámara con acercamiento suave del 4 % en bucle de 12 s. Preferencia de movimiento reducido: ruedas estáticas y sin estelas animadas.
+- Revisadas capturas Chromium a 390×693 en 0/2 s: ambas ruedas completas, frontales, cambio de orientación y estelas visibles. Más gráfico y menos realista que V2; pendiente aceptación y prueba en teléfono físico.
+
+---
+
 # Engranajes · propuesta V2 · móvil
 
 Abrir `VISTA_PREVIA.html` o directamente `ENGRANAJES_INTRO_V2.svg` en navegador. El SVG es autónomo, sin peticiones externas; PNG original integrado (no vectorización pura). Referencia original intacta.
