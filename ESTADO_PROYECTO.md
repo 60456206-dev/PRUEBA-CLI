@@ -320,3 +320,19 @@ Este archivo conserva el contexto dentro del repositorio; no supone memoria auto
 
 - Usuario acepta como oficial `shots/Water_droplet_dissolving_salt_cr…_20261024191634.mp4` (8 s), ya generado y revisado visualmente. Aceptadas las dos descargas y el agua temporalmente abultada; la reducción de sal y el final estable cumplen la acción principal.
 - Elección registrada para montaje. Archivo conservado con su nombre y duración actuales; candidatos anteriores conservados. EP02_SH04 cerrado; siguiente plano pendiente: EP02_SH05.
+
+## Comprobación EP02_SH05 · 2026-10-25
+
+- Plano activo EP02_SH05. Tarjeta, imagen ALBA_DOOR.png y prompt Flow existentes: Alba oye algo fuera de campo y tensa la mandíbula una vez, boca cerrada, mirada derecha y cámara fija; generar/usar 6 s.
+- Imagen existente revisada visualmente: boca cerrada, mirada derecha, puerta oscura y vestuario visibles. Encuadre más abierto (hasta cintura) que el primer plano descrito en tarjeta/prompt; conviene preservar la composición de la referencia. Materiales disponibles para prueba; no generado ni aceptado vídeo de este plano en los archivos consultados (sin historial bajo EP02_SH05).
+
+## Comprobación EP02_SH06 · 2026-10-25
+
+- Consulta activa: EP02_SH06; EP02_SH05 sigue pendiente de vídeo/revisión. Prompt Flow existente: grabadora inmóvil, LED de rojo a verde una vez; generar 8 s y usar 7 s.
+- No listo para generar con la referencia actual: RECORDER.png revisada visualmente muestra mano antes de pulsar y LED apagado, mientras este plano necesita grabadora sola con LED inicialmente rojo. Pendiente preparar/revisar inicio coherente; opción: fotograma final del EP02_SH03 oficial. No se ha extraído ni generado imagen ni cambiado el prompt. Sin vídeo EP02_SH06 localizado en shots ni historial por ese nombre.
+
+## Imagen EP02_SH06 preparada · 2026-10-25
+
+- Preparada SHOT_REFERENCES/EP02_SH06_START_RED.png: extracción del último fotograma (4,958333 s) del EP02_SH03 oficial, 720×1280, sin IA ni retoque. Revisada visualmente: grabadora sola, LED rojo encendido, botón rojo separado y pantalla oscura; continuidad directa de mesa/luz/objetos del vídeo aceptado. Conserva su detalle 720p y pequeñas variaciones respecto a RECORDER.png.
+- Tarjeta y prompt Flow actualizados para esta imagen y cambio exclusivo del LED a verde, sin manos. Generar 8 s, usar 7 s. Procedencia/revisión en EP02_SH06_START_RED_GENERATION.md.
+- Plano activo EP02_SH06: imagen revisada lista para prueba; aceptación y vídeo pendientes. EP02_SH05 sigue pendiente de vídeo/revisión.
