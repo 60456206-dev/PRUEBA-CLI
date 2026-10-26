@@ -4,7 +4,7 @@ Estado: propuesta y textos revisados; pendiente aceptación. Tres imágenes gene
 
 ## Enfoque
 
-Explicar el regreso del Ghost Photoshoot con animación 3D caricaturesca original. Una sábana común se presenta como un modelo de pasarela: lo divertido es el contraste entre un objeto cotidiano y una sesión de fotos exageradamente elegante. El espectador recibe una idea visual reconocible y entiende qué hace la gente en el trend. No es una frutinovela ni una supuesta noticia sobre un fantasma real.
+Explicar el regreso del Ghost Photoshoot con animación 3D cinematográfica semirrealista original. Una sábana común se presenta como un modelo de pasarela: lo divertido es el contraste entre un objeto cotidiano y una sesión de fotos exageradamente elegante. El espectador recibe una idea visual reconocible y entiende qué hace la gente en el trend. No es una frutinovela ni una supuesta noticia sobre un fantasma real.
 
 Gancho principal: «Tu disfraz de Halloween ya está en tu cama».
 Alternativa A: «¿Una sábana y unas gafas? Sí: ese es el disfraz».
@@ -25,13 +25,13 @@ La referencia a 2020 se apoya en Know Your Meme; el regreso estacional, en las r
 
 ## Dirección visual
 
-Animación 3D estilizada: volúmenes redondos, proporciones caricaturescas, material mate tipo juguete, colores menta/lila y acentos turquesa. Gafas negras grandes y poses expresivas. Nada fotorrealista. Disfraz con coronilla redonda y dobladillo ondulado, dos zapatillas turquesa visibles. Personaje de tamaño adulto, sin cara humana ni boca móvil; no vuela. Escenarios simples, iluminados y cotidianos. Todas las referencias futuras se crearán desde cero en esta carpeta.
+Animación 3D cinematográfica semirrealista: diseño animado con tejido visible, costuras, pliegues naturales, reflejos creíbles, iluminación direccional suave y sombras de contacto. Colores menta/lila y acentos turquesa. Gafas negras grandes y poses expresivas. Mantener apariencia de película animada. Disfraz con coronilla redonda y dobladillo ondulado, dos zapatillas turquesa visibles. Personaje de tamaño adulto, sin cara humana ni boca móvil; no vuela. Escenarios simples, iluminados y cotidianos. Todas las referencias futuras se crearán desde cero en esta carpeta.
 
 Producción habitual: tres imágenes base (cama, personaje en estudio y personaje junto a lavadora) y dos clips de Flow, planos 02 y 04. Plano 01: acercamiento sobre imagen; plano 03: tarjetas del fotograma final de 02. Así se conservan cuatro escenas sin cuatro generaciones de vídeo. Prompts adicionales 01 y 03 disponibles si se opta por animarlos, sin ser necesarios. Referencias generadas y revisadas: ver REFERENCIAS/README.md.
 
 ## Prompt general de dirección
 
-Create an original vertical 9:16 stylized 3D cartoon explainer about the sheet-ghost photoshoot trend. Rounded toy-like forms, matte surfaces, playful fashion poses, soft bright lighting, mint and lavender interiors, turquoise accents. The recurring figure is an adult-sized person wearing a white sheet ghost costume with a rounded crown and wavy hem, oversized black sunglasses and turquoise sneakers. The feet stay on the floor. Keep costume, glasses and shoes consistent. Simple compositions with room for captions to be added later. Fully animated visuals, no photorealism. Each shot is generated separately using its own action prompt. No generated lettering, dialogue or music.
+Create an original vertical 9:16 stylized 3D cartoon explainer about the sheet-ghost photoshoot trend. Detailed semi-realistic animated forms, physically based materials, fine cotton weave, stitched hems, natural cloth weight, realistic glass reflections, playful fashion poses, soft directional cinematic lighting, mint and lavender interiors, turquoise accents. The recurring figure is an adult-sized person wearing a white sheet ghost costume with a rounded crown and wavy hem, oversized black sunglasses and turquoise sneakers. The feet stay on the floor. Keep costume, glasses and shoes consistent. Simple compositions with room for captions to be added later. Fully animated visuals, no photorealism. Each shot is generated separately using its own action prompt. No generated lettering, dialogue or music.
 
 Este bloque define dirección; no pretende generar el montaje completo. Cada archivo de PROMPTS_FLOW es autocontenido. No subir imágenes de MASTER SERIES. Las duraciones son útiles de montaje: si Flow ofrece otro largo, elegir uno suficiente y recortar. No se han comprobado las opciones de la cuenta del usuario.
 

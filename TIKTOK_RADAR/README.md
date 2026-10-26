@@ -5,7 +5,7 @@ Proyecto independiente de MASTER_SERIES_PACKAGE. Objetivo: preparar una propuest
 ## Acuerdos vigentes · 2026-10-26
 
 - Independencia total de MASTER_SERIES_PACKAGE: no reutilizar ni combinar sus imágenes, personajes, escenarios, vídeos, referencias o continuidad. Crear y guardar los materiales propios dentro de TIKTOK_RADAR.
-- Estética animada y estilizada, nunca realista ni fotorrealista. La referencia a las series de frutas se limita al estilo visual de animación: no implica usar frutas, frutinovelas, sus personajes ni sus argumentos. Elegir personajes y escenarios según el tema investigado.
+- Estética de animación 3D cinematográfica semirrealista: conservar diseño animado con más detalle, materiales creíbles, texturas, pliegues naturales, profundidad e iluminación cuidada. Evitar superficies simplificadas tipo juguete. Aplicar también a las imágenes de referencia de cada plano. La referencia a las series de frutas se limita al estilo visual de animación: no implica usar frutas, frutinovelas, sus personajes ni sus argumentos. Elegir personajes y escenarios según el tema investigado.
 - Herramienta de vídeo elegida: Google Flow. Entregar prompts por plano listos para pegar, con una acción sencilla y continuidad propia.
 - Elegir ideas activamente: proponer una idea concreta con gancho, conflicto y giro, sin delegar toda la selección al usuario. No prometer viralidad.
 - Toda nueva idea debe partir de una investigación profunda y actual de contenido con repercusión en TikTok y otras redes en el momento de la petición. No sustituir esa investigación por ficción aleatoria, intuiciones o temas genéricos. La animación es la forma de presentar el tema investigado.

@@ -457,3 +457,10 @@ Este archivo conserva el contexto dentro del repositorio; no supone memoria auto
 
 - Usuario oficializa la edición revisada `shots/EP02_SH08_FINAL.mp4`: 8 s exactos, 720×1280, 24 fps, 192 frames, sin audio. Verificación técnica y visual completada al retomar; título/hora conservados con acercamiento del 10 %. Tarjeta actualizada y descarte Flow 20261025234500 eliminado.
 - Plano activo: EP03_SH01, llave negra sobre dibujo de compuerta; montaje 5 s (Flow generar 6 s). Guion, tarjeta y prompt leídos. KEY_TABLE.png y KEY_MASTER.png no localizados en disco ni historial consultado; existe KEY_HAND.png para continuidad. Pendiente preparar y revisar imagen inicial antes de generar vídeo.
+
+
+## TikTok Radar · cambio de estilo · 2026-10-26
+
+- Usuario pide mantener animación con mayor realismo y detalle, aplicado a las shot references. Sustituye el acuerdo anterior «nunca realista»: dirección actual 3D cinematográfica semirrealista, materiales/texturas/luz creíbles y diseño animado.
+- Generadas con image_gen y revisadas individualmente 01_CAMA_V2.png, 02_PERSONAJE_V2.png y 04_LAVANDERIA_V2.png en TIKTOK_RADAR/entregas/2026-10-25_01/REFERENCIAS/. Originales conservados. Más tejido, costuras y reflejos; pliegues varían y lavandería tiene sombras de ventana más fuertes que estudio. Propuestas, no aceptadas aún; vídeo sin probar.
+- Actualizados README, dirección de propuesta y cuatro prompts Flow. Prompts exactos y revisión V2 guardados. MASTER SERIES sin cambios; su plano pendiente sigue EP03_SH01.
