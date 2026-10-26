@@ -422,3 +422,16 @@ Este archivo conserva el contexto dentro del repositorio; no supone memoria auto
 
 - A petición del usuario, prompt Flow actualizado: foco hacia cristales existentes sobre la misma lana, debajo/derecha de zona húmeda; eliminado «lower foreground». Inicio 0–1 s, foco óptico leve 1–4 s, reposo 4–6 s. Fondo/encuadre/escala intactos, sin mesa nueva, sal añadida, caída de tela ni gotas.
 - Tarjeta y notas actualizadas; EP02_SH07_START_S2.png conservada. Texto revisado, prueba pendiente. Vídeo anterior intacto, no oficial.
+
+## Segunda revisión EP02_SH07 · 2026-10-26
+
+- Revisado `shots/Shifting_focus_on_salt_crystals_20261025231908.mp4`: 720×1280, 24 fps, 144 fotogramas (6 s de imagen, contenedor 6,016 s); decodificación completa correcta. Muestras generales cada 0,5 s y detalle cada 0,25 s frente a EP02_SH07_START_S2.png. Audio presente, no escuchado.
+- Ya no aparece la mesa con sal del intento anterior, pero introduce nuevas descargas de agua aproximadamente a 1, 2 y 3 s, un grupo blanco prominente que no estaba en el inicio y retirada de pipeta hacia 4–4,5 s. El cambio de foco no queda claramente legible como única acción. Rompe continuidad de superficie y pipeta inmóviles.
+- Recomendación: no oficializar esta versión. Preparar el plano de 6 s desde la referencia fija con cambio de enfoque controlado en edición para conservar el estado S2, en lugar de otra generación libre. Propuesta pendiente de autorización; no se ha creado montaje. Ambos candidatos conservados intactos.
+
+## EP02_SH07 oficial mediante edición · 2026-10-26
+
+- Usuario autoriza solución desde imagen fija y la elige como final. Creado `shots/EP02_SH07_FINAL.mp4` desde EP02_SH07_START_S2.png: 6 s exactos, 720×1280, 24 fps, 144 frames, sin audio para montaje.
+- Cambio de enfoque simulado: referencia intacta 0–1 s; desenfoque localizado suave de zona consumida 1–4 s, sal seca adyacente conserva detalle; reposo 4–6 s. No es cambio óptico real ni reparación del movimiento de Flow; escena reconstruida desde referencia. Pipeta vacía, sal, encuadre y fondo permanecen inmóviles.
+- Revisados contacto cada segundo y detalle inicio/final, decodificación completa sin errores. Efecto sutil, más visible en detalle. Script reproducible tools/render_ep02_sh07.py. Tarjeta/notas actualizadas.
+- Eliminados tras verificar los dos descartes 20261025230845 y 20261025231908. EP02_SH07 cerrado; siguiente plano EP02_SH08 con REPORT_TOP.png y prompt listos, vídeo pendiente.
