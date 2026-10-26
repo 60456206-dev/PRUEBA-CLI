@@ -464,3 +464,9 @@ Este archivo conserva el contexto dentro del repositorio; no supone memoria auto
 - Usuario pide mantener animación con mayor realismo y detalle, aplicado a las shot references. Sustituye el acuerdo anterior «nunca realista»: dirección actual 3D cinematográfica semirrealista, materiales/texturas/luz creíbles y diseño animado.
 - Generadas con image_gen y revisadas individualmente 01_CAMA_V2.png, 02_PERSONAJE_V2.png y 04_LAVANDERIA_V2.png en TIKTOK_RADAR/entregas/2026-10-25_01/REFERENCIAS/. Originales conservados. Más tejido, costuras y reflejos; pliegues varían y lavandería tiene sombras de ventana más fuertes que estudio. Propuestas, no aceptadas aún; vídeo sin probar.
 - Actualizados README, dirección de propuesta y cuatro prompts Flow. Prompts exactos y revisión V2 guardados. MASTER SERIES sin cambios; su plano pendiente sigue EP03_SH01.
+
+## Animación SVG · trabajo activo · 2026-10-26
+
+- Usuario pide intro basada en `ANIMACIONES_SVG/Sin título.png`, más saturación, negro puro y vapor conservado; aclara que el movimiento de engranajes es esencial.
+- Generados `ENGRANAJES_INTRO_V1.svg`, `VISTA_PREVIA.html`, generador y README en esa carpeta. SVG híbrido con PNG integrado, saturación 1,38, vapor animado y giro opuesto oscilante ±1,4°/±1,9° en 12 s; no rotación completa ni vectorización pura. Referencia intacta.
+- Revisado visualmente en Chromium en extremos del movimiento: composición/texturas conservadas, ligera suavidad/duplicación de bordes por recortes superpuestos. Propuesta V1, pendiente de aceptación y ajustes; no integrada en app. Proyectos audiovisuales anteriores sin cambios.
