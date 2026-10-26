@@ -435,3 +435,8 @@ Este archivo conserva el contexto dentro del repositorio; no supone memoria auto
 - Cambio de enfoque simulado: referencia intacta 0–1 s; desenfoque localizado suave de zona consumida 1–4 s, sal seca adyacente conserva detalle; reposo 4–6 s. No es cambio óptico real ni reparación del movimiento de Flow; escena reconstruida desde referencia. Pipeta vacía, sal, encuadre y fondo permanecen inmóviles.
 - Revisados contacto cada segundo y detalle inicio/final, decodificación completa sin errores. Efecto sutil, más visible en detalle. Script reproducible tools/render_ep02_sh07.py. Tarjeta/notas actualizadas.
 - Eliminados tras verificar los dos descartes 20261025230845 y 20261025231908. EP02_SH07 cerrado; siguiente plano EP02_SH08 con REPORT_TOP.png y prompt listos, vídeo pendiente.
+
+## EP02_SH08 · más dinamismo · 2026-10-26
+
+- Usuario informa resultado demasiado estático y pide modificar prompt. Flow actualizado: acercamiento cenital suave de ~10 % hacia «Evacuación completa: 18:00», frenado y reposo 7–8 s; título/línea completos y nítidos. Solo cámara se mueve, papel/texto/luz constantes. Sustituye cámara fija para Flow; referencia conservada.
+- Tarjeta y notas actualizadas. Texto revisado; nueva generación y revisión pendientes. No se evaluó un vídeo nuevo en esta petición.
