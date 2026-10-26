@@ -478,3 +478,5 @@ Este archivo conserva el contexto dentro del repositorio; no supone memoria auto
 - Revisado XML y capturas Chromium a 390×693 en inicio y máximo acercamiento: ruedas completas, más aire negro vertical. Persiste suavidad/duplicación periférica propia de los recortes de V1. No probado en dispositivo físico. V2 propuesta, aceptación pendiente.
 
 - Ajuste SVG V2 posterior: usuario pide más velocidad en engranajes. Ciclo de giro reducido de 12 a 4 s (3× velocidad), misma amplitud y suavizado; cámara/vapor intactos. SVG regenerado, duraciones comprobadas y captura Chromium a 2 s revisada: ruedas completas, persiste ligera duplicación de bordes. Propuesta actualizada, pendiente aceptación.
+
+- Ajuste para ventana de atención de 2 s: V2 ahora recorre 18°/24° en esos 2 s (amplitud ±9°/±12°, ciclo 4 s), entrada de 0,25 s desde 65 % de opacidad. Retirada copia fija debajo de ruedas; fallback estático conservado para movimiento reducido. XML y capturas Chromium inicio/2 s revisados: giro mucho mayor, ruedas completas; huecos oscuros visibles entre algunos dientes por recortes de la imagen, sin reconstrucción 3D. Propuesta pendiente de aceptación.

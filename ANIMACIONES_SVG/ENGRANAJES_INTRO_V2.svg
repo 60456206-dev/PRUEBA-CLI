@@ -26,9 +26,11 @@
 <radialGradient id="light"><stop stop-color="#fff" stop-opacity=".16"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
 </defs>
 <style>
-.intro{animation:appear 2.2s cubic-bezier(.16,1,.3,1) both}
-@keyframes appear{from{opacity:0}to{opacity:1}}
-@media(prefers-reduced-motion:reduce){.intro{animation:none}.moving{display:none}.camera{transform:none}}
+.still{display:none}
+.intro{animation:appear .25s cubic-bezier(.16,1,.3,1) both}
+@keyframes appear{from{opacity:.65}to{opacity:1}}
+@media(prefers-reduced-motion:reduce){.still{display:none}
+.still{display:inline}.intro{animation:none}.moving{display:none}.camera{transform:none}}
 </style>
 <rect width="1080" height="1920" fill="#000000"/>
 <g class="intro">
@@ -38,10 +40,10 @@
 <g class="camera">
 <animateTransform attributeName="transform" type="translate" values="0 0;-4 -16;0 0" dur="12s" repeatCount="indefinite" calcMode="spline" keyTimes="0;.5;1" keySplines=".42 0 .58 1;.42 0 .58 1"/>
 <g transform="translate(-512 -768)">
-<g filter="url(#color)"><use xlink:href="#original"/>
+<g filter="url(#color)"><use class="still" xlink:href="#original"/><use class="moving" mask="url(#smoke)" xlink:href="#original"/>
 <g class="moving" mask="url(#smoke)"><g filter="url(#vapor)"><use xlink:href="#original"/></g></g>
-<g class="moving"><animateTransform attributeName="transform" type="rotate" values="-1.4 350 700;1.4 350 700;-1.4 350 700" dur="4s" repeatCount="indefinite" calcMode="spline" keyTimes="0;.5;1" keySplines=".42 0 .58 1;.42 0 .58 1"/><g mask="url(#iceClip)"><use xlink:href="#original"/></g></g>
-<g class="moving"><animateTransform attributeName="transform" type="rotate" values="1.9 795 867;-1.9 795 867;1.9 795 867" dur="4s" repeatCount="indefinite" calcMode="spline" keyTimes="0;.5;1" keySplines=".42 0 .58 1;.42 0 .58 1"/><g mask="url(#metalClip)"><use xlink:href="#original"/></g></g>
+<g class="moving"><animateTransform attributeName="transform" type="rotate" values="-9 350 700;9 350 700;-9 350 700" dur="4s" repeatCount="indefinite" calcMode="spline" keyTimes="0;.5;1" keySplines=".42 0 .58 1;.42 0 .58 1"/><g mask="url(#iceClip)"><use xlink:href="#original"/></g></g>
+<g class="moving"><animateTransform attributeName="transform" type="rotate" values="12 795 867;-12 795 867;12 795 867" dur="4s" repeatCount="indefinite" calcMode="spline" keyTimes="0;.5;1" keySplines=".42 0 .58 1;.42 0 .58 1"/><g mask="url(#metalClip)"><use xlink:href="#original"/></g></g>
 </g>
 <g class="moving" style="mix-blend-mode:screen">
 <ellipse cx="280" cy="650" rx="170" ry="300" fill="url(#light)" opacity=".12"><animate attributeName="opacity" values=".12;.44;.12" dur="6s" repeatCount="indefinite"/></ellipse>
