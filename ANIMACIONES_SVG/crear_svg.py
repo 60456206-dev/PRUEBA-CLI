@@ -4,7 +4,7 @@ p=Path(__file__).resolve().parent
 source=base64.b64encode((p/'Sin título.png').read_bytes()).decode()
 svg='''<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1080" height="1920" style="width:100%;height:100%" viewBox="0 0 1080 1920" role="img" aria-labelledby="title desc">
 <title id="title">Cristal y ámbar — introducción animada</title>
-<desc id="desc">Engranajes originales con colores intensificados sobre negro puro. Giro opuesto de ida y vuelta y vapor de hielo seco en movimiento suave y reflejos pulsantes. Cámara con acercamiento y regreso acelerados y frenados suavemente, en formato móvil 9:16. Imagen PNG integrada; no es vectorización pura.</desc>
+<desc id="desc">Engranajes originales con colores intensificados sobre negro puro. Giro continuo en sentidos opuestos, con aceleración y desaceleración sin detenerse y vapor de hielo seco en movimiento suave y reflejos pulsantes. Cámara con acercamiento y regreso acelerados y frenados suavemente, en formato móvil 9:16. Imagen PNG integrada; no es vectorización pura.</desc>
 <defs>
 <image id="original" width="1024" height="1536" xlink:href="data:image/png;base64,SOURCE"/>
 <path id="iceShape" d="M185 407L304 376 353 444 393 438 414 369 478 391 494 486 527 508 574 484 617 554 589 622 605 669 638 700 610 789 569 807 545 868 558 941 489 984 456 960 424 1022 356 1025 325 950 277 925 222 974 179 942 193 859 166 814 74 820 61 753 124 696 125 651 63 601 87 541 139 503 204 533 222 503 199 465Z"/><path id="metalShape" d="M669 609L747 592 774 646 803 654 825 607 879 637 883 709 916 737 946 717 978 782 947 837 960 880 987 907 973 981 931 1005 936 1066 874 1108 822 1084 790 1094 750 1133 679 1095 677 1048 634 1012 590 1021 555 959 577 909 566 864 542 844 556 784 609 777 627 743 595 704 628 665 667 681 680 651Z"/>
@@ -46,8 +46,10 @@ svg='''<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/19
 <g transform="translate(-512 -768)">
 <g filter="url(#color)"><use class="still" xlink:href="#original"/><use class="moving" mask="url(#smoke)" xlink:href="#original"/>
 <g class="moving" mask="url(#smoke)"><g filter="url(#vapor)"><use xlink:href="#original"/></g></g>
-<g class="moving"><animateTransform attributeName="transform" type="rotate" values="-9 350 700;9 350 700;-9 350 700" dur="1.6s" repeatCount="indefinite" calcMode="spline" keyTimes="0;.5;1" keySplines=".42 0 .58 1;.42 0 .58 1"/><g mask="url(#iceClip)"><use xlink:href="#original"/></g></g>
-<g class="moving"><animateTransform attributeName="transform" type="rotate" values="12 795 867;-12 795 867;12 795 867" dur="1.6s" repeatCount="indefinite" calcMode="spline" keyTimes="0;.5;1" keySplines=".42 0 .58 1;.42 0 .58 1"/><g mask="url(#metalClip)"><use xlink:href="#original"/></g></g>
+<g class="moving"><animateTransform attributeName="transform" type="rotate" from="0 350 700" to="36000 350 700" dur="120s" repeatCount="indefinite" calcMode="linear"/>
+<g><animateTransform attributeName="transform" type="rotate" values="0 350 700;55 350 700;0 350 700;-55 350 700;0 350 700" dur="3.7s" repeatCount="indefinite" calcMode="spline" keyTimes="0;.25;.5;.75;1" keySplines=".33 .52 .67 1;.33 0 .67 .48;.33 .52 .67 1;.33 0 .67 .48"/><g mask="url(#iceClip)"><use xlink:href="#original"/></g></g></g>
+<g class="moving"><animateTransform attributeName="transform" type="rotate" from="0 795 867" to="-36000 795 867" dur="120s" repeatCount="indefinite" calcMode="linear"/>
+<g><animateTransform attributeName="transform" type="rotate" values="0 795 867;-55 795 867;0 795 867;55 795 867;0 795 867" dur="3.7s" repeatCount="indefinite" calcMode="spline" keyTimes="0;.25;.5;.75;1" keySplines=".33 .52 .67 1;.33 0 .67 .48;.33 .52 .67 1;.33 0 .67 .48"/><g mask="url(#metalClip)"><use xlink:href="#original"/></g></g></g>
 </g>
 <g class="moving" style="mix-blend-mode:screen">
 <ellipse cx="280" cy="650" rx="170" ry="300" fill="url(#light)" opacity=".12"><animate attributeName="opacity" values=".12;.44;.12" dur="6s" repeatCount="indefinite"/></ellipse>

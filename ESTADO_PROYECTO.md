@@ -492,3 +492,14 @@ Este archivo conserva el contexto dentro del repositorio; no supone memoria auto
 - Usuario rechaza V3 y elige explícitamente el aspecto de V2. Objetivo activo: acelerar esos mismos engranajes sobre la misma imagen, sin rediseño frontal. Vista previa restaurada a V2; V3 conservada pero no activa.
 - Giro V2 reducido de 4 a 1,6 s (2,5× más rápido), mismos ±9°/±12°. Cámara, vapor, PNG, colores y 9:16 intactos. Continúa oscilación, no giro 3D continuo.
 - XML/duraciones verificados y extremo a 0,8 s revisado en Chromium móvil: ruedas completas, persisten huecos oscuros de recorte. Apariencia V2 elegida; nuevo ritmo pendiente de aceptación.
+
+## SVG V2 · giro continuo rápido · 2026-10-26
+
+- Usuario pide giro continuo acelerando/desacelerando y movimiento rápido claramente perceptible. Sustituida oscilación por vueltas completas opuestas de 2 s, curva (.4,.12,.6,.88), sin parada ni inversión; velocidad continua al repetir. Misma imagen, cámara, vapor y 9:16.
+- Generador y V2 actualizados. Revisados XML y seis capturas Chromium móvil, incluyendo 1,999/2,001 s: cierre sin salto visible. Persisten huecos negros y solapes; al rotar recortes planos también rota la perspectiva de sus ejes, sin reconstrucción mecánica 3D.
+- Propuesta generada y revisada; pendiente aceptación del usuario. Vista previa sigue en V2; V1/V3 y referencia conservadas.
+
+## SVG V2 · efecto de giro sin fin · 2026-10-26
+
+- Usuario aclara que no quiere percibir un ciclo de 2 s, sino giro continuo mediante un efecto. Sustituido frenado por vuelta por giro base constante de 300°/s y modulación independiente ±55°/3,7 s; aceleración/desaceleración sin parada ni inversión. Mantiene imagen y resto de V2.
+- Generados SVG y generador actualizados; XML verificado. Revisión visual en Chromium móvil registrada tras capturas. Persisten limitaciones de recortes 2D (huecos, solapes y perspectiva rotatoria). Propuesta pendiente de aceptación.
