@@ -486,3 +486,9 @@ Este archivo conserva el contexto dentro del repositorio; no supone memoria auto
 - Usuario pide aceleración constante, vista frontal y humo moviéndose con los engranajes. Creada V3 vectorial con generador crear_svg_frontal.py; vista previa apunta a V3. V1/V2 y PNG conservados.
 - Giro opuesto con aceleración constante por ciclo de 4 s, recorrido 90°/112,5° a 2 s; velocidad se reinicia cada ciclo. Estelas giran con ruedas, además de desplazarse y variar opacidad. Cámara suave y 9:16 conservados.
 - Revisados XML y capturas Chromium 0/2 s a tamaño móvil: ruedas completas y frontales. Cambio relevante: diseño vectorial gráfico, pierde acabado fotográfico y volumen cristalino original; vapor estilizado. Propuesta, pendiente aceptación, sin push en este turno.
+
+## Retorno a SVG V2 · misma imagen · 2026-10-26
+
+- Usuario rechaza V3 y elige explícitamente el aspecto de V2. Objetivo activo: acelerar esos mismos engranajes sobre la misma imagen, sin rediseño frontal. Vista previa restaurada a V2; V3 conservada pero no activa.
+- Giro V2 reducido de 4 a 1,6 s (2,5× más rápido), mismos ±9°/±12°. Cámara, vapor, PNG, colores y 9:16 intactos. Continúa oscilación, no giro 3D continuo.
+- XML/duraciones verificados y extremo a 0,8 s revisado en Chromium móvil: ruedas completas, persisten huecos oscuros de recorte. Apariencia V2 elegida; nuevo ritmo pendiente de aceptación.

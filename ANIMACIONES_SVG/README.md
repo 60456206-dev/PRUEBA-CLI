@@ -1,3 +1,13 @@
+# Versión activa: V2 · imagen original · giro más rápido
+
+Abrir `VISTA_PREVIA.html` o `ENGRANAJES_INTRO_V2.svg`. Regenerar con `python3 ANIMACIONES_SVG/crear_svg.py`.
+
+Usuario elige el aspecto de V2 y rechaza el rediseño V3. Se conserva la misma imagen integrada, encuadre 9:16, cámara, vapor y amplitud de giro ±9°/±12°. Solo el ciclo de las ruedas baja de 4 a 1,6 s: 2,5× más rápido, con recorrido de ida en 0,8 s. Sigue siendo giro de ida y vuelta de recortes de imagen, no rotación 3D continua. V3 conservada como propuesta rechazada, fuera de la vista previa.
+
+Verificado XML y duración independiente de cámara (12 s). Revisión visual móvil del extremo a 0,8 s: imagen original y ruedas completas; persisten huecos oscuros de recorte entre algunos dientes. Ajuste de velocidad pendiente de aceptación.
+
+## Historial de propuestas (parámetros anteriores)
+
 # Engranajes · V3 frontal · propuesta actual
 
 Abrir `VISTA_PREVIA.html` o `ENGRANAJES_INTRO_V3.svg`. Lienzo móvil 1080×1920, 9:16, autónomo y vectorial. Regenerar con `python3 ANIMACIONES_SVG/crear_svg_frontal.py`.
