@@ -503,3 +503,25 @@ Este archivo conserva el contexto dentro del repositorio; no supone memoria auto
 
 - Usuario aclara que no quiere percibir un ciclo de 2 s, sino giro continuo mediante un efecto. Sustituido frenado por vuelta por giro base constante de 300°/s y modulación independiente ±55°/3,7 s; aceleración/desaceleración sin parada ni inversión. Mantiene imagen y resto de V2.
 - Generados SVG y generador actualizados; XML verificado. Revisión visual en Chromium móvil registrada tras capturas. Persisten limitaciones de recortes 2D (huecos, solapes y perspectiva rotatoria). Propuesta pendiente de aceptación.
+
+## EP03 · evaluación de automatización · 2026-10-28
+
+- Usuario retoma MASTER SERIES tras EP02 y delega operación de generación y push; pide primero evaluar alternativas a Flow/Firefox local conservando el flujo de producción en Flow. Plano siguiente EP03_SH01; preparación de referencia sigue pendiente según último estado.
+- Revisados puente Firefox, manifiesto y operaciones: lectura/clic/texto/carga/captura; no implementa recepción del MP4 en el repositorio. Sigue sin prueba integral en equipo del usuario.
+- Recomendación propuesta: Flow en Chrome local + Playwright (extensión para sesión abierta) y conexión privada con este entorno; validar carga, generación única, descarga y transferencia antes de automatizar EP03. Chrome DevTools MCP es alternativa; Firefox propio queda como respaldo. Veo API es otra vía técnica, con facturación propia y sin equivalencia con trabajar en el proyecto Flow.
+- Fuentes oficiales revisadas: support.google.com/flow/answer/16353333, playwright.dev/mcp/configuration/browser-extension, github.com/ChromeDevTools/chrome-devtools-mcp, ai.google.dev/gemini-api/docs/veo y /pricing. Búsqueda de plugins no devolvió integración directa pertinente (catálogo no exhaustivo).
+- No instalado/conectado navegador ni generados vídeos en esta evaluación. Arquitectura propuesta, no validada ni elegida por el usuario. Se conserva revisión visual por intento y no comprar créditos. Oficialización/borrado siguen sujetos al acuerdo de aceptación vigente; delegación operativa y push no se interpretan como aceptación automática de candidatos.
+
+- Usuario elige avanzar con conexión Chrome/Playwright y pide pasos para delegar control. Procedimiento: extensión oficial, servidor local Playwright MCP 0.0.83 en loopback:8931 y túnel SSH inverso hacia el Codespace actual. Comandos CLI comprobados en este entorno; conexión del usuario, carga/descarga y generación todavía pendientes. Usar URL http://localhost:8931/mcp por validación Host del servidor. No hace falta transmitir contraseñas ni token de extensión por chat.
+
+- Conexión 2026-10-28: usuario informa ambas terminales abiertas. Verificados HTTP 200, inicialización MCP y listado de herramientas a través de localhost:8931; túnel operativo. Solicitada primera lectura browser_snapshot; pendiente respuesta/conexión de extensión con pestaña Flow. No se ha generado ni gastado créditos. Cliente temporal en /tmp/flow-mcp/client.py, sesión fuera del repositorio.
+
+- Conexión Chrome confirmada: browser_snapshot devuelve proyecto Flow af9c3819-f006-4572-85b5-0aaf9636308a, título «oct 27 - 20:13», interfaz española e insignia PLUS. Campo de petición vacío y generación deshabilitada. Lectura de pestaña verificada; carga/descarga, escritura y generación aún sin probar. No se gastaron créditos.
+
+## EP03 · producción autónoma autorizada · 2026-10-28
+
+- Usuario autoriza completar los ocho planos: preparar/revisar imagen, generar en Flow, descargar y evaluar; máximo dos generaciones de vídeo por plano (segunda con prompt corregido solo si falla primera); después ajustar duración, renombrar FINAL, actualizar documentación y hacer push. Esta delegación sustituye la aceptación individual pendiente para EP03. Sin tercera generación; documentar concesiones. Parar y avisar si faltan créditos para que usuario cambie cuenta; no comprar.
+- Plano activo EP03_SH01. KEY_TABLE/KEY_MASTER ausentes en disco e historial; image_gen en curso con KEY_HAND y ARCHIVE_MASTER como referencias. Interfaz Flow leída/capturada: 9:16, una salida y confirmación previa; modelo mostrado Omni 1.1 Flash. Intento de seleccionar Veo 3.1 Fast agotó tiempo; cambio NO confirmado.
+
+- KEY_TABLE.png generada/revisada/seleccionada; prompt Flow SH01 ajustado y tarjeta actualizada. Concesiones visuales y prompt de imagen en KEY_TABLE_GENERATION.md. Ninguna generación de vídeo enviada (0/2). Conexión dejó de responder incluso a initialize MCP (8 s sin bytes), tras acceso inicial correcto; pendiente diagnóstico de terminales locales del usuario. Descarga MP4 aún no validada.
+- Precisión del acuerdo EP03: si primera versión falla, una segunda con prompt ajustado y conservar esa segunda sin generar una tercera; ajustar duración y documentar limitaciones, sin afirmar que cumple si no cumple.
