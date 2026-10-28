@@ -1,0 +1,10 @@
+# EP03_SH08 · imagen inicial
+
+Generada el 2026-10-28 mediante herramienta integrada image_gen, habilidad imagegen. Archivo: TWO_SHOT.png. Referencias: ALBA_DOOR.png (identidad/vestuario), INES_TABLE.png (identidad/vestuario), LOCATIONS/ARCHIVE_MASTER.png (espacio/abrigo/luz).
+
+Revisada visualmente: dos mujeres reconocibles, Inés a derecha junto mesa, Alba detrás a izquierda ante puerta verde, abrigo vacío interpuesto; labios cerrados, vestuario y luz compatibles. Borde inferior del abrigo fuera de cuadro: no afirma una distribución visible de sal S3. Concesiones: puerta desplazada hacia izquierda respecto al master, profundidad entre figuras reducida y abrigo visualmente alargado por recorte inferior; no es reproducción arquitectónica exacta. Seleccionada como referencia bajo delegación EP03; vídeo todavía no generado.
+
+## Prompt exacto
+
+Use case: compositing. Create a photorealistic cinematic starting frame for EP03_SH08, vertical 9:16. Reference 1 ALBA_DOOR: exact older woman's identity, gray hair, bone knitted cardigan and taupe dress. Reference 2 INES_TABLE: exact younger adult woman's identity, short brown bob, charcoal shirt. Reference 3 ARCHIVE_MASTER: same archive room, distressed plaster, green rear door, left window, right wooden table and lamp, one rust wool coat suspended on black hanger, empty collar. Compose two women separated spatially by the empty coat: Ines in foreground at screen right beside table looking left toward Alba; Alba in background at green closed door, offset left enough for face visible, looking right toward Ines. Coat in middle depth separating them. Faces visible, closed lips, restrained tense expressions; exactly two people, no person inside coat, no extra limbs. Preserve natural diffuse left window light and subtle warm table lamp. Medium-wide 35mm feel, believable room scale, no wide angle distortion. Crop lower coat hem out of frame to avoid contradicting current dissolved-salt state S3; upper coat and hollow collar clearly visible. No text, captions or watermark. This is one coherent photographed scene, not a collage.
+
