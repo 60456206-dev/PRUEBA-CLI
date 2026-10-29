@@ -2,21 +2,18 @@
 
 Actualizado: 2026-10-29.
 
-## Punto de retoma vigente · EP04 pausado a petición del usuario (todos los vídeos descargados en disco)
+## Punto de retoma vigente · EP04 completado (8/8 oficiales)
 
-- Pausa solicitada por el usuario el 2026-10-29 21:55 UTC («dejalo aui luego conitumos»). No quedan generaciones ni descargas pendientes en Google Flow: todos los vídeos `V1` y `V2` de `EP04` ya están generados y descargados localmente en `MASTER_SERIES_PACKAGE/shots/`.
-- Referencias de `EP04` preparadas, revisadas y cargadas en Flow (`6bb12840-f2cd-45a4-9055-bea65d46b4f3`): `KEY_HAND.png`, `INES_TABLE.png`, `TWO_SHOT.png`, `ALBA_DOOR.png`, `COAT_COLLAR.png` y `SHOT_REFERENCES/REPORT_FULL.png` (documentada en `SHOT_REFERENCES/REPORT_FULL_GENERATION.md`).
-- **Planos de `EP04` ya revisados, aceptados y oficializados (3/8):**
-  - `shots/EP04_SH01_FINAL.mp4` (`5.000000 s`, `120 frames`, `720×1280`, `24 fps`, `-an`, de `V1` `edit/2232b6ad-72c2-478c-b1f3-6ddaba38256a`; `V1` local eliminado tras verificar; tarjeta `EP04_SH01.md` actualizada).
-  - `shots/EP04_SH06_FINAL.mp4` (`8.000000 s`, `192 frames`, `720×1280`, `24 fps`, `-an`, de `V1` `edit/117eae8d-2fd3-47b6-916e-5fe64156577c`; `V1` local eliminado tras verificar; tarjeta `EP04_SH06.md` actualizada).
-  - `shots/EP04_SH08_FINAL.mp4` (`8.000000 s`, `192 frames`, `720×1280`, `24 fps`, `-an`, de `V1` `edit/2c29b0f3-af52-4661-b56c-8ce28b66bec6`; `V1` local eliminado tras verificar; tarjeta `EP04_SH08.md` actualizada).
-- **Planos de `EP04` descargados en disco pendientes de revisión visual `V2` y oficialización al retomar (5/8, sin requerir navegador Flow):**
-  - `EP04_SH02` (`8 s`): `EP04_SH02_V1.mp4` (revisado: leve apertura bucal `1–3 s` y leve paneo `5,5–7,5 s`) y `EP04_SH02_V2.mp4` (`edit/9ff3aeac-b5e9-4482-a238-420a8dcaa520`, descargado, pendiente revisar hoja de contacto y oficializar `EP04_SH02_FINAL.mp4`).
-  - `EP04_SH03` (`7 s`): `EP04_SH03_V1.mp4` (revisado: Inés toca el marco en lugar de Alba) y `EP04_SH03_V2.mp4` (`edit/25a1c7a9-dc6e-4d20-9e81-ff29371a0b7e`, descargado, pendiente revisar hoja de contacto, recortar a `7 s` y oficializar `EP04_SH03_FINAL.mp4`).
-  - `EP04_SH04` (`8 s`): `EP04_SH04_V1.mp4` (revisado: apertura bucal `1,5–3 s`) y `EP04_SH04_V2.mp4` (`edit/f52f60f5-e57d-4eda-b499-742e114e1084`, descargado, pendiente revisar hoja de contacto y oficializar `EP04_SH04_FINAL.mp4`).
-  - `EP04_SH05` (`5 s`): `EP04_SH05_V1.mp4` (revisado: figura pasa al fondo en `1–2 s`, tramo `2,5–7,5 s` limpio) y `EP04_SH05_V2.mp4` (`edit/9805a3fd-1be5-4845-b44e-b1a0f7c1b35c`, descargado, pendiente revisar hoja de contacto, recortar a `5 s` y oficializar `EP04_SH05_FINAL.mp4`).
-  - `EP04_SH07` (`6 s`): `EP04_SH07_V1.mp4` (revisado: baja mirada `1–5 s` y la sube en `5,5 s`) y `EP04_SH07_V2.mp4` (`edit/605d94e5-f540-406f-82a5-b734c289a99c`, descargado, pendiente revisar hoja de contacto, recortar a `6 s` y oficializar `EP04_SH07_FINAL.mp4`).
-- **Siguiente paso exacto al retomar:** extraer y revisar visualmente las hojas de contacto de `EP04_SH02_V2.mp4`, `EP04_SH03_V2.mp4`, `EP04_SH04_V2.mp4`, `EP04_SH05_V2.mp4` y `EP04_SH07_V2.mp4`, oficializar los 5 `_FINAL.mp4` restantes, actualizar tarjetas/`EP04_EDIT_PLAN.md`/`ESTADO_PROYECTO.md`, y hacer `git commit` + `git push origin main`.
+- 2026-10-29 23:25 UTC: usuario confirma que no hay correcciones obligatorias y pide oficializar todo. Episodios 1–4 completos: 32/48 planos.
+- Los 8 `shots/EP04_SHxx_FINAL.mp4` existen, todos 720×1280, 24 fps, sin audio y con decodificación completa verificada. SH01, SH06 y SH08 se oficializaron antes desde `V1`.
+- Oficializados hoy desde `V2` (V1/V2 locales eliminados tras verificar; las fuentes siguen en el proyecto Flow `6bb12840-…`):
+  - `SH02` 8 s/192 frames: cumple.
+  - `SH03` 0–7 s/168 frames. Concesión: Alba levanta el brazo alto hacia la izquierda (~1–3,5 s) en vez de tocar el marco y lo baja; Inés queda quieta.
+  - `SH04` 8 s/192 frames: la fuente de 190 frames se rellenó con 2 frames clonados del final. Labios cerrados. Concesión: acercamiento/deriva lateral fuerte; el fondo pasa de la puerta a una pared con aplique.
+  - `SH05` 0–5 s/120 frames: cumple.
+  - `SH07` 0–6 s/144 frames. Concesión: la mirada vuelve a subir desde ~5,25 s.
+- Tarjetas actualizadas. `EP04_EDIT_PLAN.md` ya apuntaba a los `_FINAL` con las duraciones correctas.
+- Siguiente: EP05_SH01 (preparar/revisar referencias y prompts) o montaje/audio de EP01–EP04, según decida el usuario.
 
 
 ## Juego PULSO (trabajo anterior)
