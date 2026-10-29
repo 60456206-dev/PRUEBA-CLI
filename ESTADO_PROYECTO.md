@@ -6,6 +6,7 @@ Actualizado: 2026-10-29.
 
 - Bloqueo externo: cuota diaria de Veo 3.1 Fast alcanzada; Flow rechazó SH06 V1 y SH05 corrección sin cobrar créditos. Esperar restablecimiento o cambio de cuenta por el usuario; no comprar ni cambiar de modelo automáticamente.
 - Oficiales guardados: SH01–SH04. Nuevos SH02 (7 s) y SH03 (6 s) revisados/finalizados; SH04 (8 s) conservado desde V2 por mandato, con labios entreabiertos iniciales, acercamiento excesivo y mirada final derecha. SH01 mantiene sus concesiones ya registradas.
+- Ajuste técnico provisional SH05 disponible: `shots/EP03_SH05_V1_AJUSTADO_5S.mp4`, 5 s/720×1280/24 fps/120 frames/sin audio, verificado y revisado. Mantiene defectos visuales de V1; no es FINAL.
 - Próximo: recuperar la única corrección SH05 (prompt guardado), rechazada por cuota; V1 local revisada/conservada, no oficial. Luego primera generación efectiva SH06, y SH07–SH08. No hay generación en curso al cierre.
 - Referencias de SH05–SH08 existentes y revisadas; no regenerarlas. Mantener 9:16, máximo dos versiones creativas por plano, conservar segunda, ajustar duración, oficializar bajo delegación y hacer push.
 
@@ -564,3 +565,5 @@ Este archivo conserva el contexto dentro del repositorio; no supone memoria auto
 - SH04 oficial desde V2 (8 s/192 frames/sin audio, verificado), con concesiones explícitas: labios entreabiertos al inicio, acercamiento excesivo y mirada final derecha; conservado por mandato segunda sin tercera. SH05 V1 revisada: chorro, gotas repetidas y pipeta móvil; corrección única aprobada 00:53 UTC (2/2). SH06 V1 aprobada 00:52 UTC (1/2), pendiente revisión.
 
 - Cierre 2026-10-29 00:54 UTC: SH05 corrección también rechazada por cuota diaria (Error explícito, sin cobro según Flow). SH06 sin vídeo producido por el mismo límite. No hay trabajos pendientes en cola. Detenidas nuevas órdenes; continuar cuando usuario cambie cuenta o vuelva la cuota. SH05 V1 conservada; corrección pendiente como segundo resultado, SH06 sin primera versión efectiva.
+
+- Usuario pide terminar ajustes: generado/revisado SH05_V1_AJUSTADO_5S como provisional; original conservado. Chrome sigue en la misma cuenta con rechazo por cuota; consultado cambio de cuenta o espera. No se han reenviado generaciones.

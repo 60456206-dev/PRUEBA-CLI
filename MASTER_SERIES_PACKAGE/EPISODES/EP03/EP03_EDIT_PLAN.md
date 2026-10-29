@@ -12,3 +12,5 @@ Proyecto 1080×1920, 24fps. Sin speed ramp. Audio separado. Cortes al cambio de 
 |00:31.000|00:39.000|shots/EP03_SH06_FINAL.mp4|0–8 s|CUT|Acusación desde evidencia, no intuición.|
 |00:39.000|00:45.000|shots/EP03_SH07_FINAL.mp4|0–6 s|CUT|Negativa ya imposible.|
 |00:45.000|00:53.000|shots/EP03_SH08_FINAL.mp4|0–8 s|CUT|Convertir hallazgo en pregunta moral.|
+
+Estado de archivos (2026-10-29): SH01–SH04 FINAL disponibles con duración ajustada. SH05 FINAL pendiente: para pruebas de montaje existe `shots/EP03_SH05_V1_AJUSTADO_5S.mp4` (5 s, sin audio), provisional con defectos de agua/pipeta. SH06–SH08 aún no generados. La tabla anterior describe el montaje objetivo de 53 s, no confirma que todos los archivos existan.
