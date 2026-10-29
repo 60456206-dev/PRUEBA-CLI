@@ -13,4 +13,4 @@ Proyecto 1080×1920, 24fps. Sin speed ramp. Audio separado. Cortes al cambio de 
 |00:39.000|00:45.000|shots/EP03_SH07_FINAL.mp4|0–6 s|CUT|Negativa ya imposible.|
 |00:45.000|00:53.000|shots/EP03_SH08_FINAL.mp4|0–8 s|CUT|Convertir hallazgo en pregunta moral.|
 
-Estado de archivos (2026-10-29): SH01–SH04 FINAL disponibles con duración ajustada. SH05 FINAL pendiente: para pruebas de montaje existe `shots/EP03_SH05_V1_AJUSTADO_5S.mp4` (5 s, sin audio), provisional con defectos de agua/pipeta. SH06–SH08 aún no generados. La tabla anterior describe el montaje objetivo de 53 s, no confirma que todos los archivos existan.
+Estado de archivos (2026-10-29): Episodio 3 completo en `shots/EP03_SH01_FINAL.mp4` a `shots/EP03_SH08_FINAL.mp4` (53 s totales de montaje, 720×1280, 24 fps, sin audio, decodificación completa verificada en los 8 planos). Concesiones documentadas en cada tarjeta de generación (`SH01`, `SH04`, `SH05`, `SH06` conservados en V2 por límite de dos variantes; `SH02`, `SH03` desde V2; `SH07`, `SH08` desde V1).

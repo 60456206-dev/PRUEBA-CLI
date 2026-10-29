@@ -2,13 +2,13 @@
 
 Actualizado: 2026-10-29.
 
-## Punto de retoma vigente · EP03
+## Punto de retoma vigente · EP03 completado
 
-- Retoma 2026-10-29 19:18 UTC: SSH/Chrome operativo, proyecto nuevo 6bb12840-f2cd-45a4-9055-bea65d46b4f3. Veo 3.1 Fast/9:16/x1 configurado; corrección pendiente SH05 reenviada y aprobada por 20 puntos. Resultado pendiente: comprobar antes de reenviar. SH06 en preparación.
-- Oficiales guardados: SH01–SH04. Nuevos SH02 (7 s) y SH03 (6 s) revisados/finalizados; SH04 (8 s) conservado desde V2 por mandato, con labios entreabiertos iniciales, acercamiento excesivo y mirada final derecha. SH01 mantiene sus concesiones ya registradas.
-- SH05 oficial desde V2: 5 s/720×1280/24 fps/120 frames/sin audio, verificado/revisado. Concesiones: hilo de agua, escurrimiento y pipeta móvil. Conservada segunda por mandato; descartes locales eliminados tras verificar FINAL.
-- Activo: SH06 primera generación aprobada por 20 puntos a las 19:22 UTC; pendiente resultado. SH07–SH08 pendientes, referencias revisadas.
-- Referencias de SH05–SH08 existentes y revisadas; no regenerarlas. Mantener 9:16, máximo dos versiones creativas por plano, conservar segunda, ajustar duración, oficializar bajo delegación y hacer push.
+- Cierre 2026-10-29 21:00 UTC: completados, verificados y oficializados los ocho planos de `EP03` (`shots/EP03_SH01_FINAL.mp4` a `shots/EP03_SH08_FINAL.mp4`, 53 s totales de montaje, 720×1280, 24 fps, sin audio, decodificación completa sin errores). Descartes locales eliminados tras verificar cada `_FINAL.mp4`.
+- `EP03_SH06_FINAL.mp4` (8 s, 192 frames, sin audio): V1 descartada por mano con objeto peludo (1,0–4,2 s); enviada única corrección (`EP03_SH06_CORRECCION.txt`, 2/2). V2 presenta intrusión breve de dos manos tocando las solapas entre ~0,3–1,4 s y abrigo vacío e inmóvil de 1,5 a 8,0 s; conservada y oficializada desde V2 bajo mandato de máximo dos versiones sin tercera, documentando el incumplimiento inicial.
+- `EP03_SH07_FINAL.mp4` (6 s, 144 frames, sin audio): revisada V1 (`edit/3f248ada-ad7e-4651-b743-4d643fd894a4`), cierra los ojos (~0,5–1,0 s), los mantiene cerrados (~1,0–2,5 s) y los abre (~3,0 s) sosteniendo mirada baja hasta 6 s con boca cerrada y cámara fija; concesión menor de leve giro frontal de cabeza. Oficializado tramo 0–6 s desde V1 sin gastar segunda generación.
+- `EP03_SH08_FINAL.mp4` (8 s, 192 frames, sin audio): adjuntada `TWO_SHOT.png` y generada V1 (`edit/ff03bd4e-90ca-4b31-8bc5-7220f09172f9`). Revisadas 16 muestras: Alba e Inés a ambos lados del abrigo vacío, Inés eleva sutilmente la barbilla (~0,5–2,5 s) con boca cerrada y sostienen posición hasta 8 s; concesión menor de leve reencuadre suave en 0–1,5 s. Oficializado desde V1.
+- Siguiente paso: `EP03` completo y publicado en Git; pendiente decidir si pasar a `EP04_SH01` o realizar montaje del episodio 3.
 
 
 ## Juego PULSO (trabajo anterior)
@@ -567,3 +567,7 @@ Este archivo conserva el contexto dentro del repositorio; no supone memoria auto
 - Cierre 2026-10-29 00:54 UTC: SH05 corrección también rechazada por cuota diaria (Error explícito, sin cobro según Flow). SH06 sin vídeo producido por el mismo límite. No hay trabajos pendientes en cola. Detenidas nuevas órdenes; continuar cuando usuario cambie cuenta o vuelva la cuota. SH05 V1 conservada; corrección pendiente como segundo resultado, SH06 sin primera versión efectiva.
 
 - Usuario pide terminar ajustes: generado/revisado SH05_V1_AJUSTADO_5S como provisional; original conservado. Chrome sigue en la misma cuenta con rechazo por cuota; consultado cambio de cuenta o espera. No se han reenviado generaciones.
+- Retoma 2026-10-29 20:50–21:00 UTC: reconectado MCP en `localhost:8931` y abierto proyecto `6bb12840-f2cd-45a4-9055-bea65d46b4f3`.
+  - `EP03_SH06`: descargada y revisada V1 (`edit/fae4b44a-4b41-4f30-92a9-a0c97cc5f8cf`, 16 muestras); descartada por mano con objeto peludo entre 1,0–4,2 s. Creado `EP03_SH06_CORRECCION.txt`, enviada y aprobada única corrección (2/2, 20 puntos). Descargada y revisada V2 (`edit/9232e433-81db-4772-b31b-0d47d17b0f35`, 16 muestras): presenta breve intrusión de dos manos tocando las solapas en ~0,3–1,4 s y abrigo vacío e inmóvil de 1,5 a 8,0 s. Oficializado `shots/EP03_SH06_FINAL.mp4` (8 s, 720×1280, 24 fps, 192 frames, sin audio) por mandato de conservar segunda versión sin tercera, documentando esa limitación; eliminados descartes locales tras verificar.
+  - `EP03_SH07`: descargada y revisada V1 (`edit/3f248ada-ad7e-4651-b743-4d643fd894a4`, 16 muestras): cierra los ojos suavemente (~0,5–1,0 s), los mantiene cerrados (~1,0–2,5 s) y los abre (~3,0 s) sosteniendo mirada baja hasta 6 s, boca cerrada y cámara fija, con leve giro frontal de cabeza como concesión menor. Oficializado `shots/EP03_SH07_FINAL.mp4` (tramo 0–6 s, 6 s exactos, 720×1280, 24 fps, 144 frames, sin audio); eliminado descarte local tras verificar.
+  - `EP03_SH08`: adjuntada `TWO_SHOT.png` y aprobada V1 (1/2, 20 puntos). Descargada y revisada V1 (`edit/ff03bd4e-90ca-4b31-8bc5-7220f09172f9`, 16 muestras): Alba e Inés a ambos lados del abrigo vacío con puerta cerrada detrás, Inés eleva sutilmente la barbilla (~0,5–2,5 s) con labios cerrados y ambas mantienen la posición hasta 8 s; concesión menor de leve reencuadre suave en 0–1,5 s. Oficializado `shots/EP03_SH08_FINAL.mp4` (8 s, 720×1280, 24 fps, 192 frames, sin audio); eliminado descarte local tras verificar. Episodio 3 completado (8/8 planos).
