@@ -4,10 +4,10 @@ Actualizado: 2026-10-29.
 
 ## Punto de retoma vigente · EP03
 
-- Bloqueo externo: cuota diaria de Veo 3.1 Fast alcanzada; Flow rechazó SH06 V1 y SH05 corrección sin cobrar créditos. Esperar restablecimiento o cambio de cuenta por el usuario; no comprar ni cambiar de modelo automáticamente.
+- Retoma 2026-10-29 19:18 UTC: SSH/Chrome operativo, proyecto nuevo 6bb12840-f2cd-45a4-9055-bea65d46b4f3. Veo 3.1 Fast/9:16/x1 configurado; corrección pendiente SH05 reenviada y aprobada por 20 puntos. Resultado pendiente: comprobar antes de reenviar. SH06 en preparación.
 - Oficiales guardados: SH01–SH04. Nuevos SH02 (7 s) y SH03 (6 s) revisados/finalizados; SH04 (8 s) conservado desde V2 por mandato, con labios entreabiertos iniciales, acercamiento excesivo y mirada final derecha. SH01 mantiene sus concesiones ya registradas.
-- Ajuste técnico provisional SH05 disponible: `shots/EP03_SH05_V1_AJUSTADO_5S.mp4`, 5 s/720×1280/24 fps/120 frames/sin audio, verificado y revisado. Mantiene defectos visuales de V1; no es FINAL.
-- Próximo: recuperar la única corrección SH05 (prompt guardado), rechazada por cuota; V1 local revisada/conservada, no oficial. Luego primera generación efectiva SH06, y SH07–SH08. No hay generación en curso al cierre.
+- SH05 oficial desde V2: 5 s/720×1280/24 fps/120 frames/sin audio, verificado/revisado. Concesiones: hilo de agua, escurrimiento y pipeta móvil. Conservada segunda por mandato; descartes locales eliminados tras verificar FINAL.
+- Activo: SH06 primera generación aprobada por 20 puntos a las 19:22 UTC; pendiente resultado. SH07–SH08 pendientes, referencias revisadas.
 - Referencias de SH05–SH08 existentes y revisadas; no regenerarlas. Mantener 9:16, máximo dos versiones creativas por plano, conservar segunda, ajustar duración, oficializar bajo delegación y hacer push.
 
 
