@@ -2,6 +2,12 @@
 
 Actualizado: 2026-10-29.
 
+## Montaje y audio EP01 · en curso · 2026-10-29
+
+- Generado `MASTER_SERIES_PACKAGE/FINAL/EP01_PICTURE_LOCK.mp4` con `tools/render_ep01_picture_lock.sh`, según `EP01_EDIT_PLAN.md`: 1080×1920, 24 fps, 51,000 s, 1224 frames, sin audio, cortes secos. Decodificación correcta; revisados los primeros y últimos frames de cada plano (orden y cortes correctos). SH01 viene de 576×1024 (PixVerse) y se escaló ×1,875: queda más suave que el resto. Montaje de imagen pendiente de aceptación del usuario.
+- El audio nativo de los clips de Flow es casi silencio (≈ −55 dB de media): no sirve como base.
+- Propuesta de audio, pendiente de decisión del usuario: las voces (Alba, Inés, Mara) con TTS de Gemini en Google AI Studio, ya que Flow solo genera audio pegado al vídeo; room tone, foley y SFX sintetizados localmente o desde fuentes CC0; música mínima o ninguna. Stems: DIALOGUE/ROOM/FOLEY/SFX/MUSIC según `AUDIO_TIMELINE.md`.
+
 ## Punto de retoma vigente · EP04 completado (8/8 oficiales)
 
 - 2026-10-29 23:25 UTC: usuario confirma que no hay correcciones obligatorias y pide oficializar todo. Episodios 1–4 completos: 32/48 planos.
