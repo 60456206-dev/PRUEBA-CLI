@@ -1,8 +1,10 @@
 # Dónde nos quedamos
 
-Actualizado: 2026-10-29.
+Actualizado: 2026-10-30.
 
 ## Montaje y audio EP01 · en curso · 2026-10-29
+
+- 2026-10-30: usuario autoriza aplicar ajustes sin crear material adicional. Generado `FINAL/EP01_AJUSTADO_V2.mp4`: 35,25 s/846 frames/1080×1920/24 fps, audio AAC y subtítulos quemados; SRT separado. Siete frases conservadas, X01 al inicio, pausas reducidas, efectos remapeados y voces equilibradas, contraste suave. Mezcla/stems nuevos en `AUDIO/EP01/AJUSTE_V2/`; script `tools/ajustar_ep01.py`, plan activo actualizado. Revisado visualmente a 2 fps y decodificación completa correcta; audio final -15,9 LUFS, pico -2,3 dBFS. Informe `FINAL/EP01_AJUSTADO_V2_REVISION.md`. Recomendación: conservar V2 para escucha final; pendiente aceptación y revisión perceptiva (API agotó espera), no oficializado. Originales conservados.
 
 - 2026-10-30: revisión detallada imagen/audio EP01 en `FINAL/EP01_REVISION_AUDIO_IMAGEN.md`. Picture lock sigue SIN audio; generado `FINAL/EP01_REVISION_AUDIO_V1.mp4` (misma imagen + mezcla previa, 51 s), para revisión, no aceptado. Revisadas 51 muestras generales y 24 de gota; las 7 frases caben. Pendientes: escucha de actuación/efectos, incorporar respiración X01, ajustar foley, niveles (-23,4 LUFS, rango 13,2 LU), pausas (11,19 s sin diálogo antes de Mara), subtítulos y montaje final. Recomendación: ajustar materiales existentes, no regenerar. No se modificó el montaje original.
 

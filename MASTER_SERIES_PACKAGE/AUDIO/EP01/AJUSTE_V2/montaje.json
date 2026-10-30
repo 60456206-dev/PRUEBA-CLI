@@ -1,0 +1,117 @@
+{
+  "duration": 35.25,
+  "segments": [
+    {
+      "shot": 1,
+      "source_in": 0,
+      "source_out": 5,
+      "start": 0.0,
+      "end": 5.0
+    },
+    {
+      "shot": 2,
+      "source_in": 5,
+      "source_out": 8.5,
+      "start": 5.0,
+      "end": 8.5
+    },
+    {
+      "shot": 3,
+      "source_in": 11,
+      "source_out": 15,
+      "start": 8.5,
+      "end": 12.5
+    },
+    {
+      "shot": 4,
+      "source_in": 16,
+      "source_out": 21,
+      "start": 12.5,
+      "end": 17.5
+    },
+    {
+      "shot": 5,
+      "source_in": 24,
+      "source_out": 27.5,
+      "start": 17.5,
+      "end": 21.0
+    },
+    {
+      "shot": 6,
+      "source_in": 30,
+      "source_out": 34.75,
+      "start": 21.0,
+      "end": 25.75
+    },
+    {
+      "shot": 7,
+      "source_in": 37,
+      "source_out": 40.25,
+      "start": 25.75,
+      "end": 29.0
+    },
+    {
+      "shot": 8,
+      "source_in": 43,
+      "source_out": 49.25,
+      "start": 29.0,
+      "end": 35.25
+    }
+  ],
+  "dialogue": [
+    {
+      "id": "L01",
+      "start": 6,
+      "end": 6.90925,
+      "text": "¿Qué has hecho?"
+    },
+    {
+      "id": "L02",
+      "start": 9,
+      "end": 11.498770833333333,
+      "text": "Solo agua. Para quitar la sal."
+    },
+    {
+      "id": "L03",
+      "start": 13,
+      "end": 16.313666666666666,
+      "text": "Lleva doce años en una bolsa."
+    },
+    {
+      "id": "L04",
+      "start": 22,
+      "end": 24.953354166666667,
+      "text": "Inés. Quédate donde estás."
+    },
+    {
+      "id": "L05",
+      "start": 26.75,
+      "end": 27.812958333333334,
+      "text": "No la escuches."
+    },
+    {
+      "id": "L06",
+      "start": 29.5,
+      "end": 30.882104166666668,
+      "text": "Es mi hermana."
+    },
+    {
+      "id": "L07",
+      "start": 33,
+      "end": 34.138,
+      "text": "Es Mara."
+    }
+  ],
+  "first_pass_loudness": {
+    "input_i": "-21.11",
+    "input_tp": "-2.10",
+    "input_lra": "5.90",
+    "input_thresh": "-35.58",
+    "output_i": "-16.27",
+    "output_tp": "-1.50",
+    "output_lra": "9.60",
+    "output_thresh": "-30.28",
+    "normalization_type": "dynamic",
+    "target_offset": "0.27"
+  }
+}
