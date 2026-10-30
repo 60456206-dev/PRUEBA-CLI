@@ -4,6 +4,8 @@ Actualizado: 2026-10-29.
 
 ## Montaje y audio EP01 · en curso · 2026-10-29
 
+- 2026-10-30: revisión detallada imagen/audio EP01 en `FINAL/EP01_REVISION_AUDIO_IMAGEN.md`. Picture lock sigue SIN audio; generado `FINAL/EP01_REVISION_AUDIO_V1.mp4` (misma imagen + mezcla previa, 51 s), para revisión, no aceptado. Revisadas 51 muestras generales y 24 de gota; las 7 frases caben. Pendientes: escucha de actuación/efectos, incorporar respiración X01, ajustar foley, niveles (-23,4 LUFS, rango 13,2 LU), pausas (11,19 s sin diálogo antes de Mara), subtítulos y montaje final. Recomendación: ajustar materiales existentes, no regenerar. No se modificó el montaje original.
+
 - 2026-10-30: usuario autoriza todos los audios EP01, máximo dos intentos por audio y push. Generados en `MASTER_SERIES_PACKAGE/AUDIO/EP01/`: 7 líneas + 2 extras TTS, originales y editados; 4 stems (DIALOGUE/ROOM/FOLEY/SFX) y mezcla previa de 51 s. Ambiente/tela/gota sintetizados localmente; sin música. 23 WAV decodificados, sin saturación en tomas; todas las líneas editadas caben en sus ventanas (L02 tempo +4,43 %). L05 usa T2 tras HTTP 429 por minuto en T1; resto T1. Revisión técnica completada, actuación/transcripción y aceptación pendientes de escucha: revisión automática de audio no disponible (HTTP error). No oficializados. Extras separados, mezcla conserva timeline original. Registro y scripts incluidos; no regenerar líneas existentes automáticamente.
 
 - 2026-10-30: conexión API Gemini comprobada: `GEMINI_API_KEY` disponible y consulta autenticada `GET /v1beta/models` devuelve HTTP 200 (50 modelos, incluidos modelos TTS). Clave no expuesta. Esto verifica autenticación y listado; generación de audio y cuota aún sin probar.
