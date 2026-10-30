@@ -15,6 +15,10 @@ Ajustes autorizados 2026-10-30. Generado, pendiente de aceptación. 1080×1920, 
 
 Audio, tiempos de frases y tramos del picture lock: `AUDIO/EP01/AJUSTE_V2/montaje.json`. Subtítulos: `FINAL/EP01_AJUSTADO_V2.srt`. El guion y AUDIO_TIMELINE originales conservan los tiempos de 51 s como preproducción; usar este plan y manifiesto para V2. No se adelantó la frase de Mara al inicio, solo su respiración X01.
 
+## Capa musical prevista
+
+Antes de la próxima mezcla, consultar [MUSICA_FONDO](../../AUDIO/EP01/MUSICA_FONDO/README.md): cue principal 12,500–21,500 s y recurso opcional 31,000–32,500 s, ambos con salidas completas antes del diálogo revelador. Solo documentación preparada; V2 permanece sin música. No cambiar duración ni voces para acomodar una composición.
+
 ## Archivo histórico: montaje de 51 s
 
 Las rutas `_FINAL` de la tabla histórica eran nombres previstos; los archivos elegidos reales son los de la tabla activa anterior. El script antiguo contiene esas rutas reales.

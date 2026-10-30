@@ -2,6 +2,14 @@
 
 Material generado, pendiente de escucha y aceptación del usuario. No oficializado.
 
+## Montaje activo y música prevista
+
+`AJUSTE_V2/` contiene los audios del montaje vigente de 35,25 s. Las carpetas originales descritas abajo corresponden a 51 s.
+
+[MUSICA_FONDO/README.md](MUSICA_FONDO/README.md) establece el brief profesional, los prompts y las entradas/salidas de música de suspense **solo para EP01**. Documentación preparada por petición del usuario; ninguna pista musical generada o incorporada todavía. Consultarla antes de la siguiente mezcla. Mantener el diálogo por delante y la retirada musical previa a Mara.
+
+## Material original de 51 s
+
 - `TAKES/`: originales Gemini 3.8 Flash TTS; Gacrux (Alba), Kore (Inés), Vindemiatrix (Mara). Máximo dos solicitudes por línea. L05 requirió segunda solicitud por límite por minuto, sin audio producido en la primera.
 - `EDITADOS/`: WAV mono PCM 16 bits, 48 kHz, silencios exteriores reducidos, margen conservado y fundidos de 5 ms. Ajuste de tempo máximo 10 % cuando la ventana lo requiere, sin cambiar tono. Originales conservados.
 - `STEMS/`: DIALOGUE, ROOM, FOLEY y SFX, todos de 51 s. Ambiente, tela y gota sintetizados localmente, sin muestras externas. No se añadió música: se prioriza el silencio y la inteligibilidad.

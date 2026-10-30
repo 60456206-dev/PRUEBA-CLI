@@ -1,5 +1,13 @@
 # Sonido por plano
 
+## Adenda activa · música EP01 sobre montaje V2
+
+Para la versión de 35,25 s, aplicar el [brief de música de fondo](../../AUDIO/EP01/MUSICA_FONDO/README.md) y su [mapa de cues](../../AUDIO/EP01/MUSICA_FONDO/CUES_EP01.md). M01 prepara la revelación entre 12,500–21,500 s; M02 es opcional entre 31,000–32,500 s. Retirar también las colas 0,5 s antes de la voz de Mara y del nombre final. La música no reemplaza ambiente ni foley y no debe añadir sonidos que parezcan pistas narrativas.
+
+Estado: solo brief/prompts; música aún no producida. Esta adenda afecta únicamente EP01. El diseño por planos que sigue conserva los tiempos históricos de 51 s; para V2 prevalecen el plan de edición activo y el mapa de cues.
+
+## Diseño original · 51 s
+
 ## EP01_SH01 · 00:00.000–00:05.000
 
 ROOM: aire de sala continuo muy bajo. FOLEY: lana y respiración textil; MUSIC: retirar música 0.5 s antes de revelación, mantener room tone salvo silencio subjetivo indicado.
