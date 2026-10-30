@@ -2,7 +2,12 @@
 
 Actualizado: 2026-10-30.
 
-## Planificación musical activa · EP04 · 2026-10-30
+## Revisión activa · imágenes EP05 · 2026-10-30
+
+- Usuario pide verificar imágenes de los 8 planos. Auditoría visual en `EPISODES/EP05/EP05_REVISION_REFERENCIAS.md`: 7/8 rutas existen; SH01/02/04/06 utilizables con concesiones de encuadre/mirada. PHONE de SH03 ausente en disco e historial local disponible. SH05 SALT_DROP y SH08 SALT_USED existen pero corresponden a sal de episodios anteriores; preparar variantes S3→S4. SH07 RECORDER tiene mano: alternativa existente y revisada EP02_SH06_START_RED.png sin mano/LED rojo; reasignación pendiente.
+- No se generaron imágenes/vídeos ni cambiaron tarjetas. Pendiente crear móvil, adaptar dos referencias de sal y reasignar grabadora; EP05_SH01 sí tiene REPORT_FULL utilizable.
+
+## Planificación musical · EP04 · 2026-10-30
 
 - Usuario pide EP04 y confirma alcance de música de fondo instrumental en todos los briefs; se aclara que la temporada tiene 6 episodios. Preparados `AUDIO/EP04/README.md` y `MUSICA_FONDO/{README.md,CUES_EP04.md,PROMPTS_EP04.md}`, enlazados desde diseño sonoro y plan. Base 55 s/24 fps; principal M01 41–46,5 s; apertura M02 opcional 1–4,5 s. Confesión, «Sí» y firma final sin música.
 - Documentación preparada y enlaces revisados; no se generaron audios ni se modificaron vídeos. Pendiente producción/escucha y validación de tiempos contra voces. Briefs EP01–EP04 preparados; EP05–EP06 aún no preparados en esta serie de tareas.
