@@ -1,7 +1,7 @@
 # EP01 · Guion de voces para TTS (Gemini · AI Studio «Generate speech»)
 
 Fuente: `AUDIO_TIMELINE.md` y `04_CHARACTER_BIBLE.md`. Español neutro, sin acento caricaturizado, sin imitar a actores conocidos.
-Generar **una toma por línea** (2–3 variantes si hace falta) y exportar en WAV. Nombre: `EP01_<PERSONAJE>_L<nn>_T<toma>.wav`.
+Generar **una toma por línea** (máximo 2 intentos por línea, por instrucción del usuario) y exportar en WAV. Nombre: `EP01_<PERSONAJE>_L<nn>_T<toma>.wav`.
 
 ## Dirección por personaje
 - **INÉS (37):** voz femenina adulta, firme y contenida. Frases cortas, sin dramatismo; susurro tenso cuando está fuera de plano.

@@ -1,0 +1,110 @@
+[
+  {
+    "id": "L01",
+    "source": "TAKES/EP01_ALBA_L01_T1.wav",
+    "edited": "EDITADOS/EP01_ALBA_L01_EDIT.wav",
+    "seconds": 0.90925,
+    "tempo_ratio": 1,
+    "peak_source": 0.502166748046875,
+    "rms_source": 0.033713217824697495,
+    "clipped_samples": 0,
+    "fits_window": true,
+    "review": "Technical only; performance and exact words require listening."
+  },
+  {
+    "id": "L02",
+    "source": "TAKES/EP01_INES_L02_T1.wav",
+    "edited": "EDITADOS/EP01_INES_L02_EDIT.wav",
+    "seconds": 2.4987708333333334,
+    "tempo_ratio": 1.0442916666666666,
+    "peak_source": 0.842041015625,
+    "rms_source": 0.14369533956050873,
+    "clipped_samples": 0,
+    "fits_window": true,
+    "review": "Technical only; performance and exact words require listening."
+  },
+  {
+    "id": "L03",
+    "source": "TAKES/EP01_INES_L03_T1.wav",
+    "edited": "EDITADOS/EP01_INES_L03_EDIT.wav",
+    "seconds": 3.3136666666666668,
+    "tempo_ratio": 1,
+    "peak_source": 0.6330548524856567,
+    "rms_source": 0.0852072536945343,
+    "clipped_samples": 0,
+    "fits_window": true,
+    "review": "Technical only; performance and exact words require listening."
+  },
+  {
+    "id": "L04",
+    "source": "TAKES/EP01_MARA_L04_T1.wav",
+    "edited": "EDITADOS/EP01_MARA_L04_EDIT.wav",
+    "seconds": 2.900354166666667,
+    "tempo_ratio": 1,
+    "peak_source": 0.7892041802406311,
+    "rms_source": 0.06259189546108246,
+    "clipped_samples": 0,
+    "fits_window": true,
+    "review": "Technical only; performance and exact words require listening."
+  },
+  {
+    "id": "L05",
+    "source": "TAKES/EP01_ALBA_L05_T2.wav",
+    "edited": "EDITADOS/EP01_ALBA_L05_EDIT.wav",
+    "seconds": 1.0629583333333332,
+    "tempo_ratio": 1,
+    "peak_source": 0.578048050403595,
+    "rms_source": 0.07702388614416122,
+    "clipped_samples": 0,
+    "fits_window": true,
+    "review": "Technical only; performance and exact words require listening."
+  },
+  {
+    "id": "L06",
+    "source": "TAKES/EP01_INES_L06_T1.wav",
+    "edited": "EDITADOS/EP01_INES_L06_EDIT.wav",
+    "seconds": 1.3821041666666667,
+    "tempo_ratio": 1,
+    "peak_source": 0.622100830078125,
+    "rms_source": 0.049910932779312134,
+    "clipped_samples": 0,
+    "fits_window": true,
+    "review": "Technical only; performance and exact words require listening."
+  },
+  {
+    "id": "L07",
+    "source": "TAKES/EP01_INES_L07_T1.wav",
+    "edited": "EDITADOS/EP01_INES_L07_EDIT.wav",
+    "seconds": 1.138,
+    "tempo_ratio": 1,
+    "peak_source": 0.8214694261550903,
+    "rms_source": 0.05329988896846771,
+    "clipped_samples": 0,
+    "fits_window": true,
+    "review": "Technical only; performance and exact words require listening."
+  },
+  {
+    "id": "X01",
+    "source": "TAKES/EP01_MARA_X01_T1.wav",
+    "edited": "EDITADOS/EP01_MARA_X01_EDIT.wav",
+    "seconds": 1.2328125,
+    "tempo_ratio": 1,
+    "peak_source": 0.079559326171875,
+    "rms_source": 0.00990488100796938,
+    "clipped_samples": 0,
+    "fits_window": true,
+    "review": "Technical only; performance and exact words require listening."
+  },
+  {
+    "id": "X02",
+    "source": "TAKES/EP01_MARA_X02_T1.wav",
+    "edited": "EDITADOS/EP01_MARA_X02_EDIT.wav",
+    "seconds": 2.8086458333333333,
+    "tempo_ratio": 1,
+    "peak_source": 0.47265625,
+    "rms_source": 0.040357254445552826,
+    "clipped_samples": 0,
+    "fits_window": true,
+    "review": "Technical only; performance and exact words require listening."
+  }
+]
