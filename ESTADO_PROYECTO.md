@@ -2,6 +2,11 @@
 
 Actualizado: 2026-10-30.
 
+## Planificación musical activa · EP02 · 2026-10-30
+
+- Usuario pide continuar con EP02 tras la carpeta musical de EP01. Preparados `AUDIO/EP02/README.md` y `MUSICA_FONDO/{README.md,CUES_EP02.md,PROMPTS_EP02.md}`, con enlaces en diseño sonoro y plan de edición. Base: 52 s, 24 fps; M01 9,5–16,5 s; M02 opcional 42,25–43,5 s. Sin música durante voz de Mara, compuerta, replay y lectura final.
+- Documentación preparada y enlaces revisados; ningún audio generado ni vídeo modificado. Pendiente concretar en montaje sonoro la repetición de golpes/arrastre: la frase del replay tiene ventana 32–37 s, los efectos repetidos no tienen ventana independiente fijada. Usar mismas fuentes y toma de voz, no nuevas interpretaciones. EP01 conserva V2 y su brief sin cambios.
+
 ## Montaje y audio EP01 · en curso · 2026-10-29
 
 - 2026-10-30: usuario pide carpeta y prompts profesionales de música de fondo, solo EP01. Creada `AUDIO/EP01/MUSICA_FONDO/` con README (dirección y entrega), `CUES_EP01.md` y `PROMPTS_EP01.md`, sobre V2 de 35,25 s. M01 12,5–21,5 s; M02 opcional 31–32,5 s; música fuera 0,5 s antes de Mara/nombre. Documentación preparada y enlaces revisados; no hay música generada, revisada ni aceptada. README de audio, diseño sonoro y plan de edición enlazan la funcionalidad para la próxima mezcla. No se modificó el render.

@@ -1,5 +1,12 @@
 # Sonido por plano
 
+## Dirección musical prevista · EP02
+
+Consultar el [brief de música](../../AUDIO/EP02/MUSICA_FONDO/README.md), [mapa de cues](../../AUDIO/EP02/MUSICA_FONDO/CUES_EP02.md) y [prompts](../../AUDIO/EP02/MUSICA_FONDO/PROMPTS_EP02.md). Cue principal 9,500–16,500 s; transición opcional 42,250–43,500 s. Mantener sin música el testimonio, la compuerta, el replay y la lectura final. Las salidas incluyen toda reverberación.
+
+Estado: solo documentación preparada sobre el plan de 52 s; no hay música producida. Antes de cerrar audio, resolver los tiempos del motivo de compuerta en el replay: el diseño fija la frase 32–37 s, pero no asigna una ventana separada a esos efectos. Reutilizar las mismas fuentes originales; no generar una segunda interpretación para el replay.
+
+
 ## EP02_SH01 · 00:00.000–00:05.000
 
 ROOM: aire de sala continuo muy bajo. FOLEY: gota breve; MUSIC: retirar música 0.5 s antes de revelación, mantener room tone salvo silencio subjetivo indicado.

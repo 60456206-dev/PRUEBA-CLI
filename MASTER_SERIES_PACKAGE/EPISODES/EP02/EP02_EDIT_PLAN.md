@@ -12,3 +12,7 @@ Proyecto 1080×1920, 24fps. Sin speed ramp. Audio separado. Cortes al cambio de 
 |00:31.000|00:38.000|shots/EP02_SH06_FINAL.mp4|0–7 s|L CUT|Probar que el sonido puede copiarse.|
 |00:38.000|00:44.000|shots/EP02_SH07_FINAL.mp4|0–6 s|CUT|Cerrar regla con imagen.|
 |00:44.000|00:52.000|shots/EP02_SH08_FINAL.mp4|0–8 s|CUT|Contradecir oficialmente el accidente.|
+
+## Capa musical prevista
+
+[Dirección y prompts EP02](../../AUDIO/EP02/MUSICA_FONDO/README.md), preparados sobre estos 52 s. M01: 9,500–16,500; M02 opcional: 42,250–43,500. El testimonio y su reproducción permanecen libres de música. Validar tiempos de voces y del replay antes de cerrar el montaje; el [mapa](../../AUDIO/EP02/MUSICA_FONDO/CUES_EP02.md) registra la decisión pendiente sobre los efectos reproducidos. Si cambia el corte, actualizar el mapa antes de conformar MUSIC. No se ha generado música ni modificado vídeo con esta documentación.
