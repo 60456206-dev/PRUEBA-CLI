@@ -2,7 +2,12 @@
 
 Actualizado: 2026-10-30.
 
-## Planificación musical activa · EP02 · 2026-10-30
+## Planificación musical activa · EP03 · 2026-10-30
+
+- Usuario pide continuar EP03 y confirma que los prompts sean solo para música. Preparados `AUDIO/EP03/README.md` y `MUSICA_FONDO/{README.md,CUES_EP03.md,PROMPTS_EP03.md}`, enlazados desde diseño sonoro y plan de edición. Base: 53 s/24 fps; M01 16,5–25,5 s; M02 opcional 41–44,5 s. Gota, testimonio de Mara y confrontación final sin música.
+- Documentación preparada y enlaces revisados; no se generaron audios ni se modificaron vídeos. Pendiente producir/revisar música y confirmar ventanas contra voces/montaje. EP01 y EP02 conservan sus briefs.
+
+## Planificación musical · EP02 · 2026-10-30
 
 - Usuario pide continuar con EP02 tras la carpeta musical de EP01. Preparados `AUDIO/EP02/README.md` y `MUSICA_FONDO/{README.md,CUES_EP02.md,PROMPTS_EP02.md}`, con enlaces en diseño sonoro y plan de edición. Base: 52 s, 24 fps; M01 9,5–16,5 s; M02 opcional 42,25–43,5 s. Sin música durante voz de Mara, compuerta, replay y lectura final.
 - Documentación preparada y enlaces revisados; ningún audio generado ni vídeo modificado. Pendiente concretar en montaje sonoro la repetición de golpes/arrastre: la frase del replay tiene ventana 32–37 s, los efectos repetidos no tienen ventana independiente fijada. Usar mismas fuentes y toma de voz, no nuevas interpretaciones. EP01 conserva V2 y su brief sin cambios.

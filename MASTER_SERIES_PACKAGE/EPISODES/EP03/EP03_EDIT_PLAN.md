@@ -14,3 +14,8 @@ Proyecto 1080×1920, 24fps. Sin speed ramp. Audio separado. Cortes al cambio de 
 |00:45.000|00:53.000|shots/EP03_SH08_FINAL.mp4|0–8 s|CUT|Convertir hallazgo en pregunta moral.|
 
 Estado de archivos (2026-10-29): Episodio 3 completo en `shots/EP03_SH01_FINAL.mp4` a `shots/EP03_SH08_FINAL.mp4` (53 s totales de montaje, 720×1280, 24 fps, sin audio, decodificación completa verificada en los 8 planos). Concesiones documentadas en cada tarjeta de generación (`SH01`, `SH04`, `SH05`, `SH06` conservados en V2 por límite de dos variantes; `SH02`, `SH03` desde V2; `SH07`, `SH08` desde V1).
+
+
+## Capa musical prevista
+
+[Brief y prompts instrumentales EP03](../../AUDIO/EP03/MUSICA_FONDO/README.md), preparados sobre estos 53 s. M01: 16,500–25,500; M02 opcional: 41,000–44,500. La gota, el testimonio de Mara y la acusación final permanecen sin música. Consultar el [mapa](../../AUDIO/EP03/MUSICA_FONDO/CUES_EP03.md) antes de conformar MUSIC; si cambia el corte, actualizar sus tiempos. Documentación únicamente: no se ha generado música ni modificado vídeo.

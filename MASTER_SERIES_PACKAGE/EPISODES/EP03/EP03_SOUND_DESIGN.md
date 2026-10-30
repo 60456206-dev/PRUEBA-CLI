@@ -1,5 +1,12 @@
 # Sonido por plano
 
+## Dirección musical prevista · EP03
+
+Consultar el [brief instrumental](../../AUDIO/EP03/MUSICA_FONDO/README.md), [mapa de cues](../../AUDIO/EP03/MUSICA_FONDO/CUES_EP03.md) y [prompts](../../AUDIO/EP03/MUSICA_FONDO/PROMPTS_EP03.md). M01: 16,500–25,500 s, con prioridad a la advertencia de Alba; M02 opcional: 41,000–44,500 s. Preservar sin música la nueva gota, el testimonio de Mara y la confrontación final. Las salidas incluyen toda cola.
+
+Estado: solo documentación musical preparada sobre 53 s; sin audio generado. Confirmar ventanas contra voces y actuación antes de integrar. La música no debe añadir voces ni efectos narrativos, y su retirada no silencia ROOM.
+
+
 ## EP03_SH01 · 00:00.000–00:05.000
 
 ROOM: aire de sala continuo muy bajo. FOLEY: roce de manga, sin énfasis; MUSIC: retirar música 0.5 s antes de revelación, mantener room tone salvo silencio subjetivo indicado.
