@@ -1,5 +1,12 @@
 # Sonido por plano
 
+## Dirección musical prevista · EP04
+
+Consultar [brief instrumental](../../AUDIO/EP04/MUSICA_FONDO/README.md), [mapa de cues](../../AUDIO/EP04/MUSICA_FONDO/CUES_EP04.md) y [prompts](../../AUDIO/EP04/MUSICA_FONDO/PROMPTS_EP04.md). Principal M01: 41,000–46,500 s. Apertura opcional M02: 1,000–4,500 s. Confesión, «Sí», intercambio sobre Mara y firma final quedan sin música; las salidas incluyen toda cola.
+
+Solo documentación preparada sobre 55 s; ninguna música generada. Confirmar ventanas contra voces y actuación. No añadir voces ni efectos narrativos dentro de MUSIC; mantener ROOM durante los silencios musicales.
+
+
 ## EP04_SH01 · 00:00.000–00:05.000
 
 ROOM: aire de sala continuo muy bajo. FOLEY: roce de manga, sin énfasis; MUSIC: retirar música 0.5 s antes de revelación, mantener room tone salvo silencio subjetivo indicado.

@@ -2,7 +2,12 @@
 
 Actualizado: 2026-10-30.
 
-## Planificación musical activa · EP03 · 2026-10-30
+## Planificación musical activa · EP04 · 2026-10-30
+
+- Usuario pide EP04 y confirma alcance de música de fondo instrumental en todos los briefs; se aclara que la temporada tiene 6 episodios. Preparados `AUDIO/EP04/README.md` y `MUSICA_FONDO/{README.md,CUES_EP04.md,PROMPTS_EP04.md}`, enlazados desde diseño sonoro y plan. Base 55 s/24 fps; principal M01 41–46,5 s; apertura M02 opcional 1–4,5 s. Confesión, «Sí» y firma final sin música.
+- Documentación preparada y enlaces revisados; no se generaron audios ni se modificaron vídeos. Pendiente producción/escucha y validación de tiempos contra voces. Briefs EP01–EP04 preparados; EP05–EP06 aún no preparados en esta serie de tareas.
+
+## Planificación musical · EP03 · 2026-10-30
 
 - Usuario pide continuar EP03 y confirma que los prompts sean solo para música. Preparados `AUDIO/EP03/README.md` y `MUSICA_FONDO/{README.md,CUES_EP03.md,PROMPTS_EP03.md}`, enlazados desde diseño sonoro y plan de edición. Base: 53 s/24 fps; M01 16,5–25,5 s; M02 opcional 41–44,5 s. Gota, testimonio de Mara y confrontación final sin música.
 - Documentación preparada y enlaces revisados; no se generaron audios ni se modificaron vídeos. Pendiente producir/revisar música y confirmar ventanas contra voces/montaje. EP01 y EP02 conservan sus briefs.

@@ -12,3 +12,7 @@ Proyecto 1080×1920, 24fps. Sin speed ramp. Audio separado. Cortes al cambio de 
 |00:33.000|00:41.000|shots/EP04_SH06_FINAL.mp4|0–8 s|CUT|No convertir a Mara en argumento de ninguna.|
 |00:41.000|00:47.000|shots/EP04_SH07_FINAL.mp4|0–6 s|CUT|Transferir pregunta hacia responsabilidad de Inés.|
 |00:47.000|00:55.000|shots/EP04_SH08_FINAL.mp4|0–8 s|CUT|Pagar pista de firma y abrir decisión final.|
+
+## Capa musical prevista
+
+[Dirección y prompts instrumentales EP04](../../AUDIO/EP04/MUSICA_FONDO/README.md), sobre este plan de 55 s. M01 principal: 41,000–46,500; M02 opcional: 1,000–4,500. Proteger sin música confesión y firma. Validar el [mapa](../../AUDIO/EP04/MUSICA_FONDO/CUES_EP04.md) contra voces; si cambia el corte, remapear antes de conformar MUSIC. Documentación preparada, sin música generada ni cambios de vídeo.
