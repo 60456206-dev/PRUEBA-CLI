@@ -1,6 +1,6 @@
 {
   "episode": "EP02",
-  "version": "V3_EPIDEMIC_SOUND",
+  "version": "V3.2_EPIDEMIC_SOUND_REBALANCED",
   "duration": 36.5,
   "segments": [
     {
@@ -113,15 +113,15 @@
     }
   ],
   "loudnorm_first_pass": {
-    "input_i": "-21.79",
-    "input_tp": "-1.69",
-    "input_lra": "10.10",
-    "input_thresh": "-34.10",
-    "output_i": "-16.33",
-    "output_tp": "-1.20",
-    "output_lra": "6.10",
-    "output_thresh": "-28.23",
+    "input_i": "-20.65",
+    "input_tp": "-2.98",
+    "input_lra": "3.80",
+    "input_thresh": "-30.70",
+    "output_i": "-15.22",
+    "output_tp": "-1.00",
+    "output_lra": "3.50",
+    "output_thresh": "-25.25",
     "normalization_type": "dynamic",
-    "target_offset": "1.83"
+    "target_offset": "0.72"
   }
 }

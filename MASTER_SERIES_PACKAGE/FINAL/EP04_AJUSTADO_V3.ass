@@ -15,8 +15,8 @@ Style: HookSub,DejaVu Sans,34,&H0098B8D8,&H000000FF,&H00101010,&H80000000,0,-1,0
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
-Dialogue: 2,0:00:00.08,0:00:02.45,HookTag,,0,0,0,,{\fad(150,350)}ARCHIVO NORTE · EPISODIO 4
-Dialogue: 2,0:00:00.18,0:00:02.45,HookSub,,0,0,0,,{\fad(200,350)}La firma al pie del acta
+Dialogue: 2,0:00:00.08,0:00:02.55,HookTag,,0,0,0,,{\fad(150,350)}ARCHIVO NORTE · EPISODIO 4
+Dialogue: 2,0:00:00.18,0:00:02.55,HookSub,,0,0,0,,{\fad(200,350)}La firma al pie del acta
 Dialogue: 1,0:00:02.80,0:00:07.28,Default,,0,0,0,,{\fad(70,60)}El agua iba hacia la sala norte.\NTú estabas allí.
 Dialogue: 1,0:00:08.45,0:00:10.98,Default,,0,0,0,,{\fad(70,60)}Cerré para que\Nno te alcanzara.
 Dialogue: 1,0:00:12.75,0:00:15.09,Default,,0,0,0,,{\fad(70,60)}¿Sabías que Mara\Nseguía dentro?

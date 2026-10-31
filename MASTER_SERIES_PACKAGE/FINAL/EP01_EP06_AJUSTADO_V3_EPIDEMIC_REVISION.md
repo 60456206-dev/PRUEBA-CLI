@@ -4,16 +4,26 @@ Generado conectando directamente con el servidor oficial **Epidemic Sound MCP AP
 
 ---
 
-## 1. Resumen Técnico de Másters `AJUSTADO_V3` (`1080×1920`, 24 fps, AAC 192 kbps)
+## 1. Resumen Técnico de Másters `AJUSTADO_V3` (V3.2 Rebalanceado, `1080×1920`, 24 fps, AAC 192 kbps)
+
+### A. 6 Episodios Individuales (`FINAL/EPxx_AJUSTADO_V3.mp4` y `LISTOS/EPxx/EPxx_FINAL.mp4`)
 
 | Episodio | Archivo Máster V3 | Subtítulos ASS / SRT | Hoja de Contacto | Duración (V2 → V3) | Sonoridad Integrada | True Peak | Estado |
 | :--- | :--- | :--- | :--- | :---: | :---: | :---: | :---: |
-| **EP01** | `FINAL/EP01_AJUSTADO_V3.mp4` | `EP01_AJUSTADO_V3.{ass,srt}` | `EP01_AJUSTADO_V3_CONTACT.png` | 35,25 s → **28,75 s** | `-15,4 LUFS` | `-1,05 dBTP` | `DECODE_OK` |
-| **EP02** | `FINAL/EP02_AJUSTADO_V3.mp4` | `EP02_AJUSTADO_V3.{ass,srt}` | `EP02_AJUSTADO_V3_CONTACT.png` | 40,00 s → **36,50 s** | `-16,0 LUFS` | `-1,19 dBTP` | `DECODE_OK` |
-| **EP03** | `FINAL/EP03_AJUSTADO_V3.mp4` | `EP03_AJUSTADO_V3.{ass,srt}` | `EP03_AJUSTADO_V3_CONTACT.png` | 38,25 s → **33,75 s** | `-15,6 LUFS` | `-1,09 dBTP` | `DECODE_OK` |
-| **EP04** | `FINAL/EP04_AJUSTADO_V3.mp4` | `EP04_AJUSTADO_V3.{ass,srt}` | `EP04_AJUSTADO_V3_CONTACT.png` | 40,50 s → **36,00 s** | `-15,3 LUFS` | `-1,14 dBTP` | `DECODE_OK` |
-| **EP05** | `FINAL/EP05_AJUSTADO_V3.mp4` | `EP05_AJUSTADO_V3.{ass,srt}` | `EP05_AJUSTADO_V3_CONTACT.png` | 37,50 s → **33,75 s** | `-15,9 LUFS` | `-1,05 dBTP` | `DECODE_OK` |
-| **EP06** | `FINAL/EP06_AJUSTADO_V3.mp4` | `EP06_AJUSTADO_V3.{ass,srt}` | `EP06_AJUSTADO_V3_CONTACT.png` | 45,00 s → **41,75 s** | `-15,4 LUFS` | `-1,10 dBTP` | `DECODE_OK` |
+| **EP01** | `FINAL/EP01_AJUSTADO_V3.mp4` | `EP01_AJUSTADO_V3.{ass,srt}` | `EP01_AJUSTADO_V3_CONTACT.png` | 35,25 s → **28,75 s** | `-14,9 LUFS` | `-0,45 dBTP` | `DECODE_OK` |
+| **EP02** | `FINAL/EP02_AJUSTADO_V3.mp4` | `EP02_AJUSTADO_V3.{ass,srt}` | `EP02_AJUSTADO_V3_CONTACT.png` | 40,00 s → **36,50 s** | `-14,8 LUFS` | `-0,70 dBTP` | `DECODE_OK` |
+| **EP03** | `FINAL/EP03_AJUSTADO_V3.mp4` | `EP03_AJUSTADO_V3.{ass,srt}` | `EP03_AJUSTADO_V3_CONTACT.png` | 38,25 s → **33,75 s** | `-14,9 LUFS` | `-0,15 dBTP` | `DECODE_OK` |
+| **EP04** | `FINAL/EP04_AJUSTADO_V3.mp4` | `EP04_AJUSTADO_V3.{ass,srt}` | `EP04_AJUSTADO_V3_CONTACT.png` | 40,50 s → **36,00 s** | `-14,8 LUFS` | `-0,72 dBTP` | `DECODE_OK` |
+| **EP05** | `FINAL/EP05_AJUSTADO_V3.mp4` | `EP05_AJUSTADO_V3.{ass,srt}` | `EP05_AJUSTADO_V3_CONTACT.png` | 37,50 s → **33,75 s** | `-14,8 LUFS` | `-0,35 dBTP` | `DECODE_OK` |
+| **EP06** | `FINAL/EP06_AJUSTADO_V3.mp4` | `EP06_AJUSTADO_V3.{ass,srt}` | `EP06_AJUSTADO_V3_CONTACT.png` | 45,00 s → **41,75 s** | `-14,6 LUFS` | `-0,41 dBTP` | `DECODE_OK` |
+
+### B. 3 Capítulos Dobles Fusionados (>60 s para Monetización / Retención en Redes)
+
+| Parte | Capítulos | Archivo en `LISTOS/` y `FINAL/` | Hoja de Contacto (16 planos) | Duración | Frames | Sonoridad Integrada | True Peak | Estado |
+| :--- | :---: | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
+| **PARTE 01** | `EP01 + EP02` | `PARTE_01_EP01_EP02_FINAL.mp4` | `PARTE_01_EP01_EP02_FINAL_CONTACT.png` | **65,25 s** (1m 05s) | 1566 | `-14,8 LUFS` | `-0,80 dBTP` | `DECODE_OK` |
+| **PARTE 02** | `EP03 + EP04` | `PARTE_02_EP03_EP04_FINAL.mp4` | `PARTE_02_EP03_EP04_FINAL_CONTACT.png` | **69,75 s** (1m 10s) | 1674 | `-14,8 LUFS` | `-0,03 dBTP` | `DECODE_OK` |
+| **PARTE 03** | `EP05 + EP06` | `PARTE_03_EP05_EP06_FINAL.mp4` | `PARTE_03_EP05_EP06_FINAL_CONTACT.png` | **75,50 s** (1m 15s) | 1812 | `-14,8 LUFS` | `-0,58 dBTP` | `DECODE_OK` |
 
 ---
 

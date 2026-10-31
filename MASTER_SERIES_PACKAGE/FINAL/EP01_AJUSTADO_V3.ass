@@ -15,8 +15,8 @@ Style: HookSub,DejaVu Sans,34,&H0098B8D8,&H000000FF,&H00101010,&H80000000,0,-1,0
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
-Dialogue: 2,0:00:00.08,0:00:02.45,HookTag,,0,0,0,,{\fad(150,350)}ARCHIVO NORTE · EPISODIO 1
-Dialogue: 2,0:00:00.18,0:00:02.45,HookSub,,0,0,0,,{\fad(200,350)}Doce años después de la inundación
+Dialogue: 2,0:00:00.08,0:00:02.55,HookTag,,0,0,0,,{\fad(150,350)}ARCHIVO NORTE · EPISODIO 1
+Dialogue: 2,0:00:00.18,0:00:02.55,HookSub,,0,0,0,,{\fad(200,350)}Doce años después de la inundación
 Dialogue: 1,0:00:03.00,0:00:04.03,Default,,0,0,0,,{\fad(70,60)}¿Qué has hecho?
 Dialogue: 1,0:00:06.00,0:00:08.62,Default,,0,0,0,,{\fad(70,60)}Solo agua.\NPara quitar la sal.
 Dialogue: 1,0:00:09.35,0:00:12.78,Default,,0,0,0,,{\fad(70,60)}Lleva doce años\Nen una bolsa.

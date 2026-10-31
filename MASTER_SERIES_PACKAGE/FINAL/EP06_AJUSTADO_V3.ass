@@ -15,8 +15,8 @@ Style: HookSub,DejaVu Sans,34,&H0098B8D8,&H000000FF,&H00101010,&H80000000,0,-1,0
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
-Dialogue: 2,0:00:00.08,0:00:02.45,HookTag,,0,0,0,,{\fad(150,350)}ARCHIVO NORTE · FINAL DE TEMPORADA
-Dialogue: 2,0:00:00.18,0:00:02.45,HookSub,,0,0,0,,{\fad(200,350)}Los siete nombres del archivo
+Dialogue: 2,0:00:00.08,0:00:02.55,HookTag,,0,0,0,,{\fad(150,350)}ARCHIVO NORTE · FINAL DE TEMPORADA
+Dialogue: 2,0:00:00.18,0:00:02.55,HookSub,,0,0,0,,{\fad(200,350)}Los siete nombres del archivo
 Dialogue: 1,0:00:00.35,0:00:05.99,Mara,,0,0,0,,{\fad(70,60)}Elena Ríos. Tomás Vera.\NLuz Arce. Bruno Sol.
 Dialogue: 1,0:00:06.85,0:00:12.23,Mara,,0,0,0,,{\fad(70,60)}Celia Paz. Samuel Costa.\NY yo, Mara Vidal.
 Dialogue: 1,0:00:12.90,0:00:16.84,DocSafe,,0,0,0,,{\fad(70,60)}Firmé sin comprobar.\NAdjuntaré mi declaración.

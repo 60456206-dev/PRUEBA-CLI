@@ -15,8 +15,8 @@ Style: HookSub,DejaVu Sans,34,&H0098B8D8,&H000000FF,&H00101010,&H80000000,0,-1,0
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
-Dialogue: 2,0:00:00.08,0:00:02.45,HookTag,,0,0,0,,{\fad(150,350)}ARCHIVO NORTE · EPISODIO 3
-Dialogue: 2,0:00:00.18,0:00:02.45,HookSub,,0,0,0,,{\fad(200,350)}La llave de la compuerta norte
+Dialogue: 2,0:00:00.08,0:00:02.55,HookTag,,0,0,0,,{\fad(150,350)}ARCHIVO NORTE · EPISODIO 3
+Dialogue: 2,0:00:00.18,0:00:02.55,HookSub,,0,0,0,,{\fad(200,350)}La llave de la compuerta norte
 Dialogue: 1,0:00:02.85,0:00:05.77,Default,,0,0,0,,{\fad(70,60)}¿Por qué guardabas la llave\Nde la compuerta?
 Dialogue: 1,0:00:07.45,0:00:11.01,DocSafe,,0,0,0,,{\fad(70,60)}Yo llevaba las llaves.\NEso ya lo sabes.
 Dialogue: 1,0:00:12.00,0:00:14.64,Default,,0,0,0,,{\fad(70,60)}No busques solo mi nombre.

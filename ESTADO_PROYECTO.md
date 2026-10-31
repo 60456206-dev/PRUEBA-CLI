@@ -2,25 +2,32 @@
 
 Actualizado: 2026-10-31.
 
-## Montaje Profesional V3 · Epidemic Sound API + Gancho y Encuadre de Redes (`EP01` a `EP06`) · 2026-10-31
+## Montaje Profesional V3.2 · Rebalanceo Acústico Epidemic Sound + 3 Capítulos Dobles Fusionados (`EP01` a `EP06` y `PARTE_01` a `PARTE_03`) · 2026-10-31
 
 - **Conexión Epidemic Sound MCP API verificada y operativa (`HTTP 200 OK`)**:
   - Autenticación confirmada mediante `EPIDEMIC_SOUND` contra `https://www.epidemicsound.com/a/mcp-service/mcp`.
   - Descargados **24 activos reales de estudio en formato WAV sin pérdida (48 kHz)** en `MASTER_SERIES_PACKAGE/AUDIO/EPIDEMIC_SOUND/` (registrados en `catalog_manifest.json`): 9 stems musicales de thriller psicológico (*Oro*, *Creeping Anxiety*, *Don't Turn Around*, *Shifting Ground*, *Dark Puzzle* y *Disturbing Evidence*) y 15 efectos de sonido y foley reales de estudio (`ROOM_BASEMENT`, `FOLEY_COAT_THICK`, `FOLEY_COAT_FLAP`, `SFX_WATER_DROP_SINGLE`, `SFX_WATER_DROP_CLOTH`, `FOLEY_KEYS_HAND`, `SFX_FLOODGATE_HIT`, `SFX_FLOODGATE_BOOM`, `SFX_FLOODGATE_SCRAPE`, `SFX_RECORDER_BUTTONS`, `FOLEY_PAPER_TURN`, `SFX_RISER_LOW`, `SFX_RUMBLE_RISING`, `SFX_DARK_BOOM`, `SFX_UI_CONFIRM`).
-- **Temporada 1 completa actualizada a `AJUSTADO_V3` (`EP01` a `EP06`)**:
-  - Se reemplazaron todos los efectos sintéticos por WAVs reales de Epidemic Sound y se incorporó el quinto stem (`EPxx_MUSIC_V3.wav`) con *ducking* dinámico automático (`-8,5 dB`) bajo los diálogos y silencios dramáticos en las revelaciones de Mara.
-  - Se rediseñó el **gancho de los primeros 0–2,5 s** recortando esperas iniciales (en `EP01` la primera línea entra en `3,00 s` en vez de `6,00 s`; en `EP03` en `2,85 s`; en `EP04` en `2,80 s`), abriendo en `t = 0,00 s` con *riser*/pulso subgrave + foley diegético inmediato + micro-rótulo editorial superior (`ARCHIVO NORTE · EPISODIO X`).
-  - Se aplicó **encuadre dinámico subpíxel a 24 fps** (`1620×2880 -> 1080×1920` con *push-in*, *macro-in*, *pull-back* y `doc_frame`) y **subtítulos ASS nativos (`1080×1920`)**, eliminando al 100 % el solapamiento sobre la firma manuscrita *«Inés Vidal»* en `EP04_SH08` y `EP05_SH01` (el subtítulo queda ahora en la madera oscura bajo el borde inferior del documento/móvil).
-  - Resumen de másters `AJUSTADO_V3` verificados (`DECODE_OK`, 1080×1920, 24 fps, AAC 192 kbps):
-    - `FINAL/EP01_AJUSTADO_V3.mp4`: 28,75 s (690 frames), `-15,4 LUFS`, `-1,05 dBTP`.
-    - `FINAL/EP02_AJUSTADO_V3.mp4`: 36,50 s (876 frames), `-16,0 LUFS`, `-1,19 dBTP`.
-    - `FINAL/EP03_AJUSTADO_V3.mp4`: 33,75 s (810 frames), `-15,6 LUFS`, `-1,09 dBTP`.
-    - `FINAL/EP04_AJUSTADO_V3.mp4`: 36,00 s (864 frames), `-15,3 LUFS`, `-1,14 dBTP`.
-    - `FINAL/EP05_AJUSTADO_V3.mp4`: 33,75 s (810 frames), `-15,9 LUFS`, `-1,05 dBTP`.
-    - `FINAL/EP06_AJUSTADO_V3.mp4`: 41,75 s (1002 frames), `-15,4 LUFS`, `-1,10 dBTP`.
-  - Documentado en `MASTER_SERIES_PACKAGE/FINAL/EP01_EP06_AJUSTADO_V3_EPIDEMIC_REVISION.md`. Hojas de contacto revisadas visualmente en `FINAL/EP01_AJUSTADO_V3_CONTACT.png` a `EP06_AJUSTADO_V3_CONTACT.png`. Versiones `V2` conservadas intactas.
-  - **Estado de publicación**: el usuario indica que deja la oficialización en pendiente porque subirá cada capítulo de forma independiente. Se conservan listos todos los másters individuales (`EP01` a `EP06` tanto en `AJUSTADO_V3` con Epidemic Sound como en `AJUSTADO_V2`) para cuando vaya publicando cada episodio.
-  - **Carpeta limpia de entrega (`LISTOS/`)**: por petición del usuario, creada `/workspaces/PRUEBA-CLI/LISTOS/` con una subcarpeta por episodio (`LISTOS/EP01/` a `LISTOS/EP06/`) que contiene exclusivamente el `.mp4` final con música y ambiente de cada capítulo (`EP01_FINAL.mp4` a `EP06_FINAL.mp4`, copias exactas de `AJUSTADO_V3`), sin archivos Markdown ni subtítulos sueltos.
+- **Rebalanceo acústico integral V3.2 (`EP01` a `EP06`)**:
+  - Por indicación del usuario tras su escucha, se rebalancearon los 5 stems (`DIALOGUE`, `ROOM`, `FOLEY`, `SFX`, `MUSIC`) en `MASTER_SERIES_PACKAGE/tools/render_epidemic_v3.py` para garantizar presencia nítida tanto en altavoces de celular/laptop como en audífonos:
+    - `ROOM_BASEMENT` ecualizado (`175 Hz` y `780 Hz`) y subido a `-30,5 dBFS` RMS (+15 dB frente a la primera mezcla V3) con *ducking* suave (`-2,8 dB`).
+    - Normalización individual por RMS activo de cada efecto de foley y SFX (gotas sobre sal/lana, roce de abrigo grueso, llaves de hierro, pliego de papel, clics de grabadora, golpes/arrastre de compuerta y *risers*/*booms* subgraves).
+    - **Música continua en el 100 % del metraje**: combinación de cama grave continua (`ORO_BASS`, `CREEPING_ANXIETY_BASS`, `SHIFTING_GROUND_BASS`) + capas instrumentales de thriller (`-23,8 dBFS` RMS antes de *ducking* de `-4,8 dB`), eliminando cualquier tramo donde la música desapareciera por completo.
+    - Masterización EBU R128 en dos pasadas a **`-14,8 LUFS`** (estándar competitivo para TikTok/Reels/Shorts).
+  - Se conserva el **gancho de los primeros 0–2,5 s** con micro-rótulo editorial superior (`ARCHIVO NORTE · EPISODIO X`), el **encuadre dinámico subpíxel a 24 fps** (`1620×2880 -> 1080×1920`) y los **subtítulos ASS nativos (`1080×1920`)** sin ningún solapamiento sobre la firma manuscrita *«Inés Vidal»*.
+  - Resumen de másters individuales `AJUSTADO_V3` verificados (`DECODE_OK`, 1080×1920, 24 fps, AAC 192 kbps):
+    - `FINAL/EP01_AJUSTADO_V3.mp4` (`LISTOS/EP01/EP01_FINAL.mp4`): 28,75 s (690 frames), `-14,9 LUFS`, `-0,45 dBTP`.
+    - `FINAL/EP02_AJUSTADO_V3.mp4` (`LISTOS/EP02/EP02_FINAL.mp4`): 36,50 s (876 frames), `-14,8 LUFS`, `-0,70 dBTP`.
+    - `FINAL/EP03_AJUSTADO_V3.mp4` (`LISTOS/EP03/EP03_FINAL.mp4`): 33,75 s (810 frames), `-14,9 LUFS`, `-0,15 dBTP`.
+    - `FINAL/EP04_AJUSTADO_V3.mp4` (`LISTOS/EP04/EP04_FINAL.mp4`): 36,00 s (864 frames), `-14,8 LUFS`, `-0,72 dBTP`.
+    - `FINAL/EP05_AJUSTADO_V3.mp4` (`LISTOS/EP05/EP05_FINAL.mp4`): 33,75 s (810 frames), `-14,8 LUFS`, `-0,35 dBTP`.
+    - `FINAL/EP06_AJUSTADO_V3.mp4` (`LISTOS/EP06/EP06_FINAL.mp4`): 41,75 s (1002 frames), `-14,6 LUFS`, `-0,41 dBTP`.
+- **3 Capítulos Dobles Fusionados (>60 s para monetización y retención en redes)**:
+  - Por petición del usuario (Opción 2), se crearon 3 partes dobles de 16 planos cada una, uniendo stems con puente sonoro subgrave continuo en la transición y subtítulos ASS unificados:
+    - `PARTE_01_EP01_EP02_FINAL.mp4` (`EP01 + EP02`): **65,25 s** (1 min 05 s, 1566 frames), `-14,8 LUFS`, `-0,80 dBTP`, `DECODE_OK`.
+    - `PARTE_02_EP03_EP04_FINAL.mp4` (`EP03 + EP04`): **69,75 s** (1 min 10 s, 1674 frames), `-14,8 LUFS`, `-0,03 dBTP`, `DECODE_OK`.
+    - `PARTE_03_EP05_EP06_FINAL.mp4` (`EP05 + EP06`): **75,50 s** (1 min 15 s, 1812 frames), `-14,8 LUFS`, `-0,58 dBTP`, `DECODE_OK`.
+  - Documentado en `MASTER_SERIES_PACKAGE/FINAL/EP01_EP06_AJUSTADO_V3_EPIDEMIC_REVISION.md` y `MASTER_SERIES_PACKAGE/FINAL/RESUMEN_V3_EPIDEMIC.json`. Hojas de contacto revisadas visualmente en `FINAL/EP01_AJUSTADO_V3_CONTACT.png` a `EP06_AJUSTADO_V3_CONTACT.png` y `FINAL/PARTE_01_EP01_EP02_FINAL_CONTACT.png` a `PARTE_03_EP05_EP06_FINAL_CONTACT.png`. Versiones `V2` conservadas intactas.
+  - **Carpeta limpia de entrega (`LISTOS/`)**: contiene tanto las 6 carpetas individuales (`LISTOS/EP01/` a `LISTOS/EP06/`) como las 3 carpetas de capítulos dobles (`LISTOS/PARTE_01_EP01_EP02/`, `LISTOS/PARTE_02_EP03_EP04/`, `LISTOS/PARTE_03_EP05_EP06/`), cada una únicamente con su `.mp4` final listo para publicar.
 
 ## Montaje y Postproducción Profesional · EP02 a EP06 (AJUSTADO_V2) · 2026-10-31
 
