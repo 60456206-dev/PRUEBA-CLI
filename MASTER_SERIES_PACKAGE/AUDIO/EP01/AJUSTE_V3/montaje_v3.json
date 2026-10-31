@@ -1,0 +1,134 @@
+{
+  "episode": "EP01",
+  "version": "V3_EPIDEMIC_SOUND",
+  "duration": 28.75,
+  "segments": [
+    {
+      "shot": 1,
+      "source_in": 1.25,
+      "source_out": 4.0,
+      "zoom_mode": "push_in_fast",
+      "start": 0.0,
+      "end": 2.75
+    },
+    {
+      "shot": 2,
+      "source_in": 5.0,
+      "source_out": 7.5,
+      "zoom_mode": "push_in",
+      "start": 2.75,
+      "end": 5.25
+    },
+    {
+      "shot": 3,
+      "source_in": 11.0,
+      "source_out": 14.75,
+      "zoom_mode": "macro_in",
+      "start": 5.25,
+      "end": 9.0
+    },
+    {
+      "shot": 4,
+      "source_in": 16.0,
+      "source_out": 20.25,
+      "zoom_mode": "push_in",
+      "start": 9.0,
+      "end": 13.25
+    },
+    {
+      "shot": 5,
+      "source_in": 24.25,
+      "source_out": 27.25,
+      "zoom_mode": "macro_in",
+      "start": 13.25,
+      "end": 16.25
+    },
+    {
+      "shot": 6,
+      "source_in": 30.0,
+      "source_out": 34.25,
+      "zoom_mode": "push_in_fast",
+      "start": 16.25,
+      "end": 20.5
+    },
+    {
+      "shot": 7,
+      "source_in": 37.0,
+      "source_out": 39.75,
+      "zoom_mode": "push_in",
+      "start": 20.5,
+      "end": 23.25
+    },
+    {
+      "shot": 8,
+      "source_in": 43.0,
+      "source_out": 48.5,
+      "zoom_mode": "pull_back",
+      "start": 23.25,
+      "end": 28.75
+    }
+  ],
+  "dialogue": [
+    {
+      "id": "L01",
+      "start": 3.0,
+      "end": 3.909,
+      "text": "¿Qué has hecho?",
+      "style": "Default"
+    },
+    {
+      "id": "L02",
+      "start": 6.0,
+      "end": 8.499,
+      "text": "Solo agua.\\NPara quitar la sal.",
+      "style": "Default"
+    },
+    {
+      "id": "L03",
+      "start": 9.35,
+      "end": 12.664,
+      "text": "Lleva doce años\\Nen una bolsa.",
+      "style": "Default"
+    },
+    {
+      "id": "L04",
+      "start": 16.65,
+      "end": 19.603,
+      "text": "Inés. Quédate\\Ndonde estás.",
+      "style": "Mara"
+    },
+    {
+      "id": "L05",
+      "start": 20.85,
+      "end": 21.913,
+      "text": "No la escuches.",
+      "style": "Default"
+    },
+    {
+      "id": "L06",
+      "start": 23.6,
+      "end": 24.982,
+      "text": "Es mi hermana.",
+      "style": "Default"
+    },
+    {
+      "id": "L07",
+      "start": 26.6,
+      "end": 27.738,
+      "text": "Es Mara.",
+      "style": "Default"
+    }
+  ],
+  "loudnorm_first_pass": {
+    "input_i": "-21.32",
+    "input_tp": "-0.92",
+    "input_lra": "6.90",
+    "input_thresh": "-33.32",
+    "output_i": "-15.53",
+    "output_tp": "-1.20",
+    "output_lra": "5.70",
+    "output_thresh": "-27.18",
+    "normalization_type": "dynamic",
+    "target_offset": "1.03"
+  }
+}

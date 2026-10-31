@@ -1,0 +1,127 @@
+{
+  "episode": "EP02",
+  "version": "V3_EPIDEMIC_SOUND",
+  "duration": 36.5,
+  "segments": [
+    {
+      "shot": 1,
+      "source_in": 0.0,
+      "source_out": 3.75,
+      "zoom_mode": "macro_in",
+      "start": 0.0,
+      "end": 3.75
+    },
+    {
+      "shot": 2,
+      "source_in": 5.0,
+      "source_out": 8.75,
+      "zoom_mode": "push_in",
+      "start": 3.75,
+      "end": 7.5
+    },
+    {
+      "shot": 3,
+      "source_in": 12.0,
+      "source_out": 15.25,
+      "zoom_mode": "macro_in",
+      "start": 7.5,
+      "end": 10.75
+    },
+    {
+      "shot": 4,
+      "source_in": 17.0,
+      "source_out": 23.0,
+      "zoom_mode": "push_in_fast",
+      "start": 10.75,
+      "end": 16.75
+    },
+    {
+      "shot": 5,
+      "source_in": 25.0,
+      "source_out": 29.0,
+      "zoom_mode": "push_in",
+      "start": 16.75,
+      "end": 20.75
+    },
+    {
+      "shot": 6,
+      "source_in": 31.0,
+      "source_out": 37.0,
+      "zoom_mode": "macro_in",
+      "start": 20.75,
+      "end": 26.75
+    },
+    {
+      "shot": 7,
+      "source_in": 38.0,
+      "source_out": 42.25,
+      "zoom_mode": "push_in",
+      "start": 26.75,
+      "end": 31.0
+    },
+    {
+      "shot": 8,
+      "source_in": 44.0,
+      "source_out": 49.5,
+      "zoom_mode": "doc_frame",
+      "start": 31.0,
+      "end": 36.5
+    }
+  ],
+  "dialogue": [
+    {
+      "id": "L01",
+      "start": 0.4,
+      "end": 2.913,
+      "text": "Mara. ¿Me oyes?",
+      "style": "Default"
+    },
+    {
+      "id": "L02",
+      "start": 4.1,
+      "end": 7.098,
+      "text": "No vuelve. Ya no está.",
+      "style": "Default"
+    },
+    {
+      "id": "L03",
+      "start": 11.35,
+      "end": 15.123,
+      "text": "Son las seis y diez.\\NHan cerrado. Seguimos aquí.",
+      "style": "Mara"
+    },
+    {
+      "id": "L04",
+      "start": 21.4,
+      "end": 25.12,
+      "text": "Son las seis y diez.\\NHan cerrado. Seguimos aquí.",
+      "style": "Mara"
+    },
+    {
+      "id": "L05",
+      "start": 27.15,
+      "end": 29.966,
+      "text": "La tela se calla.\\NLa grabación no.",
+      "style": "Default"
+    },
+    {
+      "id": "L06",
+      "start": 31.5,
+      "end": 33.873,
+      "text": "Aquí pone que a las seis\\Nya no quedaba nadie.",
+      "style": "DocSafe"
+    }
+  ],
+  "loudnorm_first_pass": {
+    "input_i": "-21.79",
+    "input_tp": "-1.69",
+    "input_lra": "10.10",
+    "input_thresh": "-34.10",
+    "output_i": "-16.33",
+    "output_tp": "-1.20",
+    "output_lra": "6.10",
+    "output_thresh": "-28.23",
+    "normalization_type": "dynamic",
+    "target_offset": "1.83"
+  }
+}

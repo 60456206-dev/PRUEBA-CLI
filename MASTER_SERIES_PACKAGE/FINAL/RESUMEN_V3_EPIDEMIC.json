@@ -1,0 +1,56 @@
+{
+  "EP01": {
+    "decode": "DECODE_OK",
+    "width": 1080,
+    "height": 1920,
+    "frames": 690,
+    "duration": 28.75,
+    "lufs": -15.36,
+    "tp": -1.05
+  },
+  "EP02": {
+    "decode": "DECODE_OK",
+    "width": 1080,
+    "height": 1920,
+    "frames": 876,
+    "duration": 36.5,
+    "lufs": -15.85,
+    "tp": -0.46
+  },
+  "EP03": {
+    "decode": "DECODE_OK",
+    "width": 1080,
+    "height": 1920,
+    "frames": 810,
+    "duration": 33.75,
+    "lufs": -15.59,
+    "tp": -1.09
+  },
+  "EP04": {
+    "decode": "DECODE_OK",
+    "width": 1080,
+    "height": 1920,
+    "frames": 864,
+    "duration": 36.0,
+    "lufs": -15.33,
+    "tp": -1.14
+  },
+  "EP05": {
+    "decode": "DECODE_OK",
+    "width": 1080,
+    "height": 1920,
+    "frames": 810,
+    "duration": 33.75,
+    "lufs": -15.93,
+    "tp": -1.05
+  },
+  "EP06": {
+    "decode": "DECODE_OK",
+    "width": 1080,
+    "height": 1920,
+    "frames": 1002,
+    "duration": 41.75,
+    "lufs": -15.36,
+    "tp": -1.1
+  }
+}

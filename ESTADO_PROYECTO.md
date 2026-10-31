@@ -2,6 +2,25 @@
 
 Actualizado: 2026-10-31.
 
+## Montaje Profesional V3 · Epidemic Sound API + Gancho y Encuadre de Redes (`EP01` a `EP06`) · 2026-10-31
+
+- **Conexión Epidemic Sound MCP API verificada y operativa (`HTTP 200 OK`)**:
+  - Autenticación confirmada mediante `EPIDEMIC_SOUND` contra `https://www.epidemicsound.com/a/mcp-service/mcp`.
+  - Descargados **24 activos reales de estudio en formato WAV sin pérdida (48 kHz)** en `MASTER_SERIES_PACKAGE/AUDIO/EPIDEMIC_SOUND/` (registrados en `catalog_manifest.json`): 9 stems musicales de thriller psicológico (*Oro*, *Creeping Anxiety*, *Don't Turn Around*, *Shifting Ground*, *Dark Puzzle* y *Disturbing Evidence*) y 15 efectos de sonido y foley reales de estudio (`ROOM_BASEMENT`, `FOLEY_COAT_THICK`, `FOLEY_COAT_FLAP`, `SFX_WATER_DROP_SINGLE`, `SFX_WATER_DROP_CLOTH`, `FOLEY_KEYS_HAND`, `SFX_FLOODGATE_HIT`, `SFX_FLOODGATE_BOOM`, `SFX_FLOODGATE_SCRAPE`, `SFX_RECORDER_BUTTONS`, `FOLEY_PAPER_TURN`, `SFX_RISER_LOW`, `SFX_RUMBLE_RISING`, `SFX_DARK_BOOM`, `SFX_UI_CONFIRM`).
+- **Temporada 1 completa actualizada a `AJUSTADO_V3` (`EP01` a `EP06`)**:
+  - Se reemplazaron todos los efectos sintéticos por WAVs reales de Epidemic Sound y se incorporó el quinto stem (`EPxx_MUSIC_V3.wav`) con *ducking* dinámico automático (`-8,5 dB`) bajo los diálogos y silencios dramáticos en las revelaciones de Mara.
+  - Se rediseñó el **gancho de los primeros 0–2,5 s** recortando esperas iniciales (en `EP01` la primera línea entra en `3,00 s` en vez de `6,00 s`; en `EP03` en `2,85 s`; en `EP04` en `2,80 s`), abriendo en `t = 0,00 s` con *riser*/pulso subgrave + foley diegético inmediato + micro-rótulo editorial superior (`ARCHIVO NORTE · EPISODIO X`).
+  - Se aplicó **encuadre dinámico subpíxel a 24 fps** (`1620×2880 -> 1080×1920` con *push-in*, *macro-in*, *pull-back* y `doc_frame`) y **subtítulos ASS nativos (`1080×1920`)**, eliminando al 100 % el solapamiento sobre la firma manuscrita *«Inés Vidal»* en `EP04_SH08` y `EP05_SH01` (el subtítulo queda ahora en la madera oscura bajo el borde inferior del documento/móvil).
+  - Resumen de másters `AJUSTADO_V3` verificados (`DECODE_OK`, 1080×1920, 24 fps, AAC 192 kbps):
+    - `FINAL/EP01_AJUSTADO_V3.mp4`: 28,75 s (690 frames), `-15,4 LUFS`, `-1,05 dBTP`.
+    - `FINAL/EP02_AJUSTADO_V3.mp4`: 36,50 s (876 frames), `-16,0 LUFS`, `-1,19 dBTP`.
+    - `FINAL/EP03_AJUSTADO_V3.mp4`: 33,75 s (810 frames), `-15,6 LUFS`, `-1,09 dBTP`.
+    - `FINAL/EP04_AJUSTADO_V3.mp4`: 36,00 s (864 frames), `-15,3 LUFS`, `-1,14 dBTP`.
+    - `FINAL/EP05_AJUSTADO_V3.mp4`: 33,75 s (810 frames), `-15,9 LUFS`, `-1,05 dBTP`.
+    - `FINAL/EP06_AJUSTADO_V3.mp4`: 41,75 s (1002 frames), `-15,4 LUFS`, `-1,10 dBTP`.
+  - Documentado en `MASTER_SERIES_PACKAGE/FINAL/EP01_EP06_AJUSTADO_V3_EPIDEMIC_REVISION.md`. Hojas de contacto revisadas visualmente en `FINAL/EP01_AJUSTADO_V3_CONTACT.png` a `EP06_AJUSTADO_V3_CONTACT.png`. Versiones `V2` conservadas intactas.
+  - **Estado de publicación**: el usuario indica que deja la oficialización en pendiente porque subirá cada capítulo de forma independiente. Se conservan listos todos los másters individuales (`EP01` a `EP06` tanto en `AJUSTADO_V3` con Epidemic Sound como en `AJUSTADO_V2`) para cuando vaya publicando cada episodio.
+
 ## Montaje y Postproducción Profesional · EP02 a EP06 (AJUSTADO_V2) · 2026-10-31
 
 - **Temporada 1 completa renderizada y ajustada (`EP01` a `EP06`)**:

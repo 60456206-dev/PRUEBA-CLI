@@ -1,0 +1,127 @@
+{
+  "episode": "EP05",
+  "version": "V3_EPIDEMIC_SOUND",
+  "duration": 33.75,
+  "segments": [
+    {
+      "shot": 1,
+      "source_in": 0.0,
+      "source_out": 3.25,
+      "zoom_mode": "doc_frame",
+      "start": 0.0,
+      "end": 3.25
+    },
+    {
+      "shot": 2,
+      "source_in": 5.0,
+      "source_out": 10.25,
+      "zoom_mode": "push_in",
+      "start": 3.25,
+      "end": 8.5
+    },
+    {
+      "shot": 3,
+      "source_in": 12.0,
+      "source_out": 15.75,
+      "zoom_mode": "doc_frame",
+      "start": 8.5,
+      "end": 12.25
+    },
+    {
+      "shot": 4,
+      "source_in": 18.0,
+      "source_out": 21.25,
+      "zoom_mode": "push_in",
+      "start": 12.25,
+      "end": 15.5
+    },
+    {
+      "shot": 5,
+      "source_in": 26.0,
+      "source_out": 29.25,
+      "zoom_mode": "macro_in",
+      "start": 15.5,
+      "end": 18.75
+    },
+    {
+      "shot": 6,
+      "source_in": 31.0,
+      "source_out": 37.25,
+      "zoom_mode": "push_in_fast",
+      "start": 18.75,
+      "end": 25.0
+    },
+    {
+      "shot": 7,
+      "source_in": 39.0,
+      "source_out": 43.0,
+      "zoom_mode": "macro_in",
+      "start": 25.0,
+      "end": 29.0
+    },
+    {
+      "shot": 8,
+      "source_in": 45.0,
+      "source_out": 49.75,
+      "zoom_mode": "macro_in",
+      "start": 29.0,
+      "end": 33.75
+    }
+  ],
+  "dialogue": [
+    {
+      "id": "L01",
+      "start": 0.35,
+      "end": 2.098,
+      "text": "Me dijiste que\\Nhabías comprobado.",
+      "style": "DocSafe"
+    },
+    {
+      "id": "L02",
+      "start": 3.65,
+      "end": 7.918,
+      "text": "Y yo firmé. Sin mirar.\\NMe acuerdo.",
+      "style": "Default"
+    },
+    {
+      "id": "L03",
+      "start": 8.95,
+      "end": 11.266,
+      "text": "Puedes mandar\\Nsolo la grabación.",
+      "style": "DocSafe"
+    },
+    {
+      "id": "L04",
+      "start": 19.2,
+      "end": 24.208,
+      "text": "Somos siete. Si alguien oye esto,\\Nque no quite a ninguno.",
+      "style": "Mara"
+    },
+    {
+      "id": "L05",
+      "start": 25.45,
+      "end": 28.408,
+      "text": "La página entera.\\NY mi nombre.",
+      "style": "Default"
+    },
+    {
+      "id": "L06",
+      "start": 29.55,
+      "end": 31.443,
+      "text": "Voy a decir los nombres.",
+      "style": "Mara"
+    }
+  ],
+  "loudnorm_first_pass": {
+    "input_i": "-21.52",
+    "input_tp": "-1.32",
+    "input_lra": "13.20",
+    "input_thresh": "-33.98",
+    "output_i": "-16.48",
+    "output_tp": "-1.20",
+    "output_lra": "8.10",
+    "output_thresh": "-28.54",
+    "normalization_type": "dynamic",
+    "target_offset": "1.98"
+  }
+}

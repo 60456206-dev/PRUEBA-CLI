@@ -1,0 +1,159 @@
+{
+  "music": [
+    {
+      "name": "ORO_INSTRUMENTS",
+      "id": "55900695-564d-45bd-bde7-672cca5e827e",
+      "stem": "INSTRUMENTS",
+      "description": "Oro - Hanna Ekström & Anna Dager",
+      "file": "MUSIC/ORO_INSTRUMENTS.wav"
+    },
+    {
+      "name": "ORO_BASS",
+      "id": "55900695-564d-45bd-bde7-672cca5e827e",
+      "stem": "BASS",
+      "description": "Oro (Bass) - Hanna Ekström & Anna Dager",
+      "file": "MUSIC/ORO_BASS.wav"
+    },
+    {
+      "name": "CREEPING_ANXIETY_INSTRUMENTS",
+      "id": "98451bbf-902f-4139-a264-a239c0308f2f",
+      "stem": "INSTRUMENTS",
+      "description": "Creeping Anxiety - Anna Dager & Hanna Ekström",
+      "file": "MUSIC/CREEPING_ANXIETY_INSTRUMENTS.wav"
+    },
+    {
+      "name": "CREEPING_ANXIETY_BASS",
+      "id": "98451bbf-902f-4139-a264-a239c0308f2f",
+      "stem": "BASS",
+      "description": "Creeping Anxiety (Bass) - Anna Dager & Hanna Ekström",
+      "file": "MUSIC/CREEPING_ANXIETY_BASS.wav"
+    },
+    {
+      "name": "DONT_TURN_AROUND_INSTRUMENTS",
+      "id": "a749c9fc-4e51-434b-a43d-22e8bad3184b",
+      "stem": "INSTRUMENTS",
+      "description": "Don't Turn Around - Belladonna Strings",
+      "file": "MUSIC/DONT_TURN_AROUND_INSTRUMENTS.wav"
+    },
+    {
+      "name": "SHIFTING_GROUND_INSTRUMENTS",
+      "id": "87893ebf-9476-46ff-9cc1-f1227748c791",
+      "stem": "INSTRUMENTS",
+      "description": "Shifting Ground - Luba Hilman",
+      "file": "MUSIC/SHIFTING_GROUND_INSTRUMENTS.wav"
+    },
+    {
+      "name": "SHIFTING_GROUND_BASS",
+      "id": "87893ebf-9476-46ff-9cc1-f1227748c791",
+      "stem": "BASS",
+      "description": "Shifting Ground (Bass) - Luba Hilman",
+      "file": "MUSIC/SHIFTING_GROUND_BASS.wav"
+    },
+    {
+      "name": "DARK_PUZZLE_INSTRUMENTS",
+      "id": "8baa12a3-6028-40b4-b57c-a091b687d041",
+      "stem": "INSTRUMENTS",
+      "description": "Dark Puzzle - Anna Dager & Hanna Ekström",
+      "file": "MUSIC/DARK_PUZZLE_INSTRUMENTS.wav"
+    },
+    {
+      "name": "DISTURBING_EVIDENCE_INSTRUMENTS",
+      "id": "84db60d5-46d4-4869-a573-b2ec46ad0b53",
+      "stem": "INSTRUMENTS",
+      "description": "Disturbing Evidence - Stefan Ekström",
+      "file": "MUSIC/DISTURBING_EVIDENCE_INSTRUMENTS.wav"
+    }
+  ],
+  "sfx": [
+    {
+      "name": "ROOM_BASEMENT",
+      "id": "f090dfcc-b464-4493-b32f-706ed02d4a95",
+      "description": "Ambience, Room Tone, Corporate Building, Dark, Basement",
+      "file": "SFX/ROOM_BASEMENT.wav"
+    },
+    {
+      "name": "FOLEY_COAT_THICK",
+      "id": "d693ef10-2841-4d51-8e5c-364e49c4d599",
+      "description": "Cloth, Movement, Jacket, Thick, Fast, Slow",
+      "file": "SFX/FOLEY_COAT_THICK.wav"
+    },
+    {
+      "name": "FOLEY_COAT_FLAP",
+      "id": "6bc04bea-5b48-469f-8ea7-462927f68a88",
+      "description": "Cloth, Flap, Foley Set Fabric, Jacket, Flap 01",
+      "file": "SFX/FOLEY_COAT_FLAP.wav"
+    },
+    {
+      "name": "SFX_WATER_DROP_SINGLE",
+      "id": "da7885a5-2746-4edd-855a-790cebf94cd7",
+      "description": "Water, Drip, Drop, Single",
+      "file": "SFX/SFX_WATER_DROP_SINGLE.wav"
+    },
+    {
+      "name": "SFX_WATER_DROP_CLOTH",
+      "id": "df3e9964-f498-4666-9b5e-079dbcc134f2",
+      "description": "Cloth, Impact, Wet Cloth, Drop On Glass, Soft",
+      "file": "SFX/SFX_WATER_DROP_CLOTH.wav"
+    },
+    {
+      "name": "FOLEY_KEYS_HAND",
+      "id": "11eaca16-49f3-45c6-8405-1bba085b8060",
+      "description": "Objects, Keys, Handling, Lock Clicks",
+      "file": "SFX/FOLEY_KEYS_HAND.wav"
+    },
+    {
+      "name": "SFX_FLOODGATE_HIT",
+      "id": "b848b9f3-665b-4205-9df4-99487a6237ad",
+      "description": "Metal, Impact, Hit Door, Heavy Impact, Rattle, Reverberant",
+      "file": "SFX/SFX_FLOODGATE_HIT.wav"
+    },
+    {
+      "name": "SFX_FLOODGATE_BOOM",
+      "id": "778b3f1c-bccb-4138-bd90-defb8fcf26fa",
+      "description": "Doors, Dungeon, Impact, Metal Door, Close, Deep, Big, Boom 01",
+      "file": "SFX/SFX_FLOODGATE_BOOM.wav"
+    },
+    {
+      "name": "SFX_FLOODGATE_SCRAPE",
+      "id": "b7e222f9-5feb-4967-88be-fcb5235f9a2b",
+      "description": "Objects, Furniture, Dragging, Scrape, Metal, Heavy",
+      "file": "SFX/SFX_FLOODGATE_SCRAPE.wav"
+    },
+    {
+      "name": "SFX_RECORDER_BUTTONS",
+      "id": "6c41c582-e514-4e50-9279-b3e5c7b06fca",
+      "description": "Mechanical, Click, Portable Cassette, Sun Ace Portable BOT 450",
+      "file": "SFX/SFX_RECORDER_BUTTONS.wav"
+    },
+    {
+      "name": "FOLEY_PAPER_TURN",
+      "id": "3e3e1af7-6d5b-4f09-a227-97575f34af7a",
+      "description": "Paper, Handle, Thick, Turn Page",
+      "file": "SFX/FOLEY_PAPER_TURN.wav"
+    },
+    {
+      "name": "SFX_RISER_LOW",
+      "id": "e705e6f7-6b2b-4083-99de-2ef6327a6771",
+      "description": "Designed, Riser, Low Risers",
+      "file": "SFX/SFX_RISER_LOW.wav"
+    },
+    {
+      "name": "SFX_RUMBLE_RISING",
+      "id": "bfaede35-d903-46d5-9c01-548e591177d3",
+      "description": "Designed, Rumble, Bass, Low, Rising 01",
+      "file": "SFX/SFX_RUMBLE_RISING.wav"
+    },
+    {
+      "name": "SFX_DARK_BOOM",
+      "id": "582229d4-ce16-4e09-8c9e-6b0d9ecace82",
+      "description": "Designed, Boom, Impact, Dark, Cinematic, Low Passed",
+      "file": "SFX/SFX_DARK_BOOM.wav"
+    },
+    {
+      "name": "SFX_UI_CONFIRM",
+      "id": "998fe887-42ea-4d38-9fd2-f430d8475bb1",
+      "description": "User Interface, Click, UI Buttons, Confirm, Menu",
+      "file": "SFX/SFX_UI_CONFIRM.wav"
+    }
+  ]
+}

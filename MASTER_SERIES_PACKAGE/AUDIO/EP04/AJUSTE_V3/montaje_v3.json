@@ -1,0 +1,134 @@
+{
+  "episode": "EP04",
+  "version": "V3_EPIDEMIC_SOUND",
+  "duration": 36.0,
+  "segments": [
+    {
+      "shot": 1,
+      "source_in": 1.5,
+      "source_out": 4.0,
+      "zoom_mode": "macro_in",
+      "start": 0.0,
+      "end": 2.5
+    },
+    {
+      "shot": 2,
+      "source_in": 5.0,
+      "source_out": 10.5,
+      "zoom_mode": "push_in",
+      "start": 2.5,
+      "end": 8.0
+    },
+    {
+      "shot": 3,
+      "source_in": 13.0,
+      "source_out": 17.25,
+      "zoom_mode": "push_in",
+      "start": 8.0,
+      "end": 12.25
+    },
+    {
+      "shot": 4,
+      "source_in": 20.0,
+      "source_out": 24.5,
+      "zoom_mode": "push_in",
+      "start": 12.25,
+      "end": 16.75
+    },
+    {
+      "shot": 5,
+      "source_in": 28.0,
+      "source_out": 31.0,
+      "zoom_mode": "push_in_fast",
+      "start": 16.75,
+      "end": 19.75
+    },
+    {
+      "shot": 6,
+      "source_in": 33.0,
+      "source_out": 39.75,
+      "zoom_mode": "push_in",
+      "start": 19.75,
+      "end": 26.5
+    },
+    {
+      "shot": 7,
+      "source_in": 41.0,
+      "source_out": 44.5,
+      "zoom_mode": "push_in",
+      "start": 26.5,
+      "end": 30.0
+    },
+    {
+      "shot": 8,
+      "source_in": 47.0,
+      "source_out": 53.0,
+      "zoom_mode": "doc_frame",
+      "start": 30.0,
+      "end": 36.0
+    }
+  ],
+  "dialogue": [
+    {
+      "id": "L01",
+      "start": 2.8,
+      "end": 7.155,
+      "text": "El agua iba hacia la sala norte.\\NTú estabas allí.",
+      "style": "Default"
+    },
+    {
+      "id": "L02",
+      "start": 8.45,
+      "end": 10.865,
+      "text": "Cerré para que\\Nno te alcanzara.",
+      "style": "Default"
+    },
+    {
+      "id": "L03",
+      "start": 12.75,
+      "end": 14.967,
+      "text": "¿Sabías que Mara\\Nseguía dentro?",
+      "style": "Default"
+    },
+    {
+      "id": "L04",
+      "start": 17.3,
+      "end": 18.097,
+      "text": "Sí.",
+      "style": "Default"
+    },
+    {
+      "id": "L05",
+      "start": 20.15,
+      "end": 22.404,
+      "text": "No podía perderos\\Na las dos.",
+      "style": "Default"
+    },
+    {
+      "id": "L06",
+      "start": 23.25,
+      "end": 25.951,
+      "text": "La perdiste tú.\\NA mí me mentiste.",
+      "style": "Default"
+    },
+    {
+      "id": "L07",
+      "start": 30.55,
+      "end": 34.39,
+      "text": "Yo cerré la puerta. Tú firmaste\\Nque no quedaba nadie.",
+      "style": "DocSafe"
+    }
+  ],
+  "loudnorm_first_pass": {
+    "input_i": "-21.08",
+    "input_tp": "-1.39",
+    "input_lra": "6.60",
+    "input_thresh": "-33.36",
+    "output_i": "-15.80",
+    "output_tp": "-1.20",
+    "output_lra": "6.80",
+    "output_thresh": "-27.65",
+    "normalization_type": "dynamic",
+    "target_offset": "1.30"
+  }
+}
