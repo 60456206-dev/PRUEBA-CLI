@@ -7,10 +7,10 @@ Actualizado: 2026-10-31.
 - Usuario delega revisión de oficiales EP04/EP05 y cierre de EP05, máximo dos intentos por plano, ajustes y verificación antes de oficializar.
 - Revisados visualmente 8 fotogramas por oficial EP04 y EP05_SH01–02, decodificación íntegra correcta. Conservar con concesiones detalladas en `MASTER_SERIES_PACKAGE/EPISODES/EP05/REVISION_RETOMA.md`; no equivalen a cumplimiento literal de todos los prompts.
 - EP05_SH03 oficializado desde PHONE.png fija: 6 s/144 frames/720×1280/24 fps/sin audio, fotograma codificado revisado y decodificación íntegra. Sin tercera generación; V1/V2 eliminadas tras verificar. Inmovilidad total y frase lateral recortada heredada de referencia documentadas.
-- Avance: **37/48 oficiales**, EP05 5/8.
-- `EP05_SH05_FINAL.mp4` oficializado (720×1280, 24 fps, 5,000 s / 120 frames sin audio, decodificación íntegra comprobada). Recorte 0–5 s de V1 (Omni 1.1 Flash). Desprendimiento e impacto limpio de gota sobre sal en Estado S3, sin manos ni aberraciones. Descarte local V1 eliminado tras verificación; hoja de contacto guardada en `shots/EP05_SH05_V1_CONTACT.png`. Tarjeta sincronizada.
-- Plano activo: **`EP05_SH06`** (referencia `SHOT_REFERENCES/COAT_COLLAR.png`, 8 s en montaje según `EP05_EDIT_PLAN.md`). Cuello del abrigo óxido y pulso final sutil. Primer intento enviado y aprobado a las 12:30 UTC en Flow (Omni 1.1 Flash / 8 s / 9:16 / 12 puntos; 1/2 intentos enviados). En cola de generación, no duplicar. Pendiente resultado y revisión.
-- Orden operativo: resolver SH06; luego SH07 y SH08 en orden de montaje (desaparición de cristales S4 en SH08). Mantener máximo dos intentos por plano y verificación antes de oficializar.
+- Avance: **38/48 oficiales**, EP05 6/8.
+- `EP05_SH06_FINAL.mp4` oficializado (720×1280, 24 fps, 8,000 s / 192 frames sin audio, decodificación íntegra comprobada). V1 (Omni 1.1 Flash). Abrigo óxido vacío en percha realiza un pulso sutil de tejido y queda en reposo absoluto; sin cuerpos, caras ni miembros extra. Descarte local V1 eliminado tras verificación; hoja de contacto guardada en `shots/EP05_SH06_V1_CONTACT.png`. Tarjeta sincronizada.
+- Plano activo: **`EP05_SH07`** (6 s en montaje según `EP05_EDIT_PLAN.md`).
+- Orden operativo: resolver SH07 y luego SH08 (cierre de EP05, desaparición de cristales S4). Mantener máximo dos intentos por plano y verificación antes de oficializar.
 
 ## Historial previo a retoma · EP05 · 2026-10-31
 
