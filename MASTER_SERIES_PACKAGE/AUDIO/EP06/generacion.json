@@ -1,0 +1,86 @@
+[
+  {
+    "id": "L01",
+    "take": 1,
+    "model": "gemini-3.8-flash-tts",
+    "voice": "Vindemiatrix",
+    "text": "<breath> Elena Ríos. Tomás Vera. Luz Arce. Bruno Sol.",
+    "style": "Susurro pausado, claro, nombrando a cada persona con dignidad.",
+    "target_seconds": 5.8,
+    "status": "generated_technical_review_pending",
+    "seconds": 5.5,
+    "file": "TAKES/EP06_MARA_L01_T1.wav"
+  },
+  {
+    "id": "L02",
+    "take": 1,
+    "model": "gemini-3.8-flash-lite-tts",
+    "voice": "Vindemiatrix",
+    "text": "Celia Paz. Samuel Costa. Y yo, Mara Vidal.",
+    "style": "Susurro sereno, cerrando la lista con calma definitiva.",
+    "target_seconds": 5.2,
+    "status": "generated_technical_review_pending",
+    "seconds": 5.68,
+    "file": "TAKES/EP06_MARA_L02_T1.wav"
+  },
+  {
+    "id": "L03",
+    "take": 1,
+    "model": "gemini-3.1-flash-tts-preview",
+    "voice": "Kore",
+    "text": "Firmé sin comprobar. Adjuntaré mi declaración.",
+    "style": "Firme, oficial, asumiendo responsabilidad completa.",
+    "target_seconds": 4.2,
+    "seconds": 4.2,
+    "file": "TAKES/EP06_INES_L03_T1.wav",
+    "status": "generated_technical_review_pending"
+  },
+  {
+    "id": "L04",
+    "take": 1,
+    "model": "gemini-2.5-flash-preview-tts",
+    "voice": "Kore",
+    "text": "No voy a quitar tu nombre.",
+    "style": "Serena, directa hacia su madre, sin rencor.",
+    "target_seconds": 3.0,
+    "seconds": 2.131,
+    "file": "TAKES/EP06_INES_L04_T1.wav",
+    "status": "generated_technical_review_pending"
+  },
+  {
+    "id": "L05",
+    "take": 1,
+    "model": "gemini-3.1-flash-tts-preview",
+    "voice": "Gacrux",
+    "text": "Deja el mío también. ¿Puedo quedarme?",
+    "style": "Grave, aceptando su responsabilidad, humilde al final.",
+    "target_seconds": 4.0,
+    "seconds": 3.4,
+    "file": "TAKES/EP06_ALBA_L05_T1.wav",
+    "status": "generated_technical_review_pending"
+  },
+  {
+    "id": "L07",
+    "take": 1,
+    "model": "gemini-2.5-flash-preview-tts",
+    "voice": "Kore",
+    "text": "Si no apagas eso.",
+    "style": "Voz baja, cierre contenido y sobrio.",
+    "target_seconds": 2.2,
+    "seconds": 2.171,
+    "file": "TAKES/EP06_INES_L07_T1.wav",
+    "status": "generated_technical_review_pending"
+  },
+  {
+    "id": "L06",
+    "take": 1,
+    "model": "reuse_slice:L02",
+    "voice": "Vindemiatrix",
+    "text": "Y yo, Mara Vidal.",
+    "style": "Reproducción exacta del tramo final de L02 en la grabadora.",
+    "target_seconds": 3.0,
+    "seconds": 2.45,
+    "file": "TAKES/EP06_MARA_L06_T1.wav",
+    "status": "reused_from_L02"
+  }
+]

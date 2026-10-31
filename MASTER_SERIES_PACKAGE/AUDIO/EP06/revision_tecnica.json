@@ -1,0 +1,72 @@
+[
+  {
+    "id": "L01",
+    "source": "TAKES/EP06_MARA_L01_T1.wav",
+    "edited": "EDITADOS/EP06_MARA_L01_EDIT.wav",
+    "seconds": 5.4648,
+    "tempo_ratio": 1.0,
+    "peak_source": 0.9777,
+    "rms_source": 0.062,
+    "fits_window": true
+  },
+  {
+    "id": "L02",
+    "source": "TAKES/EP06_MARA_L02_T1.wav",
+    "edited": "EDITADOS/EP06_MARA_L02_EDIT.wav",
+    "seconds": 5.2076,
+    "tempo_ratio": 1.0252,
+    "peak_source": 0.8635,
+    "rms_source": 0.0931,
+    "fits_window": true
+  },
+  {
+    "id": "L03",
+    "source": "TAKES/EP06_INES_L03_T1.wav",
+    "edited": "EDITADOS/EP06_INES_L03_EDIT.wav",
+    "seconds": 3.8148,
+    "tempo_ratio": 1.0,
+    "peak_source": 0.8183,
+    "rms_source": 0.1295,
+    "fits_window": true
+  },
+  {
+    "id": "L04",
+    "source": "TAKES/EP06_INES_L04_T1.wav",
+    "edited": "EDITADOS/EP06_INES_L04_EDIT.wav",
+    "seconds": 2.0666,
+    "tempo_ratio": 1.0,
+    "peak_source": 0.8503,
+    "rms_source": 0.1858,
+    "fits_window": true
+  },
+  {
+    "id": "L05",
+    "source": "TAKES/EP06_ALBA_L05_T1.wav",
+    "edited": "EDITADOS/EP06_ALBA_L05_EDIT.wav",
+    "seconds": 3.2042,
+    "tempo_ratio": 1.0,
+    "peak_source": 0.8142,
+    "rms_source": 0.1512,
+    "fits_window": true
+  },
+  {
+    "id": "L06",
+    "source": "TAKES/EP06_MARA_L06_T1.wav",
+    "edited": "EDITADOS/EP06_MARA_L06_EDIT.wav",
+    "seconds": 2.2478,
+    "tempo_ratio": 1.0,
+    "peak_source": 0.512,
+    "rms_source": 0.0814,
+    "fits_window": true
+  },
+  {
+    "id": "L07",
+    "source": "TAKES/EP06_INES_L07_T1.wav",
+    "edited": "EDITADOS/EP06_INES_L07_EDIT.wav",
+    "seconds": 2.0845,
+    "tempo_ratio": 1.0,
+    "peak_source": 0.7696,
+    "rms_source": 0.1241,
+    "fits_window": true
+  }
+]

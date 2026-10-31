@@ -1,0 +1,125 @@
+{
+  "episode": "EP04",
+  "duration": 40.5,
+  "segments": [
+    {
+      "shot": 1,
+      "source_in": 1.25,
+      "source_out": 5.0,
+      "start": 0.0,
+      "end": 3.75
+    },
+    {
+      "shot": 2,
+      "source_in": 5.0,
+      "source_out": 11.0,
+      "start": 3.75,
+      "end": 9.75
+    },
+    {
+      "shot": 3,
+      "source_in": 13.0,
+      "source_out": 17.75,
+      "start": 9.75,
+      "end": 14.5
+    },
+    {
+      "shot": 4,
+      "source_in": 20.0,
+      "source_out": 25.0,
+      "start": 14.5,
+      "end": 19.5
+    },
+    {
+      "shot": 5,
+      "source_in": 28.0,
+      "source_out": 31.25,
+      "start": 19.5,
+      "end": 22.75
+    },
+    {
+      "shot": 6,
+      "source_in": 33.0,
+      "source_out": 40.25,
+      "start": 22.75,
+      "end": 30.0
+    },
+    {
+      "shot": 7,
+      "source_in": 41.0,
+      "source_out": 45.0,
+      "start": 30.0,
+      "end": 34.0
+    },
+    {
+      "shot": 8,
+      "source_in": 47.0,
+      "source_out": 53.5,
+      "start": 34.0,
+      "end": 40.5
+    }
+  ],
+  "dialogue": [
+    {
+      "id": "L01",
+      "shot": 2,
+      "start": 4.2,
+      "end": 8.555,
+      "text": "El agua iba hacia la sala norte. Tú estabas allí."
+    },
+    {
+      "id": "L02",
+      "shot": 3,
+      "start": 10.25,
+      "end": 12.665,
+      "text": "Cerré para que no te alcanzara."
+    },
+    {
+      "id": "L03",
+      "shot": 4,
+      "start": 15.05,
+      "end": 17.267,
+      "text": "¿Sabías que Mara seguía dentro?"
+    },
+    {
+      "id": "L04",
+      "shot": 5,
+      "start": 20.15,
+      "end": 20.947,
+      "text": "Sí."
+    },
+    {
+      "id": "L05",
+      "shot": 6,
+      "start": 23.25,
+      "end": 25.504,
+      "text": "No podía perderos a las dos."
+    },
+    {
+      "id": "L06",
+      "shot": 6,
+      "start": 26.55,
+      "end": 29.251,
+      "text": "La perdiste tú. A mí me mentiste."
+    },
+    {
+      "id": "L07",
+      "shot": 8,
+      "start": 34.55,
+      "end": 38.39,
+      "text": "Yo cerré la puerta. Tú firmaste que no quedaba nadie."
+    }
+  ],
+  "first_pass_loudness": {
+    "input_i": "-21.62",
+    "input_tp": "-2.15",
+    "input_lra": "7.30",
+    "input_thresh": "-35.51",
+    "output_i": "-16.91",
+    "output_tp": "-1.50",
+    "output_lra": "5.90",
+    "output_thresh": "-29.90",
+    "normalization_type": "dynamic",
+    "target_offset": "0.91"
+  }
+}

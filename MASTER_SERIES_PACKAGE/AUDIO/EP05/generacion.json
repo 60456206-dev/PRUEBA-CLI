@@ -1,0 +1,74 @@
+[
+  {
+    "id": "L01",
+    "take": 1,
+    "model": "gemini-3.8-flash-tts",
+    "voice": "Kore",
+    "text": "Me dijiste que habías comprobado.",
+    "style": "Voz baja, mirando el documento, reproche contenido.",
+    "target_seconds": 2.5,
+    "status": "generated_technical_review_pending",
+    "seconds": 2.2,
+    "file": "TAKES/EP05_INES_L01_T1.wav"
+  },
+  {
+    "id": "L02",
+    "take": 1,
+    "model": "gemini-3.8-flash-lite-tts",
+    "voice": "Kore",
+    "text": "Y yo firmé. Sin mirar. Me acuerdo.",
+    "style": "Asumiendo su culpa, pausada, voz baja y clara.",
+    "target_seconds": 4.5,
+    "status": "generated_technical_review_pending",
+    "seconds": 4.6,
+    "file": "TAKES/EP05_INES_L02_T1.wav"
+  },
+  {
+    "id": "L03",
+    "take": 1,
+    "model": "gemini-3.8-flash-tts",
+    "voice": "Gacrux",
+    "text": "Puedes mandar solo la grabación.",
+    "style": "Voz baja, intentando protegerla por última vez.",
+    "target_seconds": 3.0,
+    "status": "generated_technical_review_pending",
+    "seconds": 2.44,
+    "file": "TAKES/EP05_ALBA_L03_T1.wav"
+  },
+  {
+    "id": "L04",
+    "take": 1,
+    "model": "gemini-3.8-flash-lite-tts",
+    "voice": "Vindemiatrix",
+    "text": "<breath> Somos siete. Si alguien oye esto, que no quite a ninguno.",
+    "style": "Susurro cercano y firme desde la tela, solemnidad serena.",
+    "target_seconds": 5.5,
+    "status": "generated_technical_review_pending",
+    "seconds": 5.28,
+    "file": "TAKES/EP05_MARA_L04_T1.wav"
+  },
+  {
+    "id": "L05",
+    "take": 1,
+    "model": "gemini-3.8-flash-tts",
+    "voice": "Kore",
+    "text": "La página entera. Y mi nombre.",
+    "style": "Decisión firme, serena, definitiva.",
+    "target_seconds": 3.0,
+    "status": "generated_technical_review_pending",
+    "seconds": 3.32,
+    "file": "TAKES/EP05_INES_L05_T1.wav"
+  },
+  {
+    "id": "L06",
+    "take": 1,
+    "model": "gemini-3.8-flash-lite-tts",
+    "voice": "Vindemiatrix",
+    "text": "<breath> Voy a decir los nombres.",
+    "style": "Susurro cercano, respiración leve, preparación final.",
+    "target_seconds": 3.0,
+    "status": "generated_technical_review_pending",
+    "seconds": 2.12,
+    "file": "TAKES/EP05_MARA_L06_T1.wav"
+  }
+]

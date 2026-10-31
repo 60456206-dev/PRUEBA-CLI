@@ -1,0 +1,118 @@
+{
+  "episode": "EP02",
+  "duration": 40.0,
+  "segments": [
+    {
+      "shot": 1,
+      "source_in": 0.0,
+      "source_out": 4.0,
+      "start": 0.0,
+      "end": 4.0
+    },
+    {
+      "shot": 2,
+      "source_in": 5.0,
+      "source_out": 9.25,
+      "start": 4.0,
+      "end": 8.25
+    },
+    {
+      "shot": 3,
+      "source_in": 12.0,
+      "source_out": 15.5,
+      "start": 8.25,
+      "end": 11.75
+    },
+    {
+      "shot": 4,
+      "source_in": 17.0,
+      "source_out": 23.5,
+      "start": 11.75,
+      "end": 18.25
+    },
+    {
+      "shot": 5,
+      "source_in": 25.0,
+      "source_out": 29.5,
+      "start": 18.25,
+      "end": 22.75
+    },
+    {
+      "shot": 6,
+      "source_in": 31.0,
+      "source_out": 37.5,
+      "start": 22.75,
+      "end": 29.25
+    },
+    {
+      "shot": 7,
+      "source_in": 38.0,
+      "source_out": 42.75,
+      "start": 29.25,
+      "end": 34.0
+    },
+    {
+      "shot": 8,
+      "source_in": 44.0,
+      "source_out": 50.0,
+      "start": 34.0,
+      "end": 40.0
+    }
+  ],
+  "dialogue": [
+    {
+      "id": "L01",
+      "shot": 1,
+      "start": 0.55,
+      "end": 3.063,
+      "text": "Mara. ¿Me oyes?"
+    },
+    {
+      "id": "L02",
+      "shot": 2,
+      "start": 4.55,
+      "end": 7.548,
+      "text": "No vuelve. Ya no está."
+    },
+    {
+      "id": "L03",
+      "shot": 4,
+      "start": 12.4,
+      "end": 16.173,
+      "text": "Son las seis y diez. Han cerrado. Seguimos aquí."
+    },
+    {
+      "id": "L04",
+      "shot": 6,
+      "start": 23.6,
+      "end": 27.32,
+      "text": "Son las seis y diez. Han cerrado. Seguimos aquí."
+    },
+    {
+      "id": "L05",
+      "shot": 7,
+      "start": 29.7,
+      "end": 32.516,
+      "text": "La tela se calla. La grabación no."
+    },
+    {
+      "id": "L06",
+      "shot": 8,
+      "start": 34.55,
+      "end": 36.923,
+      "text": "Aquí pone que a las seis ya no quedaba nadie."
+    }
+  ],
+  "first_pass_loudness": {
+    "input_i": "-21.57",
+    "input_tp": "-2.16",
+    "input_lra": "12.00",
+    "input_thresh": "-36.02",
+    "output_i": "-17.24",
+    "output_tp": "-1.50",
+    "output_lra": "15.50",
+    "output_thresh": "-31.25",
+    "normalization_type": "dynamic",
+    "target_offset": "1.24"
+  }
+}

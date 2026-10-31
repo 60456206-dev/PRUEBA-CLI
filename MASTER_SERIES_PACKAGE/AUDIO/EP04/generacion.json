@@ -1,0 +1,86 @@
+[
+  {
+    "id": "L01",
+    "take": 1,
+    "model": "gemini-3.8-flash-lite-tts",
+    "voice": "Gacrux",
+    "text": "El agua iba hacia la sala norte. Tú estabas allí.",
+    "style": "Grave, confesión cansada y contenida, peso de años.",
+    "target_seconds": 5.5,
+    "status": "generated_technical_review_pending",
+    "seconds": 4.56,
+    "file": "TAKES/EP04_ALBA_L01_T1.wav"
+  },
+  {
+    "id": "L02",
+    "take": 1,
+    "model": "gemini-3.8-flash-tts",
+    "voice": "Gacrux",
+    "text": "Cerré para que no te alcanzara.",
+    "style": "Voz baja, firmeza dolorosa, sin sollozar.",
+    "target_seconds": 4.0,
+    "status": "generated_technical_review_pending",
+    "seconds": 2.44,
+    "file": "TAKES/EP04_ALBA_L02_T1.wav"
+  },
+  {
+    "id": "L03",
+    "take": 1,
+    "model": "gemini-3.8-flash-lite-tts",
+    "voice": "Kore",
+    "text": "¿Sabías que Mara seguía dentro?",
+    "style": "Temblor contenido, directa, voz baja.",
+    "target_seconds": 4.0,
+    "status": "generated_technical_review_pending",
+    "seconds": 2.28,
+    "file": "TAKES/EP04_INES_L03_T1.wav"
+  },
+  {
+    "id": "L04",
+    "take": 1,
+    "model": "gemini-3.8-flash-tts",
+    "voice": "Gacrux",
+    "text": "Sí.",
+    "style": "Una sola palabra, grave, seca, honesta.",
+    "target_seconds": 1.2,
+    "status": "generated_technical_review_pending",
+    "seconds": 1.08,
+    "file": "TAKES/EP04_ALBA_L04_T1.wav"
+  },
+  {
+    "id": "L05",
+    "take": 1,
+    "model": "gemini-3.8-flash-lite-tts",
+    "voice": "Gacrux",
+    "text": "No podía perderos a las dos.",
+    "style": "Cansada, vulnerabilidad contenida, voz grave.",
+    "target_seconds": 3.0,
+    "status": "generated_technical_review_pending",
+    "seconds": 2.52,
+    "file": "TAKES/EP04_ALBA_L05_T1.wav"
+  },
+  {
+    "id": "L06",
+    "take": 1,
+    "model": "gemini-3.8-flash-tts",
+    "voice": "Kore",
+    "text": "La perdiste tú. A mí me mentiste.",
+    "style": "Dura, herida, firme, voz baja sin gritar.",
+    "target_seconds": 2.5,
+    "status": "generated_technical_review_pending",
+    "seconds": 3.24,
+    "file": "TAKES/EP04_INES_L06_T1.wav"
+  },
+  {
+    "id": "L07",
+    "take": 1,
+    "model": "gemini-3.8-flash-lite-tts",
+    "voice": "Gacrux",
+    "text": "Yo cerré la puerta. Tú firmaste que no quedaba nadie.",
+    "style": "Grave, devolviendo la verdad compartida, sin crueldad.",
+    "target_seconds": 5.0,
+    "status": "generated_technical_review_pending",
+    "seconds": 4.28,
+    "file": "TAKES/EP04_ALBA_L07_T1.wav"
+  }
+]

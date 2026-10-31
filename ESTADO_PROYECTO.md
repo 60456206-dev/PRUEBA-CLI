@@ -2,6 +2,19 @@
 
 Actualizado: 2026-10-31.
 
+## Montaje y Postproducción Profesional · EP02 a EP06 (AJUSTADO_V2) · 2026-10-31
+
+- **Temporada 1 completa renderizada y ajustada (`EP01` a `EP06`)**:
+  - Por instrucción del usuario, se generaron los **Picture Locks** (`FINAL/EP02_PICTURE_LOCK.mp4` a `FINAL/EP06_PICTURE_LOCK.mp4`, 1080×1920, 24 fps, sin audio), las **voces TTS** (`AUDIO/EP02/` a `AUDIO/EP06/`, con `Kore` para Inés, `Gacrux` para Alba y `Vindemiatrix` para Mara), los **stems de sala, foley y SFX** por plano, la **mezcla normalizada EBU R128 (`-16 LUFS`, `-1,5 dBTP`)**, los **subtítulos SRT y quemados** (`FontSize=14, MarginV=28`) y el **ajuste de ritmo dinámico y color/contraste** (`FINAL/EP02_AJUSTADO_V2.mp4` a `FINAL/EP06_AJUSTADO_V2.mp4`). Sin música de fondo, por indicación expresa del usuario.
+  - Resumen de másters `AJUSTADO_V2` verificados (`DECODE_OK`, 1080×1920, 24 fps, AAC 192 kbps):
+    - `FINAL/EP01_AJUSTADO_V2.mp4`: 35,25 s (846 frames), `-16,0 LUFS`, `-2,25 dBTP`.
+    - `FINAL/EP02_AJUSTADO_V2.mp4`: 40,00 s (960 frames), `-17,2 LUFS`, `-2,33 dBTP`. Reutiliza toma `L03` y motivo de compuerta (`SH05`) con filtrado de altavoz en el replay de `SH06`.
+    - `FINAL/EP03_AJUSTADO_V2.mp4`: 38,25 s (918 frames), `-16,7 LUFS`, `-2,25 dBTP`. Recorta inicio de `SH04` (labios entreabiertos) y `SH06` (`32,5–38,5 s`, eliminando por completo las manos intrusas de `0,3–1,4 s`).
+    - `FINAL/EP04_AJUSTADO_V2.mp4`: 40,50 s (972 frames), `-16,6 LUFS`, `-2,26 dBTP`. Inicia `SH01` en apertura de palma (`1,25 s`) y corta `SH07` en `4,0 s` locales antes de que Alba vuelva a levantar la mirada.
+    - `FINAL/EP05_AJUSTADO_V2.mp4`: 37,50 s (900 frames), `-17,2 LUFS`, `-2,29 dBTP`.
+    - `FINAL/EP06_AJUSTADO_V2.mp4`: 45,00 s (1080 frames), `-16,9 LUFS`, `-2,34 dBTP`. Pausas internas de `L01` ajustadas a `0,35 s`, playback `L06` extraído diegéticamente de `L02`, y ventana `SH05` (`28,75–33,00 s`) centrada en el spinner y confirmación «Informe enviado».
+  - Documentado en `MASTER_SERIES_PACKAGE/FINAL/EP02_EP06_AJUSTADO_V2_REVISION.md`. Hojas de contacto de revisión en `FINAL/EP02_AJUSTADO_V2_CONTACT.png` a `EP06_AJUSTADO_V2_CONTACT.png`.
+
 ## Cierre de EP06 y Temporada 1 Completa · 2026-10-31
 
 - **Temporada 1 completada al 100% (48/48 planos completados y verificados)**:

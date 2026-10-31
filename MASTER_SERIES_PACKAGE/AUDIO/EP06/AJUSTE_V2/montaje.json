@@ -1,0 +1,125 @@
+{
+  "episode": "EP06",
+  "duration": 45.0,
+  "segments": [
+    {
+      "shot": 1,
+      "source_in": 0.0,
+      "source_out": 6.75,
+      "start": 0.0,
+      "end": 6.75
+    },
+    {
+      "shot": 2,
+      "source_in": 8.0,
+      "source_out": 14.25,
+      "start": 6.75,
+      "end": 13.0
+    },
+    {
+      "shot": 3,
+      "source_in": 15.0,
+      "source_out": 20.25,
+      "start": 13.0,
+      "end": 18.25
+    },
+    {
+      "shot": 4,
+      "source_in": 21.0,
+      "source_out": 26.0,
+      "start": 18.25,
+      "end": 23.25
+    },
+    {
+      "shot": 5,
+      "source_in": 28.75,
+      "source_out": 33.0,
+      "start": 23.25,
+      "end": 27.5
+    },
+    {
+      "shot": 6,
+      "source_in": 33.0,
+      "source_out": 39.5,
+      "start": 27.5,
+      "end": 34.0
+    },
+    {
+      "shot": 7,
+      "source_in": 40.0,
+      "source_out": 44.5,
+      "start": 34.0,
+      "end": 38.5
+    },
+    {
+      "shot": 8,
+      "source_in": 46.0,
+      "source_out": 52.5,
+      "start": 38.5,
+      "end": 45.0
+    }
+  ],
+  "dialogue": [
+    {
+      "id": "L01",
+      "shot": 1,
+      "start": 0.45,
+      "end": 5.968,
+      "text": "Elena Ríos. Tomás Vera. Luz Arce. Bruno Sol."
+    },
+    {
+      "id": "L02",
+      "shot": 2,
+      "start": 7.25,
+      "end": 12.511,
+      "text": "Celia Paz. Samuel Costa. Y yo, Mara Vidal."
+    },
+    {
+      "id": "L03",
+      "shot": 3,
+      "start": 13.5,
+      "end": 17.315,
+      "text": "Firmé sin comprobar. Adjuntaré mi declaración."
+    },
+    {
+      "id": "L04",
+      "shot": 4,
+      "start": 18.9,
+      "end": 20.967,
+      "text": "No voy a quitar tu nombre."
+    },
+    {
+      "id": "L05",
+      "shot": 6,
+      "start": 28.15,
+      "end": 31.354,
+      "text": "Deja el mío también. ¿Puedo quedarme?"
+    },
+    {
+      "id": "L06",
+      "shot": 7,
+      "start": 34.55,
+      "end": 36.798,
+      "text": "Y yo, Mara Vidal."
+    },
+    {
+      "id": "L07",
+      "shot": 8,
+      "start": 39.15,
+      "end": 41.234,
+      "text": "Si no apagas eso."
+    }
+  ],
+  "first_pass_loudness": {
+    "input_i": "-22.32",
+    "input_tp": "-4.00",
+    "input_lra": "5.20",
+    "input_thresh": "-35.88",
+    "output_i": "-16.03",
+    "output_tp": "-1.50",
+    "output_lra": "4.50",
+    "output_thresh": "-29.36",
+    "normalization_type": "dynamic",
+    "target_offset": "0.03"
+  }
+}

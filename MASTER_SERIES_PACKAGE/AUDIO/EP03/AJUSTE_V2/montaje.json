@@ -1,0 +1,118 @@
+{
+  "episode": "EP03",
+  "duration": 38.25,
+  "segments": [
+    {
+      "shot": 1,
+      "source_in": 0.0,
+      "source_out": 3.5,
+      "start": 0.0,
+      "end": 3.5
+    },
+    {
+      "shot": 2,
+      "source_in": 5.0,
+      "source_out": 10.0,
+      "start": 3.5,
+      "end": 8.5
+    },
+    {
+      "shot": 3,
+      "source_in": 12.0,
+      "source_out": 16.75,
+      "start": 8.5,
+      "end": 13.25
+    },
+    {
+      "shot": 4,
+      "source_in": 19.5,
+      "source_out": 24.25,
+      "start": 13.25,
+      "end": 18.0
+    },
+    {
+      "shot": 5,
+      "source_in": 26.0,
+      "source_out": 29.75,
+      "start": 18.0,
+      "end": 21.75
+    },
+    {
+      "shot": 6,
+      "source_in": 32.5,
+      "source_out": 38.5,
+      "start": 21.75,
+      "end": 27.75
+    },
+    {
+      "shot": 7,
+      "source_in": 39.0,
+      "source_out": 43.0,
+      "start": 27.75,
+      "end": 31.75
+    },
+    {
+      "shot": 8,
+      "source_in": 45.0,
+      "source_out": 51.5,
+      "start": 31.75,
+      "end": 38.25
+    }
+  ],
+  "dialogue": [
+    {
+      "id": "L01",
+      "shot": 2,
+      "start": 4.05,
+      "end": 6.85,
+      "text": "¿Por qué guardabas la llave de la compuerta?"
+    },
+    {
+      "id": "L02",
+      "shot": 3,
+      "start": 9.0,
+      "end": 12.44,
+      "text": "Yo llevaba las llaves. Eso ya lo sabes."
+    },
+    {
+      "id": "L03",
+      "shot": 4,
+      "start": 13.8,
+      "end": 16.317,
+      "text": "No busques solo mi nombre."
+    },
+    {
+      "id": "L04",
+      "shot": 6,
+      "start": 22.3,
+      "end": 26.487,
+      "text": "Mamá. Te oigo al otro lado. Abre."
+    },
+    {
+      "id": "L05",
+      "shot": 8,
+      "start": 32.35,
+      "end": 33.842,
+      "text": "La oíste."
+    },
+    {
+      "id": "L06",
+      "shot": 8,
+      "start": 34.95,
+      "end": 35.932,
+      "text": "Y no abriste."
+    }
+  ],
+  "first_pass_loudness": {
+    "input_i": "-21.99",
+    "input_tp": "-4.03",
+    "input_lra": "10.50",
+    "input_thresh": "-36.39",
+    "output_i": "-16.58",
+    "output_tp": "-1.50",
+    "output_lra": "7.20",
+    "output_thresh": "-29.90",
+    "normalization_type": "dynamic",
+    "target_offset": "0.58"
+  }
+}

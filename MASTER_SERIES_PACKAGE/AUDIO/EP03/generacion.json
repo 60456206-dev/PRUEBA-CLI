@@ -1,0 +1,74 @@
+[
+  {
+    "id": "L01",
+    "take": 1,
+    "model": "gemini-3.8-flash-lite-tts",
+    "voice": "Kore",
+    "text": "¿Por qué guardabas la llave de la compuerta?",
+    "style": "Directa, contenida, exigiendo una respuesta sin gritar.",
+    "target_seconds": 4.0,
+    "status": "generated_technical_review_pending",
+    "seconds": 3.08,
+    "file": "TAKES/EP03_INES_L01_T1.wav"
+  },
+  {
+    "id": "L02",
+    "take": 1,
+    "model": "gemini-3.8-flash-tts",
+    "voice": "Gacrux",
+    "text": "Yo llevaba las llaves. Eso ya lo sabes.",
+    "style": "Seca, defensiva, voz grave y cansada.",
+    "target_seconds": 3.5,
+    "status": "generated_technical_review_pending",
+    "seconds": 3.44,
+    "file": "TAKES/EP03_ALBA_L02_T1.wav"
+  },
+  {
+    "id": "L03",
+    "take": 1,
+    "model": "gemini-3.8-flash-lite-tts",
+    "voice": "Gacrux",
+    "text": "No busques solo mi nombre.",
+    "style": "Advertencia grave, baja, contenida.",
+    "target_seconds": 3.0,
+    "status": "generated_technical_review_pending",
+    "seconds": 2.84,
+    "file": "TAKES/EP03_ALBA_L03_T1.wav"
+  },
+  {
+    "id": "L04",
+    "take": 1,
+    "model": "gemini-3.8-flash-tts",
+    "voice": "Vindemiatrix",
+    "text": "<breath> Mamá. Te oigo al otro lado. Abre.",
+    "style": "Susurro cercano, tenso, súplica contenida sin histeria.",
+    "target_seconds": 5.0,
+    "status": "generated_technical_review_pending",
+    "seconds": 4.32,
+    "file": "TAKES/EP03_MARA_L04_T1.wav"
+  },
+  {
+    "id": "L05",
+    "take": 1,
+    "model": "gemini-3.8-flash-lite-tts",
+    "voice": "Kore",
+    "text": "La oíste.",
+    "style": "Voz muy baja, helada, certeza dolorosa.",
+    "target_seconds": 2.5,
+    "status": "generated_technical_review_pending",
+    "seconds": 1.68,
+    "file": "TAKES/EP03_INES_L05_T1.wav"
+  },
+  {
+    "id": "L06",
+    "take": 1,
+    "model": "gemini-3.8-flash-tts",
+    "voice": "Kore",
+    "text": "Y no abriste.",
+    "style": "Seca, sentencia contenida, sin gritar.",
+    "target_seconds": 2.0,
+    "status": "generated_technical_review_pending",
+    "seconds": 1.36,
+    "file": "TAKES/EP03_INES_L06_T1.wav"
+  }
+]
