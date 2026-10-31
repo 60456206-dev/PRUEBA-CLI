@@ -9,8 +9,8 @@ Actualizado: 2026-10-31.
 - EP05_SH03 oficializado desde PHONE.png fija: 6 s/144 frames/720×1280/24 fps/sin audio, fotograma codificado revisado y decodificación íntegra. Sin tercera generación; V1/V2 eliminadas tras verificar. Inmovilidad total y frase lateral recortada heredada de referencia documentadas.
 - Avance: **36/48 oficiales**, EP05 4/8.
 - `EP05_SH04_FINAL.mp4` oficializado (720×1280, 24 fps, 8,000 s / 192 frames sin audio, decodificación íntegra comprobada). Inés eleva la mirada fuera de campo a la izquierda con labios cerrados y expresión sobria. Descarte local V1 eliminado tras verificación; hoja de contacto guardada en `shots/EP05_SH04_V1_CONTACT.png`. Tarjeta sincronizada.
-- Plano activo: **`EP05_SH05`** (referencia `SHOT_REFERENCES/EP05_SH05_START_S3.png`, 5 s en montaje según `EP05_EDIT_PLAN.md`). Macro de lana óxido en Estado S3, última franja de sal blanca y pipeta con gota de agua suspendida. Preparar/revisar prompt y enviar generación en Flow.
-- Orden operativo: SH05–SH08 en orden de montaje (gota/sal en SH05, pulso final en SH06 y desaparición de cristales S4 en SH08). Mantener máximo dos intentos por plano y verificación antes de oficializar.
+- Plano activo: **`EP05_SH05`** (referencia `SHOT_REFERENCES/EP05_SH05_START_S3.png`, 5 s en montaje según `EP05_EDIT_PLAN.md`). Macro de lana óxido en Estado S3, última franja de sal blanca y pipeta con gota de agua suspendida. Primer intento enviado y aprobado a las 12:19 UTC en Flow (Omni 1.1 Flash / 8 s / 9:16 / 12 puntos; 1/2 intentos enviados). En cola de generación, no duplicar. Pendiente resultado y revisión visual.
+- Orden operativo: resolver SH05; luego SH06–SH08 en orden de montaje (pulso final en SH06 y desaparición de cristales S4 en SH08). Mantener máximo dos intentos por plano y verificación antes de oficializar.
 
 ## Historial previo a retoma · EP05 · 2026-10-31
 
