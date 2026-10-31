@@ -1,6 +1,19 @@
 # Dónde nos quedamos
 
-Actualizado: 2026-10-30.
+Actualizado: 2026-10-31.
+
+## Producción de vídeo · EP05 en curso · 2026-10-31
+
+- Usuario confirma y autoriza oficialización de planos cumplidos:
+  - `EP05_SH01_FINAL.mp4` oficializado (720×1280, 24 fps, 5,000 s / 120 fotogramas sin audio, decodificación íntegra). Documento y firma «Inés Vidal» 100% estáticos y nítidos sin manos ni aberraciones. Descartes locales eliminados. Tarjeta sincronizada.
+  - `EP05_SH02_FINAL.mp4` oficializado (720×1280, 24 fps, 7,000 s / 168 fotogramas sin audio, decodificación íntegra). Alba Vidal frente a la puerta, mirada a derecha sostenida, descenso sutil de hombros, boca cerrada y cámara fija. Descartes locales eliminados. Tarjeta sincronizada.
+- Avance global de la serie: **34/48 planos oficiales**.
+- Plano activo: **`EP05_SH03`** (referencia `SHOT_REFERENCES/PHONE.png`, 6 s en montaje según `EP05_EDIT_PLAN.md`).
+  - Generada versión `V1` con Omni 1.1 Flash (6 s, 144 fotogramas): texto y pantalla del móvil 100% fieles y nítidos, pero presenta intrusión no deseada de dedos arrojando sal entre ~1,8 s y 3,2 s (inducido por la cláusula «State S3» del prompt).
+  - Generada versión `V2` con Veo 3.1 - Fast (7,93 s / 190 fotogramas): cámara fija sin manos ni sal, pero el texto de la pantalla muta y degenera en un bloque de texto falso denso a partir del segundo 2.
+  - Decodificación íntegra comprobada en ambos (`DECODE_OK`). No oficializados por defectos de continuidad/texto.
+  - Hojas de contacto generadas: `shots/EP05_SH03_V1_CONTACT.png` y `shots/EP05_SH03_V2_CONTACT.png`.
+- Conexión túnel SSH y Google Flow en Chrome local comprobados y operativos.
 
 ## Preparación e imágenes EP06 completadas · 2026-10-30
 
