@@ -5,10 +5,11 @@ Actualizado: 2026-10-31.
 ## Producción EP06 en curso · 2026-10-31
 
 - Usuario autoriza inicio de producción de vídeo de **Episodio 06 («Los siete»)** bajo el flujo autónomo de revisión y oficialización delegada.
-- Avance global de la serie: **41/48 planos oficiales** (EP01–EP05: 40/40; EP06: 1/8).
-- `EP06_SH01_FINAL.mp4` oficializado (720×1280, 24 fps, 8,000 s / 192 fotogramas exactos sin audio, decodificación íntegra comprobada `DECODE_OK`). V1 (Omni 1.1 Flash) desde `reference_frames/EP05_SH07_LASTFRAME.png`. Grabadora sobre mesa de madera con LED rojo de grabación encendido constante, cámara fija sin manos ni personas. Continuidad directa con el desenlace de EP05. Descarte V1 eliminado tras verificación; hoja de contacto guardada en `shots/EP06_SH01_V1_CONTACT.png`. Tarjeta sincronizada.
-- Plano activo: **`EP06_SH02`** (referencia `SHOT_REFERENCES/COAT_END.png`, 7 s en montaje según `EP06_EDIT_PLAN.md`). Abrigo óxido en Estado S4 colgado en el archivo, lana húmeda e inerte, sin cristales de sal.
-- Siguiente paso: subir `COAT_END.png` a Flow y generar `EP06_SH02`.
+- Avance global de la serie: **42/48 planos oficiales** (EP01–EP05: 40/40; EP06: 2/8).
+- `EP06_SH01_FINAL.mp4` oficializado (720×1280, 24 fps, 8,000 s / 192 fotogramas exactos sin audio, decodificación íntegra comprobada `DECODE_OK`). V1 (Omni 1.1 Flash) desde `reference_frames/EP05_SH07_LASTFRAME.png`. Grabadora sobre mesa con LED rojo continuo sin manos ni personas. Descarte V1 eliminado tras verificación; hoja de contacto guardada en `shots/EP06_SH01_V1_CONTACT.png`.
+- `EP06_SH02_FINAL.mp4` oficializado (720×1280, 24 fps, 7,000 s / 168 fotogramas exactos sin audio, decodificación íntegra comprobada `DECODE_OK`). Generado desde V2 en Flow con Omni 1.1 Flash (intento 2/2 tras descartar V1 por salpicadura/goteo en suelo). Abrigo de lana óxido en Estado S4 suspendido en absoluta quietud, bajo oscuro y húmedo sin sal, suelo limpio e inerte. Recortado de 8 s a 0–7,000 s según montaje. Descartes V1/V2 locales eliminados tras verificación; hojas de contacto archivadas en `shots/EP06_SH02_V1_CONTACT.png` y `shots/EP06_SH02_V2_CONTACT.png`. Tarjeta sincronizada.
+- Plano activo: **`EP06_SH03`** (referencia `SHOT_REFERENCES/PHONE.png`, 6 s en montaje según `EP06_EDIT_PLAN.md`). Smartphone cenital sobre mesa de madera del archivo, pantalla nítida e inmóvil.
+- Siguiente paso: generar `EP06_SH03` en Flow.
 
 ## Cierre de EP05 · 2026-10-31
 
