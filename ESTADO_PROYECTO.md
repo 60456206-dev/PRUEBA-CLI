@@ -2,21 +2,19 @@
 
 Actualizado: 2026-10-31.
 
-## Retoma autorizada · EP05 COMPLETADO (8/8 oficiales) · 2026-10-31
+## Producción EP06 en curso · 2026-10-31
 
-- Usuario delega revisión de oficiales EP04/EP05 y cierre de EP05, máximo dos intentos por plano, ajustes y verificación antes de oficializar.
-- Avance global de la serie: **40/48 planos oficiales**.
-- **Episodio 05 completado al 100% (8/8 oficiales)**:
-  - `EP05_SH01_FINAL.mp4`: 5 s / 120 frames (documento informe Inés Vidal).
-  - `EP05_SH02_FINAL.mp4`: 7 s / 168 frames (Alba Vidal frente a puerta, mirada sostenida).
-  - `EP05_SH03_FINAL.mp4`: 6 s / 144 frames (móvil sobre mesa con informe recortado).
-  - `EP05_SH04_FINAL.mp4`: 8 s / 192 frames (Inés mesa archivo, levantamiento gradual de mirada).
-  - `EP05_SH05_FINAL.mp4`: 5 s / 120 frames (macro lana óxido, gota disolviendo borde de sal).
-  - `EP05_SH06_FINAL.mp4`: 8 s / 192 frames (cuello de abrigo vacío pulsando y asentándose).
-  - `EP05_SH07_FINAL.mp4`: 6 s / 144 frames (grabadora sobre mesa, LED rojo de grabación encendido continuo).
-  - `EP05_SH08_FINAL.mp4`: 8 s / 192 frames (macro lana óxido, últimos cristales disolviéndose hasta Estado S4 inerte).
-- Todos los vídeos oficiales de EP05 están en 720×1280 (vertical 9:16), 24 fps, sin audio, con decodificación íntegra comprobada (`DECODE_OK`). Descartes locales eliminados y hojas de contacto `_CONTACT.png` preservadas.
-- Siguiente fase: Episodio 06 («Los siete», 8 planos pendientes, 40/48 completados) o montaje / mezcla sonora según determine el usuario.
+- Usuario autoriza inicio de producción de vídeo de **Episodio 06 («Los siete»)** bajo el flujo autónomo de revisión y oficialización delegada.
+- Avance global de la serie: **41/48 planos oficiales** (EP01–EP05: 40/40; EP06: 1/8).
+- `EP06_SH01_FINAL.mp4` oficializado (720×1280, 24 fps, 8,000 s / 192 fotogramas exactos sin audio, decodificación íntegra comprobada `DECODE_OK`). V1 (Omni 1.1 Flash) desde `reference_frames/EP05_SH07_LASTFRAME.png`. Grabadora sobre mesa de madera con LED rojo de grabación encendido constante, cámara fija sin manos ni personas. Continuidad directa con el desenlace de EP05. Descarte V1 eliminado tras verificación; hoja de contacto guardada en `shots/EP06_SH01_V1_CONTACT.png`. Tarjeta sincronizada.
+- Plano activo: **`EP06_SH02`** (referencia `SHOT_REFERENCES/COAT_END.png`, 7 s en montaje según `EP06_EDIT_PLAN.md`). Abrigo óxido en Estado S4 colgado en el archivo, lana húmeda e inerte, sin cristales de sal.
+- Siguiente paso: subir `COAT_END.png` a Flow y generar `EP06_SH02`.
+
+## Cierre de EP05 · 2026-10-31
+
+- Episodio 05 completado al 100% (8/8 oficiales):
+  - `EP05_SH01_FINAL.mp4` a `EP05_SH08_FINAL.mp4` verificados y sincronizados.
+  - Todos en 720×1280, 24 fps, sin audio, con hojas de contacto archivadas.
 
 ## Historial previo a retoma · EP05 · 2026-10-31
 
