@@ -2,15 +2,21 @@
 
 Actualizado: 2026-10-31.
 
-## Retoma autorizada · 2026-10-31
+## Retoma autorizada · EP05 COMPLETADO (8/8 oficiales) · 2026-10-31
 
 - Usuario delega revisión de oficiales EP04/EP05 y cierre de EP05, máximo dos intentos por plano, ajustes y verificación antes de oficializar.
-- Revisados visualmente 8 fotogramas por oficial EP04 y EP05_SH01–02, decodificación íntegra correcta. Conservar con concesiones detalladas en `MASTER_SERIES_PACKAGE/EPISODES/EP05/REVISION_RETOMA.md`; no equivalen a cumplimiento literal de todos los prompts.
-- EP05_SH03 oficializado desde PHONE.png fija: 6 s/144 frames/720×1280/24 fps/sin audio, fotograma codificado revisado y decodificación íntegra. Sin tercera generación; V1/V2 eliminadas tras verificar. Inmovilidad total y frase lateral recortada heredada de referencia documentadas.
-- Avance: **39/48 oficiales**, EP05 7/8.
-- `EP05_SH07_FINAL.mp4` oficializado (720×1280, 24 fps, 6,000 s / 144 frames sin audio, decodificación íntegra comprobada). V1 (Omni 1.1 Flash). Grabadora sobre mesa con LED rojo continuo sin manos ni aberraciones. Descarte local V1 eliminado tras verificación; hoja de contacto guardada en `shots/EP05_SH07_V1_CONTACT.png`. Tarjeta sincronizada.
-- Plano activo: **`EP05_SH08`** (8 s en montaje según `EP05_EDIT_PLAN.md`, cierre definitivo de EP05). Macro de lana óxido en transición directa a Estado S4: desaparición de últimos microcristales de sal, lana húmeda saturada e inerte.
-- Orden operativo: resolver SH08 para completar y cerrar el Episodio 05 al 100%. Mantener máximo dos intentos por plano y verificación antes de oficializar.
+- Avance global de la serie: **40/48 planos oficiales**.
+- **Episodio 05 completado al 100% (8/8 oficiales)**:
+  - `EP05_SH01_FINAL.mp4`: 5 s / 120 frames (documento informe Inés Vidal).
+  - `EP05_SH02_FINAL.mp4`: 7 s / 168 frames (Alba Vidal frente a puerta, mirada sostenida).
+  - `EP05_SH03_FINAL.mp4`: 6 s / 144 frames (móvil sobre mesa con informe recortado).
+  - `EP05_SH04_FINAL.mp4`: 8 s / 192 frames (Inés mesa archivo, levantamiento gradual de mirada).
+  - `EP05_SH05_FINAL.mp4`: 5 s / 120 frames (macro lana óxido, gota disolviendo borde de sal).
+  - `EP05_SH06_FINAL.mp4`: 8 s / 192 frames (cuello de abrigo vacío pulsando y asentándose).
+  - `EP05_SH07_FINAL.mp4`: 6 s / 144 frames (grabadora sobre mesa, LED rojo de grabación encendido continuo).
+  - `EP05_SH08_FINAL.mp4`: 8 s / 192 frames (macro lana óxido, últimos cristales disolviéndose hasta Estado S4 inerte).
+- Todos los vídeos oficiales de EP05 están en 720×1280 (vertical 9:16), 24 fps, sin audio, con decodificación íntegra comprobada (`DECODE_OK`). Descartes locales eliminados y hojas de contacto `_CONTACT.png` preservadas.
+- Siguiente fase: Episodio 06 («Los siete», 8 planos pendientes, 40/48 completados) o montaje / mezcla sonora según determine el usuario.
 
 ## Historial previo a retoma · EP05 · 2026-10-31
 
