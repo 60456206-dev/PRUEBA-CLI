@@ -5,12 +5,13 @@ Actualizado: 2026-10-31.
 ## Producción EP06 en curso · 2026-10-31
 
 - Usuario autoriza inicio de producción de vídeo de **Episodio 06 («Los siete»)** bajo el flujo autónomo de revisión y oficialización delegada.
-- Avance global de la serie: **43/48 planos oficiales** (EP01–EP05: 40/40; EP06: 3/8).
+- Avance global de la serie: **44/48 planos oficiales** (EP01–EP05: 40/40; EP06: 4/8).
 - `EP06_SH01_FINAL.mp4` oficializado (720×1280, 24 fps, 8,000 s / 192 fotogramas exactos sin audio, decodificación íntegra comprobada `DECODE_OK`). V1 (Omni 1.1 Flash) desde `reference_frames/EP05_SH07_LASTFRAME.png`. Grabadora sobre mesa con LED rojo continuo sin manos ni personas. Descarte V1 eliminado tras verificación; hoja de contacto guardada en `shots/EP06_SH01_V1_CONTACT.png`.
 - `EP06_SH02_FINAL.mp4` oficializado (720×1280, 24 fps, 7,000 s / 168 fotogramas exactos sin audio, decodificación íntegra comprobada `DECODE_OK`). V2 (Omni 1.1 Flash) desde `SHOT_REFERENCES/COAT_END.png`. Abrigo de lana óxido en Estado S4 suspendido en absoluta quietud, bajo oscuro y húmedo sin sal, suelo limpio e inerte. Recortado de 8 s a 0–7,000 s según montaje. Descartes V1/V2 eliminados; hojas de contacto archivadas en `shots/EP06_SH02_V1_CONTACT.png` y `shots/EP06_SH02_V2_CONTACT.png`.
 - `EP06_SH03_FINAL.mp4` oficializado (720×1280, 24 fps, 6,000 s / 144 fotogramas exactos sin audio, decodificación íntegra comprobada `DECODE_OK`). V2 (Omni 1.1 Flash) desde `SHOT_REFERENCES/PHONE.png` (intento 2/2 tras descartar V1 por intrusión de mano colocando llaves sobre la pantalla). V2 muestra el smartphone cenital sobre la mesa de madera inmóvil; texto del informe nítido y legible, pantalla sin obstrucciones. Descartes V1/V2 eliminados; hojas de contacto archivadas en `shots/EP06_SH03_V1_CONTACT.png` y `shots/EP06_SH03_V2_CONTACT.png`. Tarjeta sincronizada.
-- Plano activo: **`EP06_SH04`** (referencia `SHOT_REFERENCES/ALBA_DOOR.png`, 7 s en montaje según `EP06_EDIT_PLAN.md`). Alba frente a la puerta norte, mirada derecha, paso lateral sutil de 15 cm despejando el eje de la puerta.
-- Siguiente paso: subir `ALBA_DOOR.png` a Flow y generar `EP06_SH04`.
+- `EP06_SH04_FINAL.mp4` oficializado (720×1280, 24 fps, 7,000 s / 168 fotogramas exactos sin audio, decodificación íntegra comprobada `DECODE_OK`). V1 (Omni 1.1 Flash) desde `SHOT_REFERENCES/ALBA_DOOR.png` (evitando filtro de celebridad reemplazando nombre por mujer adulta). Alba da un paso sutil despejando el centro de la puerta norte, colocándose a la derecha junto a la lámpara con mirada fija a derecha y boca cerrada. Recortado de 8 s a 0–7,000 s según montaje. Descarte V1 eliminado; hoja de contacto archivada en `shots/EP06_SH04_V1_CONTACT.png`. Tarjeta sincronizada.
+- Plano activo: **`EP06_SH05`** (referencia `SHOT_REFERENCES/PHONE.png`, 5 s en montaje según `EP06_EDIT_PLAN.md`). Smartphone cenital sobre la mesa de madera, pantalla inmóvil lista para overlay de confirmación enviada, sin manos. Referencia `PHONE.png` ya presente en Flow.
+- Siguiente paso: generar `EP06_SH05` en Flow.
 
 ## Cierre de EP05 · 2026-10-31
 
