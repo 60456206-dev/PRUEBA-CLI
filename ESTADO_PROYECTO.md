@@ -2,10 +2,25 @@
 
 Actualizado: 2026-10-30.
 
-## Revisión activa · imágenes EP05 · 2026-10-30
+## Preparación e imágenes EP06 completadas · 2026-10-30
 
-- Usuario pide verificar imágenes de los 8 planos. Auditoría visual en `EPISODES/EP05/EP05_REVISION_REFERENCIAS.md`: 7/8 rutas existen; SH01/02/04/06 utilizables con concesiones de encuadre/mirada. PHONE de SH03 ausente en disco e historial local disponible. SH05 SALT_DROP y SH08 SALT_USED existen pero corresponden a sal de episodios anteriores; preparar variantes S3→S4. SH07 RECORDER tiene mano: alternativa existente y revisada EP02_SH06_START_RED.png sin mano/LED rojo; reasignación pendiente.
-- No se generaron imágenes/vídeos ni cambiaron tarjetas. Pendiente crear móvil, adaptar dos referencias de sal y reasignar grabadora; EP05_SH01 sí tiene REPORT_FULL utilizable.
+- Usuario pide completar las referencias de imagen de EP06 y consultar si existe un EP07.
+- Creado y auditado visualmente el asset faltante de cierre:
+  - `SHOT_REFERENCES/COAT_END.png` (768×1376): abrigo de lana óxido vacío colgado en el archivo en Estado S4 definitivo (borde inferior oscuro y húmedo sin ningún cristal blanco de sal restante, inerte y sin personas). Válido para `EP06_SH02` y `EP06_SH08`. Documentado en `COAT_END_GENERATION.md`.
+- Vinculado provisional de `EP06_SH01` con fallback a `EP02_SH06_START_RED.png` y provisto fotograma en `reference_frames/EP05_SH07_LASTFRAME.png`.
+- Estado de EP06: 8/8 imágenes iniciales listas, auditadas visualmente y disponibles en disco. Toda la temporada (EP01 a EP06) tiene cubiertas al 100% sus imágenes de referencia para generación de vídeo.
+- Alcance de la temporada: **No existe EP07**. La biblia de la serie (`02_SERIES_BIBLE.md`, `05_SEASON_ARC.md`, `06_EPISODE_OUTLINES.md`) establece exactamente 6 episodios y 48 planos (8 planos por episodio). El EP06 («Los siete») es el final definitivo.
+
+## Preparación e imágenes EP05 completadas · 2026-10-30
+
+- Usuario pide revisar estado, comprobar imágenes faltantes de EP05 y terminarlas de crear con los estándares requeridos para dejarlas listas para generar vídeos.
+- Se crearon y auditaron visualmente con éxito los 3 assets faltantes/adaptados:
+  - `SHOT_REFERENCES/PHONE.png` (768×1376): móvil sobre mesa de madera del archivo con foto del informe recortada omitiendo la firma de Inés («Evacuación completa: 18:00», «Responsable: Alba Vidal»). Documentado en `PHONE_GENERATION.md`.
+  - `SHOT_REFERENCES/EP05_SH05_START_S3.png` (768×1376): macro de lana óxido en Estado S3, zonas húmedas de EP01–EP03, última franja de sal blanca y pipeta con gota suspendida. Documentado en `EP05_SH05_START_S3_GENERATION.md`.
+  - `SHOT_REFERENCES/EP05_SH08_START_S3.png` (768×1376): macro de lana óxido en transición directa a Estado S4, lana saturada húmeda, últimos micro-cristales disolviéndose y pipeta retirada. Documentado en `EP05_SH08_START_S3_GENERATION.md`.
+- Reasignación oficial de SH07: `EP05_SH07` actualizado para usar `SHOT_REFERENCES/EP02_SH06_START_RED.png` (720×1280, grabadora sobre mesa con LED rojo encendido y sin manos).
+- Actualizadas y sincronizadas las 8 tarjetas de generación en `EPISODES/EP05/GENERATION_CARDS/`, `EP05_SHOTLIST.md`, `EP05_IMAGE_PROMPTS.md` y `EP05_REVISION_REFERENCIAS.md`.
+- Estado actual de EP05: 8/8 imágenes de inicio disponibles y verificadas visualmente. Las referencias cumplen continuidad y estándares de encuadre, iluminación y narrativa. El episodio 5 está 100% listo para arrancar la generación de vídeos (plano a plano en Flow/Kling/Wan). Siguiente paso recomendado: iniciar generación de `EP05_SH01`.
 
 ## Planificación musical · EP04 · 2026-10-30
 

@@ -34,7 +34,7 @@ Use supplied character master(s) CHARACTERS/INES_MASTER.png as identity only and
 
 ## EP05_SH05
 
-USE EXISTING: `SHOT_REFERENCES/SALT_DROP.png`.
+USE EXISTING: `SHOT_REFERENCES/EP05_SH05_START_S3.png`.
 
 Solo si falla el asset, regenerar con referencias y este prompt completo:
 
@@ -50,7 +50,7 @@ Use supplied character master(s) none as identity only and LOCATIONS/ARCHIVE_MAS
 
 ## EP05_SH07
 
-USE EXISTING: `SHOT_REFERENCES/RECORDER.png`.
+USE EXISTING: `SHOT_REFERENCES/EP02_SH06_START_RED.png`.
 
 Solo si falla el asset, regenerar con referencias y este prompt completo:
 
@@ -58,7 +58,7 @@ Use supplied character master(s) none as identity only and LOCATIONS/ARCHIVE_MAS
 
 ## EP05_SH08
 
-USE EXISTING: `SHOT_REFERENCES/SALT_USED.png`.
+USE EXISTING: `SHOT_REFERENCES/EP05_SH08_START_S3.png`.
 
 Solo si falla el asset, regenerar con referencias y este prompt completo:
 
