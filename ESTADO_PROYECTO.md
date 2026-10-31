@@ -7,10 +7,10 @@ Actualizado: 2026-10-31.
 - Usuario delega revisión de oficiales EP04/EP05 y cierre de EP05, máximo dos intentos por plano, ajustes y verificación antes de oficializar.
 - Revisados visualmente 8 fotogramas por oficial EP04 y EP05_SH01–02, decodificación íntegra correcta. Conservar con concesiones detalladas en `MASTER_SERIES_PACKAGE/EPISODES/EP05/REVISION_RETOMA.md`; no equivalen a cumplimiento literal de todos los prompts.
 - EP05_SH03 oficializado desde PHONE.png fija: 6 s/144 frames/720×1280/24 fps/sin audio, fotograma codificado revisado y decodificación íntegra. Sin tercera generación; V1/V2 eliminadas tras verificar. Inmovilidad total y frase lateral recortada heredada de referencia documentadas.
-- Avance: **35/48 oficiales**, EP05 3/8. Plano activo **EP05_SH04**; SH04: referencia INES_TABLE cargada y adjunta; petición de un vídeo Veo 3.1 Fast/8 s/9:16 enviada al agente Flow. Primer intento aprobado; pendiente resultado, no duplicar. SH05–08 pendientes.
-- SH04 primer intento aprobado a las 11:13 UTC: Veo 3.1 Fast/8 s/9:16, una salida, 20 puntos. **1/2 intentos enviados**; pendiente resultado y revisión. No duplicar. Proyecto cc2f2f40-9522-4a29-8293-1adc60cbf5bf.
-- SH04 V1 completada en Flow: `edit/365b4d8b-8321-4bff-9e76-fd9d3d79dd5e`, «Woman raising her gaze», duración mostrada 8 s. Solicitada descarga original 720p; después conexión reiniciada por el servidor (Connection reset). MP4 aún no recibido en repositorio, revisión visual y técnica pendientes; NO oficializado. No regenerar antes de recuperar/revisar V1.
-- Orden operativo: recuperar conexión y resolver SH04 pendiente; después SH05–SH08 en orden de montaje, con atención prioritaria a gota/sal (SH05), pulso final (SH06) y desaparición de cristales S4 (SH08). Referencias y prompts SH04–08 presentes. Mantener máximo dos intentos por plano y ajustes/revisión antes de oficializar.
+- Avance: **36/48 oficiales**, EP05 4/8.
+- `EP05_SH04_FINAL.mp4` oficializado (720×1280, 24 fps, 8,000 s / 192 frames sin audio, decodificación íntegra comprobada). Inés eleva la mirada fuera de campo a la izquierda con labios cerrados y expresión sobria. Descarte local V1 eliminado tras verificación; hoja de contacto guardada en `shots/EP05_SH04_V1_CONTACT.png`. Tarjeta sincronizada.
+- Plano activo: **`EP05_SH05`** (referencia `SHOT_REFERENCES/EP05_SH05_START_S3.png`, 5 s en montaje según `EP05_EDIT_PLAN.md`). Macro de lana óxido en Estado S3, última franja de sal blanca y pipeta con gota de agua suspendida. Preparar/revisar prompt y enviar generación en Flow.
+- Orden operativo: SH05–SH08 en orden de montaje (gota/sal en SH05, pulso final en SH06 y desaparición de cristales S4 en SH08). Mantener máximo dos intentos por plano y verificación antes de oficializar.
 
 ## Historial previo a retoma · EP05 · 2026-10-31
 
