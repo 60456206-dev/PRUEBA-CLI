@@ -20,6 +20,7 @@ Actualizado: 2026-10-31.
     - `FINAL/EP06_AJUSTADO_V3.mp4`: 41,75 s (1002 frames), `-15,4 LUFS`, `-1,10 dBTP`.
   - Documentado en `MASTER_SERIES_PACKAGE/FINAL/EP01_EP06_AJUSTADO_V3_EPIDEMIC_REVISION.md`. Hojas de contacto revisadas visualmente en `FINAL/EP01_AJUSTADO_V3_CONTACT.png` a `EP06_AJUSTADO_V3_CONTACT.png`. Versiones `V2` conservadas intactas.
   - **Estado de publicación**: el usuario indica que deja la oficialización en pendiente porque subirá cada capítulo de forma independiente. Se conservan listos todos los másters individuales (`EP01` a `EP06` tanto en `AJUSTADO_V3` con Epidemic Sound como en `AJUSTADO_V2`) para cuando vaya publicando cada episodio.
+  - **Carpeta limpia de entrega (`LISTOS/`)**: por petición del usuario, creada `/workspaces/PRUEBA-CLI/LISTOS/` con una subcarpeta por episodio (`LISTOS/EP01/` a `LISTOS/EP06/`) que contiene exclusivamente el `.mp4` final con música y ambiente de cada capítulo (`EP01_FINAL.mp4` a `EP06_FINAL.mp4`, copias exactas de `AJUSTADO_V3`), sin archivos Markdown ni subtítulos sueltos.
 
 ## Montaje y Postproducción Profesional · EP02 a EP06 (AJUSTADO_V2) · 2026-10-31
 
