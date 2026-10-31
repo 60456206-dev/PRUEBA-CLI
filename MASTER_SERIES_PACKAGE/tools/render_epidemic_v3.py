@@ -14,6 +14,7 @@ Montaje y Postproducción Profesional V3.2 (EP01 a EP06 + 3 Capítulos Dobles Fu
 import json
 import shutil
 import subprocess
+import sys
 import wave
 from pathlib import Path
 import numpy as np
@@ -394,28 +395,22 @@ DOUBLE_CHAPTERS = [
         "id": "PARTE_01_EP01_EP02",
         "ep_a": "EP01",
         "ep_b": "EP02",
-        "top_label": "ARCHIVO NORTE · PARTE 1 (EP. 1 Y 2)",
+        "top_label": "ARCHIVO NORTE · PARTE 1",
         "top_sub": "Doce años después de la inundación · El duplicado",
-        "mid_label": "ARCHIVO NORTE · EPISODIO 2",
-        "mid_sub": "El duplicado en la grabadora",
     },
     {
         "id": "PARTE_02_EP03_EP04",
         "ep_a": "EP03",
         "ep_b": "EP04",
-        "top_label": "ARCHIVO NORTE · PARTE 2 (EP. 3 Y 4)",
+        "top_label": "ARCHIVO NORTE · PARTE 2",
         "top_sub": "La llave de la compuerta · La firma al pie del acta",
-        "mid_label": "ARCHIVO NORTE · EPISODIO 4",
-        "mid_sub": "La firma al pie del acta",
     },
     {
         "id": "PARTE_03_EP05_EP06",
         "ep_a": "EP05",
         "ep_b": "EP06",
-        "top_label": "ARCHIVO NORTE · PARTE 3 · FINAL (EP. 5 Y 6)",
+        "top_label": "ARCHIVO NORTE · PARTE 3 · FINAL",
         "top_sub": "La última línea de sal · Los siete nombres",
-        "mid_label": "ARCHIVO NORTE · FINAL DE TEMPORADA",
-        "mid_sub": "Los siete nombres del archivo",
     },
 ]
 
@@ -913,37 +908,38 @@ def render_double_chapter(
     out_audio_dir = AUDIO_DIR / "DOBLES_V3"
     out_audio_dir.mkdir(parents=True, exist_ok=True)
 
-    # Unir stems de A y B + añadir puente sonoro cinematográfico en la unión (t = dur_a)
-    combined_stems = {}
-    for sname in ("DIALOGUE", "ROOM", "FOLEY", "SFX", "MUSIC"):
-        arr_a = data_a["stems"][sname].copy()
-        arr_b = data_b["stems"][sname].copy()
-        # En ROOM y MUSIC, suavizar la unión entre el final de A y el inicio de B para que no haya bache
-        if sname in ("ROOM", "MUSIC"):
-            fade_len = min(round(0.22 * SR), len(arr_a) // 4, len(arr_b) // 4)
-            if fade_len > 1:
-                # Restaurar nivel en la cola de A donde había fade-out individual
-                arr_a[-fade_len:] = arr_a[-2 * fade_len : -fade_len]
-        combined_stems[sname] = np.concatenate([arr_a, arr_b])[:total_samples]
-
-    # Añadir puente subgrave/riser suave justo en la transición entre ep_a y ep_b (dur_a - 1.1s a dur_a + 1.5s)
-    sub_eq = "highpass=f=45,lowpass=f=1800,equalizer=f=115:t=q:w=1.1:g=3.5"
-    bridge_riser = norm_clip(
-        af_process(slice_wav(lib["SFX_RISER_LOW"], 2.20, 4.40, 0.25, 0.35), sub_eq),
-        target_rms_db=-23.5,
-        max_peak_db=-5.5,
-    )
-    add_at(combined_stems["SFX"], bridge_riser, max(0.0, dur_a - 1.15), 0.70)
-
-    premaster = (
-        combined_stems["DIALOGUE"]
-        + combined_stems["ROOM"]
-        + combined_stems["FOLEY"]
-        + combined_stems["SFX"]
-        + combined_stems["MUSIC"]
-    )
     mix_wav = out_audio_dir / f"{part_id}_MEZCLA_V3.wav"
-    loudnorm_two_pass(premaster, mix_wav, total_dur)
+    if not mix_wav.exists():
+        # Unir stems de A y B + añadir puente sonoro cinematográfico en la unión (t = dur_a)
+        combined_stems = {}
+        for sname in ("DIALOGUE", "ROOM", "FOLEY", "SFX", "MUSIC"):
+            arr_a = data_a["stems"][sname].copy()
+            arr_b = data_b["stems"][sname].copy()
+            # En ROOM y MUSIC, suavizar la unión entre el final de A y el inicio de B para que no haya bache
+            if sname in ("ROOM", "MUSIC"):
+                fade_len = min(round(0.22 * SR), len(arr_a) // 4, len(arr_b) // 4)
+                if fade_len > 1:
+                    # Restaurar nivel en la cola de A donde había fade-out individual
+                    arr_a[-fade_len:] = arr_a[-2 * fade_len : -fade_len]
+            combined_stems[sname] = np.concatenate([arr_a, arr_b])[:total_samples]
+
+        # Añadir puente subgrave/riser suave justo en la transición entre ep_a y ep_b (dur_a - 1.1s a dur_a + 1.5s)
+        sub_eq = "highpass=f=45,lowpass=f=1800,equalizer=f=115:t=q:w=1.1:g=3.5"
+        bridge_riser = norm_clip(
+            af_process(slice_wav(lib["SFX_RISER_LOW"], 2.20, 4.40, 0.25, 0.35), sub_eq),
+            target_rms_db=-23.5,
+            max_peak_db=-5.5,
+        )
+        add_at(combined_stems["SFX"], bridge_riser, max(0.0, dur_a - 1.15), 0.70)
+
+        premaster = (
+            combined_stems["DIALOGUE"]
+            + combined_stems["ROOM"]
+            + combined_stems["FOLEY"]
+            + combined_stems["SFX"]
+            + combined_stems["MUSIC"]
+        )
+        loudnorm_two_pass(premaster, mix_wav, total_dur)
 
     # Eventos de diálogo unificados (desplazando ep_b en +dur_a)
     merged_events = [dict(ev) for ev in data_a["dialogue_events"]]
@@ -956,8 +952,7 @@ def render_double_chapter(
 
     srt_path = FINAL_DIR / f"{part_id}_FINAL.srt"
     ass_path = FINAL_DIR / f"{part_id}_FINAL.ass"
-    extra_banners = [(dur_a + 0.08, dur_a + 2.45, dcfg["mid_label"], dcfg["mid_sub"])]
-    write_subtitles(srt_path, ass_path, dcfg["top_label"], dcfg["top_sub"], merged_events, extra_banners=extra_banners)
+    write_subtitles(srt_path, ass_path, dcfg["top_label"], dcfg["top_sub"], merged_events, extra_banners=None)
 
     # Renderizar vídeo uniendo los 8 planos de ep_a + los 8 planos de ep_b (16 planos en total) con subtítulos ASS nativos
     segs_a = EPISODE_CONFIGS[ep_a]["segments"]
@@ -1096,26 +1091,52 @@ def verify_mp4(mp4_path: Path) -> dict:
 
 
 def main() -> None:
-    print("Cargando biblioteca WAV de Epidemic Sound...", flush=True)
-    lib = load_es_library()
+    dobles_only = "--dobles-only" in sys.argv
+    resumen_path = FINAL_DIR / "RESUMEN_V3_EPIDEMIC.json"
     summary = {"individuales": {}, "dobles": {}}
-    ep_data = {}
+    if resumen_path.exists():
+        try:
+            summary = json.loads(resumen_path.read_text(encoding="utf-8"))
+        except Exception:
+            pass
 
-    for ep, cfg in EPISODE_CONFIGS.items():
-        print(f"[{ep}] Construyendo stems rebalanceados (ROOM/FOLEY/SFX/MUSIC presentes) + mezcla -14.5 LUFS...", flush=True)
-        ep_data[ep] = build_episode_audio_and_subs(ep, cfg, lib)
-        dur = ep_data[ep]["duration"]
-        print(f"[{ep}] Renderizando vídeo {dur:.2f}s y actualizando LISTOS/{ep}/...", flush=True)
-        out_mp4 = render_episode_v3(ep, cfg, dur)
-        info = verify_mp4(out_mp4)
-        summary["individuales"][ep] = info
-        print(
-            f"[{ep}] LISTO -> {info['duration']:.2f}s ({info['frames']}f) | {info['lufs']:.1f} LUFS | {info['tp']:.2f} dBTP | {info['decode']}",
-            flush=True,
-        )
+    ep_data = {}
+    lib = {}
+
+    if not dobles_only:
+        print("Cargando biblioteca WAV de Epidemic Sound...", flush=True)
+        lib = load_es_library()
+        for ep, cfg in EPISODE_CONFIGS.items():
+            print(f"[{ep}] Construyendo stems rebalanceados (ROOM/FOLEY/SFX/MUSIC presentes) + mezcla -14.5 LUFS...", flush=True)
+            ep_data[ep] = build_episode_audio_and_subs(ep, cfg, lib)
+            dur = ep_data[ep]["duration"]
+            print(f"[{ep}] Renderizando vídeo {dur:.2f}s y actualizando LISTOS/{ep}/...", flush=True)
+            out_mp4 = render_episode_v3(ep, cfg, dur)
+            info = verify_mp4(out_mp4)
+            summary["individuales"][ep] = info
+            print(
+                f"[{ep}] LISTO -> {info['duration']:.2f}s ({info['frames']}f) | {info['lufs']:.1f} LUFS | {info['tp']:.2f} dBTP | {info['decode']}",
+                flush=True,
+            )
+    else:
+        for ep in EPISODE_CONFIGS:
+            m_path = AUDIO_DIR / ep / "AJUSTE_V3" / "montaje_v3.json"
+            if m_path.exists():
+                m_data = json.loads(m_path.read_text(encoding="utf-8"))
+                ep_data[ep] = {
+                    "duration": m_data["duration"],
+                    "dialogue_events": m_data["dialogue"],
+                }
+
+    target_part = None
+    for arg in sys.argv:
+        if arg.startswith("--part="):
+            target_part = arg.split("=")[1]
 
     for dcfg in DOUBLE_CHAPTERS:
         pid = dcfg["id"]
+        if target_part and pid != target_part:
+            continue
         print(f"[{pid}] Fusionando {dcfg['ep_a']} + {dcfg['ep_b']} con puente sonoro y subtítulos continuos...", flush=True)
         out_mp4 = render_double_chapter(dcfg, ep_data, lib)
         info = verify_mp4(out_mp4)
@@ -1125,8 +1146,8 @@ def main() -> None:
             flush=True,
         )
 
-    (FINAL_DIR / "RESUMEN_V3_EPIDEMIC.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
-    print("Temporada completa (6 episodios individuales + 3 capítulos dobles) renderizada y verificada.", flush=True)
+    resumen_path.write_text(json.dumps(summary, indent=2), encoding="utf-8")
+    print("Temporada completa renderizada y verificada.", flush=True)
 
 
 if __name__ == "__main__":

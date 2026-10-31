@@ -2,6 +2,20 @@
 
 Actualizado: 2026-10-31.
 
+## Capítulos Dobles Fusionados V3.2 · Rótulos Limpios y sin Mención de Fusión (`PARTE_01` a `PARTE_03`) · 2026-10-31
+
+- **Eliminación de textos de fusión e intermedios por petición del usuario**:
+  - En los 3 vídeos fusionados (`PARTE_01_EP01_EP02`, `PARTE_02_EP03_EP04`, `PARTE_03_EP05_EP06`), se retiraron completamente las etiquetas que hacían referencia a episodios unidos (`(EP. 1 Y 2)`, `(EP. 3 Y 4)`, `(EP. 5 Y 6)`) y se eliminaron los banners intermedios que aparecían a mitad de metraje.
+  - Los rótulos superiores iniciales (0 a 2,5 s) ahora son limpios y concisos:
+    - `PARTE_01`: `ARCHIVO NORTE · PARTE 1` (subtítulo: *Doce años después de la inundación · El duplicado*)
+    - `PARTE_02`: `ARCHIVO NORTE · PARTE 2` (subtítulo: *La llave de la compuerta · La firma al pie del acta*)
+    - `PARTE_03`: `ARCHIVO NORTE · PARTE 3 · FINAL` (subtítulo: *La última línea de sal · Los siete nombres*)
+  - **Re-renderizado y verificación técnica completada (`DECODE_OK`, 1080×1920, 24 fps, -14.8 LUFS)**:
+    - `LISTOS/PARTE_01_EP01_EP02/PARTE_01_EP01_EP02_FINAL.mp4`: 65,25 s (1566 frames), `-14,8 LUFS`, `-0,80 dBTP`.
+    - `LISTOS/PARTE_02_EP03_EP04/PARTE_02_EP03_EP04_FINAL.mp4`: 69,75 s (1674 frames), `-14,8 LUFS`, `-0,03 dBTP`.
+    - `LISTOS/PARTE_03_EP05_EP06/PARTE_03_EP05_EP06_FINAL.mp4`: 75,50 s (1812 frames), `-14,8 LUFS`, `-0,58 dBTP`.
+  - Archivos maestros actualizados en `MASTER_SERIES_PACKAGE/FINAL/` y sincronizados en la carpeta limpia `LISTOS/`. Hojas de contacto `_CONTACT.png` archivadas.
+
 ## Montaje Profesional V3.2 · Rebalanceo Acústico Epidemic Sound + 3 Capítulos Dobles Fusionados (`EP01` a `EP06` y `PARTE_01` a `PARTE_03`) · 2026-10-31
 
 - **Conexión Epidemic Sound MCP API verificada y operativa (`HTTP 200 OK`)**:
