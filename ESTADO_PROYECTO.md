@@ -2,19 +2,26 @@
 
 Actualizado: 2026-10-31.
 
-## Producción EP06 en curso · 2026-10-31
+## Cierre de EP06 y Temporada 1 Completa · 2026-10-31
 
-- Usuario autoriza inicio de producción de vídeo de **Episodio 06 («Los siete»)** bajo el flujo autónomo de revisión y oficialización delegada.
-- Avance global de la serie: **47/48 planos oficiales** (EP01–EP05: 40/40; EP06: 7/8).
-- `EP06_SH01_FINAL.mp4` oficializado (720×1280, 24 fps, 8,000 s / 192 fotogramas exactos sin audio, decodificación íntegra comprobada `DECODE_OK`). V1 (Omni 1.1 Flash) desde `reference_frames/EP05_SH07_LASTFRAME.png`. Grabadora sobre mesa con LED rojo continuo sin manos ni personas. Descarte V1 eliminado tras verificación; hoja de contacto guardada en `shots/EP06_SH01_V1_CONTACT.png`.
-- `EP06_SH02_FINAL.mp4` oficializado (720×1280, 24 fps, 7,000 s / 168 fotogramas exactos sin audio, decodificación íntegra comprobada `DECODE_OK`). V2 (Omni 1.1 Flash) desde `SHOT_REFERENCES/COAT_END.png`. Abrigo de lana óxido en Estado S4 suspendido en absoluta quietud, bajo oscuro y húmedo sin sal, suelo limpio e inerte. Recortado de 8 s a 0–7,000 s según montaje. Descartes V1/V2 eliminados; hojas de contacto archivadas en `shots/EP06_SH02_V1_CONTACT.png` y `shots/EP06_SH02_V2_CONTACT.png`.
-- `EP06_SH03_FINAL.mp4` oficializado (720×1280, 24 fps, 6,000 s / 144 fotogramas exactos sin audio, decodificación íntegra comprobada `DECODE_OK`). V2 (Omni 1.1 Flash) desde `SHOT_REFERENCES/PHONE.png` (intento 2/2 tras descartar V1 por intrusión de mano colocando llaves sobre la pantalla). V2 muestra el smartphone cenital sobre la mesa de madera inmóvil; texto del informe nítido y legible, pantalla sin obstrucciones. Descartes V1/V2 eliminados; hojas de contacto archivadas en `shots/EP06_SH03_V1_CONTACT.png` y `shots/EP06_SH03_V2_CONTACT.png`. Tarjeta sincronizada.
-- `EP06_SH04_FINAL.mp4` oficializado (720×1280, 24 fps, 7,000 s / 168 fotogramas exactos sin audio, decodificación íntegra comprobada `DECODE_OK`). V1 (Omni 1.1 Flash) desde `SHOT_REFERENCES/ALBA_DOOR.png` (evitando filtro de celebridad reemplazando nombre por mujer adulta). Alba da un paso sutil despejando el centro de la puerta norte, colocándose a la derecha junto a la lámpara con mirada fija a derecha y boca cerrada. Recortado de 8 s a 0–7,000 s según montaje. Descarte V1 eliminado; hoja de contacto archivada en `shots/EP06_SH04_V1_CONTACT.png`. Tarjeta sincronizada.
-- `EP06_SH05_FINAL.mp4` oficializado (720×1280, 24 fps, 5,000 s / 120 fotogramas exactos sin audio, decodificación íntegra comprobada `DECODE_OK`). V1 (Omni 1.1 Flash) desde `SHOT_REFERENCES/PHONE.png`. Smartphone cenital sobre madera estático, spinner de envío y tarjeta «Informe enviado» con checkmark verde sin manos ni mutaciones de texto. Recortado de 6 s a 0–5,000 s según montaje. Descarte V1 eliminado; hoja de contacto archivada en `shots/EP06_SH05_V1_CONTACT.png`. Tarjeta sincronizada.
-- `EP06_SH06_FINAL.mp4` oficializado (720×1280, 24 fps, 7,000 s / 168 fotogramas exactos sin audio, decodificación íntegra comprobada `DECODE_OK`). V1 (Omni 1.1 Flash) desde `SHOT_REFERENCES/KEY_TABLE.png`. Mano anciana se retira suavemente fuera de cuadro hacia el segundo 6 dejando la llave sola sobre el plano mecánico, objeto y dibujo íntegros sin morphing. Recortado de 8 s a 0–7,000 s según montaje. Descarte V1 eliminado; hoja de contacto archivada en `shots/EP06_SH06_V1_CONTACT.png`. Tarjeta sincronizada.
-- `EP06_SH07_FINAL.mp4` oficializado (720×1280, 24 fps, 6,000 s / 144 fotogramas exactos sin audio, decodificación íntegra comprobada `DECODE_OK`). V1 (Omni 1.1 Flash) desde `SHOT_REFERENCES/INES_TABLE.png`. Inés sentada a la mesa mirando a izquierda, exhala suavemente por la nariz y mantiene mirada firme y ojos húmedos con boca cerrada y sin sonrisa. Remuxado mudo a 6,000 s según montaje. Descarte V1 eliminado; hoja de contacto archivada en `shots/EP06_SH07_V1_CONTACT.png`. Tarjeta sincronizada.
-- Plano activo: **`EP06_SH08`** (referencia `SHOT_REFERENCES/COAT_END.png`, 9 s en montaje según `EP06_EDIT_PLAN.md`). El plano final de la serie: retroceso de cámara lento y controlado de 10 cm desde el abrigo óxido vacío en Estado S4 en absoluta quietud, revelando los siete abrigos vacíos colgados en el archivo. Referencia `COAT_END.png` ya presente en Flow.
-- Siguiente paso: generar `EP06_SH08` en Flow.
+- **Temporada 1 completada al 100% (48/48 planos completados y verificados)**:
+  - Episodio 01 («El informe»): 8/8 planos oficiales (`shots/EP01_SH01` a `SH08`).
+  - Episodio 02 («El duplicado»): 8/8 planos oficiales (`shots/EP02_SH01` a `SH08`).
+  - Episodio 03 («El registro»): 8/8 planos oficiales (`shots/EP03_SH01_FINAL.mp4` a `EP03_SH08_FINAL.mp4`).
+  - Episodio 04 («La llamada»): 8/8 planos oficiales (`shots/EP04_SH01_FINAL.mp4` a `EP04_SH08_FINAL.mp4`).
+  - Episodio 05 («La compuerta»): 8/8 planos oficiales (`shots/EP05_SH01_FINAL.mp4` a `EP05_SH08_FINAL.mp4`).
+  - Episodio 06 («Los siete»): 8/8 planos oficiales (`shots/EP06_SH01_FINAL.mp4` a `EP06_SH08_FINAL.mp4`).
+- **Resumen Episodio 06 («Los siete»)**:
+  - `EP06_SH01_FINAL.mp4`: 720×1280, 24 fps, 8,000 s / 192 frames, mudo. Grabadora con LED rojo continuo.
+  - `EP06_SH02_FINAL.mp4`: 720×1280, 24 fps, 7,000 s / 168 frames, mudo. Abrigo óxido en Estado S4 en quietud absoluta.
+  - `EP06_SH03_FINAL.mp4`: 720×1280, 24 fps, 6,000 s / 144 frames, mudo. Smartphone cenital con texto nítido sin manos ni llaves.
+  - `EP06_SH04_FINAL.mp4`: 720×1280, 24 fps, 7,000 s / 168 frames, mudo. Alba da paso lateral de 15 cm despejando puerta norte.
+  - `EP06_SH05_FINAL.mp4`: 720×1280, 24 fps, 5,000 s / 120 frames, mudo. Spinner y confirmación «Informe enviado» con checkmark verde.
+  - `EP06_SH06_FINAL.mp4`: 720×1280, 24 fps, 7,000 s / 168 frames, mudo. Mano anciana se retira suavemente dejando la llave sola en el plano.
+  - `EP06_SH07_FINAL.mp4`: 720×1280, 24 fps, 6,000 s / 144 frames, mudo. Inés exhala por la nariz con mirada firme a izquierda, ojos húmedos, sin sonrisa.
+  - `EP06_SH08_FINAL.mp4`: 720×1280, 24 fps, 8,000 s / 192 frames, mudo. Retroceso de cámara 10 cm desde abrigo óxido en Estado S4 revelando los siete abrigos vacíos colgados en el archivo inerte.
+- Todas las tarjetas en `MASTER_SERIES_PACKAGE/EPISODES/EP06/GENERATION_CARDS/` actualizadas. Hojas de contacto `_CONTACT.png` archivadas. Descartes locales eliminados. Decodificación íntegra comprobada en todos (`DECODE_OK`).
+- Todos los cambios committeados y sincronizados con `origin/main`.
 
 ## Cierre de EP05 · 2026-10-31
 

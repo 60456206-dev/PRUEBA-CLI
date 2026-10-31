@@ -11,4 +11,4 @@ Proyecto 1080×1920, 24fps. Sin speed ramp. Audio separado. Cortes al cambio de 
 |00:28.000|00:33.000|shots/EP06_SH05_FINAL.mp4|0–5 s|CUT|Acción irreversible, no simple intención.|
 |00:33.000|00:40.000|shots/EP06_SH06_FINAL.mp4|0–7 s|CUT|Confesión se vuelve trazable.|
 |00:40.000|00:46.000|shots/EP06_SH07_FINAL.mp4|0–6 s|L CUT|Cierre emocional con condición concreta.|
-|00:46.000|00:55.000|shots/EP06_SH08_FINAL.mp4|0–9 s|CUT|Cierre de duelo; memoria fuera del objeto.|
+|00:46.000|00:54.000|shots/EP06_SH08_FINAL.mp4|0–8 s|CUT|Cierre de duelo; memoria fuera del objeto.|
