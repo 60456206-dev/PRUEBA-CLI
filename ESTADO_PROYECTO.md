@@ -1,6 +1,21 @@
 # Dónde nos quedamos
 
-Actualizado: 2026-10-31.
+Actualizado: 2026-11-03.
+
+## TikTok Radar · Reorientación a Noticiero 3D Ágil de Alto Impacto · 2026-11-03
+
+- **Nuevo Enfoque Editorial y Comercial**:
+  - Transformación del proyecto `TIKTOK_RADAR` hacia un formato de **News Explainer / Noticiero 3D de Alto Impacto** (publicación en <60 min tras la noticia).
+  - **Fuentes:** Ingesta y contraste en tiempo real de medios reconocidos (**Xataka**, BBC Mundo, El País) y separación estricta entre fuentes oficiales (FAA, NTSB, juzgados, gobiernos) y fuentes no oficiales/reportes preliminares. Herramienta funcional en `TIKTOK_RADAR/tools/news_radar.py`.
+  - **Duración y Rapidez por Plano:** Generación en IA de **4 a 5 segundos por plano** (máximo 6 s) para evitar colas de GPU y eliminar deformaciones/morfeos; cortes de montaje ágiles de **2,0 a 3,5 s** (7 planos para 25–30 s totales).
+  - **Estética Visual:** **Animación 3D estilizada profesional** (estilo *Arcane* / *Spider-Verse* / cinemática de Unreal Engine), descartando al 100% el hiperrealismo y el *uncanny valley*. Escenificación dramática para sucesos (cabina de avión, sudor, tensión, simulación de descenso en picada) e infografía 3D holográfica para noticias abstractas.
+  - **Locución:** Tono periodístico de investigación, dicción urgente, con ritmo y micropausas de suspenso (130–145 palabras/min).
+  - **Documentación y prototipo creados:**
+    - `TIKTOK_RADAR/README.md` actualizado con el nuevo estándar.
+    - `TIKTOK_RADAR/01_ARQUITECTURA_NOTICIERO_3D.md`: Pipeline integral y benchmarking de proyectos de GitHub (`OpenReels`, `TikTok-Forge`, `Remotion`).
+    - `TIKTOK_RADAR/prompts/FORMULA_MAESTRA_PROMPTS.md`: Fórmulas exactas para personajes, simulaciones, infografías y voz.
+    - `TIKTOK_RADAR/entregas/CASO_EJEMPLO_ACCIDENTE_FLORIDA.md`: Caso prototipo completo con guión, tiempos y 7 planos de recreación 3D listos para producir.
+  - **Aislamiento Total:** Todos los cambios y archivos están contenidos exclusivamente en `TIKTOK_RADAR/`, sin tocar `MASTER_SERIES_PACKAGE`.
 
 ## Capítulos Dobles Fusionados V3.2 · Rótulos Limpios y sin Mención de Fusión (`PARTE_01` a `PARTE_03`) · 2026-10-31
 
