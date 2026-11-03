@@ -18,10 +18,12 @@ Actualizado: 2026-11-03.
     - `TIKTOK_RADAR/entregas/CASO_EJEMPLO_ACCIDENTE_FLORIDA.md`: Caso prototipo completo con guión de 62,5 s (138 palabras), tiempos y 13 planos de recreación 3D listos para producir.
   - **Protocolo de Aprobación Rápida Establecido**:
     - Se crea `TIKTOK_RADAR/PROTOCOLO_APROBACION_RAPIDA.md`. No se hacen micro-preguntas continuas; las dudas críticas se agrupan en fichas con opciones recomendadas por defecto para que el usuario apruebe en bloque con un solo mensaje («Adelante con lo recomendado» o «1A, 2B»).
-  - **Implementación del Pipeline Autónomo y Despliegue AWS**:
-    - Se implementó `TIKTOK_RADAR/tools/pipeline_autonomo.py` integrando `edge-tts` (locutor neutral periodístico `es-MX-JorgeNeural` gratuito) y escáner en tiempo real de Xataka, BBC Mundo y El País.
-    - Se ejecutó la primera prueba real autónoma: detectó la noticia de última hora del accidente aéreo en Florida, generó el guion estructurado, el storyboard de 13 planos para Google Flow y sintetizó el audio en `TIKTOK_RADAR/entregas/2026-11-03_AUTONOMO/LOCUCION_NOTICIERO_62S.mp3` con **62,69 segundos exactos** (`DECODE_OK`, apto para monetizar en TikTok).
-    - Se crearon las herramientas de despliegue en servidor AWS: `TIKTOK_RADAR/tools/instalar_servidor_aws.sh` (instalador de Chrome, Playwright, XFCE y puerto CDP 9222) y la guía paso a paso `TIKTOK_RADAR/GUIA_DESPLIEGUE_AWS_AUTONOMO.md` para ejecución 100% independiente de este chat (mediante Cron o trigger autónomo).
+  - **Implementación del Pipeline Autónomo, Inyector Anti-Bugs de Flow, Editor NLE Algorítmico y Despliegue AWS**:
+    - Se implementó `TIKTOK_RADAR/tools/pipeline_autonomo.py` integrando `edge-tts` (locutor neutral periodístico `es-MX-JorgeNeural` gratuito), escáner en tiempo real de Xataka, BBC Mundo y El País, y generación de `prompt` + `fallback_prompt` anti-bloqueo de políticas con garantía automática de duración `>= 61,0 s`.
+    - Se implementó `TIKTOK_RADAR/tools/flow_generator.py`: inyector autónomo con Playwright Headless sobre `~/flow-profile`, con limpieza automática de `SingletonLock`, escudo anti-popups (`Escape` x3), auto-aprobación del agente de Flow, recuperación automática con `fallback_prompt` ante bloqueos de política, doble vía de descarga (UI + Red) y checkpointing de `SH01.mp4` a `SH13.mp4`.
+    - Se implementó `TIKTOK_RADAR/tools/ensamblador_final.py`: editor de vídeo algorítmico NLE para Linux sobre FFmpeg Filtergraph + ASS Vector Engine con cámara dinámica 24 fps (Ken Burns + vibración en cabina), transiciones broadcast reales (`xfade`), subtítulos Kinetic palabra por palabra (`.ass`) con resaltado en Amarillo/Cian y diseño sonoro multicapa masterizado a **`-14,8 LUFS`**.
+    - Se creó el orquestador maestro `TIKTOK_RADAR/tools/ejecutar_todo.py` y el manual de supervisión `TIKTOK_RADAR/SUPERVISOR_SERVIDOR_AWS.md` (sincronizados y subidos al repositorio independiente `STANDALONE_TIKTOK_RADAR` -> `git@github.com:60456206-dev/TIKTOK-NEWS.git`).
+    - Se verificó la conexión real en el servidor AWS (`3.142.230.147`) con `test_flow_session.py` (`CONEXIÓN EXITOSA`).
   - **Aislamiento Total:** Todos los cambios y archivos están contenidos exclusivamente en `TIKTOK_RADAR/`, sin tocar `MASTER_SERIES_PACKAGE`.
 
 ## Capítulos Dobles Fusionados V3.2 · Rótulos Limpios y sin Mención de Fusión (`PARTE_01` a `PARTE_03`) · 2026-10-31
