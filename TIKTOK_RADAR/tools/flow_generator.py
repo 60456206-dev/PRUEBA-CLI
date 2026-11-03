@@ -125,21 +125,21 @@ async def ensure_inside_flow_project(page: Page) -> bool:
             log(f"Navegando hacia editor de proyecto Flow (intento {attempt}/3)...")
             await dismiss_stray_popups(page)
 
-            # Buscar si hay un proyecto existente o botón de "Nuevo proyecto" / "Crear con Flow"
+            # Buscar primero un proyecto existente (/project/) para reutilizar ajustes 9:16 + x1
             clicked = await page.evaluate("""() => {
+                // Prioridad 1: Enlace a un proyecto existente (/project/)
+                for (const a of document.querySelectorAll('a[href*="/project/"]')) {
+                    a.click();
+                    return 'existing_project';
+                }
+                // Prioridad 2: Botón de Nuevo Proyecto / New Project
                 const buttons = Array.from(document.querySelectorAll('button, a'));
-                // Prioridad 1: Botón de Nuevo Proyecto / New Project
                 for (const b of buttons) {
                     const t = (b.innerText || b.getAttribute('aria-label') || '').toLowerCase();
                     if (t.includes('nuevo proyecto') || t.includes('new project') || t.includes('crear con flow') || t.includes('create with flow')) {
                         b.click();
                         return 'new_project:' + t;
                     }
-                }
-                // Prioridad 2: Enlace a un proyecto existente (/project/)
-                for (const a of document.querySelectorAll('a[href*="/project/"]')) {
-                    a.click();
-                    return 'existing_project';
                 }
                 return null;
             }""")
@@ -161,36 +161,34 @@ async def ensure_inside_flow_project(page: Page) -> bool:
 
 
 async def configure_vertical_9_16(page: Page) -> None:
-    """Intenta seleccionar formato Vertical 9:16 en los ajustes del prompt si está disponible."""
+    """
+    Abre el panel 'tune' (Configuración del agente de este proyecto),
+    selecciona '9:16' y 'x1' tanto para imagen como para vídeo (Omni 1.1 Flash),
+    y pulsa 'Guardar'.
+    """
     try:
         await dismiss_stray_popups(page)
-        opened = await page.evaluate("""() => {
-            const btns = Array.from(document.querySelectorAll('button'));
-            for (const b of btns) {
-                const label = (b.getAttribute('aria-label') || b.innerText || '').toLowerCase();
-                if (label.includes('ajustes') || label.includes('settings') || label.includes('9:16') || label.includes('16:9')) {
-                    b.click();
-                    return true;
-                }
-            }
-            return false;
-        }""")
-        if opened:
-            await asyncio.sleep(1.0)
+        tune_btn = page.locator('button:has-text("tune")').first
+        if await tune_btn.count() > 0 and await tune_btn.is_visible():
+            await tune_btn.click(force=True)
+            await asyncio.sleep(1.5)
             await page.evaluate("""() => {
-                const els = Array.from(document.querySelectorAll('button, [role="option"], [role="menuitem"], [role="radio"], span'));
-                for (const el of els) {
-                    const t = (el.innerText || el.getAttribute('aria-label') || '').toLowerCase();
-                    if (t.includes('9:16') || t.includes('vertical') || t.includes('retrato') || t.includes('portrait')) {
-                        el.click();
-                        break;
+                for (const b of document.querySelectorAll('button.mat-button-toggle-button')) {
+                    const t = (b.innerText || '').replace(/\\s+/g, ' ').trim();
+                    if (t.includes('9:16') || t === 'x1') {
+                        b.click();
                     }
                 }
             }""")
-            await asyncio.sleep(0.5)
-            await dismiss_stray_popups(page)
+            await asyncio.sleep(0.6)
+            save_btn = page.locator('button.settings-save-button, button:has-text("Guardar")').first
+            if await save_btn.count() > 0 and await save_btn.is_visible():
+                await save_btn.click(force=True)
+                log("Ajustes del agente Flow fijados y guardados: Vídeo 9:16 Vertical (1x - Omni 1.1 Flash).")
+                await asyncio.sleep(1.5)
+        await dismiss_stray_popups(page)
     except Exception as e:
-        log(f"Nota al configurar 9:16 (se mantiene por prompt): {e}")
+        log(f"Nota al configurar 9:16 + x1: {e}")
 
 
 async def get_tile_states(page: Page) -> List[Dict[str, Any]]:
@@ -250,7 +248,7 @@ async def auto_approve_if_prompted(page: Page) -> bool:
 
 
 async def submit_prompt_to_flow(page: Page, prompt_text: str) -> bool:
-    """Rellena el prompt en el cuadro de texto de Flow y pulsa Iniciar generación."""
+    """Rellena el prompt forzando modo Vídeo (Omni 1.1 Flash), pulsa Iniciar generación y aprueba la tarjeta."""
     await dismiss_stray_popups(page)
 
     selectors = [
@@ -273,17 +271,16 @@ async def submit_prompt_to_flow(page: Page, prompt_text: str) -> bool:
             return False
         box = page.locator('div[role="textbox"], textarea').first
 
-    try:
-        await box.click(timeout=5000)
-        await asyncio.sleep(0.3)
-        # Limpiar cualquier texto residual
-        await page.keyboard.press("Control+A")
-        await page.keyboard.press("Backspace")
-        await asyncio.sleep(0.2)
-        await box.fill(prompt_text)
-        await asyncio.sleep(0.8)
+    # Prefijo explícito para que el agente de Flow use siempre Omni 1.1 Flash (Vídeo) y nunca Nano Banana (Imagen)
+    video_directive = "Generate a video directly using Omni 1.1 Flash (text-to-video, do NOT generate images with Nano Banana): "
+    full_prompt = prompt_text if "Omni 1.1 Flash" in prompt_text else (video_directive + prompt_text)
 
-        # Pulsar botón de Iniciar generación
+    try:
+        await box.click(force=True, timeout=5000)
+        await asyncio.sleep(0.3)
+        await box.fill(full_prompt)
+        await asyncio.sleep(0.7)
+
         gen_btn = page.locator(
             'button[aria-label="Iniciar generación"], '
             'button[aria-label*="generación"], '
@@ -291,13 +288,17 @@ async def submit_prompt_to_flow(page: Page, prompt_text: str) -> bool:
             'button[aria-label*="Enviar"]'
         ).first
 
-        if await gen_btn.count() > 0 and await gen_btn.is_enabled():
-            await gen_btn.click()
+        if await gen_btn.count() > 0:
+            await gen_btn.click(force=True)
         else:
             await page.keyboard.press("Enter")
 
-        await asyncio.sleep(3.0)
-        await auto_approve_if_prompted(page)
+        # Esperar hasta 25s a que el agente muestre el botón 'Aprobar' y pulsarlo
+        for sec in range(25):
+            await asyncio.sleep(1.0)
+            if await auto_approve_if_prompted(page):
+                await asyncio.sleep(2.5)
+                break
         return True
     except Exception as e:
         log(f"Error al enviar prompt: {e}")
