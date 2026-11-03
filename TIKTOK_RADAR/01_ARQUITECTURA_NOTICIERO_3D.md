@@ -32,13 +32,15 @@ flowchart TD
 * **Fuentes de Prensa Especializada y Foros Reconocidos:** Xataka (tecnología/ciencia), BBC Mundo, Reuters, El País, TechCrunch, Hacker News.
 * **Separación Editorial Obligatoria:** Si un dato no está confirmado por una autoridad oficial, la narración debe declararlo explícitamente (*«según reportes preliminares de medios locales...»*).
 
-### Capa 2: Director Editorial y Redacción Estructurada
-* **Regla de Pacing:** 25 a 35 segundos totales (55 a 70 palabras).
-* **Bloques narrativos:**
-  1. *Gancho (0–3 s):* Suspenso o interrogante inmediato.
-  2. *Contexto Oficial (3–10 s):* Datos verificados y lugar del suceso.
-  3. *Recreación Dramática (10–22 s):* El momento crítico (cabina de piloto, fallo en servidor, colapso de sistema).
-  4. *Conclusión e Interacción (22–30 s):* Pregunta directa que incentive comentarios.
+### Capa 2: Director Editorial y Redacción Estructurada (61–65 s Monetizables)
+* **Regla de Pacing para Monetización (>60 s):** 61 a 65 segundos totales (130 a 145 palabras).
+* **Bloques narrativos para sostener la retención durante todo el minuto:**
+  1. *Gancho (0–3 s):* Suspenso o interrogante disruptivo inmediato.
+  2. *Contexto Oficial (3–14 s):* Datos verificados, modelo de aeronave / dispositivo y lugar del suceso.
+  3. *Recreación Dramática - Acto 1 (14–26 s):* El momento en que inician las alarmas y la reacción en cabina/escena.
+  4. *Recreación Dramática - Acto 2 (26–40 s):* El descenso crítico, la maniobra física y el último reporte de telemetría.
+  5. *Investigación Técnica (40–52 s):* Lo que revelan las cajas negras, datos de radar y declaraciones de las autoridades.
+  6. *Conclusión e Interacción (52–63 s):* Hipótesis en disputa y pregunta directa al espectador para detonar comentarios.
 
 ### Capa 3: Generación de Activos
 1. **Vídeo (4 a 5 segundos por plano):**

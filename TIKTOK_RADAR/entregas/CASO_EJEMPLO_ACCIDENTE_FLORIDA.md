@@ -1,94 +1,82 @@
-# TikTok Radar · Caso de Estudio Prototipo: Accidente Aéreo en Florida
+# TikTok Radar · Caso de Estudio Prototipo: Accidente Aéreo en Florida (Edición Monetizable 62 s)
 
-Demostración completa del nuevo formato **Noticiero Ágil con Recreación 3D Estilizada** y narración periodística.
-
----
-
-## 1. Ficha Editorial y Verificación de Fuentes
-
-* **Titular de Impacto:** *«12 segundos en silencio: ¿Qué pasó en la cabina del avión en Florida?»*
-* **Fuente Oficial:** Comunicados de la FAA (Federal Aviation Administration) y NTSB (National Transportation Safety Board).
-* **Fuente de Prensa Corroborada:** Cobertura de BBC Mundo y agencias internacionales sobre el accidente de la aeronave privada bimotor.
-* **Duración Total Estimada:** **28 segundos** (60 palabras).
-* **Estructura:** 7 planos cortos (generados a **4-5 s en IA**, montados a **2,5–3,5 s**).
+Demostración completa del formato **Noticiero Ágil con Recreación 3D Estilizada**, optimizado específicamente para el **Programa de Recompensas para Creadores de TikTok (> 60 segundos)** sin perder ritmo ni aburrir al espectador.
 
 ---
 
-## 2. Guión para Locutor de Noticias (Voice Script)
+## 1. Ficha Técnica de Monetización y Fuentes
 
-> **[0:00 - 0:03] Gancho (Tono urgente, suspenso):**  
-> *«En solo doce segundos, un avión privado en Florida se esfumó por completo del radar.»*  
+* **Duración Total:** **62,5 segundos** (Supera la barrera de 1 minuto requerida por TikTok para monetizar, calibrado a 138 palabras).
+* **Fuentes Oficiales:** FAA (Federal Aviation Administration) y NTSB (National Transportation Safety Board).
+* **Fuentes de Prensa Corroborada:** BBC Mundo, Reuters y registros de telemetría de FlightRadar24.
+* **Estructura de Edición:** 13 planos dinámicos (clips generados en IA a **4-5 s**, montados con cortes rápidos cada **2,5 a 4,0 s**).
+
+---
+
+## 2. Guión para Locutor de Noticias (Voice Script · 138 Palabras · 62,5 s)
+
+> **[0:00 - 0:04] Gancho de Alto Impacto (Tono urgente, suspenso):**  
+> *«En solo doce segundos, un avión privado con nueve personas a bordo desapareció por completo de los radares en Florida.»*  
 > *(Pausa dramática de 0.3 s)*
 >
-> **[0:03 - 0:09] Hecho Oficial (Tono sobrio y contrastado):**  
-> *«Ocurrió al anochecer. Las autoridades aeronáuticas confirmaron que el bimotor volaba en ruta normal antes de un descenso repentino.»*
+> **[0:04 - 0:14] Contexto Oficial Verificado (Tono sobrio):**  
+> *«Ocurrió al anochecer. Según la Administración Federal de Aviación, la aeronave volaba en altitud de crucero estable antes de iniciar un descenso vertical incontrolable.»*
 >
-> **[0:09 - 0:17] Recreación en Cabina (Tono tenso, inmersivo):**  
-> *«Adentro de la cabina, las alarmas rojas se encendieron. Los pilotos intentaron estabilizar los mandos mientras la aeronave perdía altitud a toda velocidad.»*
+> **[0:14 - 0:26] Recreación en Cabina · Acto 1 (Tono tenso, inmersivo):**  
+> *«Adentro de la cabina, las luces de emergencia se encendieron. Los pilotos forcejearon contra los mandos intentando nivelar las alas, mientras la alarma de colisión ensordecía el habitáculo.»*
 >
-> **[0:17 - 0:23] Datos Clave (Tono de investigación):**  
-> *«No hubo llamada de auxilio. La NTSB ya investiga si se trató de una falla catastrófica en los motores o desorientación espacial.»*
+> **[0:26 - 0:38] Recreación Exterior · Acto 2 (Tono de acción física):**  
+> *«Los motores rugieron al máximo empuje, pero la cola del avión ya no respondía. Entre nubes de tormenta y lluvia torrencial, el bimotor se precipitó hacia la costa sin emitir señal de auxilio.»*
 >
-> **[0:23 - 0:28] Cierre y Llamada a Comentarios (Tono directo al espectador):**  
-> *«El reporte final tardará meses. ¿Falla mecánica o error humano? Déjame tu teoría en los comentarios.»*
+> **[0:38 - 0:50] Datos Técnicos e Investigación NTSB (Tono analítico):**  
+> *«Los peritos de la NTSB analizan ahora si fue una falla estructural en los timones o una desorientación espacial provocada por la tormenta lo que selló el destino del vuelo.»*
+>
+> **[0:50 - 1:02] Cierre y Llamada a Comentarios (Tono directo al espectador):**  
+> *«Las cajas negras tardarán semanas en descifrarse. ¿Crees que fue una falla mecánica imposible de salvar o un error de los pilotos? Déjame tu opinión en los comentarios.»*
 
 ---
 
-## 3. Storyboard y Prompts de Vídeo (Estilo 3D Estilizado · Sin Hiperrealismo)
+## 3. Desglose de Planos (Animación 3D Estilizada · Cero Hiperrealismo)
 
-### SH01 · El Radar 3D (0:00 - 0:03) · Montaje: 3.0 s (Generar: 4.5 s)
-* **Objetivo:** Captar el scroll de inmediato con un mapa 3D cinemático.
-* **Prompt para IA (Wan 2.1 / Kling / Google Flow):**
-  ```text
-  Vertical 9:16, modern stylized 3D tech visualization, Arcane and tactical thriller aesthetic. High-angle 3D holographic digital radar map tracking a flight path over a stylized coastline of Florida at night. A glowing yellow airplane blip suddenly flashes bright red, followed by a steep dotted descent vector line dropping rapidly. Green illuminated telemetry numbers tick down at high speed. Sleek dark holographic interface, subtle camera push-in with lens flare and volumetric glow. Silent, clean geometric animation.
-  ```
-
-### SH02 · Recreación en Cabina: Tensión y Sudor (0:03 - 0:08) · Montaje: 3.5 s (Generar: 5.0 s)
-* **Objetivo:** Mostrar la desesperación humana sin caer en rostros plásticos o hiperrealistas.
-* **Prompt para IA:**
-  ```text
-  Vertical 9:16, modern stylized 3D cinematic animation, Pixar and Arcane thriller look. Tight medium close-up inside a dark airplane cockpit. A stylized male pilot with sweat beads glinting on his furrowed forehead and wide, alert eyes grips the dual control yoke with two tense hands. Red emergency instrument lights cast high-contrast reflections across his face and leather headset. His chest heaves with rapid breathing, mouth closed in intense concentration, fighting the controls. Subtle camera vibration simulating cockpit turbulence. Expressive stylized character acting, rich volumetric rim lighting, octane render.
-  ```
-
-### SH03 · Simulación Exterior: Avión en Descenso (0:08 - 0:12) · Montaje: 3.5 s (Generar: 5.0 s)
-* **Objetivo:** Simular el descenso empinado del avión entre nubes oscuras con luces de posición.
-* **Prompt para IA:**
-  ```text
-  Vertical 9:16, dramatic 3D aviation simulation cinematic. Dynamic tracking camera following a sleek private twin-engine jet banking sharply and descending steeply through dense, stormy purple and black clouds at dusk. Flashing red beacon lights on the tail fin and bright amber wingtip strobes illuminate rushing mist and rain streaks. Smooth physics-based flight dynamics, sense of heavy speed and wind resistance. Moody volumetric atmosphere, cinematic lighting, stylized realism without blur.
-  ```
-
-### SH04 · Detalle de Instrumentos: Alarma Roja (0:12 - 0:16) · Montaje: 3.0 s (Generar: 4.5 s)
-* **Objetivo:** Macro a la instrumentación para dar ritmo y variedad visual.
-* **Prompt para IA:**
-  ```text
-  Vertical 9:16, stylized 3D macro animation. Close-up on the cockpit avionics dashboard. An analog altimeter needle spins downward erratically past 5000 feet while an adjacent digital glass display flashes a bright red master warning banner reading PULL UP. High-tech metallic knobs and glowing switches reflect amber ambient cockpit lights. Dramatic macro lens with shallow depth of field, steady camera.
-  ```
-
-### SH05 · Recreación Copiloto / Mandos (0:16 - 0:20) · Montaje: 3.0 s (Generar: 4.5 s)
-* **Objetivo:** Co-piloto empujando palancas de aceleración al máximo intentando salvar la nave.
-* **Prompt para IA:**
-  ```text
-  Vertical 9:16, modern stylized 3D character animation. Close-up of pilot hands in flight gloves slamming the dual throttle levers fully forward on the central pedestal to maximum power. Emergency red cabin strobe flashes every second. Hands vibrate with mechanical engine strain. Stylized textures, tactile metallic surfaces, crisp motion.
-  ```
-
-### SH06 · Gráfico de la Investigación Oficial NTSB (0:20 - 0:24) · Montaje: 3.0 s (Generar: 4.5 s)
-* **Objetivo:** Respaldar la noticia con la fuente oficial para transmitir rigor y credibilidad.
-* **Prompt para IA:**
-  ```text
-  Vertical 9:16, sleek 3D editorial infographic animation. A stylized 3D official investigative document folder floating open in mid-air over a dark navy background. The official seal of an aviation safety agency is embossed in gold foil. Floating 3D holographic soundwave lines represent the missing cockpit voice recorder data. Slow cinematic camera orbit, particles of ambient light, elegant broadcast news aesthetic.
-  ```
-
-### SH07 · Cierre y Pregunta al Público (0:24 - 0:28) · Montaje: 3.5 s (Generar: 5.0 s)
-* **Objetivo:** Remate visual con la costa al anochecer y caja de texto interactiva para comentarios.
-* **Prompt para IA:**
-  ```text
-  Vertical 9:16, stylized 3D cinematic landscape. Distant wide view of Florida coastline under a stormy twilight sky, with police and searchlight beams sweeping over dark choppy ocean waters. Volumetric god rays from coastal light towers, heavy cinematic mood, gentle upward camera tilt. High visual retention, beautiful stylized art direction.
-  ```
+| Plano | Tiempo Montaje | Duración Generación IA | Escena / Acción Visual |
+| :---: | :---: | :---: | :--- |
+| **SH01** | `0:00 - 0:04` (4.0 s) | 5.0 s | Radar 3D holográfico táctico: línea de vuelo amarilla que titila en rojo y cae en picada. |
+| **SH02** | `0:04 - 0:09` (5.0 s) | 5.0 s | Gráfico 3D del bimotor en vuelo nivelado al atardecer sobre Florida antes de la tormenta. |
+| **SH03** | `0:09 - 0:14` (5.0 s) | 5.0 s | Telemetría digital y mapa de satélite con datos de altitud cayendo de 18.000 a 2.000 pies. |
+| **SH04** | `0:14 - 0:18` (4.0 s) | 5.0 s | Recreación en cabina: primer plano al piloto con sudor en la frente y ojos abiertos de tensión. |
+| **SH05** | `0:18 - 0:22` (4.0 s) | 5.0 s | Manos del copiloto sujetando el timón con fuerza mientras el panel parpadea en rojo. |
+| **SH06** | `0:22 - 0:26` (4.0 s) | 5.0 s | Macro al panel de instrumentos: altímetro girando hacia abajo y alerta roja parpadeante *PULL UP*. |
+| **SH07** | `0:26 - 0:30` (4.0 s) | 5.0 s | Exterior 3D estilizado: el avión inclinado en picada atravesando nubes oscuras con luces de navegación. |
+| **SH08** | `0:30 - 0:34` (4.0 s) | 5.0 s | Plano dinámico a la cola y alerones del avión vibrando por turbulencia extrema. |
+| **SH09** | `0:34 - 0:38` (4.0 s) | 5.0 s | Manos empujando las palancas de potencia al máximo, con cabina sacudiéndose. |
+| **SH10** | `0:38 - 0:44` (6.0 s) | 6.0 s | Infografía 3D de la NTSB: modelo 3D del avión desglosándose en partes estructurales transparentes. |
+| **SH11** | `0:44 - 0:50` (6.0 s) | 6.0 s | Recreación holográfica de la caja negra (FDR) y ondas de audio de cabina sobre fondo oscuro. |
+| **SH12** | `0:50 - 0:56` (6.0 s) | 6.0 s | Costa de Florida al anochecer con reflectores de barcos de búsqueda barriendo el agua. |
+| **SH13** | `0:56 - 1:02,5` (6.5 s) | 7.0 s | Vista cinematográfica del océano con caja de texto interactiva animada invitando a comentar. |
 
 ---
 
-## 4. Por qué este formato es comercialmente superior
+## 4. Prompts Clave para Herramientas de IA (Wan / Kling / Flow)
 
-1. **Evita la fealdad de la IA común:** En lugar de imágenes hiperrealistas con manos mutadas, la animación 3D estilizada da una estética prémium similar a una serie de Netflix o un tráiler de videojuego.
-2. **Generación en menos de 1 hora:** Como cada clip solo requiere 4–5 segundos en la IA, los 7 planos se pueden procesar en paralelo en 10-15 minutos.
-3. **Alto valor percibido:** Resuelve el problema de canales de noticias aburridos, transformando sucesos reales en micro-películas informativas de 28 segundos.
+### Prompt SH04 · Cabina: Tensión y Sudor (Generar 5 s)
+```text
+Vertical 9:16, modern stylized 3D cinematic animation, Arcane and Pixar thriller look. Tight medium close-up inside a dark airplane cockpit. A stylized male pilot with sweat beads glinting on his furrowed forehead and wide, alert eyes grips the dual control yoke with two tense hands. Red emergency instrument lights cast high-contrast reflections across his face and leather headset. His chest heaves with rapid breathing, mouth closed in intense concentration, fighting the controls. Subtle camera vibration simulating cockpit turbulence. Expressive stylized character acting, rich volumetric rim lighting, octane render style. No photorealism, no uncanny valley, completely animated.
+```
+
+### Prompt SH07 · Avión en Descenso entre Tormenta (Generar 5 s)
+```text
+Vertical 9:16, dramatic 3D aviation simulation cinematic. Dynamic tracking camera following a sleek private twin-engine jet banking sharply and descending steeply through dense, stormy purple and black clouds at dusk. Flashing red beacon lights on the tail fin and bright amber wingtip strobes illuminate rushing mist and rain streaks. Smooth physics-based flight dynamics, sense of heavy speed and wind resistance. Moody volumetric atmosphere, cinematic lighting, stylized realism without blur.
+```
+
+### Prompt SH10 · Infografía Estructural NTSB (Generar 6 s)
+```text
+Vertical 9:16, stylized 3D technical explainer animation. A sleek 3D wireframe and metallic model of a twin-engine executive jet rotates slowly in mid-air over a dark navy blue background. Specific sections of the rudder and tail assembly glow in bright neon orange, highlighting mechanical inspection points. Floating clean digital labels and telemetry lines orbit the aircraft model. Minimalist high-end broadcast news aesthetic, volumetric lighting.
+```
+
+---
+
+## 5. El Secreto para que 1 Minuto no Aburra
+
+1. **Corte visual cada 3–4 segundos:** En ningún momento el espectador ve una imagen estática. Se alterna constantemente entre cabina humana, avión exterior, pantalla de radar y gráficos técnicos.
+2. **Subtítulos Kinetic Palabra por Palabra:** Cada término clave (*«12 segundos»*, *«radares»*, *«luces de emergencia»*, *«cajas negras»*) resalta en color amarillo brillante con un micro-rebote.
+3. **Diseño Sonoro Multicapa:** Voz del locutor en primer plano, cama musical de suspenso continuo, sonidos diegéticos de cabina (clics, alarmas, ruidos de turbulencia) y efectos de transición (*swooshes*) en cada corte de plano.

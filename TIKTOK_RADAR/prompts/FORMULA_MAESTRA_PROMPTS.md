@@ -12,9 +12,9 @@ Guía técnica y de ingeniería de prompts para generar el formato **Noticiero �
 3. **Retención de Audiencia en TikTok:** En redes verticales, mantener un mismo encuadre estático por 10 segundos destruye el *watch time*. El cerebro del espectador moderno exige un nuevo estímulo visual cada **2 a 3.5 segundos** (corte seco, cambio de ángulo o zoom in).
 
 > [!TIP]
-> **Estándar Técnico de TikTok Radar:**
+> **Estándar Técnico de TikTok Radar (Monetización >60 s):**
 > - **Generación en IA:** Clips de **4 a 5 segundos** (máximo 6 segundos). Tasa de acierto >95%, renderizado ultrarrápido y movimiento limpio.
-> - **Corte en Montaje Final:** Ventanas activas de **2,0 a 3,5 segundos** por plano, encadenando 6 a 8 planos por vídeo de 25–30 segundos.
+> - **Corte en Montaje Final:** Ventanas activas de **2,5 a 4,0 segundos** por plano, encadenando 12 a 15 planos cortos para alcanzar los **61 a 65 segundos** requeridos para monetizar en TikTok sin provocar fatiga visual.
 
 ---
 
@@ -60,8 +60,9 @@ Vertical 9:16, stylized 3D tech explainer animation. A high-tech server rack cha
 * **Cadencia:** 130 a 145 palabras por minuto (ritmo firme y dinámico, sin sonar atropellado ni aburrido).
 * **Entonación:** Modulación enfática en los ganchos y datos clave, con micropausas dramáticas de 0.25 a 0.40 s antes de las revelaciones.
 
-### Estructura del Guión (25–30 Segundos / 55–65 Palabras)
+### Estructura del Guión Monetizable (61–65 Segundos / 130–145 Palabras)
 1. **0–3 s (Gancho de Curiosidad):** Pregunta o afirmación disruptiva que activa la retención.
-2. **3–12 s (Hecho Oficial):** Qué ocurrió con datos contrastados de agencias oficiales.
-3. **12–22 s (El Detalle Oculto / La Recreación):** La causa técnica, la tensión en cabina o la incógnita.
-4. **22–28 s (Cierre y Pregunta de Interacción):** Estado actual de la investigación y llamado a la acción.
+2. **3–14 s (Hecho Oficial):** Qué ocurrió con datos contrastados de agencias oficiales.
+3. **14–38 s (La Recreación Dramática):** La tensión en cabina, las decisiones humanas y la simulación física del suceso.
+4. **38–52 s (Datos Técnicos y Cajas Negras):** Lo que revelan los radares y registros de vuelo.
+5. **52–63 s (Cierre y Pregunta de Debate):** Hipótesis abierta y llamado a la acción para comentarios.
