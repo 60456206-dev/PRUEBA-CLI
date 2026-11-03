@@ -16,6 +16,8 @@ Actualizado: 2026-11-03.
     - `TIKTOK_RADAR/01_ARQUITECTURA_NOTICIERO_3D.md`: Pipeline integral y benchmarking de proyectos de GitHub (`OpenReels`, `TikTok-Forge`, `Remotion`).
     - `TIKTOK_RADAR/prompts/FORMULA_MAESTRA_PROMPTS.md`: Fórmulas exactas para personajes, simulaciones, infografías y voz.
     - `TIKTOK_RADAR/entregas/CASO_EJEMPLO_ACCIDENTE_FLORIDA.md`: Caso prototipo completo con guión de 62,5 s (138 palabras), tiempos y 13 planos de recreación 3D listos para producir.
+  - **Protocolo de Aprobación Rápida Establecido**:
+    - Se crea `TIKTOK_RADAR/PROTOCOLO_APROBACION_RAPIDA.md`. No se hacen micro-preguntas continuas; las dudas críticas se agrupan en fichas con opciones recomendadas por defecto para que el usuario apruebe en bloque con un solo mensaje («Adelante con lo recomendado» o «1A, 2B»).
   - **Aislamiento Total:** Todos los cambios y archivos están contenidos exclusivamente en `TIKTOK_RADAR/`, sin tocar `MASTER_SERIES_PACKAGE`.
 
 ## Capítulos Dobles Fusionados V3.2 · Rótulos Limpios y sin Mención de Fusión (`PARTE_01` a `PARTE_03`) · 2026-10-31
