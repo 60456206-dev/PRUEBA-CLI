@@ -2,6 +2,16 @@
 
 Actualizado: 2026-11-04.
 
+## Cron Autónomo Activado en AWS (6 Vídeos / Día) · 2026-11-04
+
+- **Automatización Total Activada en Crontab del Servidor AWS (`ubuntu@3.142.230.147`)**:
+  - `crontab` instalado y verificado activo con `systemctl status cron` (`active (running)`).
+  - El servidor despierta de forma autónoma **50 minutos antes de cada publicación**, renderiza el paquete completo (vídeo + portada 9:16 + hashtags) y lo entrega a WhatsApp con **32 minutos de antelación**.
+  - **Próxima Ejecución Programada para Hoy**:
+    - **Vídeo 4 (🤖 IA & Modelos Frontera)**: Inicia a las **03:25 PM Perú** (20:25 UTC) -> Entrega a WhatsApp a las **~03:43 PM** -> Publicación en TikTok a las **04:15 PM**.
+    - **Vídeo 5 (⚙️ Hardware & Chips 2nm)**: Inicia a las **06:25 PM Perú** (23:25 UTC) -> Publicación en TikTok a las **07:15 PM**.
+    - **Vídeo 6 (🚀 Espacio & Ciencia)**: Inicia a las **08:55 PM Perú** (01:55 UTC) -> Publicación en TikTok a las **09:45 PM**.
+
 ## Cronograma Maestro: Producción Anticipada en AWS vs. Publicación en TikTok (6 Vídeos / Día) · 2026-11-04
 
 - **Ajuste Crítico de Cronograma con Margen Operativo de Descarga (Instrucción Expresa del Usuario)**:
