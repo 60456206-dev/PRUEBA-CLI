@@ -196,127 +196,481 @@ def generate_infographic_vector_shot(
     norm_mp4: Path,
     target_dur: float,
     fps: int = 24,
+    genre: str = "G1",
+    title: str = "",
 ) -> None:
     """
     Sintetiza una placa infográfica broadcast vectorial táctica (1080x1920 @ 24fps)
     utilizando FFmpeg Filtergraph nativo sin consumir créditos de Google Flow.
-    Modelos especializados de alto impacto:
-      - SH01: Radar táctico y cuadrícula de monitoreo aeronaval/satelital en vivo.
-      - SH03: Telemetría digital y altímetro numérico animado en descenso crítico.
-      - SH10: Esquema técnico 3D y wireframe blueprint estructural.
-      - SH11: Evidencia forense oficial, unidad caja negra FDR y onda de audio CVR.
-      - SH13: Cierre interactivo con píldora CTA para comentarios y retención en TikTok.
+    Se adapta automáticamente a la categoría y contexto temático de la noticia:
+      - Aviación: Radar aeronaval, altímetro numérico, blueprint fuselaje, FDR caja negra.
+      - Desastres Naturales Perú: Monitoreo satelital INDECI, sismograma/lluvias, radio de impacto, reporte COEN.
+      - Ciberataques: Centro SOC, tráfico DDoS en Gbps, topología de red, CVE forense.
+      - IA & Chips: Radar de semiconductores, TFLOPs/2nm, matriz de transistores, benchmark.
+      - Espacio: Rastreo Deep Space, velocidad orbital km/h, diagrama de sonda, telemetría NASA/ESA.
     """
     shot_id = shot_info.get("id", f"SH{shot_idx+1:02d}")
     shot_type = shot_info.get("type", "INFOGRAFIA TACTICA").upper()
     dur_s = max(1.0, target_dur)
 
-    cards = {
-        "SH01": (
-            "0x060f1e",
-            f"drawgrid=w=120:h=120:t=2:c=0x00e5ff@0.15,"
-            f"drawbox=x=60:y=380:w=960:h=1160:color=0x00e5ff@0.3:t=3,"
-            f"drawbox=x=80:y=400:w=920:h=1120:color=0x0088cc@0.15:t=1,"
-            f"drawbox=x='60+mod(t*220\\,960)':y=380:w=4:h=1160:color=0x00ffff@0.5:t=fill,"
-            f"drawbox=x='540-180-40*sin(t*3)':y='960-180-40*sin(t*3)':w='360+80*sin(t*3)':h='360+80*sin(t*3)':color=0xffaa00@0.35:t=2,"
-            f"drawbox=x=60:y=280:w=960:h=70:color=0x0a1a2f@0.9:t=fill,"
-            f"drawtext=fontfile={FONT_BOLD}:text='RADAR TACTICO EN VIVO · MONITOREO 3D':fontcolor=0x00ffff:fontsize=32:x=(w-text_w)/2:y=300,"
-            f"drawtext=fontfile={FONT_BOLD}:text='SISTEMA DE RASTREO SATELITAL / AERONAVAL':fontcolor=0xffcc00:fontsize=28:x=100:y=440,"
-            f"drawtext=fontfile={FONT_REG}:text='SECTOR\\: ESPACIO AEREO / RUTA COMERCIAL':fontcolor=white@0.85:fontsize=24:x=100:y=490,"
-            f"drawtext=fontfile={FONT_REG}:text='ESTADO DE FRECUENCIA\\: ALERTA CRITICA ACTIVA':fontcolor=0xff3344:fontsize=24:x=100:y=530,"
-            f"drawtext=fontfile={FONT_MONO}:text='COORDS\\: 25.7617 N\\, 80.1918 W · BEACON ON':fontcolor=0x00ffff:fontsize=22:x=100:y=1460,"
-            f"vignette=PI/4,format=yuv420p"
-        ),
-        "SH03": (
-            "0x091424",
-            f"drawgrid=w=80:h=80:t=1:c=0x00b4d8@0.12,"
-            f"drawbox=x=60:y=380:w=960:h=1160:color=0x00b4d8@0.35:t=2,"
-            f"drawbox=x=60:y=280:w=960:h=70:color=0x081c30@0.9:t=fill,"
-            f"drawtext=fontfile={FONT_BOLD}:text='REGISTRO DE TELEMETRIA Y PARAMETROS':fontcolor=0x00e5ff:fontsize=32:x=(w-text_w)/2:y=300,"
-            f"drawtext=fontfile={FONT_BOLD}:text='ALTITUD DETECTADA\\:':fontcolor=white:fontsize=30:x=100:y=450,"
-            f"drawtext=fontfile={FONT_MONO}:text='%{{eif\\:18200-3200*t\\:d}} FT':fontcolor=0xff3344:fontsize=64:x=100:y=500,"
-            f"drawtext=fontfile={FONT_BOLD}:text='TASA DE DESCENSO\\: -3\\,400 FPM (CRITICO)':fontcolor=0xffaa00:fontsize=28:x=100:y=600,"
-            f"drawtext=fontfile={FONT_REG}:text='ANGULO DE ATAQUE\\: +14.2 DEG · ANOMALIA':fontcolor=white@0.85:fontsize=26:x=100:y=650,"
-            f"drawbox=x=100:y=740:w=880:h=320:color=0x00223a@0.8:t=fill,"
-            f"drawbox=x=100:y=740:w=880:h=320:color=0x00e5ff@0.4:t=2,"
-            f"drawtext=fontfile={FONT_BOLD}:text='PERFIL DE TRAYECTORIA EN TIEMPO REAL':fontcolor=0x00e5ff:fontsize=22:x=130:y=765,"
-            f"drawbox=x=130:y=820:w='120+t*130':h=16:color=0xff3344@0.9:t=fill,"
-            f"drawtext=fontfile={FONT_REG}:text='PERDIDA SUBITA DE SENAL DE RADAR SECUNDARIO':fontcolor=0xff8888:fontsize=22:x=130:y=860,"
-            f"drawtext=fontfile={FONT_MONO}:text='CANAL DE TRANSPONDER\\: 7700 [EMERGENCIA]':fontcolor=0xffcc00:fontsize=22:x=130:y=900,"
-            f"drawtext=fontfile={FONT_REG}:text='FRECUENCIA DE CONTACTO TIERRA\\: PERDIDA 12S':fontcolor=white@0.8:fontsize=22:x=130:y=940,"
-            f"vignette=PI/4,format=yuv420p"
-        ),
-        "SH10": (
-            "0x051329",
-            f"drawgrid=w=60:h=60:t=1:c=0x0099ff@0.14,"
-            f"drawbox=x=60:y=380:w=960:h=1160:color=0x00aaff@0.4:t=3,"
-            f"drawbox=x=60:y=280:w=960:h=70:color=0x061e3d@0.95:t=fill,"
-            f"drawtext=fontfile={FONT_BOLD}:text='ESQUEMA TECNICO Y PLANO ESTRUCTURAL':fontcolor=0x00e5ff:fontsize=32:x=(w-text_w)/2:y=300,"
-            f"drawbox=x=140:y=480:w=800:h=460:color=0x004477@0.4:t=fill,"
-            f"drawbox=x=140:y=480:w=800:h=460:color=0x00d4ff@0.5:t=2,"
-            f"drawbox=x=220:y=560:w=640:h=300:color=0x00d4ff@0.3:t=1,"
-            f"drawbox=x=480:y=510:w=160:h=400:color=0xff9900@0.4:t=2,"
-            f"drawtext=fontfile={FONT_BOLD}:text='SUBSISTEMA DE CONTROL DE TIMON Y EMPUJE':fontcolor=0xffaa00:fontsize=26:x=(w-text_w)/2:y=700,"
-            f"drawtext=fontfile={FONT_REG}:text='PUNTO DE PRESION HIDRAULICA CRITICA':fontcolor=0xff3344:fontsize=22:x=(w-text_w)/2:y=745,"
-            f"drawbox=x=140:y=990:w=800:h=480:color=0x041933@0.9:t=fill,"
-            f"drawbox=x=140:y=990:w=800:h=480:color=0x00aaff@0.3:t=2,"
-            f"drawtext=fontfile={FONT_BOLD}:text='EVALUACION DE COMPONENTES CRITICOS\\:':fontcolor=0x00e5ff:fontsize=26:x=180:y=1030,"
-            f"drawtext=fontfile={FONT_REG}:text='• CIRCUITO PRIMARIO\\: SOBRECARGA DINAMICA':fontcolor=white@0.9:fontsize=23:x=180:y=1080,"
-            f"drawtext=fontfile={FONT_REG}:text='• VALVULAS DE COMPENSACION\\: SIN RESPUESTA':fontcolor=0xff7777:fontsize=23:x=180:y=1125,"
-            f"drawtext=fontfile={FONT_REG}:text='• INTEGRIDAD DEL FUSELAJE TRASERO\\: OK':fontcolor=0x55ff88:fontsize=23:x=180:y=1170,"
-            f"drawtext=fontfile={FONT_MONO}:text='ESTADO FORENSE\\: DICTAMEN EN INVESTIGACION':fontcolor=0xffcc00:fontsize=23:x=180:y=1220,"
-            f"vignette=PI/4,format=yuv420p"
-        ),
-        "SH11": (
-            "0x161311",
-            f"drawbox=x=60:y=380:w=960:h=1160:color=0xff6600@0.4:t=3,"
-            f"drawbox=x=60:y=280:w=960:h=70:color=0x261408@0.95:t=fill,"
-            f"drawtext=fontfile={FONT_BOLD}:text='EVIDENCIA OFICIAL Y REGISTRO FORENSE':fontcolor=0xff8833:fontsize=32:x=(w-text_w)/2:y=300,"
-            f"drawbox=x=140:y=440:w=800:h=260:color=0x2e1705@0.9:t=fill,"
-            f"drawbox=x=140:y=440:w=800:h=260:color=0xff6600@0.8:t=3,"
-            f"drawbox=x=170:y=470:w=160:h=200:color=0xff5500@0.9:t=fill,"
-            f"drawtext=fontfile={FONT_BOLD}:text='FLIGHT':fontcolor=black:fontsize=26:x=200:y=520,"
-            f"drawtext=fontfile={FONT_BOLD}:text='RECORDER':fontcolor=black:fontsize=22:x=180:y=560,"
-            f"drawtext=fontfile={FONT_BOLD}:text='DO NOT OPEN':fontcolor=black:fontsize=16:x=185:y=600,"
-            f"drawtext=fontfile={FONT_BOLD}:text='UNIDAD FDR RECUPERADA':fontcolor=0xffaa00:fontsize=28:x=360:y=480,"
-            f"drawtext=fontfile={FONT_REG}:text='REGISTROS DE VOZ Y DATOS DE IMPACTO':fontcolor=white@0.85:fontsize=22:x=360:y=530,"
-            f"drawtext=fontfile={FONT_REG}:text='ESTADO FISICO\\: INTEGRO / ACCESO AUTORIZADO':fontcolor=0x44ff88:fontsize=22:x=360:y=575,"
-            f"drawtext=fontfile={FONT_MONO}:text='SERIAL\\: FDR-NTSB-2026-X4':fontcolor=0x00ffff:fontsize=20:x=360:y=625,"
-            f"drawbox=x=140:y=740:w=800:h=320:color=0x11161d@0.95:t=fill,"
-            f"drawbox=x=140:y=740:w=800:h=320:color=0x00e5ff@0.3:t=2,"
-            f"drawtext=fontfile={FONT_BOLD}:text='ONDA DE AUDIO CABINA CVR (ULTIMOS 12 SEG)':fontcolor=0x00e5ff:fontsize=22:x=170:y=770,"
-            f"drawbox=x=170:y=850:w='140+160*abs(sin(t*8))':h=8:color=0x00ffff:t=fill,"
-            f"drawbox=x=350:y=830:w='120+180*abs(sin(t*12))':h=10:color=0xffaa00:t=fill,"
-            f"drawbox=x=520:y=810:w='160+220*abs(sin(t*16))':h=12:color=0xff3344:t=fill,"
-            f"drawtext=fontfile={FONT_REG}:text='CORRELACION TEMPORAL\\: CONFIRMADA CON RADAR':fontcolor=white@0.8:fontsize=21:x=170:y=990,"
-            f"drawbox=x=140:y=1100:w=800:h=370:color=0x1f1a18@0.9:t=fill,"
-            f"drawtext=fontfile={FONT_BOLD}:text='INSPECCION OFICIAL EN CURSO':fontcolor=0xffcc00:fontsize=24:x=180:y=1130,"
-            f"drawtext=fontfile={FONT_REG}:text='• ORGANISMO\\: SEGURIDAD EN EL TRANSPORTE':fontcolor=white@0.85:fontsize=22:x=180:y=1180,"
-            f"drawtext=fontfile={FONT_REG}:text='• DICTAMEN PRELIMINAR\\: ESTIMADO EN 14 DIAS':fontcolor=white@0.85:fontsize=22:x=180:y=1225,"
-            f"vignette=PI/4,format=yuv420p"
-        ),
-        "SH13": (
-            "0x0a101d",
-            f"drawbox=x=60:y=380:w=960:h=1160:color=0x00ffff@0.4:t=4,"
-            f"drawbox=x=60:y=280:w=960:h=70:color=0x0e223b@0.95:t=fill,"
-            f"drawtext=fontfile={FONT_BOLD}:text='DICTAMEN FINAL · DEBATE DE LA COMUNIDAD':fontcolor=0x00e5ff:fontsize=30:x=(w-text_w)/2:y=300,"
-            f"drawbox=x=120:y=460:w=840:h=380:color=0x132238@0.95:t=fill,"
-            f"drawbox=x=120:y=460:w=840:h=380:color=0xffe500@0.8:t=3,"
-            f"drawtext=fontfile={FONT_BOLD}:text='¿QUE OPINAS DE ESTE SUCESO?':fontcolor=0xffe500:fontsize=38:x=(w-text_w)/2:y=530,"
-            f"drawtext=fontfile={FONT_REG}:text='¿Las medidas fueron suficientes o':fontcolor=white:fontsize=30:x=(w-text_w)/2:y=610,"
-            f"drawtext=fontfile={FONT_REG}:text='hubo negligencia evitable?':fontcolor=white:fontsize=30:x=(w-text_w)/2:y=660,"
-            f"drawtext=fontfile={FONT_BOLD}:text='DEJA TU OPINION EN LOS COMENTARIOS':fontcolor=0x00ffff:fontsize=28:x=(w-text_w)/2:y=735,"
-            f"drawbox=x=120:y=900:w=840:h=140:color=0x1f2e46@0.9:t=fill,"
-            f"drawbox=x=120:y=900:w=840:h=140:color=0x00e5ff@0.4:t=2,"
-            f"drawtext=fontfile={FONT_BOLD}:text='💬 COMENTA TU POSTURA':fontcolor=white:fontsize=30:x=170:y=950,"
-            f"drawtext=fontfile={FONT_BOLD}:text='REPORTE 24/7':fontcolor=0xffcc00:fontsize=22:x=700:y=955,"
-            f"drawbox=x=120:y=1080:w=840:h=140:color=0x1f2e46@0.9:t=fill,"
-            f"drawbox=x=120:y=1080:w=840:h=140:color=0x00e5ff@0.4:t=2,"
-            f"drawtext=fontfile={FONT_BOLD}:text='🔔 SIGUE AL RADAR PARA MAS NOTICIAS':fontcolor=white:fontsize=28:x=150:y=1135,"
-            f"drawtext=fontfile={FONT_REG}:text='INFORMACION VERIFICADA CON FUENTES OFICIALES':fontcolor=white@0.6:fontsize=22:x=(w-text_w)/2:y=1380,"
-            f"vignette=PI/4,format=yuv420p"
-        ),
-    }
+    title_low = (title or "").lower()
+    genre_upper = (genre or "G1").upper()
+
+    is_peru = ("PERU" in genre_upper or any(k in title_low for k in ["perú", "peru", "lima", "arequipa", "piura", "indeci", "sismo", "huaico", "terremoto", "panamericana", "el niño", "rpp", "andina", "lluvia"]))
+    is_cyber = ("G2" in genre_upper or any(k in title_low for k in ["ciber", "hacker", "ransomware", "malware", "exploit", "breach", "zero-day"]))
+    is_ai = ("G3" in genre_upper or any(k in title_low for k in ["gemini", "google", "ia", "ai", "openai", "chip", "2 nm", "robot", "nvidia", "deepseek", "chatgpt", "semiconduct", "dram", "nand", "euv", "silicon", "hardware", "cpu", "gpu"]))
+    is_space = ("G4" in genre_upper or any(k in title_low for k in ["espacio", "nasa", "esa", "marte", "luna", "cohete", "spacex", "telescopio", "asteroide", "planetary", "space", "starship", "orbit"]))
+
+    if is_peru:
+        cards = {
+            "SH01": (
+                "0x071524",
+                f"drawgrid=w=120:h=120:t=2:c=0x00e5ff@0.15,"
+                f"drawbox=x=60:y=380:w=960:h=1160:color=0x00e5ff@0.3:t=3,"
+                f"drawbox=x=80:y=400:w=920:h=1120:color=0x0088cc@0.15:t=1,"
+                f"drawbox=x='60+mod(t*220\\,960)':y=380:w=4:h=1160:color=0x00ffff@0.5:t=fill,"
+                f"drawbox=x='540-180-40*sin(t*3)':y='960-180-40*sin(t*3)':w='360+80*sin(t*3)':h='360+80*sin(t*3)':color=0xffaa00@0.35:t=2,"
+                f"drawbox=x=60:y=280:w=960:h=70:color=0x0a1a2f@0.9:t=fill,"
+                f"drawtext=fontfile={FONT_BOLD}:text='CENTRO DE MONITOREO SISMICO Y SATELITAL EN VIVO':fontcolor=0x00ffff:fontsize=30:x=(w-text_w)/2:y=300,"
+                f"drawtext=fontfile={FONT_BOLD}:text='SISTEMA NACIONAL DE ALERTA TEMPRANA · INDECI / COEN':fontcolor=0xffcc00:fontsize=26:x=100:y=440,"
+                f"drawtext=fontfile={FONT_REG}:text='SECTOR\\: COSTA Y VALLES ANDINOS DEL PERU':fontcolor=white@0.85:fontsize=24:x=100:y=490,"
+                f"drawtext=fontfile={FONT_REG}:text='ESTADO DE FRECUENCIA\\: ALERTA ROJA ACTIVA':fontcolor=0xff3344:fontsize=24:x=100:y=530,"
+                f"drawtext=fontfile={FONT_MONO}:text='COORDS\\: 12.0464 S\\, 77.0428 W [PERU] · SENAL VIGILADA':fontcolor=0x00ffff:fontsize=22:x=100:y=1460,"
+                f"vignette=PI/4,format=yuv420p"
+            ),
+            "SH03": (
+                "0x0c1524",
+                f"drawgrid=w=80:h=80:t=1:c=0x00b4d8@0.12,"
+                f"drawbox=x=60:y=380:w=960:h=1160:color=0x00b4d8@0.35:t=2,"
+                f"drawbox=x=60:y=280:w=960:h=70:color=0x081c30@0.9:t=fill,"
+                f"drawtext=fontfile={FONT_BOLD}:text='REGISTRO DE PARAMETROS SISMICOS / LLUVIAS':fontcolor=0x00e5ff:fontsize=30:x=(w-text_w)/2:y=300,"
+                f"drawtext=fontfile={FONT_BOLD}:text='NIVEL DE AFECTACION DETECTADO\\:':fontcolor=white:fontsize=30:x=100:y=450,"
+                f"drawtext=fontfile={FONT_MONO}:text='%{{eif\\:68-8*t\\:d}} ML (MAGNITUD)':fontcolor=0xff3344:fontsize=58:x=100:y=500,"
+                f"drawtext=fontfile={FONT_BOLD}:text='INTENSIDAD ESTIMADA\\: GRADO V-VI (MERCALLI)':fontcolor=0xffaa00:fontsize=26:x=100:y=600,"
+                f"drawtext=fontfile={FONT_REG}:text='NIVEL DE RIESGO\\: CRITICO POR DESBORDE / SISMO':fontcolor=white@0.85:fontsize=24:x=100:y=650,"
+                f"drawbox=x=100:y=740:w=880:h=320:color=0x00223a@0.8:t=fill,"
+                f"drawbox=x=100:y=740:w=880:h=320:color=0x00e5ff@0.4:t=2,"
+                f"drawtext=fontfile={FONT_BOLD}:text='RED SISMICA NACIONAL / METEOROLOGICA DEL PERU':fontcolor=0x00e5ff:fontsize=22:x=130:y=765,"
+                f"drawbox=x=130:y=820:w='120+t*130':h=16:color=0xff3344@0.9:t=fill,"
+                f"drawtext=fontfile={FONT_REG}:text='REPORTE PRELIMINAR ACTUALIZADO EN TIEMPO REAL':fontcolor=0xff8888:fontsize=22:x=130:y=860,"
+                f"drawtext=fontfile={FONT_MONO}:text='CANAL DE EMERGENCIA\\: INDECI COEN-PERU':fontcolor=0xffcc00:fontsize=22:x=130:y=900,"
+                f"drawtext=fontfile={FONT_REG}:text='ACTIVACION DE BRIGADAS DE PRIMERA RESPUESTA':fontcolor=white@0.8:fontsize=22:x=130:y=940,"
+                f"vignette=PI/4,format=yuv420p"
+            ),
+            "SH10": (
+                "0x06192e",
+                f"drawgrid=w=60:h=60:t=1:c=0x0099ff@0.14,"
+                f"drawbox=x=60:y=380:w=960:h=1160:color=0x00aaff@0.4:t=3,"
+                f"drawbox=x=60:y=280:w=960:h=70:color=0x061e3d@0.95:t=fill,"
+                f"drawtext=fontfile={FONT_BOLD}:text='MAPA GEODESICO Y RADIO DE AFECTACION':fontcolor=0x00e5ff:fontsize=32:x=(w-text_w)/2:y=300,"
+                f"drawbox=x=140:y=480:w=800:h=460:color=0x004477@0.4:t=fill,"
+                f"drawbox=x=140:y=480:w=800:h=460:color=0x00d4ff@0.5:t=2,"
+                f"drawbox=x=220:y=560:w=640:h=300:color=0x00d4ff@0.3:t=1,"
+                f"drawbox=x=480:y=510:w=160:h=400:color=0xff9900@0.4:t=2,"
+                f"drawtext=fontfile={FONT_BOLD}:text='PERIMETRO DE IMPACTO Y CORREDORES DE EMERGENCIA':fontcolor=0xffaa00:fontsize=24:x=(w-text_w)/2:y=700,"
+                f"drawtext=fontfile={FONT_REG}:text='ZONIFICACION DE DANOS Y EVACUACION PRIORITARIA':fontcolor=0xff3344:fontsize=22:x=(w-text_w)/2:y=745,"
+                f"drawbox=x=140:y=990:w=800:h=480:color=0x041933@0.9:t=fill,"
+                f"drawbox=x=140:y=990:w=800:h=480:color=0x00aaff@0.3:t=2,"
+                f"drawtext=fontfile={FONT_BOLD}:text='EVALUACION DE INFRAESTRUCTURA EN PERU\\:':fontcolor=0x00e5ff:fontsize=26:x=180:y=1030,"
+                f"drawtext=fontfile={FONT_REG}:text='• VIAS VIALES\\: TRAMOS CON RESTRICCION':fontcolor=white@0.9:fontsize=23:x=180:y=1080,"
+                f"drawtext=fontfile={FONT_REG}:text='• SERVICIOS ESENCIALES\\: MONITOREO DE SUMINISTRO':fontcolor=0xff7777:fontsize=23:x=180:y=1125,"
+                f"drawtext=fontfile={FONT_REG}:text='• CUADRILLAS Y POLICIA\\: DESPLEGADAS EN ZONA':fontcolor=0x55ff88:fontsize=23:x=180:y=1170,"
+                f"drawtext=fontfile={FONT_MONO}:text='DICTAMEN\\: DECLARATORIA DE EMERGENCIA OFICIAL':fontcolor=0xffcc00:fontsize=23:x=180:y=1220,"
+                f"vignette=PI/4,format=yuv420p"
+            ),
+            "SH11": (
+                "0x1f140a",
+                f"drawbox=x=60:y=380:w=960:h=1160:color=0xff6600@0.4:t=3,"
+                f"drawbox=x=60:y=280:w=960:h=70:color=0x261408@0.95:t=fill,"
+                f"drawtext=fontfile={FONT_BOLD}:text='EVIDENCIA Y REPORTE OFICIAL INDECI / COEN':fontcolor=0xff8833:fontsize=30:x=(w-text_w)/2:y=300,"
+                f"drawbox=x=140:y=440:w=800:h=260:color=0x2e1705@0.9:t=fill,"
+                f"drawbox=x=140:y=440:w=800:h=260:color=0xff6600@0.8:t=3,"
+                f"drawbox=x=170:y=470:w=160:h=200:color=0xff5500@0.9:t=fill,"
+                f"drawtext=fontfile={FONT_BOLD}:text='INDECI':fontcolor=black:fontsize=26:x=200:y=520,"
+                f"drawtext=fontfile={FONT_BOLD}:text='COEN':fontcolor=black:fontsize=24:x=205:y=560,"
+                f"drawtext=fontfile={FONT_BOLD}:text='OFICIAL':fontcolor=black:fontsize=18:x=205:y=600,"
+                f"drawtext=fontfile={FONT_BOLD}:text='REPORTE OFICIAL CONSOLIDADO':fontcolor=0xffaa00:fontsize=26:x=360:y=480,"
+                f"drawtext=fontfile={FONT_REG}:text='BALANCE DE AFECTACIONES Y NECESIDADES':fontcolor=white@0.85:fontsize=22:x=360:y=530,"
+                f"drawtext=fontfile={FONT_REG}:text='RESPUESTA GUBERNAMENTAL EN CURSO':fontcolor=0x44ff88:fontsize=22:x=360:y=575,"
+                f"drawtext=fontfile={FONT_MONO}:text='DOCUMENTO\\: COEN-EMERGENCIA-PERU':fontcolor=0x00ffff:fontsize=20:x=360:y=625,"
+                f"drawbox=x=140:y=740:w=800:h=320:color=0x11161d@0.95:t=fill,"
+                f"drawbox=x=140:y=740:w=800:h=320:color=0x00e5ff@0.3:t=2,"
+                f"drawtext=fontfile={FONT_BOLD}:text='DISPOSICIONES DE SEGURIDAD EMITIDAS POR EL ESTADO':fontcolor=0x00e5ff:fontsize=21:x=170:y=770,"
+                f"drawbox=x=170:y=850:w='140+160*abs(sin(t*8))':h=8:color=0x00ffff:t=fill,"
+                f"drawbox=x=350:y=830:w='120+180*abs(sin(t*12))':h=10:color=0xffaa00:t=fill,"
+                f"drawbox=x=520:y=810:w='160+220*abs(sin(t*16))':h=12:color=0xff3344:t=fill,"
+                f"drawtext=fontfile={FONT_REG}:text='COORDINACION DIRECTA CON GOBIERNOS REGIONALES':fontcolor=white@0.8:fontsize=21:x=170:y=990,"
+                f"drawbox=x=140:y=1100:w=800:h=370:color=0x1f1a18@0.9:t=fill,"
+                f"drawtext=fontfile={FONT_BOLD}:text='MEDIDAS URGENTES RECOMENDADAS':fontcolor=0xffcc00:fontsize=24:x=180:y=1130,"
+                f"drawtext=fontfile={FONT_REG}:text='• MANTENER RUTAS DE EVACUACION DESPEJADAS':fontcolor=white@0.85:fontsize=22:x=180:y=1180,"
+                f"drawtext=fontfile={FONT_REG}:text='• SEGUIR UNICAMENTE COMUNICADOS OFICIALES':fontcolor=white@0.85:fontsize=22:x=180:y=1225,"
+                f"vignette=PI/4,format=yuv420p"
+            ),
+            "SH13": (
+                "0x0b1320",
+                f"drawbox=x=60:y=380:w=960:h=1160:color=0x00ffff@0.4:t=4,"
+                f"drawbox=x=60:y=280:w=960:h=70:color=0x0e223b@0.95:t=fill,"
+                f"drawtext=fontfile={FONT_BOLD}:text='DICTAMEN DE EMERGENCIA · DEBATE CIUDADANO':fontcolor=0x00e5ff:fontsize=28:x=(w-text_w)/2:y=300,"
+                f"drawbox=x=120:y=460:w=840:h=380:color=0x132238@0.95:t=fill,"
+                f"drawbox=x=120:y=460:w=840:h=380:color=0xffe500@0.8:t=3,"
+                f"drawtext=fontfile={FONT_BOLD}:text='¿LAS MEDIDAS FUERON SUFICIENTES?':fontcolor=0xffe500:fontsize=36:x=(w-text_w)/2:y=530,"
+                f"drawtext=fontfile={FONT_REG}:text='¿Las autoridades actuaron a tiempo o':fontcolor=white:fontsize=30:x=(w-text_w)/2:y=610,"
+                f"drawtext=fontfile={FONT_REG}:text='faltó preparación ante el suceso?':fontcolor=white:fontsize=30:x=(w-text_w)/2:y=660,"
+                f"drawtext=fontfile={FONT_BOLD}:text='DEJA TU REPORTE DESDE TU REGION':fontcolor=0x00ffff:fontsize=28:x=(w-text_w)/2:y=735,"
+                f"drawbox=x=120:y=900:w=840:h=140:color=0x1f2e46@0.9:t=fill,"
+                f"drawbox=x=120:y=900:w=840:h=140:color=0x00e5ff@0.4:t=2,"
+                f"drawtext=fontfile={FONT_BOLD}:text='💬 COMENTA DESDE TU ZONA':fontcolor=white:fontsize=30:x=170:y=950,"
+                f"drawtext=fontfile={FONT_BOLD}:text='REPORTE PERU':fontcolor=0xffcc00:fontsize=22:x=680:y=955,"
+                f"drawbox=x=120:y=1080:w=840:h=140:color=0x1f2e46@0.9:t=fill,"
+                f"drawbox=x=120:y=1080:w=840:h=140:color=0x00e5ff@0.4:t=2,"
+                f"drawtext=fontfile={FONT_BOLD}:text='🔔 SIGUE AL RADAR PARA MAS NOTICIAS':fontcolor=white:fontsize=28:x=150:y=1135,"
+                f"drawtext=fontfile={FONT_REG}:text='COBERTURA NACIONAL CON FUENTES OFICIALES':fontcolor=white@0.6:fontsize=22:x=(w-text_w)/2:y=1380,"
+                f"vignette=PI/4,format=yuv420p"
+            ),
+        }
+    elif is_cyber:
+        cards = {
+            "SH01": (
+                "0x06111e",
+                f"drawgrid=w=100:h=100:t=2:c=0x00ffff@0.15,"
+                f"drawbox=x=60:y=380:w=960:h=1160:color=0x00e5ff@0.3:t=3,"
+                f"drawbox=x=60:y=280:w=960:h=70:color=0x0a1a2f@0.9:t=fill,"
+                f"drawtext=fontfile={FONT_BOLD}:text='CENTRO DE MONITOREO SOC · RADAR DE AMENAZAS':fontcolor=0x00ffff:fontsize=30:x=(w-text_w)/2:y=300,"
+                f"drawtext=fontfile={FONT_BOLD}:text='INCIDENTE CRITICO EN INFRAESTRUCTURA DE RED':fontcolor=0xffcc00:fontsize=26:x=100:y=440,"
+                f"drawtext=fontfile={FONT_REG}:text='OBJETIVO\\: SERVIDORES Y SERVICIOS ESENCIALES':fontcolor=white@0.85:fontsize=24:x=100:y=490,"
+                f"drawtext=fontfile={FONT_REG}:text='VECTOR DE INFECCION\\: EXPLOIT ZERO-DAY ACTIVO':fontcolor=0xff3344:fontsize=24:x=100:y=530,"
+                f"drawtext=fontfile={FONT_MONO}:text='FIREWALL STATUS\\: BREACH CONTAINMENT MODE ON':fontcolor=0x00ffff:fontsize=22:x=100:y=1460,"
+                f"vignette=PI/4,format=yuv420p"
+            ),
+            "SH03": (
+                "0x091422",
+                f"drawgrid=w=80:h=80:t=1:c=0x00b4d8@0.12,"
+                f"drawbox=x=60:y=380:w=960:h=1160:color=0x00b4d8@0.35:t=2,"
+                f"drawbox=x=60:y=280:w=960:h=70:color=0x081c30@0.9:t=fill,"
+                f"drawtext=fontfile={FONT_BOLD}:text='TRAFICO MALICIOSO Y ANCHO DE BANDA':fontcolor=0x00e5ff:fontsize=32:x=(w-text_w)/2:y=300,"
+                f"drawtext=fontfile={FONT_BOLD}:text='PICO DE ATAQUE REGISTRADO\\:':fontcolor=white:fontsize=30:x=100:y=450,"
+                f"drawtext=fontfile={FONT_MONO}:text='%{{eif\\:940-120*t\\:d}} GBPS':fontcolor=0xff3344:fontsize=64:x=100:y=500,"
+                f"drawtext=fontfile={FONT_BOLD}:text='TASA DE ATAQUE\\: 14.8 MILLONES PPS (CRITICO)':fontcolor=0xffaa00:fontsize=26:x=100:y=600,"
+                f"drawtext=fontfile={FONT_REG}:text='ANOMALIA\\: SATURACION DE ENLACES PRIMARIOS':fontcolor=white@0.85:fontsize=26:x=100:y=650,"
+                f"drawbox=x=100:y=740:w=880:h=320:color=0x00223a@0.8:t=fill,"
+                f"drawbox=x=100:y=740:w=880:h=320:color=0x00e5ff@0.4:t=2,"
+                f"drawtext=fontfile={FONT_BOLD}:text='ANALISIS DE PAQUETES IP EN TIEMPO REAL':fontcolor=0x00e5ff:fontsize=22:x=130:y=765,"
+                f"drawbox=x=130:y=820:w='120+t*130':h=16:color=0xff3344@0.9:t=fill,"
+                f"drawtext=fontfile={FONT_REG}:text='PATRONES DE RANSOMWARE EN EJECUCION DETECTADOS':fontcolor=0xff8888:fontsize=22:x=130:y=860,"
+                f"drawtext=fontfile={FONT_MONO}:text='PROTOCOLO\\: BLOQUEO BGP Y QUARANTINE ON':fontcolor=0xffcc00:fontsize=22:x=130:y=900,"
+                f"vignette=PI/4,format=yuv420p"
+            ),
+            "SH10": (
+                "0x06152b",
+                f"drawgrid=w=60:h=60:t=1:c=0x0099ff@0.14,"
+                f"drawbox=x=60:y=380:w=960:h=1160:color=0x00aaff@0.4:t=3,"
+                f"drawbox=x=60:y=280:w=960:h=70:color=0x061e3d@0.95:t=fill,"
+                f"drawtext=fontfile={FONT_BOLD}:text='TOPOLOGIA DE RED Y NODOS AISLADOS':fontcolor=0x00e5ff:fontsize=32:x=(w-text_w)/2:y=300,"
+                f"drawbox=x=140:y=480:w=800:h=460:color=0x004477@0.4:t=fill,"
+                f"drawbox=x=140:y=480:w=800:h=460:color=0x00d4ff@0.5:t=2,"
+                f"drawtext=fontfile={FONT_BOLD}:text='MAPA DE SERVIDORES Y FIREWALL PERIMETRAL':fontcolor=0xffaa00:fontsize=26:x=(w-text_w)/2:y=700,"
+                f"drawtext=fontfile={FONT_REG}:text='AISLAMIENTO DE SUBRED PARA CONTENER IMPACTO':fontcolor=0xff3344:fontsize=22:x=(w-text_w)/2:y=745,"
+                f"drawbox=x=140:y=990:w=800:h=480:color=0x041933@0.9:t=fill,"
+                f"drawbox=x=140:y=990:w=800:h=480:color=0x00aaff@0.3:t=2,"
+                f"drawtext=fontfile={FONT_BOLD}:text='ESTADO FORENSE DIGITAL\\:':fontcolor=0x00e5ff:fontsize=26:x=180:y=1030,"
+                f"drawtext=fontfile={FONT_REG}:text='• VECTOR DE ENTRADA\\: PARCHEADO':fontcolor=0x55ff88:fontsize=23:x=180:y=1080,"
+                f"drawtext=fontfile={FONT_REG}:text='• BASE DE DATOS\\: REVISION DE CIFRADO':fontcolor=0xffcc00:fontsize=23:x=180:y=1125,"
+                f"vignette=PI/4,format=yuv420p"
+            ),
+            "SH11": (
+                "0x15161c",
+                f"drawbox=x=60:y=380:w=960:h=1160:color=0x00e5ff@0.4:t=3,"
+                f"drawbox=x=60:y=280:w=960:h=70:color=0x0f1f33@0.95:t=fill,"
+                f"drawtext=fontfile={FONT_BOLD}:text='ANALISIS FORENSE DIGITAL · REPORTE CVE':fontcolor=0x00e5ff:fontsize=30:x=(w-text_w)/2:y=300,"
+                f"drawbox=x=140:y=440:w=800:h=260:color=0x132238@0.9:t=fill,"
+                f"drawbox=x=140:y=440:w=800:h=260:color=0x00e5ff@0.6:t=3,"
+                f"drawtext=fontfile={FONT_BOLD}:text='CVE FORENSE ZERO-DAY':fontcolor=0xffaa00:fontsize=26:x=180:y=480,"
+                f"drawtext=fontfile={FONT_REG}:text='FIRMA CRIPTOGRAFICA DEL ATAQUE CONFIRMADA':fontcolor=white@0.85:fontsize=22:x=180:y=530,"
+                f"drawtext=fontfile={FONT_MONO}:text='HASH\\: SHA256-APT-CRITICAL-EXPLOIT':fontcolor=0x00ffff:fontsize=20:x=180:y=580,"
+                f"drawbox=x=140:y=740:w=800:h=320:color=0x11161d@0.95:t=fill,"
+                f"drawtext=fontfile={FONT_BOLD}:text='EVALUACION DE INCIDENTE POR EQUIPO DE CIBERDEFENSA':fontcolor=0x00e5ff:fontsize=21:x=170:y=770,"
+                f"vignette=PI/4,format=yuv420p"
+            ),
+            "SH13": (
+                "0x091220",
+                f"drawbox=x=60:y=380:w=960:h=1160:color=0x00ffff@0.4:t=4,"
+                f"drawbox=x=60:y=280:w=960:h=70:color=0x0e223b@0.95:t=fill,"
+                f"drawtext=fontfile={FONT_BOLD}:text='DEBATE · SEGURIDAD DIGITAL GLOBAL':fontcolor=0x00e5ff:fontsize=30:x=(w-text_w)/2:y=300,"
+                f"drawbox=x=120:y=460:w=840:h=380:color=0x132238@0.95:t=fill,"
+                f"drawbox=x=120:y=460:w=840:h=380:color=0xffe500@0.8:t=3,"
+                f"drawtext=fontfile={FONT_BOLD}:text='¿ESTAMOS REALMENTE PROTEGIDOS?':fontcolor=0xffe500:fontsize=36:x=(w-text_w)/2:y=530,"
+                f"drawtext=fontfile={FONT_REG}:text='¿O los servicios esenciales pueden caer':fontcolor=white:fontsize=30:x=(w-text_w)/2:y=610,"
+                f"drawtext=fontfile={FONT_REG}:text='en cualquier momento por un exploit?':fontcolor=white:fontsize=30:x=(w-text_w)/2:y=660,"
+                f"drawtext=fontfile={FONT_BOLD}:text='DEJA TU OPINION EN LOS COMENTARIOS':fontcolor=0x00ffff:fontsize=28:x=(w-text_w)/2:y=735,"
+                f"drawbox=x=120:y=900:w=840:h=140:color=0x1f2e46@0.9:t=fill,"
+                f"drawtext=fontfile={FONT_BOLD}:text='💬 COMENTA TU POSTURA':fontcolor=white:fontsize=30:x=170:y=950,"
+                f"drawbox=x=120:y=1080:w=840:h=140:color=0x1f2e46@0.9:t=fill,"
+                f"drawtext=fontfile={FONT_BOLD}:text='🔔 SIGUE AL RADAR PARA MAS NOTICIAS':fontcolor=white:fontsize=28:x=150:y=1135,"
+                f"vignette=PI/4,format=yuv420p"
+            ),
+        }
+    elif is_ai:
+        cards = {
+            "SH01": (
+                "0x061324",
+                f"drawgrid=w=100:h=100:t=2:c=0x00e5ff@0.15,"
+                f"drawbox=x=60:y=380:w=960:h=1160:color=0x00e5ff@0.3:t=3,"
+                f"drawbox=x=60:y=280:w=960:h=70:color=0x0a1a2f@0.9:t=fill,"
+                f"drawtext=fontfile={FONT_BOLD}:text='RADAR DE LITOGRAFIA Y ARQUITECTURA DE CHIPS':fontcolor=0x00ffff:fontsize=30:x=(w-text_w)/2:y=300,"
+                f"drawtext=fontfile={FONT_BOLD}:text='CADENA GLOBAL DE SEMICONDUCTORES Y SUPERCOMPUTO':fontcolor=0xffcc00:fontsize=24:x=100:y=440,"
+                f"drawtext=fontfile={FONT_REG}:text='FABRICACION DE VANGUARDIA\\: PROCESO DE 2 NM EUV':fontcolor=white@0.85:fontsize=24:x=100:y=490,"
+                f"drawtext=fontfile={FONT_REG}:text='ESTADO DE FABRICACION\\: ALTA EFICIENCIA ENERGETICA':fontcolor=0x44ff88:fontsize=24:x=100:y=530,"
+                f"drawtext=fontfile={FONT_MONO}:text='WAFER FAB\\: 300MM HIGH-NA LITHOGRAPHY ACTIVE':fontcolor=0x00ffff:fontsize=22:x=100:y=1460,"
+                f"vignette=PI/4,format=yuv420p"
+            ),
+            "SH03": (
+                "0x081628",
+                f"drawgrid=w=80:h=80:t=1:c=0x00b4d8@0.12,"
+                f"drawbox=x=60:y=380:w=960:h=1160:color=0x00b4d8@0.35:t=2,"
+                f"drawbox=x=60:y=280:w=960:h=70:color=0x081c30@0.9:t=fill,"
+                f"drawtext=fontfile={FONT_BOLD}:text='POTENCIA DE CALCULO E INFERENCIA IA':fontcolor=0x00e5ff:fontsize=32:x=(w-text_w)/2:y=300,"
+                f"drawtext=fontfile={FONT_BOLD}:text='CAPACIDAD DE PROCESAMIENTO\\:':fontcolor=white:fontsize=30:x=100:y=450,"
+                f"drawtext=fontfile={FONT_MONO}:text='%{{eif\\:180-25*t\\:d}} TFLOPS':fontcolor=0x00ffff:fontsize=64:x=100:y=500,"
+                f"drawtext=fontfile={FONT_BOLD}:text='NODO LITOGRAFICO\\: 2 NM GATE-ALL-AROUND':fontcolor=0xffaa00:fontsize=26:x=100:y=600,"
+                f"drawtext=fontfile={FONT_REG}:text='ANCHO DE BANDA DE MEMORIA\\: HBM3E DE ALTA VELOCIDAD':fontcolor=white@0.85:fontsize=24:x=100:y=650,"
+                f"drawbox=x=100:y=740:w=880:h=320:color=0x00223a@0.8:t=fill,"
+                f"drawbox=x=100:y=740:w=880:h=320:color=0x00e5ff@0.4:t=2,"
+                f"drawtext=fontfile={FONT_BOLD}:text='ESCALAMIENTO DE MODELOS DE FRONTERA':fontcolor=0x00e5ff:fontsize=22:x=130:y=765,"
+                f"drawbox=x=130:y=820:w='120+t*130':h=16:color=0x00ffff@0.9:t=fill,"
+                f"drawtext=fontfile={FONT_REG}:text='REDUCCION DE LATENCIA EN CENTROS DE DATOS':fontcolor=0x55ff88:fontsize=22:x=130:y=860,"
+                f"drawtext=fontfile={FONT_MONO}:text='EFICIENCIA ENERGETICA\\: +40% FRENTE A GEN PREVIA':fontcolor=0xffcc00:fontsize=22:x=130:y=900,"
+                f"vignette=PI/4,format=yuv420p"
+            ),
+            "SH10": (
+                "0x06182c",
+                f"drawgrid=w=60:h=60:t=1:c=0x0099ff@0.14,"
+                f"drawbox=x=60:y=380:w=960:h=1160:color=0x00aaff@0.4:t=3,"
+                f"drawbox=x=60:y=280:w=960:h=70:color=0x061e3d@0.95:t=fill,"
+                f"drawtext=fontfile={FONT_BOLD}:text='ARQUITECTURA DE SILICIO Y MATRIZ TENSOR':fontcolor=0x00e5ff:fontsize=30:x=(w-text_w)/2:y=300,"
+                f"drawbox=x=140:y=480:w=800:h=460:color=0x004477@0.4:t=fill,"
+                f"drawbox=x=140:y=480:w=800:h=460:color=0x00d4ff@0.5:t=2,"
+                f"drawtext=fontfile={FONT_BOLD}:text='SUBSISTEMA DE NUCLEOS DE IA Y MEMORIA APILADA':fontcolor=0xffaa00:fontsize=24:x=(w-text_w)/2:y=700,"
+                f"drawtext=fontfile={FONT_REG}:text='INTERCONEXION ULTRA RAPIDA CHIP-TO-CHIP':fontcolor=0x00ffff:fontsize=22:x=(w-text_w)/2:y=745,"
+                f"drawbox=x=140:y=990:w=800:h=480:color=0x041933@0.9:t=fill,"
+                f"drawtext=fontfile={FONT_BOLD}:text='INNOVACIONES CLAVE DE LITOGRAFIA\\:':fontcolor=0x00e5ff:fontsize=26:x=180:y=1030,"
+                f"drawtext=fontfile={FONT_REG}:text='• TRANSISTORES GAA (NANOSHEET)\\: ACTIVOS':fontcolor=0x55ff88:fontsize=23:x=180:y=1080,"
+                f"drawtext=fontfile={FONT_REG}:text='• ALIMENTACION TRASERA (BACKSIDE POWER)\\: INTEGRADA':fontcolor=white@0.9:fontsize=23:x=180:y=1125,"
+                f"vignette=PI/4,format=yuv420p"
+            ),
+            "SH11": (
+                "0x0f1826",
+                f"drawbox=x=60:y=380:w=960:h=1160:color=0x00e5ff@0.4:t=3,"
+                f"drawbox=x=60:y=280:w=960:h=70:color=0x091b30@0.95:t=fill,"
+                f"drawtext=fontfile={FONT_BOLD}:text='BENCHMARK OFICIAL Y PRUEBAS DE INFERENCIA':fontcolor=0x00e5ff:fontsize=28:x=(w-text_w)/2:y=300,"
+                f"drawbox=x=140:y=440:w=800:h=260:color=0x132238@0.9:t=fill,"
+                f"drawbox=x=140:y=440:w=800:h=260:color=0x00e5ff@0.6:t=3,"
+                f"drawtext=fontfile={FONT_BOLD}:text='RESULTADOS CERTIFICADOS DE LABORATORIO':fontcolor=0xffaa00:fontsize=26:x=180:y=480,"
+                f"drawtext=fontfile={FONT_REG}:text='MAXIMA VELOCIDAD DE RESPUESTA EN MODELOS FRONTERA':fontcolor=white@0.85:fontsize=22:x=180:y=530,"
+                f"drawtext=fontfile={FONT_MONO}:text='METRICA\\: TOKENS/SEG EN TIEMPO RECORD':fontcolor=0x00ffff:fontsize=20:x=180:y=580,"
+                f"drawbox=x=140:y=740:w=800:h=320:color=0x11161d@0.95:t=fill,"
+                f"drawtext=fontfile={FONT_BOLD}:text='IMPACTO DIRECTO EN LA INDUSTRIA DE INTELIGENCIA ARTIFICIAL':fontcolor=0x00e5ff:fontsize=20:x=170:y=770,"
+                f"vignette=PI/4,format=yuv420p"
+            ),
+            "SH13": (
+                "0x0a1422",
+                f"drawbox=x=60:y=380:w=960:h=1160:color=0x00ffff@0.4:t=4,"
+                f"drawbox=x=60:y=280:w=960:h=70:color=0x0e223b@0.95:t=fill,"
+                f"drawtext=fontfile={FONT_BOLD}:text='DEBATE · EL FUTURO DE LA INTELIGENCIA ARTIFICIAL':fontcolor=0x00e5ff:fontsize=28:x=(w-text_w)/2:y=300,"
+                f"drawbox=x=120:y=460:w=840:h=380:color=0x132238@0.95:t=fill,"
+                f"drawbox=x=120:y=460:w=840:h=380:color=0xffe500@0.8:t=3,"
+                f"drawtext=fontfile={FONT_BOLD}:text='¿ESTE SALTO NOS ACERCA A LA AGI?':fontcolor=0xffe500:fontsize=36:x=(w-text_w)/2:y=530,"
+                f"drawtext=fontfile={FONT_REG}:text='¿Crees que el hardware superará pronto':fontcolor=white:fontsize=30:x=(w-text_w)/2:y=610,"
+                f"drawtext=fontfile={FONT_REG}:text='las capacidades del cerebro humano?':fontcolor=white:fontsize=30:x=(w-text_w)/2:y=660,"
+                f"drawtext=fontfile={FONT_BOLD}:text='DEJA TU OPINION EN LOS COMENTARIOS':fontcolor=0x00ffff:fontsize=28:x=(w-text_w)/2:y=735,"
+                f"drawbox=x=120:y=900:w=840:h=140:color=0x1f2e46@0.9:t=fill,"
+                f"drawtext=fontfile={FONT_BOLD}:text='💬 DEJA TU PREDICCION':fontcolor=white:fontsize=30:x=170:y=950,"
+                f"drawbox=x=120:y=1080:w=840:h=140:color=0x1f2e46@0.9:t=fill,"
+                f"drawtext=fontfile={FONT_BOLD}:text='🔔 SIGUE AL RADAR PARA MAS NOTICIAS':fontcolor=white:fontsize=28:x=150:y=1135,"
+                f"vignette=PI/4,format=yuv420p"
+            ),
+        }
+    elif is_space:
+        cards = {
+            "SH01": (
+                "0x060f1c",
+                f"drawgrid=w=100:h=100:t=2:c=0x00e5ff@0.15,"
+                f"drawbox=x=60:y=380:w=960:h=1160:color=0x00e5ff@0.3:t=3,"
+                f"drawbox=x=60:y=280:w=960:h=70:color=0x0a1a2f@0.9:t=fill,"
+                f"drawtext=fontfile={FONT_BOLD}:text='CENTRO DE CONTROL · RASTREO ORBITAL DEEP SPACE':fontcolor=0x00ffff:fontsize=30:x=(w-text_w)/2:y=300,"
+                f"drawtext=fontfile={FONT_BOLD}:text='TELEMETRIA DE MISION PLANETARIA NASA / ESA':fontcolor=0xffcc00:fontsize=26:x=100:y=440,"
+                f"drawtext=fontfile={FONT_REG}:text='TRAYECTORIA\\: MANIOBRA DE APROXIMACION':fontcolor=white@0.85:fontsize=24:x=100:y=490,"
+                f"drawtext=fontfile={FONT_REG}:text='COMUNICACION\\: SENAL ENLAZADA A RED ESPACIAL':fontcolor=0x44ff88:fontsize=24:x=100:y=530,"
+                f"drawtext=fontfile={FONT_MONO}:text='ORBIT\\: 410 KM ALTITUDE · INCLINATION NOMINAL':fontcolor=0x00ffff:fontsize=22:x=100:y=1460,"
+                f"vignette=PI/4,format=yuv420p"
+            ),
+            "SH03": (
+                "0x081324",
+                f"drawgrid=w=80:h=80:t=1:c=0x00b4d8@0.12,"
+                f"drawbox=x=60:y=380:w=960:h=1160:color=0x00b4d8@0.35:t=2,"
+                f"drawbox=x=60:y=280:w=960:h=70:color=0x081c30@0.9:t=fill,"
+                f"drawtext=fontfile={FONT_BOLD}:text='VELOCIDAD Y ALTURA DE DESCENSO ORBITAL':fontcolor=0x00e5ff:fontsize=30:x=(w-text_w)/2:y=300,"
+                f"drawtext=fontfile={FONT_BOLD}:text='VELOCIDAD DE APROXIMACION\\:':fontcolor=white:fontsize=30:x=100:y=450,"
+                f"drawtext=fontfile={FONT_MONO}:text='%{{eif\\:27800-1400*t\\:d}} KM/H':fontcolor=0x00ffff:fontsize=60:x=100:y=500,"
+                f"drawtext=fontfile={FONT_BOLD}:text='TASA DE FRENADO\\: PROPULSION CONTROLADA':fontcolor=0xffaa00:fontsize=26:x=100:y=600,"
+                f"drawtext=fontfile={FONT_REG}:text='ANGULO DE REENTRADA\\: PARAMETROS EN TOLERANCIA':fontcolor=white@0.85:fontsize=24:x=100:y=650,"
+                f"drawbox=x=100:y=740:w=880:h=320:color=0x00223a@0.8:t=fill,"
+                f"drawtext=fontfile={FONT_BOLD}:text='MONITOREO DE NAVEGACION AUTONOMA EN VIVO':fontcolor=0x00e5ff:fontsize=22:x=130:y=765,"
+                f"drawbox=x=130:y=820:w='120+t*130':h=16:color=0x00ffff@0.9:t=fill,"
+                f"drawtext=fontfile={FONT_REG}:text='PROPULSORES IONICOS Y TOBERAS CALIBRADAS':fontcolor=0x55ff88:fontsize=22:x=130:y=860,"
+                f"vignette=PI/4,format=yuv420p"
+            ),
+            "SH10": (
+                "0x051326",
+                f"drawgrid=w=60:h=60:t=1:c=0x0099ff@0.14,"
+                f"drawbox=x=60:y=380:w=960:h=1160:color=0x00aaff@0.4:t=3,"
+                f"drawbox=x=60:y=280:w=960:h=70:color=0x061e3d@0.95:t=fill,"
+                f"drawtext=fontfile={FONT_BOLD}:text='BLUEPRINT TECNICO Y ESQUEMA DE PROPULSION':fontcolor=0x00e5ff:fontsize=30:x=(w-text_w)/2:y=300,"
+                f"drawbox=x=140:y=480:w=800:h=460:color=0x004477@0.4:t=fill,"
+                f"drawbox=x=140:y=480:w=800:h=460:color=0x00d4ff@0.5:t=2,"
+                f"drawtext=fontfile={FONT_BOLD}:text='SUBSISTEMA DE TOBERAS Y ESCUDO TERMICO':fontcolor=0xffaa00:fontsize=24:x=(w-text_w)/2:y=700,"
+                f"drawbox=x=140:y=990:w=800:h=480:color=0x041933@0.9:t=fill,"
+                f"drawtext=fontfile={FONT_BOLD}:text='DIAGNOSTICO DE SENSORES Y PANELES SOLARES\\:':fontcolor=0x00e5ff:fontsize=24:x=180:y=1030,"
+                f"drawtext=fontfile={FONT_REG}:text='• DESPLIEGUE DE PANELES\\: COMPLETADO AL 100%':fontcolor=0x55ff88:fontsize=23:x=180:y=1080,"
+                f"drawtext=fontfile={FONT_REG}:text='• RESERVA DE COMBUSTIBLE\\: OPTIMA PARA RETORNO':fontcolor=white@0.9:fontsize=23:x=180:y=1125,"
+                f"vignette=PI/4,format=yuv420p"
+            ),
+            "SH11": (
+                "0x0b1626",
+                f"drawbox=x=60:y=380:w=960:h=1160:color=0x00e5ff@0.4:t=3,"
+                f"drawbox=x=60:y=280:w=960:h=70:color=0x091b30@0.95:t=fill,"
+                f"drawtext=fontfile={FONT_BOLD}:text='TELEMETRIA OFICIAL DE MISION ESPACIAL':fontcolor=0x00e5ff:fontsize=30:x=(w-text_w)/2:y=300,"
+                f"drawbox=x=140:y=440:w=800:h=260:color=0x132238@0.9:t=fill,"
+                f"drawtext=fontfile={FONT_BOLD}:text='DATOS TRANSMITIDOS POR ANTENAS DEEP SPACE':fontcolor=0xffaa00:fontsize=24:x=180:y=480,"
+                f"drawtext=fontfile={FONT_REG}:text='CONFIRMACION DE TRAYECTORIA POR AGENCIAS OFICIALES':fontcolor=white@0.85:fontsize=22:x=180:y=530,"
+                f"drawtext=fontfile={FONT_MONO}:text='STATUS\\: MISSION OBJECTIVE SUCCESSFUL':fontcolor=0x00ffff:fontsize=20:x=180:y=580,"
+                f"vignette=PI/4,format=yuv420p"
+            ),
+            "SH13": (
+                "0x07111e",
+                f"drawbox=x=60:y=380:w=960:h=1160:color=0x00ffff@0.4:t=4,"
+                f"drawbox=x=60:y=280:w=960:h=70:color=0x0e223b@0.95:t=fill,"
+                f"drawtext=fontfile={FONT_BOLD}:text='DEBATE · EL FUTURO DE LA EXPLORACION ESPACIAL':fontcolor=0x00e5ff:fontsize=28:x=(w-text_w)/2:y=300,"
+                f"drawbox=x=120:y=460:w=840:h=380:color=0x132238@0.95:t=fill,"
+                f"drawbox=x=120:y=460:w=840:h=380:color=0xffe500@0.8:t=3,"
+                f"drawtext=fontfile={FONT_BOLD}:text='¿HABRA COLONIAS EN ESTA DECADA?':fontcolor=0xffe500:fontsize=36:x=(w-text_w)/2:y=530,"
+                f"drawtext=fontfile={FONT_REG}:text='¿Lograremos establecer bases humanas en':fontcolor=white:fontsize=30:x=(w-text_w)/2:y=610,"
+                f"drawtext=fontfile={FONT_REG}:text='la Luna o Marte antes del 2030?':fontcolor=white:fontsize=30:x=(w-text_w)/2:y=660,"
+                f"drawtext=fontfile={FONT_BOLD}:text='DEJA TU PREDICCION EN LOS COMENTARIOS':fontcolor=0x00ffff:fontsize=28:x=(w-text_w)/2:y=735,"
+                f"drawbox=x=120:y=900:w=840:h=140:color=0x1f2e46@0.9:t=fill,"
+                f"drawtext=fontfile={FONT_BOLD}:text='💬 DEJA TU PREDICCION':fontcolor=white:fontsize=30:x=170:y=950,"
+                f"drawbox=x=120:y=1080:w=840:h=140:color=0x1f2e46@0.9:t=fill,"
+                f"drawtext=fontfile={FONT_BOLD}:text='🔔 SIGUE AL RADAR PARA MAS NOTICIAS':fontcolor=white:fontsize=28:x=150:y=1135,"
+                f"vignette=PI/4,format=yuv420p"
+            ),
+        }
+    else:
+        # Default: Aviación / Incidentes Aéreos
+        cards = {
+            "SH01": (
+                "0x060f1e",
+                f"drawgrid=w=120:h=120:t=2:c=0x00e5ff@0.15,"
+                f"drawbox=x=60:y=380:w=960:h=1160:color=0x00e5ff@0.3:t=3,"
+                f"drawbox=x=80:y=400:w=920:h=1120:color=0x0088cc@0.15:t=1,"
+                f"drawbox=x='60+mod(t*220\\,960)':y=380:w=4:h=1160:color=0x00ffff@0.5:t=fill,"
+                f"drawbox=x='540-180-40*sin(t*3)':y='960-180-40*sin(t*3)':w='360+80*sin(t*3)':h='360+80*sin(t*3)':color=0xffaa00@0.35:t=2,"
+                f"drawbox=x=60:y=280:w=960:h=70:color=0x0a1a2f@0.9:t=fill,"
+                f"drawtext=fontfile={FONT_BOLD}:text='RADAR TACTICO EN VIVO · MONITOREO 3D':fontcolor=0x00ffff:fontsize=32:x=(w-text_w)/2:y=300,"
+                f"drawtext=fontfile={FONT_BOLD}:text='SISTEMA DE RASTREO SATELITAL / AERONAVAL':fontcolor=0xffcc00:fontsize=28:x=100:y=440,"
+                f"drawtext=fontfile={FONT_REG}:text='SECTOR\\: ESPACIO AEREO / RUTA COMERCIAL':fontcolor=white@0.85:fontsize=24:x=100:y=490,"
+                f"drawtext=fontfile={FONT_REG}:text='ESTADO DE FRECUENCIA\\: ALERTA CRITICA ACTIVA':fontcolor=0xff3344:fontsize=24:x=100:y=530,"
+                f"drawtext=fontfile={FONT_MONO}:text='COORDS\\: 25.7617 N\\, 80.1918 W · BEACON ON':fontcolor=0x00ffff:fontsize=22:x=100:y=1460,"
+                f"vignette=PI/4,format=yuv420p"
+            ),
+            "SH03": (
+                "0x091424",
+                f"drawgrid=w=80:h=80:t=1:c=0x00b4d8@0.12,"
+                f"drawbox=x=60:y=380:w=960:h=1160:color=0x00b4d8@0.35:t=2,"
+                f"drawbox=x=60:y=280:w=960:h=70:color=0x081c30@0.9:t=fill,"
+                f"drawtext=fontfile={FONT_BOLD}:text='REGISTRO DE TELEMETRIA Y PARAMETROS':fontcolor=0x00e5ff:fontsize=32:x=(w-text_w)/2:y=300,"
+                f"drawtext=fontfile={FONT_BOLD}:text='ALTITUD DETECTADA\\:':fontcolor=white:fontsize=30:x=100:y=450,"
+                f"drawtext=fontfile={FONT_MONO}:text='%{{eif\\:18200-3200*t\\:d}} FT':fontcolor=0xff3344:fontsize=64:x=100:y=500,"
+                f"drawtext=fontfile={FONT_BOLD}:text='TASA DE DESCENSO\\: -3\\,400 FPM (CRITICO)':fontcolor=0xffaa00:fontsize=28:x=100:y=600,"
+                f"drawtext=fontfile={FONT_REG}:text='ANGULO DE ATAQUE\\: +14.2 DEG · ANOMALIA':fontcolor=white@0.85:fontsize=26:x=100:y=650,"
+                f"drawbox=x=100:y=740:w=880:h=320:color=0x00223a@0.8:t=fill,"
+                f"drawbox=x=100:y=740:w=880:h=320:color=0x00e5ff@0.4:t=2,"
+                f"drawtext=fontfile={FONT_BOLD}:text='PERFIL DE TRAYECTORIA EN TIEMPO REAL':fontcolor=0x00e5ff:fontsize=22:x=130:y=765,"
+                f"drawbox=x=130:y=820:w='120+t*130':h=16:color=0xff3344@0.9:t=fill,"
+                f"drawtext=fontfile={FONT_REG}:text='PERDIDA SUBITA DE SENAL DE RADAR SECUNDARIO':fontcolor=0xff8888:fontsize=22:x=130:y=860,"
+                f"drawtext=fontfile={FONT_MONO}:text='CANAL DE TRANSPONDER\\: 7700 [EMERGENCIA]':fontcolor=0xffcc00:fontsize=22:x=130:y=900,"
+                f"drawtext=fontfile={FONT_REG}:text='FRECUENCIA DE CONTACTO TIERRA\\: PERDIDA 12S':fontcolor=white@0.8:fontsize=22:x=130:y=940,"
+                f"vignette=PI/4,format=yuv420p"
+            ),
+            "SH10": (
+                "0x051329",
+                f"drawgrid=w=60:h=60:t=1:c=0x0099ff@0.14,"
+                f"drawbox=x=60:y=380:w=960:h=1160:color=0x00aaff@0.4:t=3,"
+                f"drawbox=x=60:y=280:w=960:h=70:color=0x061e3d@0.95:t=fill,"
+                f"drawtext=fontfile={FONT_BOLD}:text='ESQUEMA TECNICO Y PLANO ESTRUCTURAL':fontcolor=0x00e5ff:fontsize=32:x=(w-text_w)/2:y=300,"
+                f"drawbox=x=140:y=480:w=800:h=460:color=0x004477@0.4:t=fill,"
+                f"drawbox=x=140:y=480:w=800:h=460:color=0x00d4ff@0.5:t=2,"
+                f"drawbox=x=220:y=560:w=640:h=300:color=0x00d4ff@0.3:t=1,"
+                f"drawbox=x=480:y=510:w=160:h=400:color=0xff9900@0.4:t=2,"
+                f"drawtext=fontfile={FONT_BOLD}:text='SUBSISTEMA DE CONTROL DE TIMON Y EMPUJE':fontcolor=0xffaa00:fontsize=26:x=(w-text_w)/2:y=700,"
+                f"drawtext=fontfile={FONT_REG}:text='PUNTO DE PRESION HIDRAULICA CRITICA':fontcolor=0xff3344:fontsize=22:x=(w-text_w)/2:y=745,"
+                f"drawbox=x=140:y=990:w=800:h=480:color=0x041933@0.9:t=fill,"
+                f"drawbox=x=140:y=990:w=800:h=480:color=0x00aaff@0.3:t=2,"
+                f"drawtext=fontfile={FONT_BOLD}:text='EVALUACION DE COMPONENTES CRITICOS\\:':fontcolor=0x00e5ff:fontsize=26:x=180:y=1030,"
+                f"drawtext=fontfile={FONT_REG}:text='• CIRCUITO PRIMARIO\\: SOBRECARGA DINAMICA':fontcolor=white@0.9:fontsize=23:x=180:y=1080,"
+                f"drawtext=fontfile={FONT_REG}:text='• VALVULAS DE COMPENSACION\\: SIN RESPUESTA':fontcolor=0xff7777:fontsize=23:x=180:y=1125,"
+                f"drawtext=fontfile={FONT_REG}:text='• INTEGRIDAD DEL FUSELAJE TRASERO\\: OK':fontcolor=0x55ff88:fontsize=23:x=180:y=1170,"
+                f"drawtext=fontfile={FONT_MONO}:text='ESTADO FORENSE\\: DICTAMEN EN INVESTIGACION':fontcolor=0xffcc00:fontsize=23:x=180:y=1220,"
+                f"vignette=PI/4,format=yuv420p"
+            ),
+            "SH11": (
+                "0x161311",
+                f"drawbox=x=60:y=380:w=960:h=1160:color=0xff6600@0.4:t=3,"
+                f"drawbox=x=60:y=280:w=960:h=70:color=0x261408@0.95:t=fill,"
+                f"drawtext=fontfile={FONT_BOLD}:text='EVIDENCIA OFICIAL Y REGISTRO FORENSE':fontcolor=0xff8833:fontsize=32:x=(w-text_w)/2:y=300,"
+                f"drawbox=x=140:y=440:w=800:h=260:color=0x2e1705@0.9:t=fill,"
+                f"drawbox=x=140:y=440:w=800:h=260:color=0xff6600@0.8:t=3,"
+                f"drawbox=x=170:y=470:w=160:h=200:color=0xff5500@0.9:t=fill,"
+                f"drawtext=fontfile={FONT_BOLD}:text='FLIGHT':fontcolor=black:fontsize=26:x=200:y=520,"
+                f"drawtext=fontfile={FONT_BOLD}:text='RECORDER':fontcolor=black:fontsize=22:x=180:y=560,"
+                f"drawtext=fontfile={FONT_BOLD}:text='DO NOT OPEN':fontcolor=black:fontsize=16:x=185:y=600,"
+                f"drawtext=fontfile={FONT_BOLD}:text='UNIDAD FDR RECUPERADA':fontcolor=0xffaa00:fontsize=28:x=360:y=480,"
+                f"drawtext=fontfile={FONT_REG}:text='REGISTROS DE VOZ Y DATOS DE IMPACTO':fontcolor=white@0.85:fontsize=22:x=360:y=530,"
+                f"drawtext=fontfile={FONT_REG}:text='ESTADO FISICO\\: INTEGRO / ACCESO AUTORIZADO':fontcolor=0x44ff88:fontsize=22:x=360:y=575,"
+                f"drawtext=fontfile={FONT_MONO}:text='SERIAL\\: FDR-NTSB-2026-X4':fontcolor=0x00ffff:fontsize=20:x=360:y=625,"
+                f"drawbox=x=140:y=740:w=800:h=320:color=0x11161d@0.95:t=fill,"
+                f"drawbox=x=140:y=740:w=800:h=320:color=0x00e5ff@0.3:t=2,"
+                f"drawtext=fontfile={FONT_BOLD}:text='ONDA DE AUDIO CABINA CVR (ULTIMOS 12 SEG)':fontcolor=0x00e5ff:fontsize=22:x=170:y=770,"
+                f"drawbox=x=170:y=850:w='140+160*abs(sin(t*8))':h=8:color=0x00ffff:t=fill,"
+                f"drawbox=x=350:y=830:w='120+180*abs(sin(t*12))':h=10:color=0xffaa00:t=fill,"
+                f"drawbox=x=520:y=810:w='160+220*abs(sin(t*16))':h=12:color=0xff3344:t=fill,"
+                f"drawtext=fontfile={FONT_REG}:text='CORRELACION TEMPORAL\\: CONFIRMADA CON RADAR':fontcolor=white@0.8:fontsize=21:x=170:y=990,"
+                f"drawbox=x=140:y=1100:w=800:h=370:color=0x1f1a18@0.9:t=fill,"
+                f"drawtext=fontfile={FONT_BOLD}:text='INSPECCION OFICIAL EN CURSO':fontcolor=0xffcc00:fontsize=24:x=180:y=1130,"
+                f"drawtext=fontfile={FONT_REG}:text='• ORGANISMO\\: SEGURIDAD EN EL TRANSPORTE':fontcolor=white@0.85:fontsize=22:x=180:y=1180,"
+                f"drawtext=fontfile={FONT_REG}:text='• DICTAMEN PRELIMINAR\\: ESTIMADO EN 14 DIAS':fontcolor=white@0.85:fontsize=22:x=180:y=1225,"
+                f"vignette=PI/4,format=yuv420p"
+            ),
+            "SH13": (
+                "0x0a101d",
+                f"drawbox=x=60:y=380:w=960:h=1160:color=0x00ffff@0.4:t=4,"
+                f"drawbox=x=60:y=280:w=960:h=70:color=0x0e223b@0.95:t=fill,"
+                f"drawtext=fontfile={FONT_BOLD}:text='DICTAMEN FINAL · DEBATE DE LA COMUNIDAD':fontcolor=0x00e5ff:fontsize=30:x=(w-text_w)/2:y=300,"
+                f"drawbox=x=120:y=460:w=840:h=380:color=0x132238@0.95:t=fill,"
+                f"drawbox=x=120:y=460:w=840:h=380:color=0xffe500@0.8:t=3,"
+                f"drawtext=fontfile={FONT_BOLD}:text='¿QUE OPINAS DE ESTE SUCESO?':fontcolor=0xffe500:fontsize=38:x=(w-text_w)/2:y=530,"
+                f"drawtext=fontfile={FONT_REG}:text='¿Las medidas fueron suficientes o':fontcolor=white:fontsize=30:x=(w-text_w)/2:y=610,"
+                f"drawtext=fontfile={FONT_REG}:text='hubo negligencia evitable?':fontcolor=white:fontsize=30:x=(w-text_w)/2:y=660,"
+                f"drawtext=fontfile={FONT_BOLD}:text='DEJA TU OPINION EN LOS COMENTARIOS':fontcolor=0x00ffff:fontsize=28:x=(w-text_w)/2:y=735,"
+                f"drawbox=x=120:y=900:w=840:h=140:color=0x1f2e46@0.9:t=fill,"
+                f"drawbox=x=120:y=900:w=840:h=140:color=0x00e5ff@0.4:t=2,"
+                f"drawtext=fontfile={FONT_BOLD}:text='💬 COMENTA TU POSTURA':fontcolor=white:fontsize=30:x=170:y=950,"
+                f"drawtext=fontfile={FONT_BOLD}:text='REPORTE 24/7':fontcolor=0xffcc00:fontsize=22:x=700:y=955,"
+                f"drawbox=x=120:y=1080:w=840:h=140:color=0x1f2e46@0.9:t=fill,"
+                f"drawbox=x=120:y=1080:w=840:h=140:color=0x00e5ff@0.4:t=2,"
+                f"drawtext=fontfile={FONT_BOLD}:text='🔔 SIGUE AL RADAR PARA MAS NOTICIAS':fontcolor=white:fontsize=28:x=150:y=1135,"
+                f"drawtext=fontfile={FONT_REG}:text='INFORMACION VERIFICADA CON FUENTES OFICIALES':fontcolor=white@0.6:fontsize=22:x=(w-text_w)/2:y=1380,"
+                f"vignette=PI/4,format=yuv420p"
+            ),
+        }
 
     if shot_id in cards:
         bg, vf = cards[shot_id]
@@ -352,6 +706,8 @@ def prepare_normalized_shot(
     raw_mp4: Path,
     norm_mp4: Path,
     target_dur: float,
+    genre: str = "G1",
+    title: str = "",
 ) -> None:
     """
     Prepara cada plano a 1080x1920 @ 24fps con la duración exacta + margen de solapamiento para xfade:
@@ -405,7 +761,7 @@ def prepare_normalized_shot(
         subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     else:
         # Modo Infográfico Vectorial HUD (o respaldo)
-        generate_infographic_vector_shot(shot_info, shot_idx, norm_mp4, target_dur, fps)
+        generate_infographic_vector_shot(shot_info, shot_idx, norm_mp4, target_dur, fps, genre=genre, title=title)
 
 
 def build_transition_video(
@@ -604,11 +960,13 @@ def assemble_final_video(delivery_dir: Path) -> Path:
     clip_durations = [(w / sum_w) * total_raw_needed for w in base_weights]
 
     norm_clips: List[Path] = []
-    log(f"2/4 Procesando los {num_shots} planos (Ken Burns 24fps, sacudida de cámara y etalonaje)...")
+    genre = meta.get("genre", "G1")
+    title = meta.get("title", "")
+    log(f"2/4 Procesando los {num_shots} planos (Ken Burns 24fps, sacudida de cámara, HUD vectorial para {genre})...")
     for idx, s in enumerate(shots):
         raw_mp4 = shots_dir / f"{s['id']}.mp4"
         norm_mp4 = work_dir / f"norm_{s['id']}.mp4"
-        prepare_normalized_shot(s, idx, raw_mp4, norm_mp4, clip_durations[idx])
+        prepare_normalized_shot(s, idx, raw_mp4, norm_mp4, clip_durations[idx], genre=genre, title=title)
         norm_clips.append(norm_mp4)
 
     # 3. Ensamblar transiciones xfade

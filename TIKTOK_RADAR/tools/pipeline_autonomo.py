@@ -28,12 +28,29 @@ from audio_generator import generate_speech, probe_duration
 ROOT_DIR = Path(__file__).resolve().parent.parent
 ENTREGAS_DIR = ROOT_DIR / "entregas"
 ENTREGAS_DIR.mkdir(parents=True, exist_ok=True)
+CONFIG_PATH = ROOT_DIR / "config_produccion.json"
 
+
+def load_production_config() -> Dict[str, Any]:
+    if CONFIG_PATH.exists():
+        try:
+            return json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
+        except Exception:
+            pass
+    return {}
+
+
+PROD_CONFIG = load_production_config()
 STYLE_PREFIX = (
-    "Vertical 9:16, modern stylized 3D cinematic animation, Arcane and Spider-Verse "
-    "tactical news thriller aesthetic, Unreal Engine 5 volumetric lighting, rich stylized textures, "
-    "no photorealism, no uncanny valley. "
+    PROD_CONFIG.get("consistencia_visual", {}).get("estilo_maestro")
+    or (
+        "Vertical 9:16, modern stylized 3D cinematic animation, Arcane and Spider-Verse "
+        "tactical news thriller aesthetic, Unreal Engine 5 volumetric lighting, rich stylized textures, "
+        "no photorealism, no uncanny valley. "
+    )
 )
+if not STYLE_PREFIX.endswith(". ") and not STYLE_PREFIX.endswith("."):
+    STYLE_PREFIX += ". "
 
 
 def score_news(item: Dict[str, Any]) -> float:
@@ -68,12 +85,21 @@ def pick_top_news(news_list: List[Dict[str, Any]]) -> Dict[str, Any]:
     return ranked[0]
 
 
-def build_shot_prompts(is_aviation: bool, is_cyber: bool) -> List[Dict[str, Any]]:
+def build_shot_prompts(
+    is_aviation: bool = False,
+    is_cyber: bool = False,
+    is_ai: bool = False,
+    is_space: bool = False,
+    is_peru: bool = False,
+) -> List[Dict[str, Any]]:
     """
-    Construye los 13 planos bajo la Arquitectura Híbrida:
-    - 8 Planos Cinemáticos de Acción/Drama: Renderizados en Google Flow (Veo).
-    - 5 Planos Infográficos Broadcast HUD: Renderizados en FFmpeg Vector HUD sin costo de créditos (SH01, SH03, SH10, SH11, SH13).
+    Construye los 13 planos con anclas de consistencia visual por categoría:
+    - Modo Híbrido: 8 Planos Cinemáticos Flow + 5 Planos Infográficos Vector HUD FFmpeg (0 créditos).
+    - Modo Flow Puro: 13 Planos 100% Cinemáticos en Flow si está configurado en config_produccion.json.
     """
+    active_mode = PROD_CONFIG.get("modo_produccion", {}).get("activo", "hibrido")
+    is_full_flow = (active_mode == "flow_puro")
+
     if is_aviation:
         raw_shots = [
             {
@@ -181,16 +207,79 @@ def build_shot_prompts(is_aviation: bool, is_cyber: bool) -> List[Dict[str, Any]
                 "fallback_en": "Stylized 3D glowing cyan question mark hologram floating over a dark blue digital background."
             },
         ]
+    elif is_peru:
+        raw_shots = [
+            {"id": "SH01", "sec": "0-4s", "dur": 4.0, "ia_dur": "5s", "render_mode": "infographic", "type": "Radar Sísmico INDECI", "action": "Radar sismológico en tiempo real con coordenadas del Perú y alerta roja.", "visual_en": "Tactical emergency command center in Peru with a 3D topographic radar screen pulsing over coastal territory with amber fault lines.", "fallback_en": "Stylized 3D holographic topographical map of Peru with pulsing amber fault lines and emergency telemetry."},
+            {"id": "SH02", "sec": "4-9s", "dur": 5.0, "ia_dur": "5s", "render_mode": "flow", "type": "Respuesta Operativa", "action": "Vehículos de emergencia con balizas avanzando por carretera bajo lluvia torrencial.", "visual_en": "Stylized 3D emergency convoy with flashing red and blue lights speeding down a wet highway amidst heavy rain and mist, volumetric headlights.", "fallback_en": "Stylized 3D emergency response vehicles driving through rain at night with flashing lights."},
+            {"id": "SH03", "sec": "9-14s", "dur": 5.0, "ia_dur": "5s", "render_mode": "infographic", "type": "Parámetros de Emergencia", "action": "Telemetría de aceleración sísmica y precipitaciones fluviales en aumento.", "visual_en": "Futuristic 3D seismic telemetry screen displaying fluctuating Richter graphs and emergency alert bars in glowing red.", "fallback_en": "Stylized 3D digital seismograph monitor with glowing red telemetry curves."},
+            {"id": "SH04", "sec": "14-18s", "dur": 4.0, "ia_dur": "5s", "render_mode": "flow", "type": "Especialista en Terreno", "action": "Primer plano a brigadista de auxilio con chaleco táctico observando el río desbordado.", "visual_en": "Tight close-up of a stylized 3D emergency rescue worker in a high-vis orange jacket, raindrops on helmet, serious determined expression.", "fallback_en": "Stylized 3D rescue worker in rain gear with focused expression under stormy weather."},
+            {"id": "SH05", "sec": "18-22s", "dur": 4.0, "ia_dur": "5s", "render_mode": "flow", "type": "Coordinación de Radio", "action": "Manos operando transmisor de radiofrecuencia y trazando ruta en mapa de satélite.", "visual_en": "Close-up of gloved hands adjusting VHF radio dials and marking tactical routes on a glowing digital tablet map.", "fallback_en": "Close-up of stylized 3D hands operating a communications radio console."},
+            {"id": "SH06", "sec": "22-26s", "dur": 4.0, "ia_dur": "5s", "render_mode": "flow", "type": "Macro de Alerta", "action": "Macro a altavoz de alarma perimétrica y luces estroboscópicas de advertencia.", "visual_en": "Extreme macro of an outdoor civil defense siren and flashing amber strobe light vibrating in heavy rain.", "fallback_en": "Macro close-up of an amber emergency beacon flashing on a metal pole in rain."},
+            {"id": "SH07", "sec": "26-30s", "dur": 4.0, "ia_dur": "5s", "render_mode": "flow", "type": "Acción Perimetral", "action": "Cuadrilla desplegando barreras de contención y guiando el tránsito en zona vulnerable.", "visual_en": "Dynamic tracking shot of emergency responders placing reflective barriers and directing traffic under dark cloudy sky.", "fallback_en": "Stylized 3D emergency crew placing safety barriers on a road under rain."},
+            {"id": "SH08", "sec": "30-34s", "dur": 4.0, "ia_dur": "5s", "render_mode": "flow", "type": "Desplazamiento Rápido", "action": "Camioneta de rescate 4x4 cruzando badén con salpicadura de agua a alta velocidad.", "visual_en": "Low-angle dynamic tracking shot of a 4x4 rescue truck splashing through flooded water on a road with cinematic motion blur.", "fallback_en": "Stylized 3D 4x4 truck driving through water on a road at dusk."},
+            {"id": "SH09", "sec": "34-38s", "dur": 4.0, "ia_dur": "5s", "render_mode": "flow", "type": "Comando de Crisis", "action": "Autoridad en mesa de crisis firmando protocolo de auxilio inmediato con mapa de fondo.", "visual_en": "Inside emergency operations room, officials surrounding a tactical table with a glowing digital map, urgent atmosphere.", "fallback_en": "Stylized 3D crisis room with officers reviewing a digital map on a table."},
+            {"id": "SH10", "sec": "38-44s", "dur": 5.0, "ia_dur": "5s", "render_mode": "infographic", "type": "Mapa Geodésico", "action": "Mapa 3D del departamento afectado con radio de impacto y rutas habilitadas.", "visual_en": "Holographic 3D geodetic blueprint map of the Peruvian region highlighting danger zones in bright red and safe corridors in green.", "fallback_en": "Stylized 3D holographic terrain map showing highlighted rescue zones in neon orange."},
+            {"id": "SH11", "sec": "44-50s", "dur": 5.0, "ia_dur": "5s", "render_mode": "infographic", "type": "Reporte Oficial", "action": "Ficha oficial de balance técnico emitida por organismos de defensa nacional.", "visual_en": "Broadcast official report card graphic with emergency agency badges and rolling status metrics on dark textured background.", "fallback_en": "Clean 3D broadcast news report graphic with checkmark badges and digital text data."},
+            {"id": "SH12", "sec": "50-56s", "dur": 5.5, "ia_dur": "5s", "render_mode": "flow", "type": "Panorama de Apoyo", "action": "Amanecer sobre el valle con cuadrillas brindando apoyo humanitario a los pobladores.", "visual_en": "Wide panoramic 3D cinematic shot of a valley at dawn with emergency tents, rescue trucks, and peaceful golden morning light.", "fallback_en": "Stylized 3D landscape at dawn with relief tents and morning sunlight."},
+            {"id": "SH13", "sec": "56-62.5s", "dur": 6.2, "ia_dur": "5s", "render_mode": "infographic", "type": "Debate Ciudadano", "action": "Tarjeta final de cierre con pregunta comunitaria sobre la respuesta a la emergencia.", "visual_en": "Cinematic slow camera drift with a glowing 3D question mark and community feedback prompt frame.", "fallback_en": "Stylized 3D glowing cyan question mark over a dark blue background."},
+        ]
+    elif is_cyber:
+        raw_shots = [
+            {"id": "SH01", "sec": "0-4s", "dur": 4.0, "ia_dur": "5s", "render_mode": "infographic", "type": "Radar SOC de Amenazas", "action": "Matriz holográfica de ciberdefensa detectando anomalía de tráfico malicioso masivo.", "visual_en": "Dark cybersecurity SOC center with a giant 3D holographic globe showing crimson DDoS attack vectors striking data nodes.", "fallback_en": "Stylized 3D cyber threat map showing glowing red attack vectors across global network nodes."},
+            {"id": "SH02", "sec": "4-9s", "dur": 5.0, "ia_dur": "5s", "render_mode": "flow", "type": "Sala de Servidores", "action": "Bóveda de servidores en penumbra con bancos de fibra óptica titilando en cian y ámbar.", "visual_en": "Sleek high-density server room corridor with cold blue LED lighting, rows of dark server racks pulsing with data streams.", "fallback_en": "Stylized 3D dark server room with glowing blue and amber LED lights."},
+            {"id": "SH03", "sec": "9-14s", "dur": 5.0, "ia_dur": "5s", "render_mode": "infographic", "type": "Telemetría de Tráfico", "action": "Gráfica de paquetes bloqueados y ancho de banda superando 900 Gbps.", "visual_en": "Close-up of a futuristic 3D cyber dashboard showing bandwidth spikes counting up to 940 Gbps with red alert threshold.", "fallback_en": "Stylized 3D digital telemetry monitor showing network traffic graphs and glowing alert markers."},
+            {"id": "SH04", "sec": "14-18s", "dur": 4.0, "ia_dur": "5s", "render_mode": "flow", "type": "Analista en Tensión", "action": "Primer plano a especialista en seguridad digital con reflejo de líneas de código en anteojos.", "visual_en": "Tight close-up of a stylized 3D cyber analyst with dark glasses reflecting green terminal code, focused tense expression.", "fallback_en": "Stylized 3D computer specialist looking intensely at a computer screen in dark room."},
+            {"id": "SH05", "sec": "18-22s", "dur": 4.0, "ia_dur": "5s", "render_mode": "flow", "type": "Escritura de Comandos", "action": "Manos veloces ejecutando scripts de contención en un teclado mecánico.", "visual_en": "Close-up of fingers typing rapidly on an illuminated mechanical keyboard in a dark command room.", "fallback_en": "Close-up of stylized 3D hands typing on a glowing keyboard."},
+            {"id": "SH06", "sec": "22-26s", "dur": 4.0, "ia_dur": "5s", "render_mode": "flow", "type": "Macro a Switch de Fibra", "action": "Macro a cables de fibra óptica con conectores transparentes emitiendo pulsos de luz.", "visual_en": "Extreme macro of high-speed fiber-optic network cables with internal pulsing cyan light streams and glowing patch panels.", "fallback_en": "Macro close-up of glowing fiber-optic network cables connected to a server."},
+            {"id": "SH07", "sec": "26-30s", "dur": 4.0, "ia_dur": "5s", "render_mode": "flow", "type": "Alarma de Intrusión", "action": "Racks de servidores encendiendo luces de alerta roja ante intento de acceso no autorizado.", "visual_en": "Dynamic camera tracking down a server rack aisle as overhead red emergency warning lights flash sequentially.", "fallback_en": "Stylized 3D server racks with red flashing emergency alert lights."},
+            {"id": "SH08", "sec": "30-34s", "dur": 4.0, "ia_dur": "5s", "render_mode": "flow", "type": "Enfriamiento Máximo", "action": "Turbinas de refrigeración líquida acelerando con niebla térmica en el pasillo.", "visual_en": "Close-up of cryogenic cooling fans spinning rapidly amidst cold white vapor mist inside a supercomputing facility.", "fallback_en": "Stylized 3D cooling fans spinning with light vapor inside a tech facility."},
+            {"id": "SH09", "sec": "34-38s", "dur": 4.0, "ia_dur": "5s", "render_mode": "flow", "type": "Aislamiento de Red", "action": "Mano presionando botón de desconexión física de subred para frenar la propagación.", "visual_en": "Close-up of an operator pressing an illuminated emergency network isolation switch on a sleek control desk.", "fallback_en": "Close-up of a hand pressing an illuminated emergency switch on a console."},
+            {"id": "SH10", "sec": "38-44s", "dur": 5.0, "ia_dur": "5s", "render_mode": "infographic", "type": "Topología de Red", "action": "Esquema 3D wireframe de nodos de red con los servidores infectados aislados en rojo.", "visual_en": "Translucent 3D wireframe network topology diagram showing compromised nodes quarantined in neon red cages.", "fallback_en": "3D holographic network diagram showing isolated data nodes highlighted in orange."},
+            {"id": "SH11", "sec": "44-50s", "dur": 5.0, "ia_dur": "5s", "render_mode": "infographic", "type": "Análisis Forense CVE", "action": "Ficha técnica de la vulnerabilidad de día cero y firma criptográfica del exploit.", "visual_en": "Broadcast cybersecurity forensic dossier showing hexadecimal payload strings, CVE identifier, and threat level badge.", "fallback_en": "Stylized 3D digital security audit dossier with cryptographic hashes and warning badges."},
+            {"id": "SH12", "sec": "50-56s", "dur": 5.5, "ia_dur": "5s", "render_mode": "flow", "type": "Estabilidad Recuperada", "action": "Centro de monitoreo volviendo a estado seguro con pantallas en verde esmeralda.", "visual_en": "Wide atmospheric 3D shot of the cyber operations center calming down as wall monitors transition from red to calm emerald green.", "fallback_en": "Stylized 3D tech operations center with monitors glowing in green stability mode."},
+            {"id": "SH13", "sec": "56-62.5s", "dur": 6.2, "ia_dur": "5s", "render_mode": "infographic", "type": "Pregunta de Ciberseguridad", "action": "Cierre interactivo preguntando sobre la vulnerabilidad de servicios esenciales.", "visual_en": "Slow camera drift with a glowing 3D question mark and digital news debate frame for comments.", "fallback_en": "Stylized 3D glowing cyan question mark over a dark digital background."},
+        ]
+    elif is_ai:
+        raw_shots = [
+            {"id": "SH01", "sec": "0-4s", "dur": 4.0, "ia_dur": "5s", "render_mode": "infographic", "type": "Radar de Silicio y Chips", "action": "Mapa 3D de la cadena global de semiconductores y nodos litográficos.", "visual_en": "Dark high-tech room with a glowing 3D holographic silicon wafer floating above a global semiconductor supply chain map.", "fallback_en": "Stylized 3D holographic semiconductor silicon wafer floating above a digital grid."},
+            {"id": "SH02", "sec": "4-9s", "dur": 5.0, "ia_dur": "5s", "render_mode": "flow", "type": "Sala Blanca EUV", "action": "Instalación de litografía ultravioleta con atmósfera presurizada e iluminación dorada.", "visual_en": "Ultra-modern cleanroom laboratory with golden monochromatic lighting, robotic tracks, and ultra-high-precision machinery.", "fallback_en": "Stylized 3D cleanroom semiconductor facility with golden lighting and robotic arms."},
+            {"id": "SH03", "sec": "9-14s", "dur": 5.0, "ia_dur": "5s", "render_mode": "infographic", "type": "Métricas de Cómputo", "action": "Telemetría de potencia de cálculo TFLOPs y salto a proceso de 2 nanómetros.", "visual_en": "Futuristic 3D dashboard showing transistor density metrics scaling to 2nm and performance curves climbing in bright cyan.", "fallback_en": "Stylized 3D digital telemetry screen showing chip performance graphs and glowing metrics."},
+            {"id": "SH04", "sec": "14-18s", "dur": 4.0, "ia_dur": "5s", "render_mode": "flow", "type": "Ingeniero de Litografía", "action": "Ingeniero en traje blanco antiestático inspeccionando oblea de silicio con visor.", "visual_en": "Tight close-up of a stylized 3D cleanroom engineer in a white protective bunny suit, looking through an electron microscope.", "fallback_en": "Stylized 3D technician in white cleanroom suit inspecting a wafer under a microscope."},
+            {"id": "SH05", "sec": "18-22s", "dur": 4.0, "ia_dur": "5s", "render_mode": "flow", "type": "Manipulación Robótica", "action": "Brazo robótico de ultra precisión transfiriendo una oblea de 300 mm con vacío.", "visual_en": "Close-up of a sleek robotic gripper delicately lifting a glowing 300mm silicon wafer with millimeter precision.", "fallback_en": "Close-up of a stylized 3D robotic arm holding a circular silicon wafer."},
+            {"id": "SH06", "sec": "22-26s", "dur": 4.0, "ia_dur": "5s", "render_mode": "flow", "type": "Macro a Microarquitectura", "action": "Macro extremo a los circuitos integrados de silicio reflejando colores irisados.", "visual_en": "Extreme macro of microscopic silicon die surface showing intricate multi-layer nano-circuits with rainbow reflections.", "fallback_en": "Extreme macro of a stylized 3D microchip surface with glowing intricate golden pathways."},
+            {"id": "SH07", "sec": "26-30s", "dur": 4.0, "ia_dur": "5s", "render_mode": "flow", "type": "Láser High-NA EUV", "action": "Haz de luz láser ultravioleta extremo grabando patrones nanométricos a gran velocidad.", "visual_en": "Dynamic tracking shot of intense deep-ultraviolet laser pulses etching micro-patterns onto a photosensitive silicon layer.", "fallback_en": "Stylized 3D laser beam etching microscopic patterns on a metallic surface."},
+            {"id": "SH08", "sec": "30-34s", "dur": 4.0, "ia_dur": "5s", "render_mode": "flow", "type": "Ensamblaje Automatizado", "action": "Bandejas automatizadas transportando microprocesadores empaquetados hacia pruebas.", "visual_en": "Automated magnetic conveyor transporting rows of finished high-performance AI accelerator chips in clean air.", "fallback_en": "Stylized 3D automated conveyor carrying microchips in a factory."},
+            {"id": "SH09", "sec": "34-38s", "dur": 4.0, "ia_dur": "5s", "render_mode": "flow", "type": "Activación de Cómputo", "action": "Mano activando el encendido del nuevo rack de aceleración de inteligencia artificial.", "visual_en": "Close-up of an engineer hand flipping the master power toggle on an advanced AI cluster, rows of LEDs igniting instantly.", "fallback_en": "Close-up of a hand flipping a switch on an illuminated server panel."},
+            {"id": "SH10", "sec": "38-44s", "dur": 5.0, "ia_dur": "5s", "render_mode": "infographic", "type": "Diagrama de Silicio 2nm", "action": "Esquema 3D wireframe de la arquitectura de núcleos y memoria HBM3e apilada.", "visual_en": "3D wireframe schematic blueprint of stacked 3D silicon chiplet architecture with high-bandwidth memory glowing in neon amber.", "fallback_en": "3D holographic wireframe blueprint of an advanced computer processor architecture."},
+            {"id": "SH11", "sec": "44-50s", "dur": 5.0, "ia_dur": "5s", "render_mode": "infographic", "type": "Benchmark de Rendimiento", "action": "Ficha oficial de rendimiento de cálculo comparando con la generación previa.", "visual_en": "Broadcast official hardware benchmark card showing throughput gain bars and energy efficiency indices on dark glass.", "fallback_en": "Clean 3D broadcast hardware benchmark chart comparing processor speeds."},
+            {"id": "SH12", "sec": "50-56s", "dur": 5.5, "ia_dur": "5s", "render_mode": "flow", "type": "Granja de Supercómputo", "action": "Vista panorámica del centro de cómputo de frontera operando a pleno rendimiento.", "visual_en": "Wide atmospheric 3D cinematic shot of a vast AI supercomputing data center with thousands of glowing racks extending to the horizon.", "fallback_en": "Stylized 3D panoramic view of a massive modern data center at night."},
+            {"id": "SH13", "sec": "56-62.5s", "dur": 6.2, "ia_dur": "5s", "render_mode": "infographic", "type": "Pregunta de IA y Hardware", "action": "Cierre interactivo preguntando sobre la llegada de la inteligencia artificial general.", "visual_en": "Cinematic slow camera drift with a glowing 3D question mark and tech debate frame for TikTok comments.", "fallback_en": "Stylized 3D glowing cyan question mark over a dark digital background."},
+        ]
+    elif is_space:
+        raw_shots = [
+            {"id": "SH01", "sec": "0-4s", "dur": 4.0, "ia_dur": "5s", "render_mode": "infographic", "type": "Rastreo Orbital Deep Space", "action": "Mapa 3D holográfico de trayectoria orbital y coordenadas de descenso planetario.", "visual_en": "Dark mission control center with a 3D holographic globe showing an orbital transfer ellipse curving toward a distant moon.", "fallback_en": "Stylized 3D space mission trajectory map with curved orbital vectors across planets."},
+            {"id": "SH02", "sec": "4-9s", "dur": 5.0, "ia_dur": "5s", "render_mode": "flow", "type": "Nave en Órbita", "action": "Sonda espacial o módulo de exploración cruzando la curvatura de la Tierra.", "visual_en": "Sleek metallic spacecraft coasting smoothly above the vivid blue curvature of Earth at sunrise, golden sunlight reflecting on solar arrays.", "fallback_en": "Stylized 3D spacecraft orbiting Earth above sunrise clouds, cinematic lighting."},
+            {"id": "SH03", "sec": "9-14s", "dur": 5.0, "ia_dur": "5s", "render_mode": "infographic", "type": "Telemetría de Descenso", "action": "Datos de velocidad orbital en km/h y altitud de aproximación en tiempo real.", "visual_en": "Futuristic 3D flight telemetry display showing orbital velocity at 27800 km/h and descent altitude graphs in glowing cyan.", "fallback_en": "Stylized 3D digital telemetry dashboard showing orbital speed and altitude graphs."},
+            {"id": "SH04", "sec": "14-18s", "dur": 4.0, "ia_dur": "5s", "render_mode": "flow", "type": "Director de Misión", "action": "Primer plano al director de vuelo en centro de control con auriculares y mirada atenta.", "visual_en": "Tight close-up of a stylized 3D flight director wearing an aerospace headset, glowing blue console reflections in eyes, tense focus.", "fallback_en": "Stylized 3D mission controller wearing a headset looking focused at screens."},
+            {"id": "SH05", "sec": "18-22s", "dur": 4.0, "ia_dur": "5s", "render_mode": "flow", "type": "Comando de Propulsión", "action": "Manos operando los mandos de telemetría y activando el encendido de frenado.", "visual_en": "Close-up of operator hands gripping a dual-axis thruster joystick and arming propulsion sequence on glowing console.", "fallback_en": "Close-up of stylized 3D hands operating a space control console."},
+            {"id": "SH06", "sec": "22-26s", "dur": 4.0, "ia_dur": "5s", "render_mode": "flow", "type": "Macro a Toberas", "action": "Macro a toberas de maniobra orientándose en el vacío espacial.", "visual_en": "Extreme macro close-up of gimbaled spacecraft attitude control thruster nozzles articulating against the starry void.", "fallback_en": "Macro close-up of a stylized 3D rocket thruster nozzle in space."},
+            {"id": "SH07", "sec": "26-30s", "dur": 4.0, "ia_dur": "5s", "render_mode": "flow", "type": "Encendido de Plasma", "action": "Propulsores encendiéndose con una estela brillante de plasma azul en la noche cósmica.", "visual_en": "Dynamic tracking shot of spacecraft main engine firing with a luminous violet-blue plasma plume illuminating the metallic hull.", "fallback_en": "Stylized 3D rocket engine firing a bright blue flame in dark space."},
+            {"id": "SH08", "sec": "30-34s", "dur": 4.0, "ia_dur": "5s", "render_mode": "flow", "type": "Despliegue de Paneles", "action": "Satélite desplegando paneles solares dorados con micro-vibración en el vacío.", "visual_en": "Close-up cinematic shot of multi-junction golden solar array wings unfolding smoothly against distant stars.", "fallback_en": "Stylized 3D satellite unfolding golden solar panels in space."},
+            {"id": "SH09", "sec": "34-38s", "dur": 4.0, "ia_dur": "5s", "render_mode": "flow", "type": "Confirmación de Inserción", "action": "Mano en control de misión presionando confirmación de órbita capturada con éxito.", "visual_en": "Close-up inside control room of a mission scientist confirming orbital insertion on a digital telemetry tablet.", "fallback_en": "Close-up of a hand tapping a green confirmation button on a control tablet."},
+            {"id": "SH10", "sec": "38-44s", "dur": 5.0, "ia_dur": "5s", "render_mode": "infographic", "type": "Blueprint de la Sonda", "action": "Modelo 3D wireframe de la sonda espacial con escudo térmico resaltado en ámbar.", "visual_en": "Stylized 3D wireframe blueprint of an interplanetary spacecraft rotating in dark studio with ablative heat shield in neon amber.", "fallback_en": "3D holographic wireframe blueprint of a spacecraft rotating in a dark digital space."},
+            {"id": "SH11", "sec": "44-50s", "dur": 5.0, "ia_dur": "5s", "render_mode": "infographic", "type": "Telemetría Oficial NASA/ESA", "action": "Ficha oficial de datos transmitidos por la Red de Espacio Profundo.", "visual_en": "Broadcast official space telemetry graphic showing signal strength bars, mission elapsed time, and orbital parameters.", "fallback_en": "Clean 3D broadcast space mission data card with antenna signal meters."},
+            {"id": "SH12", "sec": "50-56s", "dur": 5.5, "ia_dur": "5s", "render_mode": "flow", "type": "Horizonte Cósmico", "action": "Vista panorámica de la nave alejándose hacia su destino cósmico.", "visual_en": "Wide atmospheric 3D shot of the spacecraft cruising gracefully toward a distant glowing planet under a field of brilliant stars.", "fallback_en": "Stylized 3D wide view of a spaceship flying toward a distant planet in starry space."},
+            {"id": "SH13", "sec": "56-62.5s", "dur": 6.2, "ia_dur": "5s", "render_mode": "infographic", "type": "Pregunta de Exploración", "action": "Cierre interactivo preguntando sobre el establecimiento de colonias humanas en el espacio.", "visual_en": "Cinematic slow camera drift over a starry cosmos with a glowing 3D question mark and space exploration debate frame.", "fallback_en": "Stylized 3D glowing cyan question mark over a dark starry background."},
+        ]
     else:
-        infographic_ids = {"SH01", "SH03", "SH10", "SH11", "SH13"}
         raw_shots = [
             {
                 "id": f"SH{i:02d}",
                 "sec": f"{(i-1)*5}-{i*5}s",
                 "dur": 4.8,
                 "ia_dur": "5s",
-                "render_mode": "infographic" if f"SH{i:02d}" in infographic_ids else "flow",
-                "type": "Infografía Táctica 3D" if f"SH{i:02d}" in infographic_ids else "Escena 3D Cinemática",
+                "render_mode": "infographic" if f"SH{i:02d}" in {"SH01", "SH03", "SH10", "SH11", "SH13"} else "flow",
+                "type": "Infografía Táctica 3D" if f"SH{i:02d}" in {"SH01", "SH03", "SH10", "SH11", "SH13"} else "Escena 3D Cinemática",
                 "action": f"Recreación 3D estilizada del plano {i} del reporte periodístico.",
                 "visual_en": f"Dramatic broadcast 3D news visualization scene {i}, glowing holographic data panels and expressive stylized 3D environment, slow cinematic camera movement.",
                 "fallback_en": f"Stylized 3D futuristic broadcast news studio hologram display scene {i} with cyan and amber lighting."
@@ -200,12 +289,13 @@ def build_shot_prompts(is_aviation: bool, is_cyber: bool) -> List[Dict[str, Any]
 
     shots = []
     for s in raw_shots:
+        mode = "flow" if is_full_flow else s.get("render_mode", "flow")
         shots.append({
             "id": s["id"],
             "sec": s["sec"],
             "dur": s["dur"],
             "ia_dur": s["ia_dur"],
-            "render_mode": s.get("render_mode", "flow"),
+            "render_mode": mode,
             "type": s["type"],
             "action": s["action"],
             "prompt": STYLE_PREFIX + s["visual_en"],
@@ -307,7 +397,13 @@ def generate_monetizable_storyboard(news: Dict[str, Any]) -> Dict[str, Any]:
     words = script.split()
     word_count = len(words)
     est_duration = round(word_count / 2.2, 1)
-    shots = build_shot_prompts(is_aviation=is_aviation, is_cyber=is_cyber)
+    shots = build_shot_prompts(
+        is_aviation=is_aviation,
+        is_cyber=is_cyber,
+        is_ai=is_ai,
+        is_space=is_space,
+        is_peru=is_peru_disaster,
+    )
 
     return {
         "title": title,

@@ -1,0 +1,62 @@
+{
+  "_descripcion": "Configuración Central de Producción, Consistencia Visual y Modo de Render (TikTok Radar)",
+  "modo_produccion": {
+    "activo": "hibrido",
+    "opciones": {
+      "hibrido": "8 Planos Cinemáticos Flow (Acción/Drama) + 5 Planos Infográficos FFmpeg Vector HUD (48 créditos/día para 6 vídeos)",
+      "flow_puro": "13 Planos 100% Cinemáticos en Google Flow (78 créditos/día para 6 vídeos)",
+      "demo": "Renderizado NLE instantáneo de prueba sin invocar Google Flow (0 créditos)"
+    }
+  },
+  "consistencia_visual": {
+    "estilo_maestro": "Vertical 9:16, modern stylized 3D cinematic animation, Arcane and Spider-Verse tactical news thriller aesthetic, Unreal Engine 5 volumetric lighting, rich stylized textures, no photorealism, no uncanny valley",
+    "motor_render": "Unreal Engine 5 Volumetric / Octane Render Style",
+    "resolucion": "1080x1920",
+    "fps": 24,
+    "paleta_colores": {
+      "fondo_noche": "0x060f1e",
+      "cian_tactico": "0x00e5ff",
+      "ambar_alerta": "0xffaa00",
+      "rojo_critico": "0xff3344",
+      "amarillo_neon": "0xffe500"
+    },
+    "anclas_por_categoria": {
+      "G1_AVIACION": {
+        "personaje": "Stylized 3D male pilot with dark aviation headset, navy blue flight uniform, furrowed brow, focused expression, mouth closed",
+        "aeronave": "Sleek white twin-engine executive jet with deep navy rim accents and bright wingtip strobe lights",
+        "cabina": "Glass cockpit with dual glowing amber/cyan instrument panels, weather radar displays, and throttle quadrant"
+      },
+      "G1_PERU_DESASTRES": {
+        "personaje": "Stylized 3D emergency first responder in high-visibility orange-and-blue tactical jacket under heavy rain",
+        "entorno": "Peruvian coastal and andean valley terrain, wet asphalt, emergency convoy flashing red and blue lights",
+        "sala_crisis": "INDECI/COEN crisis monitoring room with massive glowing satellite weather displays and topography maps"
+      },
+      "G2_CIBERATAQUES": {
+        "personaje": "Stylized 3D cybersecurity intelligence analyst in dark tech facility illuminated by cyan and amber monitor glow",
+        "entorno": "High-density server vault with matte black racks, pulsing LED activity lights and fiber optic bundles",
+        "elementos": "Holographic command terminal displays showing encrypted traffic matrices and packet inspection nodes"
+      },
+      "G3_IA_HARDWARE": {
+        "personaje": "Stylized 3D cleanroom semiconductor engineer wearing white anti-static bunny suit and protective visor",
+        "entorno": "Extreme ultraviolet (High-NA EUV) lithography cleanroom with sterile golden and monochromatic lighting",
+        "elementos": "Translucent glowing 300mm silicon wafer with iridescent 2nm micro-architecture circuit patterns"
+      },
+      "G4_ESPACIO": {
+        "personaje": "Stylized 3D mission flight director in command center console wearing headset, tracking telemetry monitors",
+        "entorno": "Deep space planetary orbit, atmospheric entry plasma trails, and robotic probe solar arrays",
+        "elementos": "Precision navigation vector telemetry HUD, rocket thruster plume, and celestial horizon"
+      }
+    }
+  },
+  "reglas_infografias_ffmpeg": {
+    "solo_en_planos_de_datos": true,
+    "explicacion": "Los gráficos FFmpeg Vector HUD SOLO se aplican a los planos de contexto, telemetría, esquemas técnicos, evidencias y debate (SH01, SH03, SH10, SH11, SH13). Los planos de acción humana, rostros y tensión SIEMPRE se generan en Flow como animación cinemática 3D.",
+    "temas_dinamicos": {
+      "G1_AVIACION": "Radar táctico de vuelo, Altímetro dinámico, Blueprint fuselaje, Caja negra FDR y audio CVR",
+      "G1_PERU_DESASTRES": "Monitoreo satelital INDECI, Sismograma/Escala Richter, Mapa de epicentro, Reporte oficial COEN",
+      "G2_CIBERATAQUES": "Centro SOC, Gráfico de tráfico DDoS, Topología de red, CVE y análisis forense",
+      "G3_IA_HARDWARE": "Radar de semiconductores, Densidad de transistores, Diagrama de silicio 2nm, Benchmark de rendimiento",
+      "G4_ESPACIO": "Rastreo orbital Deep Space, Velocidad y altura de descenso, Diagrama de sonda, Telemetría oficial"
+    }
+  }
+}

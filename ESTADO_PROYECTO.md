@@ -2,6 +2,23 @@
 
 Actualizado: 2026-11-04.
 
+## Configuración Central de Consistencia Visual y Restricción Estricta de Infografías · 2026-11-04
+
+- **Archivo Maestro de Configuración Centralizada ([`TIKTOK_RADAR/config_produccion.json`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/config_produccion.json))**:
+  - Creado como la **única fuente de verdad** editable para la consistencia visual y el modo de render:
+    - `"modo_produccion"`: Permite alternar fácilmente entre `"hibrido"` (8 Flow + 5 FFmpeg = 48 créditos/día para 6 vídeos) y `"flow_puro"` (13 planos 100% Flow = 78 créditos/día).
+    - `"consistencia_visual"`: Define el estilo maestro (*Vertical 9:16, modern stylized 3D cinematic animation, Arcane and Spider-Verse tactical news thriller aesthetic, Unreal Engine 5 volumetric lighting, rich stylized textures*), la paleta de colores táctica hex y las **anclas visuales consistentes por categoría**:
+      - **G1 Aviación**: Piloto 3D con headset oscuro, uniforme navy, avión ejecutivo bimotor estilizado, cabina de cristal con doble pantalla ámbar/cian.
+      - **G1 Desastres Perú**: Rescatista 3D de primera respuesta con chaqueta táctica naranja/azul bajo lluvia torrencial, geografía andina/costa peruana, sala de crisis INDECI/COEN con pantallas satelitales.
+      - **G2 Ciberataques**: Analista 3D de ciberdefensa en bunker oscuro, servidores matte black con LEDs pulsantes y consolas holográficas de tráfico.
+      - **G3 IA & Hardware**: Ingeniero 3D de sala limpia con traje antiestático y visor protector, sala litográfica High-NA EUV, oblea de silicio de 300 mm brillante con circuitos de 2nm.
+      - **G4 Espacio**: Director de vuelo 3D con headset en consola de seguimiento, órbita planetaria y estela de plasma de reentrada, telemetría orbital y toberas de propulsión.
+  - **Regla Estricta para Gráficos FFmpeg**:
+    - **Solo en planos donde se necesita y aporta valor**: FFmpeg Vector HUD queda **estrictamente confinado a planos de datos y telemetría (`SH01`, `SH03`, `SH10`, `SH11`, `SH13`)**.
+    - **Prohibido en drama y acción**: Los planos de drama humano, rostros de personajes, interacción física con mandos y tensión (`SH02`, `SH04`, `SH05`, `SH06`, `SH07`, `SH08`, `SH09`, `SH12`) **siempre se generan como animación cinemática 3D en Google Flow**.
+    - **Adaptación temática inteligente por categoría ([`tools/ensamblador_final.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/ensamblador_final.py))**: Si el vídeo es de un sismo en Perú, el HUD muestra sismograma Richter y radar INDECI/COEN; si es ciberataques, muestra tráfico DDoS Gbps y reporte forense CVE; si es IA, muestra transistores 2nm y benchmarks; si es espacio, telemetría orbital Deep Space NASA/ESA; y si es aviación, altímetro y caja negra FDR/CVR.
+  - Verificado mediante pruebas de compilación y renderizado vectorial local.
+
 ## Arquitectura Híbrida Activada (8 Flow + 5 FFmpeg) y Ahorro a 48 Créditos/Día · 2026-11-04
 
 - **Adopción de la Opción B Híbrida por Decisión del Usuario**:
