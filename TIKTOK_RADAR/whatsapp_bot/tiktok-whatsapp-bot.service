@@ -1,0 +1,18 @@
+[Unit]
+Description=TikTok Radar WhatsApp Web Bot Permanente en AWS
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu/TIKTOK-NEWS/whatsapp_bot
+ExecStart=/usr/bin/node bot.js
+Restart=always
+RestartSec=5
+Environment=PATH=/usr/bin:/usr/local/bin:/home/ubuntu/.local/bin
+Environment=NODE_ENV=production
+StandardOutput=append:/home/ubuntu/TIKTOK-NEWS/whatsapp_bot/bot.log
+StandardError=append:/home/ubuntu/TIKTOK-NEWS/whatsapp_bot/bot.log
+
+[Install]
+WantedBy=multi-user.target

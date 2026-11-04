@@ -1,52 +1,54 @@
-# GUÍA DE MONITOREO Y BOT DE WHATSAPP PARA EL SERVIDOR AWS (`TIKTOK-NEWS`)
+# GUÍA DEL BOT DE WHATSAPP PROPIO Y MONITOREO EN AWS (`TIKTOK-NEWS`)
 
-Esta guía explica cómo activar el **Bot Monitor de WhatsApp** en tu servidor AWS para que:
-1. Te envíe alertas automáticas a tu WhatsApp personal cada vez que termine un plano (`SH01`..`SH13`) o cuando el vídeo final (`NOTICIERO_FINAL_62S.mp4`) esté listo.
-2. Si le escribes un mensaje por WhatsApp (ej. *«¿Cómo va el render?»* o *«¿Cuánto falta?»*), el servidor invoque automáticamente a **Antigravity (`agy --dangerously-skip-permissions`)** y te responda directamente por WhatsApp con el estado del servidor.
-
----
-
-## 1. Configuración Gratuita en 2 Minutos (Sin Tarjetas de Crédito)
-
-Usamos la API gratuita de **CallMeBot para WhatsApp**, que no requiere suscripciones, ni números de empresa, ni configurar Meta Developers.
-
-### Paso 1: Obtener tu API Key personal de WhatsApp (1 minuto)
-1. En tu teléfono, agrega a tus contactos el número oficial del bot de CallMeBot:  
-   👉 **`+34 644 59 87 23`** (o guarda el enlace directo: [wa.me/34644598723](https://wa.me/34644598723))
-2. Envíale este mensaje exacto desde tu WhatsApp:
-   ```text
-   I allow callmebot to send me messages
-   ```
-3. En 5 segundos, el bot te responderá con tu mensaje de confirmación y tu **apikey**:
-   > *«API Key Generated: 123456»*
+Esta guía explica cómo activar tu **Bot Propio de WhatsApp Web** en tu servidor AWS para:
+1. **Recibir alertas y vídeos directamente en tu WhatsApp** cada vez que termine un plano (`SH01`..`SH13`) o cuando el vídeo final (`NOTICIERO_FINAL_62S.mp4`) esté listo.
+2. **Hablar directamente con Antigravity (`agy`) desde tu WhatsApp**: le preguntas cómo va el servidor o le pides generar el noticiero del día y el agente ejecuta las tareas y te responde en vivo.
+3. **Cero intermediarios ni caídas**: corre 100% en tu servidor AWS, con persistencia 24/7 en systemd y reconexión automática.
 
 ---
 
-## 2. Guardar tu Configuración en el Servidor AWS
+## 1. Instalación y Vinculación en 1 Solo Paso (Bot Propio Nativo)
 
-Conéctate por SSH a tu servidor AWS y crea tu archivo de configuración:
+En tu servidor AWS (`~/TIKTOK-NEWS`), solo ejecuta:
 
 ```bash
-cat << 'EOF' > ~/.whatsapp_config.json
-{
-  "provider": "callmebot",
-  "phone": "+519XXXXXXXX",
-  "apikey": "TU_API_KEY_AQUI"
-}
-EOF
+cd ~/TIKTOK-NEWS
+git pull origin main
+bash whatsapp_bot/instalar_y_arrancar.sh
 ```
-*(Reemplaza `+519XXXXXXXX` por tu número con código de país de Perú o tu país, y `TU_API_KEY_AQUI` por la clave que te dio el bot).*
 
-### Probar que funcione el envío
-Ejecuta este comando en el servidor:
+El script:
+- Instala Node.js 20 LTS automáticamente si no lo tienes.
+- Instala las dependencias (`whatsapp-web.js`, `express`).
+- Configura el servicio permanente `tiktok-whatsapp-bot` en systemd.
+
+### Vincular tu WhatsApp (Solo se hace una vez):
+Ejecuta en tu terminal:
 ```bash
-python3 ~/TIKTOK-NEWS/tools/whatsapp_monitor.py --test-msg "🚀 Probando conexión WhatsApp desde Servidor AWS TikTok Radar"
+bash ~/TIKTOK-NEWS/whatsapp_bot/ver_qr.sh
 ```
-¡Recibirás el mensaje en tu WhatsApp al instante!
+Aparecerá el código QR en la consola. Abre WhatsApp en tu celular > **Dispositivos vinculados** > **Vincular un dispositivo** y escanea el QR.
+
+¡Y listo! La sesión queda guardada permanentemente en el servidor (`~/.wwebjs_auth`). No volverá a pedirte QR aunque reinicies el servidor.
 
 ---
 
-## 3. Cómo Funciona el Supervisor Autónomo con `agy`
+## 2. Cómo Usar el Bot desde tu WhatsApp
+
+Una vez vinculado, el bot te enviará un mensaje automático a tu chat personal:
+> 🤖 *¡TikTok Radar Bot Activo en tu Servidor AWS!*
+
+A partir de ahí, puedes escribirle comandos o preguntas:
+* `!estado`: Te devuelve el uptime, uso de RAM, CPU y disco de AWS.
+* `!generar`: Lanza la producción completa del Noticiero 3D en AWS (`tools/ejecutar_todo.py`).
+* Cualquier pregunta en lenguaje natural (ej: *«¿Qué noticias se escanearon hoy?»* o *«¿Cuánto pesa el último vídeo?»*): El bot ejecuta a **Antigravity (`agy --dangerously-skip-permissions`)** en AWS y te responde al WhatsApp con su respuesta.
+
+---
+
+## 3. Fallback Tradicional (CallMeBot / Twilio)
+
+Si en algún momento el bot local estuviera apagado, [`tools/whatsapp_monitor.py`](tools/whatsapp_monitor.py) cuenta con fallback automático hacia `~/.whatsapp_config.json` (CallMeBot o Twilio).
+
 
 El script [`tools/whatsapp_monitor.py`](tools/whatsapp_monitor.py) tiene dos modos:
 

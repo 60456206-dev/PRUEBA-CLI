@@ -44,28 +44,44 @@ def load_config() -> Dict[str, Any]:
     }
 
 
-def send_whatsapp(message: str) -> bool:
-    """Envía un mensaje de texto directamente a tu WhatsApp personal."""
+def send_whatsapp(message: str, media_path: Optional[str] = None) -> bool:
+    """Envía un mensaje o archivo directamente a WhatsApp usando primero el Bot Propio en AWS (puerto 5050),
+    con fallback a CallMeBot o Twilio si el bot propio no está activo."""
+    # 1. Intentar con el Bot Propio Nativo en localhost:5050 (Sin intermediarios)
+    try:
+        payload = {"message": message}
+        if media_path and os.path.exists(media_path):
+            payload["mediaPath"] = str(Path(media_path).resolve())
+        data = json.dumps(payload).encode("utf-8")
+        req = urllib.request.Request(
+            "http://127.0.0.1:5050/send",
+            data=data,
+            headers={"Content-Type": "application/json", "User-Agent": "TikTokRadarMonitor/2.0"},
+        )
+        with urllib.request.urlopen(req, timeout=8) as resp:
+            if resp.status == 200:
+                return True
+    except Exception:
+        pass  # Si el bot local aún no está activo, usar fallback
+
+    # 2. Fallback a configuración tradicional (CallMeBot / Twilio)
     cfg = load_config()
     provider = cfg.get("provider", "callmebot")
     phone = cfg.get("phone", "").strip()
     apikey = cfg.get("apikey", "").strip()
 
     if not phone:
-        print(f"[WHATSAPP-DRY-RUN] No se configuró número de teléfono en {CONFIG_FILE}. Mensaje:\n{message}\n")
+        print(f"[WHATSAPP-DRY-RUN] No se configuró número ni bot local activo. Mensaje:\n{message}\n")
         return False
 
     try:
         if provider == "callmebot":
-            # CallMeBot API: Gratuita, sin suscripciones ni tarjetas de crédito
-            # Formato de URL: https://api.callmebot.com/whatsapp.php?phone=[phone]&text=[text]&apikey=[apikey]
             clean_phone = re.sub(r"[^\d+]", "", phone)
             encoded_text = urllib.parse.quote(message)
             url = f"https://api.callmebot.com/whatsapp.php?phone={clean_phone}&text={encoded_text}&apikey={apikey}"
             req = urllib.request.Request(url, headers={"User-Agent": "TikTokRadarBot/1.0"})
             with urllib.request.urlopen(req, timeout=15) as resp:
-                status = resp.status
-                return status == 200
+                return resp.status == 200
         elif provider == "twilio":
             sid = cfg.get("twilio_sid", "")
             token = cfg.get("twilio_token", "")
