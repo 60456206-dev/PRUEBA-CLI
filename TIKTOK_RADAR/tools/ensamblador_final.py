@@ -141,8 +141,8 @@ Style: SubBadge,DejaVu Sans,26,&H0000EAFF,&H0000EAFF,&H00000000,&H96000000,-1,0,
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
-Dialogue: 2,0:00:00.00,{format_ass_time(total_duration)},TopBadge,,0,0,0,,🔴 ÚLTIMA HORA · NOTICIERO 3D
-Dialogue: 2,0:00:00.00,{format_ass_time(total_duration)},SubBadge,,0,0,0,,FUENTE VERIFICADA: {source_name.upper()} · RECREACIÓN TÁCTICA
+Dialogue: 2,0:00:00.00,0:00:03.20,TopBadge,,0,0,0,,{{\\fad(200,400)}}🔴 ÚLTIMA HORA
+Dialogue: 2,0:00:00.00,0:00:03.20,SubBadge,,0,0,0,,{{\\fad(200,400)}}INFORME ESPECIAL · FUENTE: {source_name.upper()}
 """
 
     events = []

@@ -27,7 +27,7 @@ def main():
     args = parser.parse_args()
 
     print("======================================================================")
-    print("🚀 INICIANDO FÁBRICA AUTÓNOMA DE NOTICIERO 3D (TIKTOK RADAR >60s)")
+    print("🚀 INICIANDO FÁBRICA AUTÓNOMA DE NOTICIERO EXPLAINER (TIKTOK RADAR >60s)")
     print("======================================================================\n")
 
     if args.dir:

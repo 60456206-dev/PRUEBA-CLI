@@ -304,7 +304,7 @@ client.on('message_create', async (msg) => {
     try {
       const media = MessageMedia.fromFilePath(vid.path);
       await client.sendMessage(targetChat, media, {
-        caption: `🎬 *${vid.name}*\n📦 Tamaño: ${sizeMb} MB\n⏱️ Recreación 3D vertical (>60s) generada en AWS.`,
+        caption: `🎬 *${vid.name}*\n📦 Tamaño: ${sizeMb} MB\n⏱️ Noticiero vertical de última hora (>60s) producido en AWS.`,
         sendMediaAsDocument: false,
       });
       console.log(`[WA-BOT] 📤 Vídeo enviado con éxito a +${senderNumber}`);
