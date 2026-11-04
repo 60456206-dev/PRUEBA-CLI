@@ -2,6 +2,16 @@
 
 Actualizado: 2026-11-04.
 
+## Bot Propio de WhatsApp Web y Supervisión Permanente en AWS (`tiktok-whatsapp-bot`) · 2026-11-04
+
+- **Bot Propio Nativo 24/7 en AWS**:
+  - Implementado en `TIKTOK_RADAR/whatsapp_bot/bot.js` bajo servicio systemd `tiktok-whatsapp-bot.service` en el servidor AWS (`3.142.230.147`).
+  - Sin intermediarios ni cuotas externas (usa `whatsapp-web.js` + Google Chrome headless en la máquina de AWS).
+  - Enlazado con el agente local de Antigravity (`agy --dangerously-skip-permissions`) en `~/TIKTOK-NEWS` para responder preguntas por WhatsApp y recibir comandos (`!estado`, `!generar`).
+  - Documentación de uso y vinculación en [`TIKTOK_RADAR/WHATSAPP_BOT_SUPERVISOR.md`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/WHATSAPP_BOT_SUPERVISOR.md).
+  - Repositorio `TIKTOK-NEWS` sincronizado y servicio activo (`active (running)`).
+  - Pendiente para el usuario: escanear el código QR una sola vez con `bash ~/TIKTOK-NEWS/whatsapp_bot/ver_qr.sh` para autenticar su cuenta de WhatsApp.
+
 ## Conexión y Comunicación Exitosa con Agente Antigravity (`agy`) en Servidor AWS · 2026-11-04
 
 - **Comunicación Remota Directa Establecida**:
