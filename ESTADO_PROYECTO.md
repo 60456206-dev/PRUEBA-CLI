@@ -2,7 +2,29 @@
 
 Actualizado: 2026-11-04.
 
-## Integración de Audio Broadcast: Gemini 3.8 Flash TTS + Epidemic Sound MCP · 2026-11-04
+## Motor CapCut Pro en FFmpeg y Regla Fija de 4 Géneros Diarios 100% Autónomos · 2026-11-04
+
+- **Ensamblador FFmpeg elevado a nivel CapCut Pro ([`tools/ensamblador_final.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/ensamblador_final.py))**:
+  - Subtítulos estilo Hormozi / TikTok: ráfagas rápidas de 2 a 3 palabras por corte con rebote elástico (*Pop-in bounce* `82% -> 112% -> 100%`), resaltado automático en Amarillo Neón (`#FFE500`) y Cian Eléctrico, trazo negro de 5.5 px + sombra 3D, y ubicación segura en `MarginV=440` (sin tapar botones de TikTok).
+  - Hook Pill inicial (0 a 3.0s): cápsula roja `🔴 ÚLTIMA HORA` + rótulo inferior de la fuente oficial con desvanecimiento suave.
+  - Cámara dinámica: alternancia de *punch-in zoom* (1.00x a 1.08x) y *pull-back* suave, más sacudida de cabina en escenas de tensión.
+  - Render de prueba exitoso verificado: `NOTICIERO_FINAL_62S.mp4` (62.71s, 1080×1920 a 24 fps, -15.1 LUFS, monetizable >60s).
+
+- **Regla Fija: Producción 100% Autónoma de los 4 Géneros Clave (Sin Espera de Visto Bueno)**:
+  - Por indicación del usuario (estará en clases sin tiempo para validar manualmente), se cancela la espera de aprobación y el sistema genera de forma totalmente autónoma.
+  - Se definen exactamente 4 vídeos diarios (1 por cada género temático):
+    1. **🚨 Aviación, Catástrofes y Rescates (G1)**: Caídas de altitud, fallos de telemetría, alertas sísmicas/tsunami y emergencias.
+    2. **💻 Ciberataques, Guerra Digital y Amenazas Críticas (G2)**: Hackeos a hospitales, bancos de sangre, infraestructuras y ransomware.
+    3. **🤖 Inteligencia Artificial, Robótica y Big Tech (G3)**: Guerra de chips (2nm), automatización extrema y modelos frontera.
+    4. **🚀 Espacio, Ciencia Extrema y Fenómenos Anómalos (G4)**: Misiones NASA/ESA, llamaradas solares y física extrema.
+  - [`tools/news_radar.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/news_radar.py) actualizado con filtro negativo estricto (elimina ofertas, Lidl, Amazon, precios, rebajas y política genérica) y mapeo estricto por género.
+  - [`tools/pipeline_autonomo.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/pipeline_autonomo.py) y [`tools/ejecutar_todo.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/ejecutar_todo.py) soportan banderas `--genre <G1|G2|G3|G4>` y `--all` para procesar los 4 géneros automáticamente en lote.
+  - WhatsApp Bot (`whatsapp_bot/bot.js`) adaptado para responder a `!generar` lanzando los 4 vídeos o uno específico (`!generar 1..4`).
+
+- **Sincronización Total con AWS (`ubuntu@3.142.230.147`)**:
+  - Código committeado y sincronizado en ambos repositorios (`PRUEBA-CLI` y `TIKTOK-NEWS` en AWS, commit `aac3eaf`).
+  - Servicio `tiktok-whatsapp-bot.service` reiniciado y verificado operativo (`active (running)`).
+  - Verificado escáner de 4 géneros en AWS devolviendo noticias limpias y de alto impacto.
 
 - **Configuración de APIs de Estudio en AWS (`ubuntu@3.142.230.147`)**:
   - Claves `GEMINI_API_KEY` y `EPIDEMIC_SOUND` configuradas y verificadas operativas (HTTP 200) tanto localmente como en el servidor AWS (`~/.api_keys.env` y `~/.bashrc`).
