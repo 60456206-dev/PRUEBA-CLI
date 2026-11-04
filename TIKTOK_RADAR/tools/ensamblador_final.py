@@ -89,15 +89,34 @@ def format_ass_time(seconds: float) -> str:
 
 
 def colorize_words_ass(words: List[str]) -> str:
-    """Aplica etiquetas de color ASS (Amarillo / Cian / Blanco) a palabras de alto impacto."""
+    """
+    Aplica etiquetas de color ASS al estilo CapCut Pro:
+    - Amarillo Neón (&H0000EAFF& = #FFE500) en palabras clave de impacto o números.
+    - Cian Eléctrico (&H00FFFF00&) en entidades oficiales / tecnología.
+    - Si ninguna palabra coincide, resalta automáticamente la palabra más larga (>4 letras).
+    """
+    cleaned_words = [re.sub(r"[^\wáéíóúñü]", "", w.lower()) for w in words]
+    has_highlight = any(
+        (c in HIGHLIGHT_YELLOW or c in HIGHLIGHT_CYAN or c.isdigit())
+        for c in cleaned_words
+    )
+
+    # Si no hay palabra en el diccionario, resaltar la más larga para mantener el ritmo CapCut
+    fallback_highlight_idx = -1
+    if not has_highlight and words:
+        lengths = [len(c) for c in cleaned_words]
+        max_len = max(lengths) if lengths else 0
+        if max_len >= 5:
+            fallback_highlight_idx = lengths.index(max_len)
+
     out = []
-    for w in words:
-        clean = re.sub(r"[^\wáéíóúñü]", "", w.lower())
-        if clean in HIGHLIGHT_YELLOW or clean.isdigit():
-            # Amarillo brillante en formato BGR de ASS (&H0000EAFF&)
+    for idx, w in enumerate(words):
+        clean = cleaned_words[idx]
+        if clean in HIGHLIGHT_YELLOW or clean.isdigit() or idx == fallback_highlight_idx:
+            # Amarillo Neón estilo Hormozi / CapCut
             out.append(r"{\c&H0000EAFF&}" + w.upper() + r"{\c&H00FFFFFF&}")
         elif clean in HIGHLIGHT_CYAN:
-            # Cian táctico en formato BGR (&H00FFFF00&)
+            # Cian Eléctrico
             out.append(r"{\c&H00FFFF00&}" + w.upper() + r"{\c&H00FFFFFF&}")
         else:
             out.append(w.upper())
@@ -106,9 +125,11 @@ def colorize_words_ass(words: List[str]) -> str:
 
 def generate_kinetic_ass(script: str, total_duration: float, ass_path: Path, source_name: str) -> None:
     """
-    Genera subtítulos vectoriales .ASS con:
-    - Rótulo superior de Noticiero ('ÚLTIMA HORA · FUENTE')
-    - Subtítulos Kinetic de 3-4 palabras con pop-in elástico y resaltado cromático.
+    Genera subtítulos vectoriales .ASS con estética CapCut Pro / Viral Reels:
+    1. Hook Card inicial (0 a 3.0s): Píldora roja y rótulo de fuente oficial.
+    2. Ráfagas cortas de 2 a 3 palabras (Hormozi / TikTok Bouncing).
+    3. Efecto elástico de rebote (\fscx82\fscy82 -> 112% -> 100%).
+    4. Safe zone vertical a MarginV=440 (libre de botones de TikTok).
     """
     words = script.split()
     chunks: List[List[str]] = []
@@ -116,8 +137,8 @@ def generate_kinetic_ass(script: str, total_duration: float, ass_path: Path, sou
 
     for w in words:
         current.append(w)
-        # Cortar cada 3-4 palabras o en signos de puntuación
-        if len(current) >= 4 or (len(current) >= 2 and w.endswith((".", ",", "?", "!"))):
+        # Ráfagas rápidas de 2 a 3 palabras estilo CapCut, o corte en puntuación
+        if len(current) >= 3 or (len(current) >= 2 and w.endswith((".", ",", "?", "!", ":", ";"))):
             chunks.append(current)
             current = []
     if current:
@@ -135,14 +156,14 @@ ScaledBorderAndShadow: yes
 
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-Style: KineticMain,DejaVu Sans,68,&H00FFFFFF,&H0000EAFF,&H00000000,&H96000000,-1,0,0,0,100,100,1.5,0,1,4.5,2.0,2,70,70,370,1
-Style: TopBadge,DejaVu Sans,34,&H00FFFFFF,&H00FFFFFF,&H000000B0,&H96000000,-1,0,0,0,100,100,2.0,0,1,4.5,1.5,8,60,60,135,1
-Style: SubBadge,DejaVu Sans,26,&H0000EAFF,&H0000EAFF,&H00000000,&H96000000,-1,0,0,0,100,100,1.0,0,1,3.0,1.0,8,60,60,205,1
+Style: CapCutBouncing,DejaVu Sans,74,&H00FFFFFF,&H0000EAFF,&H00000000,&H90000000,-1,0,0,0,100,100,1.2,0,1,5.5,2.5,2,80,80,440,1
+Style: HookPill,DejaVu Sans,30,&H00FFFFFF,&H00FFFFFF,&H001818D8,&H00000000,-1,0,0,0,100,100,1.8,0,3,7.0,0.0,8,60,60,150,1
+Style: HookSource,DejaVu Sans,26,&H0000EAFF,&H0000EAFF,&H00000000,&HA0000000,-1,0,0,0,100,100,1.2,0,1,3.5,1.5,8,60,60,225,1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
-Dialogue: 2,0:00:00.00,0:00:03.20,TopBadge,,0,0,0,,{{\\fad(200,400)}}🔴 ÚLTIMA HORA
-Dialogue: 2,0:00:00.00,0:00:03.20,SubBadge,,0,0,0,,{{\\fad(200,400)}}INFORME ESPECIAL · FUENTE: {source_name.upper()}
+Dialogue: 2,0:00:00.00,0:00:03.00,HookPill,,0,0,0,,{{\\fad(120,300)}}🔴 ÚLTIMA HORA
+Dialogue: 2,0:00:00.00,0:00:03.00,HookSource,,0,0,0,,{{\\fad(120,300)}}REPORTE OFICIAL · {source_name.upper()}
 """
 
     events = []
@@ -155,10 +176,10 @@ Dialogue: 2,0:00:00.00,0:00:03.20,SubBadge,,0,0,0,,{{\\fad(200,400)}}INFORME ESP
         cursor = end_t
 
         styled_text = colorize_words_ass(c)
-        # Animación pop-in (escala 92% -> 114% en 90ms -> 100% en 180ms)
-        anim_tag = r"{\fscx92\fscy92\t(0,90,\fscx114\fscy114)\t(90,180,\fscx100\fscy100)}"
+        # Pop-in elástico CapCut: 82% -> 112% (75ms) -> 100% (150ms)
+        anim_tag = r"{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}"
         events.append(
-            f"Dialogue: 1,{format_ass_time(start_t)},{format_ass_time(end_t)},KineticMain,,0,0,0,,{anim_tag}{styled_text}"
+            f"Dialogue: 1,{format_ass_time(start_t)},{format_ass_time(end_t)},CapCutBouncing,,0,0,0,,{anim_tag}{styled_text}"
         )
 
     ass_path.write_text(header + "\n".join(events) + "\n", encoding="utf-8")
@@ -181,22 +202,31 @@ def prepare_normalized_shot(
     frames = int(math.ceil(target_dur * fps))
 
     if raw_mp4.exists() and raw_mp4.stat().st_size > 25_000:
-        # Escalar a 1200x2134 y recortar dinámicamente a 1080x1920 (zoom + vibración opcional)
+        # Dinamismo de cámara CapCut: alternar acercamiento (punch-in) y alejamiento (pull-back)
+        zoom_in = (shot_idx % 2 == 0)
         if is_tense:
+            crop_expr = (
+                "scale=1240:2204:force_original_aspect_ratio=increase,crop=1240:2204,"
+                "crop=1080:1920:"
+                "x='(iw-ow)/2 + 20*sin(2*PI*t/1.6) + 7*sin(2*PI*t*7.5)':"
+                "y='(ih-oh)/2 - 28*(t/{dur:.2f}) + 7*cos(2*PI*t*6.5)',"
+                "eq=contrast=1.09:saturation=1.16:brightness=-0.01, format=yuv420p"
+            ).format(dur=max(1.0, target_dur))
+        elif zoom_in:
             crop_expr = (
                 "scale=1220:2168:force_original_aspect_ratio=increase,crop=1220:2168,"
                 "crop=1080:1920:"
-                "x='(iw-ow)/2 + 18*sin(2*PI*t/1.8) + 6*sin(2*PI*t*7.5)':"
-                "y='(ih-oh)/2 - 22*(t/{dur:.2f}) + 6*cos(2*PI*t*6.5)',"
-                "eq=contrast=1.08:saturation=1.15:brightness=-0.01, format=yuv420p"
+                "x='(iw-ow)/2 + 12*sin(PI*t/{dur:.2f})':"
+                "y='(ih-oh)/2 - 40*(t/{dur:.2f})',"
+                "eq=contrast=1.07:saturation=1.14, format=yuv420p"
             ).format(dur=max(1.0, target_dur))
         else:
             crop_expr = (
-                "scale=1200:2134:force_original_aspect_ratio=increase,crop=1200:2134,"
+                "scale=1220:2168:force_original_aspect_ratio=increase,crop=1220:2168,"
                 "crop=1080:1920:"
-                "x='(iw-ow)/2 + 14*sin(PI*t/{dur:.2f})':"
-                "y='(ih-oh)/2 - 35*(t/{dur:.2f})',"
-                "eq=contrast=1.06:saturation=1.12, format=yuv420p"
+                "x='(iw-ow)/2 - 12*sin(PI*t/{dur:.2f})':"
+                "y='(ih-oh)/2 + 35*(t/{dur:.2f}) - 35',"
+                "eq=contrast=1.07:saturation=1.14, format=yuv420p"
             ).format(dur=max(1.0, target_dur))
 
         cmd = [

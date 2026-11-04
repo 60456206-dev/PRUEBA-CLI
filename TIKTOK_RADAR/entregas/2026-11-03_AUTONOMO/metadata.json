@@ -1,9 +1,78 @@
 {
   "date": "2026-11-03",
-  "title": "Qui\u00e9nes son las 9 v\u00edctimas del fatal accidente del avi\u00f3n privado que se estrell\u00f3 en Florida",
+  "title": "Quiénes son las 9 víctimas del fatal accidente del avión privado que se estrelló en Florida",
   "source": "BBC Mundo (Internacional / Impacto)",
   "url": "https://www.bbc.com/mundo/articles/cx054q17vvezo?at_medium=RSS&at_campaign=rss",
   "duration_seconds": 62.688,
   "is_monetizable": true,
-  "shots_count": 13
+  "shots_count": 13,
+  "script": "En solo doce segundos, un avión privado con nueve personas a bordo desapareció por completo de los radares en Florida. Ocurrió al anochecer. Según la Administración Federal de Aviación, la aeronave volaba en altitud de crucero estable antes de iniciar un descenso vertical incontrolable. Adentro de la cabina, las luces de emergencia se encendieron. Los pilotos forcejearon contra los mandos intentando nivelar las alas, mientras la alarma de colisión ensordecía el habitáculo. Los motores rugieron al máximo empuje, pero los timones ya no respondían. Entre nubes de tormenta y lluvia torrencial, el bimotor se precipitó hacia la costa sin emitir ninguna señal de auxilio. Los peritos de la NTSB analizan ahora si fue una falla estructural catastrófica o una desorientación espacial en plena tormenta. Las cajas negras tardarán semanas en descifrarse. ¿Crees que fue una falla mecánica imposible de salvar o un error de los pilotos? Déjame tu opinión en los comentarios.",
+  "word_count": 152,
+  "shots": [
+    {
+      "id": "SH01",
+      "dur": 4.5,
+      "type": "ESCENA 3D"
+    },
+    {
+      "id": "SH02",
+      "dur": 4.5,
+      "type": "ESCENA 3D"
+    },
+    {
+      "id": "SH03",
+      "dur": 4.5,
+      "type": "ESCENA 3D"
+    },
+    {
+      "id": "SH04",
+      "dur": 4.5,
+      "type": "ESCENA 3D"
+    },
+    {
+      "id": "SH05",
+      "dur": 4.5,
+      "type": "ESCENA 3D"
+    },
+    {
+      "id": "SH06",
+      "dur": 4.5,
+      "type": "ESCENA 3D"
+    },
+    {
+      "id": "SH07",
+      "dur": 4.5,
+      "type": "ESCENA 3D"
+    },
+    {
+      "id": "SH08",
+      "dur": 4.5,
+      "type": "ESCENA 3D"
+    },
+    {
+      "id": "SH09",
+      "dur": 4.5,
+      "type": "ESCENA 3D"
+    },
+    {
+      "id": "SH10",
+      "dur": 6.0,
+      "type": "ESCENA 3D"
+    },
+    {
+      "id": "SH11",
+      "dur": 6.0,
+      "type": "ESCENA 3D"
+    },
+    {
+      "id": "SH12",
+      "dur": 6.0,
+      "type": "ESCENA 3D"
+    },
+    {
+      "id": "SH13",
+      "dur": 6.0,
+      "type": "ESCENA 3D"
+    }
+  ]
 }
