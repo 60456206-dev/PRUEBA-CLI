@@ -274,23 +274,26 @@ GENRE_KEYWORDS = {
     ],
 }
 
-# Palabras clave geográficas e instituciones de Perú para Desastres / Catástrofes
+# Palabras clave geográficas e instituciones de Perú para Desastres Naturales
 PERU_LOCATIONS = [
     "perú", "peru", "lima", "arequipa", "cusco", "piura", "trujillo", "puno",
     "ancash", "loreto", "ica", "callao", "chimbote", "tarapoto", "chiclayo",
     "huaraz", "indeci", "igp", "senamhi", "costa verde", "río rímac", "rio rimac"
 ]
 
-PERU_DISASTER_TERMS = [
+# Desastres Naturales de Perú (SOLO fenómenos naturales, NO accidentes vehiculares ni aviación)
+PERU_NATURAL_DISASTER_TERMS = [
     "sismo", "terremoto", "temblor", "huaico", "aluvión", "deslizamiento",
-    "tsunami", "desborde", "inundación", "alerta roja", "emergencia",
-    "catástrofe", "fallecid", "rescate", "evacuación", "alud", "derrumb"
+    "tsunami", "desborde", "inundación", "alud", "erupción", "volcán",
+    "lluvias torrenciales", "precipitaciones", "alerta roja meteorológica",
+    "el niño", "indeci", "igp", "senamhi"
 ]
 
 AVIATION_TERMS = [
     "avión", "aeronave", "vuelo", "aterrizaje", "piloto", "cabina", "altitud",
-    "accidente", "airplane", "aircraft", "flight", "cockpit", "crash", "mayday",
-    "boeing", "airbus", "turbulence", "emergency landing", "airspace"
+    "accidente aéreo", "airplane", "aircraft", "flight", "cockpit", "crash",
+    "mayday", "boeing", "airbus", "turbulence", "emergency landing", "airspace",
+    "shooting", "aerotime", "aviation safety", "ntsb", "faa"
 ]
 
 # Palabras de polémica, controversia, shock y alto potencial de vistas (Views)
@@ -400,26 +403,27 @@ def score_article(item: Dict[str, Any], now_ts: float) -> float:
 
     combined = f"{item['title']} {item['summary']}".lower()
 
-    # 2. Regla Especial Perú en Desastres Naturales y Catástrofes (G1)
+    # 2. Regla Especial Aviación: Prioridad estricta al último suceso / primicia global (SIN sesgo de país)
+    is_aviation = any(a in combined for a in AVIATION_TERMS) or item.get("is_aviation", False)
+    if is_aviation:
+        item["is_aviation_incident"] = True
+        if pub_ts > 0:
+            # En aviación la primicia de última hora multiplica su peso cronológico sin alterar por geografía
+            freshness_boost = max(0.0, 24.0 - min(24.0, age_hours)) * 0.90
+            score += freshness_boost
+    else:
+        item["is_aviation_incident"] = False
+
+    # 3. Regla Especial Perú: EXCLUSIVA para Desastres Naturales (NUNCA aplica a aviación)
     is_g1 = (item["genre"] == "G1_AVIACION_CATASTROFES")
     has_peru = any(p in combined for p in PERU_LOCATIONS) or item.get("is_peru", False)
-    has_disaster = any(d in combined for d in PERU_DISASTER_TERMS)
+    has_natural_disaster = any(d in combined for d in PERU_NATURAL_DISASTER_TERMS)
 
-    if is_g1 and (has_peru and has_disaster):
-        score += 60.0  # 🇵🇪 Prioridad #1 Nacional Perú
+    if is_g1 and has_peru and has_natural_disaster and not is_aviation:
+        score += 60.0  # 🇵🇪 Prioridad #1 Nacional Perú EXCLUSIVA para Desastres Naturales
         item["is_peru_priority"] = True
     else:
         item["is_peru_priority"] = False
-
-    # 3. Regla Especial Aviación: Prioridad estricta al último suceso
-    is_aviation = any(a in combined for a in AVIATION_TERMS) or item.get("is_aviation", False)
-    if is_aviation and pub_ts > 0:
-        # En aviación la primicia de última hora multiplica su peso
-        freshness_boost = max(0.0, 24.0 - min(24.0, age_hours)) * 0.75
-        score += freshness_boost
-        item["is_aviation_incident"] = True
-    else:
-        item["is_aviation_incident"] = False
 
     # 4. Riqueza y Densidad Informativa (Más información)
     text_len = len(item["title"]) + len(item["summary"])
