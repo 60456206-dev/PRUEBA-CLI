@@ -2,6 +2,17 @@
 
 Actualizado: 2026-11-04.
 
+## Regla Fundamental Cronológica, Prioridad Perú en Desastres y Lote de 5 Vídeos · 2026-11-04
+
+- **Regla Fundamental Cronológica y Selección por Máxima Densidad Informativa ([`tools/news_radar.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/news_radar.py))**:
+  - **Orden cronológico estricto (De lo más reciente a lo antiguo)**: Parser de fechas RFC 2822 e ISO 8601 con cálculo en tiempo real de `age_hours`. Primicias de las últimas 3 horas reciben bonificación masiva (+14 pts); noticias antiguas (>48h) son penalizadas.
+  - **Comparación entre foros y fuentes**: Cuando se generan múltiples vídeos (ej. 5 vídeos en G3 de Hardware, Chips y Robótica), el radar escanea simultáneamente **Tom's Hardware**, **TechCrunch** (Main, AI y Hardware), **Ars Technica** y **Xataka**, comparando los artículos y eligiendo los que posean mayor **densidad informativa** (cifras, datos duros), **potencial viral de vistas** y **polémica / controversia** (*lawsuits*, crisis de memoria, bloqueos de exportación, etc.).
+  - **🇵🇪 Prioridad Nacional Perú en Desastres Naturales (Puesto #1 en G1)**: Si ocurre un sismo, huaico, aluvión, alerta roja o desastre natural en el Perú reportado por **RPP Noticias (Alerta Perú)**, **El Comercio Perú** o **Agencia Andina**, el radar le otorga automáticamente **+60.0 puntos de prioridad nacional**, asegurando que el **primer vídeo de G1 sea obligatoriamente el suceso del Perú** antes de dar paso a emergencias globales.
+  - **✈️ Aviación: Prioridad estricta al último suceso reportado**: Para incidentes aéreos, caídas de altitud o aterrizajes de emergencia, se selecciona estrictamente el hecho de aviación más reciente disponible.
+  - **Deduplicación inteligente**: Algoritmo de similitud de titulares que impide que se produzcan dos vídeos sobre el mismo hecho si varios foros lo cubren.
+  - **Soporte de series de N vídeos**: [`tools/news_radar.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/news_radar.py), [`tools/pipeline_autonomo.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/pipeline_autonomo.py) y [`tools/ejecutar_todo.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/ejecutar_todo.py) soportan banderas `--count <N>` (ej: `--count 5`) y `--rank <0..4>` para generar series de vídeos del mismo género.
+  - Bot de WhatsApp actualizado para admitir órdenes como `!generar 5 g3` o `!generar 5 chips`.
+
 ## Fuentes de Alto Impacto para los 4 Géneros y Sincronización Total en AWS · 2026-11-04
 
 - **Ingesta Multi-Fuente Internacional Configurada por Categoría ([`tools/news_radar.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/news_radar.py))**:

@@ -204,12 +204,25 @@ def generate_monetizable_storyboard(news: Dict[str, Any]) -> Dict[str, Any]:
     link = news["link"]
     title_low = title.lower()
 
-    is_aviation = any(k in title_low for k in ["avión", "aeronave", "vuelo", "accidente", "aircraft", "flight", "plane", "pilot", "mayday", "crash", "haiti", "boeing", "airbus"])
+    is_peru_disaster = news.get("is_peru_priority", False) or any(k in title_low for k in ["perú", "peru", "lima", "arequipa", "piura", "indeci", "sismo", "huaico", "terremoto", "panamericana", "el niño", "rpp", "andina"])
+    is_aviation = any(k in title_low for k in ["avión", "aeronave", "vuelo", "accidente", "aircraft", "flight", "plane", "pilot", "mayday", "crash", "haiti", "boeing", "airbus", "aerotime"])
     is_cyber = any(k in title_low for k in ["ciberataque", "hackeo", "neveras", "hacker", "ransomware", "malware", "exploit", "apt", "breach", "zero-day", "cyber"])
-    is_ai = any(k in title_low for k in ["gemini", "google", "ia", "ai", "openai", "chip", "2 nm", "robot", "nvidia", "deepseek", "chatgpt", "apple", "semiconduct", "dram", "nand", "euv", "silicon", "hardware", "cpu", "gpu", "micron", "intel", "amd", "tsmc"])
+    is_ai = any(k in title_low for k in ["gemini", "google", "ia", "ai", "openai", "chip", "2 nm", "robot", "nvidia", "deepseek", "chatgpt", "apple", "semiconduct", "dram", "nand", "euv", "silicon", "hardware", "cpu", "gpu", "micron", "intel", "amd", "tsmc", "techcrunch", "tom's hardware"])
     is_space = any(k in title_low for k in ["espacio", "nasa", "esa", "marte", "luna", "cohete", "spacex", "telescopio", "asteroide", "planetary", "space", "starship", "orbit", "landing"])
 
-    if is_aviation:
+    if is_peru_disaster and not is_aviation:
+        script = (
+            f"Alerta de última hora en el Perú. {title}. "
+            f"Según los reportes oficiales confirmados por los centros de monitoreo y la redacción de {source}, "
+            "la emergencia se registró hace pocas horas activando de inmediato el desplazamiento de cuadrillas de auxilio y unidades de primera respuesta. "
+            "En el lugar de los hechos, las autoridades evalúan la magnitud de los daños materiales y atienden a las personas afectadas en el perímetro de seguridad. "
+            "Organismos oficiales como Indeci y la Policía Nacional han emitido recomendaciones urgentes a la ciudadanía para evitar zonas de riesgo y mantener las vías despejadas. "
+            "Equipos de rescate continúan trabajando en la zona mientras se elabora el informe técnico de daños y pérdidas. "
+            "El país sigue de cerca la evolución de este suceso en las próximas horas. "
+            "¿Consideras que las autoridades actuaron con la rapidez necesaria ante esta emergencia? "
+            "Déjame tu opinión en los comentarios."
+        )
+    elif is_aviation:
         script = (
             "En solo doce segundos, una emergencia aérea de máxima gravedad desató las alarmas en el espacio aéreo internacional. "
             f"Según los informes oficiales confirmados por la autoridad aeronáutica y la redacción de {source}, "
@@ -319,16 +332,38 @@ async def synthesize_voiceover(script: str, output_path: Path, voice: str = "Puc
     return dur
 
 
-def run_pipeline(genre_key: Optional[str] = None) -> Path:
-    from news_radar import get_daily_4_genres
-    print("1. Escaneando y clasificando noticias en los 4 géneros clave...", flush=True)
-    daily_genres = get_daily_4_genres()
+def run_pipeline(genre_key: Optional[str] = None, rank_index: int = 0) -> Path:
+    from news_radar import get_daily_4_genres, get_top_news_by_genre
+    print("1. Escaneando y clasificando noticias con orden cronológico y prioridad Perú/Aviación...", flush=True)
 
-    if genre_key and genre_key in daily_genres:
-        top_news = daily_genres[genre_key]
-        suffix = genre_key.replace("G1_", "").replace("G2_", "").replace("G3_", "").replace("G4_", "")
+    genre_map = {
+        "G1": "G1_AVIACION_CATASTROFES",
+        "G2": "G2_CIBERATAQUES_HACKERS",
+        "G3": "G3_IA_ROBOTICA",
+        "G4": "G4_ESPACIO_CIENCIA",
+        "G1_AVIACION_CATASTROFES": "G1_AVIACION_CATASTROFES",
+        "G2_CIBERATAQUES_HACKERS": "G2_CIBERATAQUES_HACKERS",
+        "G3_IA_ROBOTICA": "G3_IA_ROBOTICA",
+        "G4_ESPACIO_CIENCIA": "G4_ESPACIO_CIENCIA",
+    }
+
+    full_key = genre_map.get(genre_key, genre_key) if genre_key else None
+
+    if full_key:
+        ranked_items = get_top_news_by_genre(full_key, limit=max(5, rank_index + 1))
+        if ranked_items and rank_index < len(ranked_items):
+            top_news = ranked_items[rank_index]
+        elif ranked_items:
+            top_news = ranked_items[0]
+        else:
+            daily_genres = get_daily_4_genres()
+            top_news = daily_genres.get(full_key, list(daily_genres.values())[0])
+
+        suffix = full_key.replace("G1_", "").replace("G2_", "").replace("G3_", "").replace("G4_", "")
+        if rank_index > 0:
+            suffix += f"_V{rank_index+1}"
     else:
-        # Por defecto tomar el de mayor puntuación general
+        daily_genres = get_daily_4_genres()
         genre_key = max(daily_genres, key=lambda g: daily_genres[g].get("score", 1.0))
         top_news = daily_genres[genre_key]
         suffix = "AUTONOMO"
@@ -409,6 +444,8 @@ if __name__ == "__main__":
         "G3_IA_ROBOTICA", "G4_ESPACIO_CIENCIA",
         "G1", "G2", "G3", "G4"
     ], help="Género específico a producir")
+    parser.add_argument("--rank", type=int, default=0, help="Posición de noticia ordenada (0 = más reciente / mayor score)")
+    parser.add_argument("--count", type=int, default=1, help="Número de vídeos a producir en serie para el género (ej: 5)")
     parser.add_argument("--all", action="store_true", help="Producir los 4 géneros del día en lote")
     args = parser.parse_args()
 
@@ -425,6 +462,12 @@ if __name__ == "__main__":
             print(f"🚀 INICIANDO PRODUCCIÓN DE GÉNERO: {g}")
             print(f"=======================================================")
             run_pipeline(g)
+    elif args.count > 1 and args.genre:
+        target_genre = genre_map.get(args.genre, args.genre)
+        print(f"🚀 INICIANDO PRODUCCIÓN EN SERIE ({args.count} VÍDEOS) PARA: {target_genre}")
+        for r in range(args.count):
+            print(f"\n--- PROCESANDO VÍDEO #{r+1} (RANK {r}) ---")
+            run_pipeline(target_genre, rank_index=r)
     else:
         target_genre = genre_map.get(args.genre, args.genre)
-        out = run_pipeline(target_genre)
+        out = run_pipeline(target_genre, rank_index=args.rank)

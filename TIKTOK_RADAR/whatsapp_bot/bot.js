@@ -360,7 +360,7 @@ client.on('message_create', async (msg) => {
     return;
   }
 
-  // COMANDO 5: INICIAR PRODUCCIÓN (!generar / !generar todos / !generar 1..4)
+  // COMANDO 5: INICIAR PRODUCCIÓN (!generar / !generar todos / !generar 1..4 / !generar 5 g3)
   if (
     lower.startsWith('!generar') ||
     lower.includes('generar noticiero') ||
@@ -369,20 +369,32 @@ client.on('message_create', async (msg) => {
     let args = ['tools/ejecutar_todo.py'];
     let modeText = 'los 4 géneros diarios (Aviación, Ciberataques, IA, Espacio)';
 
-    if (lower.includes(' 1') || lower.includes('aviacion') || lower.includes('catastrofe')) {
+    const countMatch = lower.match(/(\d+)\s*(?:videos?|noticias?)/) || lower.match(/!generar\s+(\d+)/);
+    let count = 1;
+    if (countMatch) {
+      const parsed = parseInt(countMatch[1]);
+      if (parsed >= 1 && parsed <= 10) count = parsed;
+    }
+
+    if (lower.includes(' 1') || lower.includes('g1') || lower.includes('aviacion') || lower.includes('catastrofe') || lower.includes('peru')) {
       args.push('--genre', 'G1');
-      modeText = 'Género 1 (🚨 Aviación & Catástrofes)';
-    } else if (lower.includes(' 2') || lower.includes('ciber') || lower.includes('hacker')) {
+      modeText = `Género 1 (🚨 Aviación & Desastres Perú/Mundo)`;
+    } else if (lower.includes(' 2') || lower.includes('g2') || lower.includes('ciber') || lower.includes('hacker')) {
       args.push('--genre', 'G2');
-      modeText = 'Género 2 (💻 Ciberataques & Amenazas)';
-    } else if (lower.includes(' 3') || lower.includes('ia') || lower.includes('tech') || lower.includes('robot')) {
+      modeText = `Género 2 (💻 Ciberataques & Amenazas)`;
+    } else if (lower.includes(' 3') || lower.includes('g3') || lower.includes('ia') || lower.includes('tech') || lower.includes('robot') || lower.includes('chip') || lower.includes('hardware')) {
       args.push('--genre', 'G3');
-      modeText = 'Género 3 (🤖 Inteligencia Artificial & Tech)';
-    } else if (lower.includes(' 4') || lower.includes('espacio') || lower.includes('ciencia')) {
+      modeText = `Género 3 (🤖 IA, Chips & Hardware TechCrunch/Tom's)`;
+    } else if (lower.includes(' 4') || lower.includes('g4') || lower.includes('espacio') || lower.includes('ciencia')) {
       args.push('--genre', 'G4');
-      modeText = 'Género 4 (🚀 Espacio & Ciencia Extrema)';
+      modeText = `Género 4 (🚀 Espacio & Ciencia Extrema)`;
     } else {
       args.push('--all');
+    }
+
+    if (count > 1 && args.includes('--genre')) {
+      args.push('--count', count.toString());
+      modeText += ` [Lote de ${count} vídeos ordenados por cronología y polémica]`;
     }
 
     await msg.reply(`🤖 🚀 *Iniciando producción autónoma en AWS...*\n🎯 *Objetivo:* ${modeText}.\n_No te preocupes por nada, el servidor trabaja solo mientras estás en clases y te entregará los vídeos aquí._`);

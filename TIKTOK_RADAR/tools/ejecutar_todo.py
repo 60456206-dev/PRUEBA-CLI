@@ -21,13 +21,13 @@ from pipeline_autonomo import run_pipeline
 from ensamblador_final import assemble_final_video, get_latest_delivery_dir
 
 
-def produce_single_genre(genre_key: Optional[str] = None, skip_flow: bool = False, custom_dir: Optional[str] = None) -> Path:
+def produce_single_genre(genre_key: Optional[str] = None, skip_flow: bool = False, custom_dir: Optional[str] = None, rank_index: int = 0) -> Path:
     if custom_dir:
         delivery_dir = get_latest_delivery_dir(custom_dir)
         print(f"[FASE 1] Reutilizando paquete existente en: {delivery_dir}\n")
     else:
-        print(f"[FASE 1] Ejecutando Radar de Noticias + Guión + Voz Gemini TTS ({genre_key or 'AUTOMÁTICO'})...")
-        delivery_dir = run_pipeline(genre_key)
+        print(f"[FASE 1] Ejecutando Radar de Noticias + Guión + Voz Gemini TTS ({genre_key or 'AUTOMÁTICO'} | Rank {rank_index})...")
+        delivery_dir = run_pipeline(genre_key, rank_index=rank_index)
         print("")
 
     if not skip_flow:
@@ -57,6 +57,8 @@ def main():
         "G3_IA_ROBOTICA", "G4_ESPACIO_CIENCIA",
         "G1", "G2", "G3", "G4"
     ], help="Producir un género específico")
+    parser.add_argument("--rank", type=int, default=0, help="Posición de noticia ordenada (0 = más reciente / mayor score)")
+    parser.add_argument("--count", type=int, default=1, help="Número de vídeos a producir en serie para el género (ej: 5)")
     parser.add_argument("--all", action="store_true", help="Producir los 4 géneros automáticamente en lote")
     args = parser.parse_args()
 
@@ -85,9 +87,22 @@ def main():
         for c in completed:
             print(f"  • {c}")
         print("======================================================================")
+    elif args.count > 1 and args.genre:
+        target_genre = genre_map.get(args.genre, args.genre)
+        print(f"🎬 PRODUCIENDO SERIE DE {args.count} VÍDEOS PARA {target_genre} (CRONOLOGÍA + INFORMACIÓN + POLÉMICA)")
+        completed = []
+        for r in range(args.count):
+            print(f"\n>>> INICIANDO VÍDEO #{r+1} (RANK {r}) <<<")
+            mp4 = produce_single_genre(target_genre, skip_flow=args.skip_flow, rank_index=r)
+            completed.append(mp4)
+        print("======================================================================")
+        print(f"🎉 SERIE DE {args.count} VÍDEOS COMPLETADA CON ÉXITO:")
+        for c in completed:
+            print(f"  • {c}")
+        print("======================================================================")
     else:
         target_genre = genre_map.get(args.genre, args.genre)
-        final_mp4 = produce_single_genre(target_genre, skip_flow=args.skip_flow, custom_dir=args.dir)
+        final_mp4 = produce_single_genre(target_genre, skip_flow=args.skip_flow, custom_dir=args.dir, rank_index=args.rank)
         print("======================================================================")
         print(f"🎉 PRODUCCIÓN FINALIZADA CON ÉXITO: {final_mp4}")
         print("======================================================================")

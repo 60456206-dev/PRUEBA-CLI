@@ -1,20 +1,25 @@
 #!/usr/bin/env python3
 """
-TIKTOK RADAR · Módulo de Ingesta, Filtrado Anti-Spam y Clasificación en 4 Géneros
-Garantiza 4 vídeos diarios de alto impacto para producción 100% autónoma:
-1. Aviación, Catástrofes y Rescates (G1)
-2. Ciberataques, Guerra Digital y Amenazas Críticas (G2)
-3. Inteligencia Artificial, Robótica y Big Tech (G3)
-4. Espacio, Ciencia Extrema y Fenómenos Anómalos (G4)
+TIKTOK RADAR · Módulo de Ingesta, Filtrado Anti-Spam y Clasificación Inteligente
+Reglas Fundamentales de Producción:
+1. Cronología Estricta: De lo más reciente a lo más antiguo (primicias de foros y agencias).
+2. Densidad Informativa, Potencial de Vistas (Viralidad) y Polémica/Controversia.
+3. Prioridad Nacional Perú en Desastres Naturales y Catástrofes (Puesto #1 en G1).
+4. Aviación: Selección estricta del último incidente o emergencia reportada.
+5. Inclusión obligatoria de TechCrunch y Tom's Hardware en tecnología/chips.
+6. Soporte para generar N vídeos (ej. 5 vídeos) sin duplicar noticias.
 """
 
+import email.utils
 import json
 import re
+import sys
 import urllib.request
 import xml.etree.ElementTree as ET
-from datetime import datetime
-from typing import Dict, List, Any, Optional
+from datetime import datetime, timezone
+from typing import Dict, List, Any, Optional, Set
 
+# Términos publicitarios y spam comercial a eliminar
 BLACKLIST_TERMS = [
     "oferta", "descuento", "precio", "rebajad", "comprar", "truco", "chollo",
     "análisis", "review", "premio", "lidl", "amazon", "aliexpress", "mercadona",
@@ -26,10 +31,47 @@ BLACKLIST_TERMS = [
     "republicanos", "candidato", "escaños"
 ]
 
+# Fuentes internacionales y nacionales organizadas por categoría
 FEEDS = [
     # -------------------------------------------------------------------------
-    # 1. 🚨 G1: Aviación, Catástrofes y Rescates
+    # 1. 🚨 G1: Aviación, Catástrofes y Desastres Naturales
     # -------------------------------------------------------------------------
+    {
+        "id": "rpp_peru",
+        "name": "RPP Noticias (Alerta Perú)",
+        "url": "https://rpp.pe/feed",
+        "primary_genre": "G1_AVIACION_CATASTROFES",
+        "allowed_genres": ["G1_AVIACION_CATASTROFES"],
+        "weight": 1.7,
+        "is_peru": True,
+    },
+    {
+        "id": "elcomercio_peru",
+        "name": "El Comercio Perú",
+        "url": "https://elcomercio.pe/arc/outboundfeeds/rss/?outputType=xml",
+        "primary_genre": "G1_AVIACION_CATASTROFES",
+        "allowed_genres": ["G1_AVIACION_CATASTROFES"],
+        "weight": 1.6,
+        "is_peru": True,
+    },
+    {
+        "id": "andina_peru",
+        "name": "Agencia Andina Perú",
+        "url": "https://andina.pe/agencia/rss/noticias.aspx",
+        "primary_genre": "G1_AVIACION_CATASTROFES",
+        "allowed_genres": ["G1_AVIACION_CATASTROFES"],
+        "weight": 1.5,
+        "is_peru": True,
+    },
+    {
+        "id": "aerotime",
+        "name": "AeroTime Global Aviation",
+        "url": "https://www.aerotime.aero/feed",
+        "primary_genre": "G1_AVIACION_CATASTROFES",
+        "allowed_genres": ["G1_AVIACION_CATASTROFES"],
+        "weight": 1.6,
+        "is_aviation": True,
+    },
     {
         "id": "infobae_mundo",
         "name": "Infobae Última Hora",
@@ -44,7 +86,7 @@ FEEDS = [
         "url": "https://feeds.bbci.co.uk/mundo/rss.xml",
         "primary_genre": "G1_AVIACION_CATASTROFES",
         "allowed_genres": ["G1_AVIACION_CATASTROFES", "G4_ESPACIO_CIENCIA"],
-        "weight": 1.2,
+        "weight": 1.3,
     },
     {
         "id": "elpais_inter",
@@ -62,14 +104,6 @@ FEEDS = [
         "allowed_genres": ["G1_AVIACION_CATASTROFES"],
         "weight": 1.2,
     },
-    {
-        "id": "aerotime",
-        "name": "AeroTime Global Aviation",
-        "url": "https://www.aerotime.aero/feed",
-        "primary_genre": "G1_AVIACION_CATASTROFES",
-        "allowed_genres": ["G1_AVIACION_CATASTROFES"],
-        "weight": 1.5,
-    },
 
     # -------------------------------------------------------------------------
     # 2. 💻 G2: Ciberataques, Guerra Digital y Amenazas Críticas
@@ -80,7 +114,7 @@ FEEDS = [
         "url": "https://feeds.feedburner.com/TheHackersNews",
         "primary_genre": "G2_CIBERATAQUES_HACKERS",
         "allowed_genres": ["G2_CIBERATAQUES_HACKERS"],
-        "weight": 1.5,
+        "weight": 1.6,
     },
     {
         "id": "bleepingcomputer",
@@ -88,7 +122,7 @@ FEEDS = [
         "url": "https://www.bleepingcomputer.com/feed/",
         "primary_genre": "G2_CIBERATAQUES_HACKERS",
         "allowed_genres": ["G2_CIBERATAQUES_HACKERS"],
-        "weight": 1.4,
+        "weight": 1.5,
     },
     {
         "id": "securityweek",
@@ -108,11 +142,51 @@ FEEDS = [
     },
 
     # -------------------------------------------------------------------------
-    # 3. 🤖 G3: Inteligencia Artificial, Robótica y Big Tech
+    # 3. 🤖 G3: Inteligencia Artificial, Hardware, Robótica y Big Tech
     # -------------------------------------------------------------------------
     {
+        "id": "tomshardware",
+        "name": "Tom's Hardware",
+        "url": "https://www.tomshardware.com/feeds/news",
+        "primary_genre": "G3_IA_ROBOTICA",
+        "allowed_genres": ["G3_IA_ROBOTICA", "G2_CIBERATAQUES_HACKERS"],
+        "weight": 1.7,
+    },
+    {
+        "id": "techcrunch_main",
+        "name": "TechCrunch News",
+        "url": "https://techcrunch.com/feed/",
+        "primary_genre": "G3_IA_ROBOTICA",
+        "allowed_genres": ["G3_IA_ROBOTICA", "G2_CIBERATAQUES_HACKERS"],
+        "weight": 1.6,
+    },
+    {
+        "id": "techcrunch_ai",
+        "name": "TechCrunch AI",
+        "url": "https://techcrunch.com/category/artificial-intelligence/feed/",
+        "primary_genre": "G3_IA_ROBOTICA",
+        "allowed_genres": ["G3_IA_ROBOTICA"],
+        "weight": 1.6,
+    },
+    {
+        "id": "techcrunch_hardware",
+        "name": "TechCrunch Hardware",
+        "url": "https://techcrunch.com/category/hardware/feed/",
+        "primary_genre": "G3_IA_ROBOTICA",
+        "allowed_genres": ["G3_IA_ROBOTICA"],
+        "weight": 1.5,
+    },
+    {
+        "id": "arstechnica",
+        "name": "Ars Technica Tech & Frontier",
+        "url": "https://feeds.arstechnica.com/arstechnica/technology-lab",
+        "primary_genre": "G3_IA_ROBOTICA",
+        "allowed_genres": ["G2_CIBERATAQUES_HACKERS", "G3_IA_ROBOTICA"],
+        "weight": 1.4,
+    },
+    {
         "id": "elpais_tec",
-        "name": "El País Tecnología & Ciber",
+        "name": "El País Tecnología",
         "url": "https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/tecnologia/portada",
         "primary_genre": "G3_IA_ROBOTICA",
         "allowed_genres": ["G2_CIBERATAQUES_HACKERS", "G3_IA_ROBOTICA"],
@@ -126,49 +200,17 @@ FEEDS = [
         "allowed_genres": ["G3_IA_ROBOTICA", "G4_ESPACIO_CIENCIA"],
         "weight": 1.0,
     },
-    {
-        "id": "techcrunch_ai",
-        "name": "TechCrunch AI",
-        "url": "https://techcrunch.com/category/artificial-intelligence/feed/",
-        "primary_genre": "G3_IA_ROBOTICA",
-        "allowed_genres": ["G3_IA_ROBOTICA"],
-        "weight": 1.5,
-    },
-    {
-        "id": "arstechnica",
-        "name": "Ars Technica Tech & Frontier",
-        "url": "https://feeds.arstechnica.com/arstechnica/technology-lab",
-        "primary_genre": "G3_IA_ROBOTICA",
-        "allowed_genres": ["G2_CIBERATAQUES_HACKERS", "G3_IA_ROBOTICA"],
-        "weight": 1.3,
-    },
-    {
-        "id": "tomshardware",
-        "name": "Tom's Hardware",
-        "url": "https://www.tomshardware.com/feeds/news",
-        "primary_genre": "G3_IA_ROBOTICA",
-        "allowed_genres": ["G3_IA_ROBOTICA", "G2_CIBERATAQUES_HACKERS"],
-        "weight": 1.5,
-    },
 
     # -------------------------------------------------------------------------
     # 4. 🚀 G4: Espacio, Ciencia Extrema y Fenómenos Anómalos
     # -------------------------------------------------------------------------
-    {
-        "id": "europapress_ciencia",
-        "name": "EuropaPress Ciencia & Espacio",
-        "url": "https://www.europapress.es/rss/rss.aspx?ch=00136",
-        "primary_genre": "G4_ESPACIO_CIENCIA",
-        "allowed_genres": ["G4_ESPACIO_CIENCIA"],
-        "weight": 1.4,
-    },
     {
         "id": "nasa_breaking",
         "name": "NASA Breaking News",
         "url": "https://www.nasa.gov/news-release/feed/",
         "primary_genre": "G4_ESPACIO_CIENCIA",
         "allowed_genres": ["G4_ESPACIO_CIENCIA"],
-        "weight": 1.5,
+        "weight": 1.6,
     },
     {
         "id": "esa_news",
@@ -176,7 +218,7 @@ FEEDS = [
         "url": "https://www.esa.int/rssfeed/Our_Activities/Space_News",
         "primary_genre": "G4_ESPACIO_CIENCIA",
         "allowed_genres": ["G4_ESPACIO_CIENCIA"],
-        "weight": 1.4,
+        "weight": 1.5,
     },
     {
         "id": "phys_space",
@@ -184,16 +226,26 @@ FEEDS = [
         "url": "https://phys.org/rss-feed/space-news/",
         "primary_genre": "G4_ESPACIO_CIENCIA",
         "allowed_genres": ["G4_ESPACIO_CIENCIA"],
+        "weight": 1.4,
+    },
+    {
+        "id": "europapress_ciencia",
+        "name": "EuropaPress Ciencia & Espacio",
+        "url": "https://www.europapress.es/rss/rss.aspx?ch=00136",
+        "primary_genre": "G4_ESPACIO_CIENCIA",
+        "allowed_genres": ["G4_ESPACIO_CIENCIA"],
         "weight": 1.3,
     },
 ]
 
+# Palabras clave por género temático
 GENRE_KEYWORDS = {
     "G1_AVIACION_CATASTROFES": [
         "avión", "aeronave", "vuelo", "aterrizaje", "piloto", "cabina", "altitud",
         "accidente", "choque", "desastre", "colisión", "catástrofe", "rescate",
         "emergencia", "naufragio", "tormenta", "huracán", "volcán", "terremoto",
-        "sismo", "explosión", "evacuación", "alerta roja", "radar", "marítimo",
+        "sismo", "temblor", "huaico", "aluvión", "deslizamiento", "inundación",
+        "tsunami", "explosión", "evacuación", "alerta roja", "radar", "marítimo",
         "airplane", "plane", "aircraft", "flight", "cockpit", "altitude", "crash",
         "mayday", "boeing", "airbus", "turbulence", "emergency landing", "aviation safety"
     ],
@@ -222,10 +274,80 @@ GENRE_KEYWORDS = {
     ],
 }
 
+# Palabras clave geográficas e instituciones de Perú para Desastres / Catástrofes
+PERU_LOCATIONS = [
+    "perú", "peru", "lima", "arequipa", "cusco", "piura", "trujillo", "puno",
+    "ancash", "loreto", "ica", "callao", "chimbote", "tarapoto", "chiclayo",
+    "huaraz", "indeci", "igp", "senamhi", "costa verde", "río rímac", "rio rimac"
+]
+
+PERU_DISASTER_TERMS = [
+    "sismo", "terremoto", "temblor", "huaico", "aluvión", "deslizamiento",
+    "tsunami", "desborde", "inundación", "alerta roja", "emergencia",
+    "catástrofe", "fallecid", "rescate", "evacuación", "alud", "derrumb"
+]
+
+AVIATION_TERMS = [
+    "avión", "aeronave", "vuelo", "aterrizaje", "piloto", "cabina", "altitud",
+    "accidente", "airplane", "aircraft", "flight", "cockpit", "crash", "mayday",
+    "boeing", "airbus", "turbulence", "emergency landing", "airspace"
+]
+
+# Palabras de polémica, controversia, shock y alto potencial de vistas (Views)
+POLEMIC_KEYWORDS = [
+    "crisis", "demanda", "paraliza", "alerta", "prohibido", "colapso", "investigación",
+    "violación", "millonario", "caída", "shock", "escándalo", "secreto", "filtración",
+    "amenaza", "grave", "falla", "caos", "urgente", "colapsa", "destrucción",
+    "warns", "scandal", "ban", "lawsuit", "exploit", "outage", "ravages", "defeat",
+    "breach", "exposed", "emergency", "urgent", "clash", "fight", "collapse", "crisis"
+]
+
 
 def is_blacklisted(text: str) -> bool:
     t = text.lower()
     return any(b in t for b in BLACKLIST_TERMS)
+
+
+def parse_rss_date(date_str: str) -> float:
+    """Parsea fechas RSS (RFC 2822 o ISO 8601) a timestamp Unix UTC en float."""
+    if not date_str:
+        return 0.0
+    # 1. Intentar RFC 2822 (estándar RSS 2.0)
+    try:
+        dt = email.utils.parsedate_to_datetime(date_str)
+        if dt:
+            return dt.timestamp()
+    except Exception:
+        pass
+    # 2. Intentar ISO 8601 (estándar Atom)
+    try:
+        dt = datetime.fromisoformat(date_str.replace("Z", "+00:00"))
+        if dt:
+            return dt.timestamp()
+    except Exception:
+        pass
+    return 0.0
+
+
+def title_tokens(title: str) -> Set[str]:
+    """Extrae palabras clave de un título para deduplicación entre foros."""
+    words = re.findall(r"\b[a-z0-9áéíóúñ]{3,}\b", title.lower())
+    stop_words = {
+        "para", "como", "con", "que", "los", "las", "por", "una", "uno", "unos",
+        "the", "and", "for", "with", "from", "sobre", "tras", "este", "esta", "about"
+    }
+    return set(w for w in words if w not in stop_words)
+
+
+def is_duplicate_story(title_a: str, title_b: str) -> bool:
+    """Detecta si dos fuentes diferentes están reportando sobre el mismo hecho."""
+    t_a = title_tokens(title_a)
+    t_b = title_tokens(title_b)
+    if not t_a or not t_b:
+        return False
+    inter = t_a.intersection(t_b)
+    min_len = min(len(t_a), len(t_b))
+    return (len(inter) / min_len) >= 0.50
 
 
 def classify_genre(title: str, summary: str, default_genre: str, allowed_genres: Optional[List[str]] = None) -> str:
@@ -236,7 +358,6 @@ def classify_genre(title: str, summary: str, default_genre: str, allowed_genres:
             continue
         for kw in kws:
             if kw in combined:
-                # Mayor peso si la palabra clave aparece en el título exacto
                 scores[genre] += 3 if kw in title.lower() else 1
 
     valid_scores = {k: v for k, v in scores.items() if (not allowed_genres or k in allowed_genres)}
@@ -244,6 +365,83 @@ def classify_genre(title: str, summary: str, default_genre: str, allowed_genres:
     if valid_scores[best_genre] > 0:
         return best_genre
     return default_genre
+
+
+def score_article(item: Dict[str, Any], now_ts: float) -> float:
+    """
+    Algoritmo de puntuación integral:
+    - Cronología estricta (frescura en horas).
+    - Prioridad Nacional Perú en Desastres / Catástrofes (+50 pts).
+    - Aviación: Prioridad estricta al último incidente reportado.
+    - Densidad informativa (datos duros, cifras, extensión).
+    - Potencial de vistas / viralidad y polémica/controversia.
+    """
+    base_weight = item.get("source_weight", 1.0)
+    score = base_weight * 2.0
+
+    pub_ts = item.get("timestamp", 0.0)
+    if pub_ts > 0:
+        age_hours = max(0.0, (now_ts - pub_ts) / 3600.0)
+        # 1. Regla Cronológica (De lo más reciente a lo más antiguo)
+        if age_hours <= 3.0:
+            score += 14.0  # Primicia absoluta (hace <3 horas)
+        elif age_hours <= 6.0:
+            score += 9.0   # Muy reciente (hace <6 horas)
+        elif age_hours <= 12.0:
+            score += 6.0   # Publicado hoy (hace <12 horas)
+        elif age_hours <= 24.0:
+            score += 3.0   # Últimas 24 horas
+        elif age_hours > 48.0:
+            score -= 8.0   # Noticia antigua
+    else:
+        age_hours = 24.0
+
+    item["age_hours"] = round(age_hours, 1)
+
+    combined = f"{item['title']} {item['summary']}".lower()
+
+    # 2. Regla Especial Perú en Desastres Naturales y Catástrofes (G1)
+    is_g1 = (item["genre"] == "G1_AVIACION_CATASTROFES")
+    has_peru = any(p in combined for p in PERU_LOCATIONS) or item.get("is_peru", False)
+    has_disaster = any(d in combined for d in PERU_DISASTER_TERMS)
+
+    if is_g1 and (has_peru and has_disaster):
+        score += 60.0  # 🇵🇪 Prioridad #1 Nacional Perú
+        item["is_peru_priority"] = True
+    else:
+        item["is_peru_priority"] = False
+
+    # 3. Regla Especial Aviación: Prioridad estricta al último suceso
+    is_aviation = any(a in combined for a in AVIATION_TERMS) or item.get("is_aviation", False)
+    if is_aviation and pub_ts > 0:
+        # En aviación la primicia de última hora multiplica su peso
+        freshness_boost = max(0.0, 24.0 - min(24.0, age_hours)) * 0.75
+        score += freshness_boost
+        item["is_aviation_incident"] = True
+    else:
+        item["is_aviation_incident"] = False
+
+    # 4. Riqueza y Densidad Informativa (Más información)
+    text_len = len(item["title"]) + len(item["summary"])
+    if text_len >= 120:
+        score += 1.5
+    if text_len >= 250:
+        score += 2.5
+    # Cifras y métricas numéricas concretas
+    data_matches = re.findall(r"\b\d+(?:[\.,]\d+)?%?|\b\d+k\b|\b\d+m\b", combined)
+    score += min(3.5, len(data_matches) * 0.7)
+
+    # 5. Potencial de Vistas y Polémica / Controversia
+    polemic_matches = [w for w in POLEMIC_KEYWORDS if w in combined]
+    score += min(8.0, len(polemic_matches) * 2.0)
+
+    # 6. Coincidencia con palabras clave del género
+    genre_kws = GENRE_KEYWORDS.get(item["genre"], [])
+    kw_hits = [k for k in genre_kws if k in combined]
+    for kw in kw_hits:
+        score += 2.5 if kw in item["title"].lower() else 1.0
+
+    return round(score, 2)
 
 
 def get_node_text(elem: ET.Element, tag_names: List[str]) -> str:
@@ -265,12 +463,14 @@ def get_node_attrib(elem: ET.Element, tag_names: List[str], attr: str = "href") 
     return ""
 
 
-def fetch_feed(feed_info: Dict[str, Any], max_items: int = 15) -> List[Dict[str, Any]]:
+def fetch_feed(feed_info: Dict[str, Any], max_items: int = 25) -> List[Dict[str, Any]]:
     items = []
     headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
+    now_ts = datetime.now(timezone.utc).timestamp()
+
     try:
         req = urllib.request.Request(feed_info["url"], headers=headers)
-        with urllib.request.urlopen(req, timeout=8) as response:
+        with urllib.request.urlopen(req, timeout=9) as response:
             xml_data = response.read()
         root = ET.fromstring(xml_data)
 
@@ -295,35 +495,40 @@ def fetch_feed(feed_info: Dict[str, Any], max_items: int = 15) -> List[Dict[str,
             if is_blacklisted(desc):
                 continue
 
-            pub_date = get_node_text(item, date_tags)
+            pub_date_str = get_node_text(item, date_tags)
+            pub_ts = parse_rss_date(pub_date_str)
+
             genre = classify_genre(
                 title, desc,
                 default_genre=feed_info.get("primary_genre", "G1_AVIACION_CATASTROFES"),
                 allowed_genres=feed_info.get("allowed_genres")
             )
 
-            # Puntuación de impacto dramático: EXIGIR al menos 1 coincidencia del género
+            # Validar al menos una coincidencia temática o ser fuente nativa de la categoría
             combined = (title + " " + desc).lower()
             keyword_matches = [kw for kw in GENRE_KEYWORDS.get(genre, []) if kw in combined]
-            if not keyword_matches:
+            if not keyword_matches and not feed_info.get("is_peru") and not feed_info.get("is_aviation"):
                 continue
 
-            score = feed_info.get("weight", 1.0)
-            for kw in keyword_matches:
-                score += 2.5 if kw in title.lower() else 1.0
-
-            items.append({
+            candidate = {
                 "source_id": feed_info["id"],
                 "source_name": feed_info["name"],
+                "source_weight": feed_info.get("weight", 1.0),
+                "is_peru": feed_info.get("is_peru", False),
+                "is_aviation": feed_info.get("is_aviation", False),
                 "genre": genre,
                 "title": title,
                 "link": link,
-                "summary": desc[:250] + ("..." if len(desc) > 250 else ""),
-                "pub_date": pub_date,
-                "score": round(score, 2),
-            })
+                "summary": desc[:300] + ("..." if len(desc) > 300 else ""),
+                "pub_date": pub_date_str,
+                "timestamp": pub_ts,
+            }
+
+            candidate["score"] = score_article(candidate, now_ts)
+            items.append(candidate)
+
     except Exception as e:
-        print(f"[Error consultando {feed_info['name']}]: {e}")
+        print(f"[Aviso Escáner {feed_info['name']}]: {e}")
     return items
 
 
@@ -334,25 +539,49 @@ def scan_all_sources() -> List[Dict[str, Any]]:
     return all_news
 
 
+def get_top_news_by_genre(genre_key: str, limit: int = 5) -> List[Dict[str, Any]]:
+    """
+    Obtiene las mejores N noticias para un género específico, aplicando:
+    1. Orden cronológico de lo más reciente a lo más antiguo.
+    2. Comparación entre todas las fuentes y foros de la categoría.
+    3. Selección de la noticia con más información, vistas potenciales y polémica.
+    4. Deduplicación para que los N vídeos sean sobre temas distintos.
+    5. Prioridad nacional Perú para G1 si existen desastres en Perú.
+    """
+    all_news = scan_all_sources()
+    genre_items = [item for item in all_news if item["genre"] == genre_key]
+
+    # Ordenar primero: noticias de Perú arriba (si es G1), luego por puntaje integral
+    genre_items.sort(
+        key=lambda x: (
+            1 if x.get("is_peru_priority") else 0,
+            x["score"],
+            x.get("timestamp", 0)
+        ),
+        reverse=True
+    )
+
+    # Deduplicación inteligente: asegurar que cada puesto sea una noticia diferente
+    unique_items: List[Dict[str, Any]] = []
+    for item in genre_items:
+        is_dup = False
+        for chosen in unique_items:
+            if is_duplicate_story(item["title"], chosen["title"]):
+                is_dup = True
+                break
+        if not is_dup:
+            unique_items.append(item)
+        if len(unique_items) >= limit:
+            break
+
+    return unique_items
+
+
 def get_daily_4_genres() -> Dict[str, Dict[str, Any]]:
     """
     Selecciona exactamente la noticia número 1 de mayor impacto para cada uno de los 4 géneros.
     Garantiza la producción de 4 vídeos diarios sin repetir temáticas.
     """
-    all_news = scan_all_sources()
-    by_genre: Dict[str, List[Dict[str, Any]]] = {
-        "G1_AVIACION_CATASTROFES": [],
-        "G2_CIBERATAQUES_HACKERS": [],
-        "G3_IA_ROBOTICA": [],
-        "G4_ESPACIO_CIENCIA": [],
-    }
-
-    for item in all_news:
-        g = item["genre"]
-        if g in by_genre:
-            by_genre[g].append(item)
-
-    selected: Dict[str, Dict[str, Any]] = {}
     genre_names = {
         "G1_AVIACION_CATASTROFES": "🚨 AVIACIÓN & CATÁSTROFES",
         "G2_CIBERATAQUES_HACKERS": "💻 CIBERATAQUES & AMENAZAS",
@@ -360,14 +589,16 @@ def get_daily_4_genres() -> Dict[str, Dict[str, Any]]:
         "G4_ESPACIO_CIENCIA": "🚀 ESPACIO & CIENCIA EXTREMA",
     }
 
-    for g, items in by_genre.items():
-        if items:
-            items.sort(key=lambda x: x["score"], reverse=True)
-            chosen = items[0]
-            chosen["genre_label"] = genre_names[g]
+    selected: Dict[str, Dict[str, Any]] = {}
+
+    for g, label in genre_names.items():
+        top_list = get_top_news_by_genre(g, limit=1)
+        if top_list:
+            chosen = top_list[0]
+            chosen["genre_label"] = label
             selected[g] = chosen
         else:
-            # Fallback temático garantizado para nunca detener el ciclo diario
+            # Fallback temático garantizado
             fallbacks = {
                 "G1_AVIACION_CATASTROFES": {
                     "source_name": "Reporte de Emergencia NTSB",
@@ -376,7 +607,7 @@ def get_daily_4_genres() -> Dict[str, Dict[str, Any]]:
                     "summary": "Falla súbita de instrumentación obliga a descenso de emergencia a 2.000 pies.",
                     "score": 5.0,
                     "genre": g,
-                    "genre_label": genre_names[g],
+                    "genre_label": label,
                 },
                 "G2_CIBERATAQUES_HACKERS": {
                     "source_name": "The Hacker News",
@@ -385,16 +616,16 @@ def get_daily_4_genres() -> Dict[str, Dict[str, Any]]:
                     "summary": "Ransomware provoca pérdidas millonarias al alterar sensores térmicos de distribución.",
                     "score": 5.0,
                     "genre": g,
-                    "genre_label": genre_names[g],
+                    "genre_label": label,
                 },
                 "G3_IA_ROBOTICA": {
-                    "source_name": "Wired Tech",
-                    "title": "Empresas migran ingenieros a nuevos modelos de IA reduciendo costos por diez",
-                    "link": "https://www.xataka.com",
-                    "summary": "La nueva generación de modelos autónomos desafía el monopolio tradicional de código.",
+                    "source_name": "Tom's Hardware",
+                    "title": "Empresas aceleran adopción de nodos de 2 nanómetros para chips de inteligencia artificial",
+                    "link": "https://www.tomshardware.com",
+                    "summary": "La nueva litografía extrema rompe barreras de eficiencia energética en centros de cómputo.",
                     "score": 5.0,
                     "genre": g,
-                    "genre_label": genre_names[g],
+                    "genre_label": label,
                 },
                 "G4_ESPACIO_CIENCIA": {
                     "source_name": "NASA Science",
@@ -403,7 +634,7 @@ def get_daily_4_genres() -> Dict[str, Dict[str, Any]]:
                     "summary": "Emisión electromagnética de clase X amenaza con interferir satélites de navegación.",
                     "score": 5.0,
                     "genre": g,
-                    "genre_label": genre_names[g],
+                    "genre_label": label,
                 },
             }
             selected[g] = fallbacks[g]
@@ -412,11 +643,39 @@ def get_daily_4_genres() -> Dict[str, Dict[str, Any]]:
 
 
 if __name__ == "__main__":
-    daily = get_daily_4_genres()
-    print("=== TIKTOK RADAR · 4 GÉNEROS SELECCIONADOS PARA HOY ===")
-    for g, item in daily.items():
-        print(f"\n[{item['genre_label']}]")
-        print(f"  Fuente: {item['source_name']}")
-        print(f"  Título: {item['title']}")
-        print(f"  Puntaje: {item['score']}")
-        print(f"  Enlace: {item['link']}")
+    import argparse
+    parser = argparse.ArgumentParser(description="TikTok Radar · Escáner de Noticias de Última Hora")
+    parser.add_argument("--genre", choices=["G1", "G2", "G3", "G4"], help="Filtrar por género")
+    parser.add_argument("--limit", type=int, default=5, help="Número de noticias a mostrar por género (def: 5)")
+    args = parser.parse_args()
+
+    genre_map = {
+        "G1": "G1_AVIACION_CATASTROFES",
+        "G2": "G2_CIBERATAQUES_HACKERS",
+        "G3": "G3_IA_ROBOTICA",
+        "G4": "G4_ESPACIO_CIENCIA",
+    }
+
+    if args.genre:
+        g_key = genre_map[args.genre]
+        print(f"=== TIKTOK RADAR · TOP {args.limit} NOTICIAS PARA [{args.genre}] ===")
+        print(f"Criterio: Cronología (reciente a antiguo) + Más información + Polémica/Viralidad + Perú/Aviación\n")
+        ranked = get_top_news_by_genre(g_key, limit=args.limit)
+        for idx, it in enumerate(ranked, 1):
+            peru_flag = " [🇵🇪 PRIORIDAD PERÚ]" if it.get("is_peru_priority") else ""
+            av_flag = " [✈️ ÚLTIMA HORA AVIACIÓN]" if it.get("is_aviation_incident") else ""
+            print(f"#{idx} [{it['source_name']}]{peru_flag}{av_flag} (Hace {it.get('age_hours', '?')}h | Score: {it['score']})")
+            print(f"   Título: {it['title']}")
+            print(f"   Enlace: {it['link']}")
+            print(f"   Resumen: {it['summary'][:150]}...\n")
+    else:
+        daily = get_daily_4_genres()
+        print("=== TIKTOK RADAR · 4 GÉNEROS SELECCIONADOS PARA HOY ===")
+        print("Reglas: De lo más reciente a lo antiguo, máxima densidad informativa, polémica, y prioridad Perú/Aviación.")
+        for g, item in daily.items():
+            peru_flag = " [🇵🇪 PRIORIDAD PERÚ]" if item.get("is_peru_priority") else ""
+            av_flag = " [✈️ ÚLTIMA HORA AVIACIÓN]" if item.get("is_aviation_incident") else ""
+            print(f"\n[{item['genre_label']}]{peru_flag}{av_flag}")
+            print(f"  Fuente: {item['source_name']} (Hace {item.get('age_hours', '?')}h | Score: {item['score']})")
+            print(f"  Título: {item['title']}")
+            print(f"  Enlace: {item['link']}")
