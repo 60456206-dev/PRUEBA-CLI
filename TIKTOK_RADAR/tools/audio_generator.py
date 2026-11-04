@@ -72,22 +72,22 @@ def probe_duration(path: Path) -> float:
 def generate_speech_gemini(
     text: str,
     output_path: Path,
-    voice: str = "Puck",
+    voice: str = "Fenrir",
     style: Optional[str] = None
 ) -> bool:
-    """Genera locución con Gemini 3.8 Flash TTS y metadatos de dirección periodística."""
+    """Genera locución con Gemini 3.8 Flash TTS y metadatos de dirección dramática y apasionada."""
     key = os.getenv("GEMINI_API_KEY") or GEMINI_API_KEY
     if not key:
         return False
 
     if not style:
         style = (
-            "Locución periodística de investigación urgente para noticiero de última hora. "
-            "Dicción clara, ritmo broadcast dinámico, tono serio y autoritario en español neutro. "
-            "Pausas medidas de suspenso entre frases."
+            "Locución apasionada, vibrante y con profunda emoción dramática para noticiero de última hora en TikTok. "
+            "Ritmo dinámico, enérgico y acelerado, con inflexiones vivas de asombro y tensión periodística en las cifras y exclamaciones. "
+            "Cero monotonía, cero tono plano o robótico; locución llena de convicción, nervio y adrenalina."
         )
 
-    models_to_try = ["gemini-3.8-flash-tts", "gemini-3.8-flash-lite-tts"]
+    models_to_try = ["gemini-3.8-flash-tts", "gemini-3.8-flash-lite-tts", "gemini-3.1-flash-tts-preview"]
 
     for model in models_to_try:
         body = {
@@ -151,7 +151,8 @@ def generate_speech_gemini(
 async def _generate_speech_edge_async(text: str, output_path: Path, voice: str = "es-MX-JorgeNeural") -> bool:
     try:
         import edge_tts
-        communicate = edge_tts.Communicate(text, voice)
+        # Aceleración a +12% y tono para transmitir emoción y energía periodística en lugar de lectura calmada
+        communicate = edge_tts.Communicate(text, voice, rate="+12%", pitch="+1Hz")
         await communicate.save(str(output_path))
         dur = probe_duration(output_path)
         print(f"[AUDIO-TTS] ✅ Locución Edge-TTS fallback completada: {output_path.name} ({dur:.2f} s)", flush=True)
@@ -164,7 +165,7 @@ async def _generate_speech_edge_async(text: str, output_path: Path, voice: str =
 def generate_speech(
     text: str,
     output_path: Path,
-    voice_gemini: str = "Puck",
+    voice_gemini: str = "Fenrir",
     voice_edge: str = "es-MX-JorgeNeural",
     style: Optional[str] = None
 ) -> float:

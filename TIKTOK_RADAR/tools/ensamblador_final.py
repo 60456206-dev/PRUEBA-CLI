@@ -190,6 +190,43 @@ FONT_REG = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
 FONT_MONO = "/usr/share/fonts/truetype/dejavu/DejaVuSansMono-Bold.ttf"
 
 
+def build_modern_broadcast_card(
+    badge: str,
+    title: str,
+    metric_val: str,
+    metric_label: str,
+    bullets: list,
+    accent_hex: str = "0x00e5ff",
+    bg_hex: str = "0x060c18",
+    footer_text: str = "⚡ REPORTE OFICIAL BROADCAST · RADAR 24/7"
+) -> tuple:
+    filters = [
+        f"drawbox=x=70:y=360:w=940:h=1200:color=0x0c1526@0.92:t=fill",
+        f"drawbox=x=70:y=360:w=940:h=1200:color={accent_hex}@0.65:t=2",
+        f"drawbox=x=110:y=400:w=420:h=50:color={accent_hex}@0.18:t=fill",
+        f"drawbox=x=110:y=400:w=420:h=50:color={accent_hex}:t=2",
+        f"drawtext=fontfile={FONT_BOLD}:text='{badge}':fontcolor={accent_hex}:fontsize=22:x=130:y=414",
+        f"drawtext=fontfile={FONT_BOLD}:text='{title}':fontcolor=white:fontsize=36:x=110:y=490",
+        f"drawtext=fontfile={FONT_BOLD}:text='{metric_val}':fontcolor=0xffe500:fontsize=96:x=110:y=550",
+        f"drawtext=fontfile={FONT_REG}:text='{metric_label}':fontcolor=white@0.85:fontsize=26:x=110:y=680",
+        f"drawbox=x=110:y=730:w=860:h=6:color=0x1e293b:t=fill",
+        f"drawbox=x=110:y=730:w='mod(t*340\,860)':h=6:color={accent_hex}:t=fill"
+    ]
+    by = 780
+    for txt, col in bullets:
+        clean_txt = txt.replace(":", "\:")
+        filters.append(f"drawtext=fontfile={FONT_REG}:text='{clean_txt}':fontcolor={col}:fontsize=24:x=110:y={by}")
+        by += 48
+
+    filters.extend([
+        f"drawbox=x=110:y=1380:w=860:h=60:color=0x111c2e@0.9:t=fill",
+        f"drawbox=x=110:y=1380:w=860:h=60:color={accent_hex}@0.4:t=1",
+        f"drawtext=fontfile={FONT_BOLD}:text='{footer_text}':fontcolor={accent_hex}:fontsize=22:x=140:y=1400",
+        "vignette=PI/4,format=yuv420p"
+    ])
+    return bg_hex, ",".join(filters)
+
+
 def generate_infographic_vector_shot(
     shot_info: Dict[str, Any],
     shot_idx: int,
@@ -199,16 +236,6 @@ def generate_infographic_vector_shot(
     genre: str = "G1",
     title: str = "",
 ) -> None:
-    """
-    Sintetiza una placa infográfica broadcast vectorial táctica (1080x1920 @ 24fps)
-    utilizando FFmpeg Filtergraph nativo sin consumir créditos de Google Flow.
-    Se adapta automáticamente a la categoría y contexto temático de la noticia:
-      - Aviación: Radar aeronaval, altímetro numérico, blueprint fuselaje, FDR caja negra.
-      - Desastres Naturales Perú: Monitoreo satelital INDECI, sismograma/lluvias, radio de impacto, reporte COEN.
-      - Ciberataques: Centro SOC, tráfico DDoS en Gbps, topología de red, CVE forense.
-      - IA & Chips: Radar de semiconductores, TFLOPs/2nm, matriz de transistores, benchmark.
-      - Espacio: Rastreo Deep Space, velocidad orbital km/h, diagrama de sonda, telemetría NASA/ESA.
-    """
     shot_id = shot_info.get("id", f"SH{shot_idx+1:02d}")
     shot_type = shot_info.get("type", "INFOGRAFIA TACTICA").upper()
     dur_s = max(1.0, target_dur)
@@ -223,470 +250,360 @@ def generate_infographic_vector_shot(
 
     if is_peru:
         cards = {
-            "SH01": (
-                "0x071524",
-                f"drawgrid=w=120:h=120:t=2:c=0x00e5ff@0.15,"
-                f"drawbox=x=60:y=380:w=960:h=1160:color=0x00e5ff@0.3:t=3,"
-                f"drawbox=x=80:y=400:w=920:h=1120:color=0x0088cc@0.15:t=1,"
-                f"drawbox=x='60+mod(t*220\\,960)':y=380:w=4:h=1160:color=0x00ffff@0.5:t=fill,"
-                f"drawbox=x='540-180-40*sin(t*3)':y='960-180-40*sin(t*3)':w='360+80*sin(t*3)':h='360+80*sin(t*3)':color=0xffaa00@0.35:t=2,"
-                f"drawbox=x=60:y=280:w=960:h=70:color=0x0a1a2f@0.9:t=fill,"
-                f"drawtext=fontfile={FONT_BOLD}:text='CENTRO DE MONITOREO SISMICO Y SATELITAL EN VIVO':fontcolor=0x00ffff:fontsize=30:x=(w-text_w)/2:y=300,"
-                f"drawtext=fontfile={FONT_BOLD}:text='SISTEMA NACIONAL DE ALERTA TEMPRANA · INDECI / COEN':fontcolor=0xffcc00:fontsize=26:x=100:y=440,"
-                f"drawtext=fontfile={FONT_REG}:text='SECTOR\\: COSTA Y VALLES ANDINOS DEL PERU':fontcolor=white@0.85:fontsize=24:x=100:y=490,"
-                f"drawtext=fontfile={FONT_REG}:text='ESTADO DE FRECUENCIA\\: ALERTA ROJA ACTIVA':fontcolor=0xff3344:fontsize=24:x=100:y=530,"
-                f"drawtext=fontfile={FONT_MONO}:text='COORDS\\: 12.0464 S\\, 77.0428 W [PERU] · SENAL VIGILADA':fontcolor=0x00ffff:fontsize=22:x=100:y=1460,"
-                f"vignette=PI/4,format=yuv420p"
+            "SH01": build_modern_broadcast_card(
+                "● MONITOREO EN VIVO · INDECI",
+                "SISTEMA DE ALERTA NACIONAL",
+                "ALERTA ROJA",
+                "COSTA Y VALLES ANDINOS DEL PERÚ",
+                [
+                    ("• COORDENADAS: 12.04 S, 77.04 W · SEÑAL VIGILADA", "0x00ffff"),
+                    ("• PROTOCOLO: BRIGADAS DE PRIMERA RESPUESTA EN ZONA", "white@0.9"),
+                    ("• ESTADO: MONITOREO CONTINUO INDECI / COEN", "0xffcc00")
+                ],
+                accent_hex="0x00e5ff",
+                bg_hex="0x06111f"
             ),
-            "SH03": (
-                "0x0c1524",
-                f"drawgrid=w=80:h=80:t=1:c=0x00b4d8@0.12,"
-                f"drawbox=x=60:y=380:w=960:h=1160:color=0x00b4d8@0.35:t=2,"
-                f"drawbox=x=60:y=280:w=960:h=70:color=0x081c30@0.9:t=fill,"
-                f"drawtext=fontfile={FONT_BOLD}:text='REGISTRO DE PARAMETROS SISMICOS / LLUVIAS':fontcolor=0x00e5ff:fontsize=30:x=(w-text_w)/2:y=300,"
-                f"drawtext=fontfile={FONT_BOLD}:text='NIVEL DE AFECTACION DETECTADO\\:':fontcolor=white:fontsize=30:x=100:y=450,"
-                f"drawtext=fontfile={FONT_MONO}:text='%{{eif\\:68-8*t\\:d}} ML (MAGNITUD)':fontcolor=0xff3344:fontsize=58:x=100:y=500,"
-                f"drawtext=fontfile={FONT_BOLD}:text='INTENSIDAD ESTIMADA\\: GRADO V-VI (MERCALLI)':fontcolor=0xffaa00:fontsize=26:x=100:y=600,"
-                f"drawtext=fontfile={FONT_REG}:text='NIVEL DE RIESGO\\: CRITICO POR DESBORDE / SISMO':fontcolor=white@0.85:fontsize=24:x=100:y=650,"
-                f"drawbox=x=100:y=740:w=880:h=320:color=0x00223a@0.8:t=fill,"
-                f"drawbox=x=100:y=740:w=880:h=320:color=0x00e5ff@0.4:t=2,"
-                f"drawtext=fontfile={FONT_BOLD}:text='RED SISMICA NACIONAL / METEOROLOGICA DEL PERU':fontcolor=0x00e5ff:fontsize=22:x=130:y=765,"
-                f"drawbox=x=130:y=820:w='120+t*130':h=16:color=0xff3344@0.9:t=fill,"
-                f"drawtext=fontfile={FONT_REG}:text='REPORTE PRELIMINAR ACTUALIZADO EN TIEMPO REAL':fontcolor=0xff8888:fontsize=22:x=130:y=860,"
-                f"drawtext=fontfile={FONT_MONO}:text='CANAL DE EMERGENCIA\\: INDECI COEN-PERU':fontcolor=0xffcc00:fontsize=22:x=130:y=900,"
-                f"drawtext=fontfile={FONT_REG}:text='ACTIVACION DE BRIGADAS DE PRIMERA RESPUESTA':fontcolor=white@0.8:fontsize=22:x=130:y=940,"
-                f"vignette=PI/4,format=yuv420p"
+            "SH03": build_modern_broadcast_card(
+                "● PARÁMETROS EN TIEMPO REAL",
+                "NIVEL DE AFECTACIÓN DETECTADO",
+                "%{eif\:68-8*t\:d} ML",
+                "MAGNITUD / PRECIPITACIÓN SÍSMICA Y PLUVIAL",
+                [
+                    ("• INTENSIDAD ESTIMADA: GRADO V-VI (MERCALLI)", "0xffaa00"),
+                    ("• NIVEL DE RIESGO: CRÍTICO POR DESBORDE O SISMO", "0xff3344"),
+                    ("• RED SÍSMICA / METEOROLÓGICA DEL PERÚ: ACTIVA", "white@0.9")
+                ],
+                accent_hex="0xffaa00",
+                bg_hex="0x140d08"
             ),
-            "SH10": (
-                "0x06192e",
-                f"drawgrid=w=60:h=60:t=1:c=0x0099ff@0.14,"
-                f"drawbox=x=60:y=380:w=960:h=1160:color=0x00aaff@0.4:t=3,"
-                f"drawbox=x=60:y=280:w=960:h=70:color=0x061e3d@0.95:t=fill,"
-                f"drawtext=fontfile={FONT_BOLD}:text='MAPA GEODESICO Y RADIO DE AFECTACION':fontcolor=0x00e5ff:fontsize=32:x=(w-text_w)/2:y=300,"
-                f"drawbox=x=140:y=480:w=800:h=460:color=0x004477@0.4:t=fill,"
-                f"drawbox=x=140:y=480:w=800:h=460:color=0x00d4ff@0.5:t=2,"
-                f"drawbox=x=220:y=560:w=640:h=300:color=0x00d4ff@0.3:t=1,"
-                f"drawbox=x=480:y=510:w=160:h=400:color=0xff9900@0.4:t=2,"
-                f"drawtext=fontfile={FONT_BOLD}:text='PERIMETRO DE IMPACTO Y CORREDORES DE EMERGENCIA':fontcolor=0xffaa00:fontsize=24:x=(w-text_w)/2:y=700,"
-                f"drawtext=fontfile={FONT_REG}:text='ZONIFICACION DE DANOS Y EVACUACION PRIORITARIA':fontcolor=0xff3344:fontsize=22:x=(w-text_w)/2:y=745,"
-                f"drawbox=x=140:y=990:w=800:h=480:color=0x041933@0.9:t=fill,"
-                f"drawbox=x=140:y=990:w=800:h=480:color=0x00aaff@0.3:t=2,"
-                f"drawtext=fontfile={FONT_BOLD}:text='EVALUACION DE INFRAESTRUCTURA EN PERU\\:':fontcolor=0x00e5ff:fontsize=26:x=180:y=1030,"
-                f"drawtext=fontfile={FONT_REG}:text='• VIAS VIALES\\: TRAMOS CON RESTRICCION':fontcolor=white@0.9:fontsize=23:x=180:y=1080,"
-                f"drawtext=fontfile={FONT_REG}:text='• SERVICIOS ESENCIALES\\: MONITOREO DE SUMINISTRO':fontcolor=0xff7777:fontsize=23:x=180:y=1125,"
-                f"drawtext=fontfile={FONT_REG}:text='• CUADRILLAS Y POLICIA\\: DESPLEGADAS EN ZONA':fontcolor=0x55ff88:fontsize=23:x=180:y=1170,"
-                f"drawtext=fontfile={FONT_MONO}:text='DICTAMEN\\: DECLARATORIA DE EMERGENCIA OFICIAL':fontcolor=0xffcc00:fontsize=23:x=180:y=1220,"
-                f"vignette=PI/4,format=yuv420p"
+            "SH10": build_modern_broadcast_card(
+                "● MAPA GEODÉSICO Y CORREDORES",
+                "EVALUACIÓN DE INFRAESTRUCTURA",
+                "RADIO DE IMPACTO",
+                "ZONIFICACIÓN DE DAÑOS Y RUTAS HABILITADAS",
+                [
+                    ("• RED VIAL: TRAMOS CON RESTRICCIÓN PREVENTIVA", "white@0.9"),
+                    ("• SERVICIOS ESENCIALES: SUMINISTRO BAJO VIGILANCIA", "0xff7777"),
+                    ("• CUADRILLAS Y POLICÍA: DESPLEGADAS EN EL PERÍMETRO", "0x55ff88")
+                ],
+                accent_hex="0x00e5ff",
+                bg_hex="0x071526"
             ),
-            "SH11": (
-                "0x1f140a",
-                f"drawbox=x=60:y=380:w=960:h=1160:color=0xff6600@0.4:t=3,"
-                f"drawbox=x=60:y=280:w=960:h=70:color=0x261408@0.95:t=fill,"
-                f"drawtext=fontfile={FONT_BOLD}:text='EVIDENCIA Y REPORTE OFICIAL INDECI / COEN':fontcolor=0xff8833:fontsize=30:x=(w-text_w)/2:y=300,"
-                f"drawbox=x=140:y=440:w=800:h=260:color=0x2e1705@0.9:t=fill,"
-                f"drawbox=x=140:y=440:w=800:h=260:color=0xff6600@0.8:t=3,"
-                f"drawbox=x=170:y=470:w=160:h=200:color=0xff5500@0.9:t=fill,"
-                f"drawtext=fontfile={FONT_BOLD}:text='INDECI':fontcolor=black:fontsize=26:x=200:y=520,"
-                f"drawtext=fontfile={FONT_BOLD}:text='COEN':fontcolor=black:fontsize=24:x=205:y=560,"
-                f"drawtext=fontfile={FONT_BOLD}:text='OFICIAL':fontcolor=black:fontsize=18:x=205:y=600,"
-                f"drawtext=fontfile={FONT_BOLD}:text='REPORTE OFICIAL CONSOLIDADO':fontcolor=0xffaa00:fontsize=26:x=360:y=480,"
-                f"drawtext=fontfile={FONT_REG}:text='BALANCE DE AFECTACIONES Y NECESIDADES':fontcolor=white@0.85:fontsize=22:x=360:y=530,"
-                f"drawtext=fontfile={FONT_REG}:text='RESPUESTA GUBERNAMENTAL EN CURSO':fontcolor=0x44ff88:fontsize=22:x=360:y=575,"
-                f"drawtext=fontfile={FONT_MONO}:text='DOCUMENTO\\: COEN-EMERGENCIA-PERU':fontcolor=0x00ffff:fontsize=20:x=360:y=625,"
-                f"drawbox=x=140:y=740:w=800:h=320:color=0x11161d@0.95:t=fill,"
-                f"drawbox=x=140:y=740:w=800:h=320:color=0x00e5ff@0.3:t=2,"
-                f"drawtext=fontfile={FONT_BOLD}:text='DISPOSICIONES DE SEGURIDAD EMITIDAS POR EL ESTADO':fontcolor=0x00e5ff:fontsize=21:x=170:y=770,"
-                f"drawbox=x=170:y=850:w='140+160*abs(sin(t*8))':h=8:color=0x00ffff:t=fill,"
-                f"drawbox=x=350:y=830:w='120+180*abs(sin(t*12))':h=10:color=0xffaa00:t=fill,"
-                f"drawbox=x=520:y=810:w='160+220*abs(sin(t*16))':h=12:color=0xff3344:t=fill,"
-                f"drawtext=fontfile={FONT_REG}:text='COORDINACION DIRECTA CON GOBIERNOS REGIONALES':fontcolor=white@0.8:fontsize=21:x=170:y=990,"
-                f"drawbox=x=140:y=1100:w=800:h=370:color=0x1f1a18@0.9:t=fill,"
-                f"drawtext=fontfile={FONT_BOLD}:text='MEDIDAS URGENTES RECOMENDADAS':fontcolor=0xffcc00:fontsize=24:x=180:y=1130,"
-                f"drawtext=fontfile={FONT_REG}:text='• MANTENER RUTAS DE EVACUACION DESPEJADAS':fontcolor=white@0.85:fontsize=22:x=180:y=1180,"
-                f"drawtext=fontfile={FONT_REG}:text='• SEGUIR UNICAMENTE COMUNICADOS OFICIALES':fontcolor=white@0.85:fontsize=22:x=180:y=1225,"
-                f"vignette=PI/4,format=yuv420p"
+            "SH11": build_modern_broadcast_card(
+                "● DOSSIER OFICIAL Y BALANCE",
+                "DICTAMEN DE EMERGENCIA NACIONAL",
+                "COEN / INDECI",
+                "DOCUMENTO OFICIAL CONSOLIDADO",
+                [
+                    ("• ASISTENCIA: BRIGADAS DE AUXILIO DESPLAZADAS", "0x55ff88"),
+                    ("• COMUNICADO: SEGUIR EXCLUSIVAMENTE FUENTES OFICIALES", "white@0.9"),
+                    ("• MONITOREO: EVALUACIÓN PERMANENTE EN LAS PRÓXIMAS HORAS", "0xffcc00")
+                ],
+                accent_hex="0xff6600",
+                bg_hex="0x1a0f08"
             ),
-            "SH13": (
-                "0x0b1320",
-                f"drawbox=x=60:y=380:w=960:h=1160:color=0x00ffff@0.4:t=4,"
-                f"drawbox=x=60:y=280:w=960:h=70:color=0x0e223b@0.95:t=fill,"
-                f"drawtext=fontfile={FONT_BOLD}:text='DICTAMEN DE EMERGENCIA · DEBATE CIUDADANO':fontcolor=0x00e5ff:fontsize=28:x=(w-text_w)/2:y=300,"
-                f"drawbox=x=120:y=460:w=840:h=380:color=0x132238@0.95:t=fill,"
-                f"drawbox=x=120:y=460:w=840:h=380:color=0xffe500@0.8:t=3,"
-                f"drawtext=fontfile={FONT_BOLD}:text='¿LAS MEDIDAS FUERON SUFICIENTES?':fontcolor=0xffe500:fontsize=36:x=(w-text_w)/2:y=530,"
-                f"drawtext=fontfile={FONT_REG}:text='¿Las autoridades actuaron a tiempo o':fontcolor=white:fontsize=30:x=(w-text_w)/2:y=610,"
-                f"drawtext=fontfile={FONT_REG}:text='faltó preparación ante el suceso?':fontcolor=white:fontsize=30:x=(w-text_w)/2:y=660,"
-                f"drawtext=fontfile={FONT_BOLD}:text='DEJA TU REPORTE DESDE TU REGION':fontcolor=0x00ffff:fontsize=28:x=(w-text_w)/2:y=735,"
-                f"drawbox=x=120:y=900:w=840:h=140:color=0x1f2e46@0.9:t=fill,"
-                f"drawbox=x=120:y=900:w=840:h=140:color=0x00e5ff@0.4:t=2,"
-                f"drawtext=fontfile={FONT_BOLD}:text='💬 COMENTA DESDE TU ZONA':fontcolor=white:fontsize=30:x=170:y=950,"
-                f"drawtext=fontfile={FONT_BOLD}:text='REPORTE PERU':fontcolor=0xffcc00:fontsize=22:x=680:y=955,"
-                f"drawbox=x=120:y=1080:w=840:h=140:color=0x1f2e46@0.9:t=fill,"
-                f"drawbox=x=120:y=1080:w=840:h=140:color=0x00e5ff@0.4:t=2,"
-                f"drawtext=fontfile={FONT_BOLD}:text='🔔 SIGUE AL RADAR PARA MAS NOTICIAS':fontcolor=white:fontsize=28:x=150:y=1135,"
-                f"drawtext=fontfile={FONT_REG}:text='COBERTURA NACIONAL CON FUENTES OFICIALES':fontcolor=white@0.6:fontsize=22:x=(w-text_w)/2:y=1380,"
-                f"vignette=PI/4,format=yuv420p"
+            "SH13": build_modern_broadcast_card(
+                "● DEBATE CIUDADANO · TIKTOK",
+                "¿LAS MEDIDAS FUERON SUFICIENTES?",
+                "DEJA TU REPORTE",
+                "¿Las autoridades actuaron a tiempo o faltó prevención?",
+                [
+                    ("💬 Comenta tu testimonio o reporte desde tu región", "0xffe500"),
+                    ("🔔 Sigue al Radar para el seguimiento en tiempo real", "white@0.9"),
+                    ("⚡ Información contrastada con fuentes de primera línea", "0x00ffff")
+                ],
+                accent_hex="0xffe500",
+                bg_hex="0x0d131f",
+                footer_text="💬 TU OPINIÓN ES CLAVE · COMENTA ABAJO"
             ),
         }
     elif is_cyber:
         cards = {
-            "SH01": (
-                "0x06111e",
-                f"drawgrid=w=100:h=100:t=2:c=0x00ffff@0.15,"
-                f"drawbox=x=60:y=380:w=960:h=1160:color=0x00e5ff@0.3:t=3,"
-                f"drawbox=x=60:y=280:w=960:h=70:color=0x0a1a2f@0.9:t=fill,"
-                f"drawtext=fontfile={FONT_BOLD}:text='CENTRO DE MONITOREO SOC · RADAR DE AMENAZAS':fontcolor=0x00ffff:fontsize=30:x=(w-text_w)/2:y=300,"
-                f"drawtext=fontfile={FONT_BOLD}:text='INCIDENTE CRITICO EN INFRAESTRUCTURA DE RED':fontcolor=0xffcc00:fontsize=26:x=100:y=440,"
-                f"drawtext=fontfile={FONT_REG}:text='OBJETIVO\\: SERVIDORES Y SERVICIOS ESENCIALES':fontcolor=white@0.85:fontsize=24:x=100:y=490,"
-                f"drawtext=fontfile={FONT_REG}:text='VECTOR DE INFECCION\\: EXPLOIT ZERO-DAY ACTIVO':fontcolor=0xff3344:fontsize=24:x=100:y=530,"
-                f"drawtext=fontfile={FONT_MONO}:text='FIREWALL STATUS\\: BREACH CONTAINMENT MODE ON':fontcolor=0x00ffff:fontsize=22:x=100:y=1460,"
-                f"vignette=PI/4,format=yuv420p"
+            "SH01": build_modern_broadcast_card(
+                "● CENTRO SOC · INTEL DE AMENAZAS",
+                "RADAR DE SEGURIDAD DIGITAL",
+                "ALERTA ZERO-DAY",
+                "INCIDENTE CRÍTICO EN INFRAESTRUCTURA DE RED",
+                [
+                    ("• OBJETIVO: SERVIDORES Y SERVICIOS ESENCIALES", "white@0.9"),
+                    ("• VECTOR: EXPLOIT DE DÍA CERO DETECTADO", "0xff3344"),
+                    ("• MITIGACIÓN: FIREWALL Y FILTRADO BGP EN VIVO", "0x00ffff")
+                ],
+                accent_hex="0x00e5ff",
+                bg_hex="0x060f1c"
             ),
-            "SH03": (
-                "0x091422",
-                f"drawgrid=w=80:h=80:t=1:c=0x00b4d8@0.12,"
-                f"drawbox=x=60:y=380:w=960:h=1160:color=0x00b4d8@0.35:t=2,"
-                f"drawbox=x=60:y=280:w=960:h=70:color=0x081c30@0.9:t=fill,"
-                f"drawtext=fontfile={FONT_BOLD}:text='TRAFICO MALICIOSO Y ANCHO DE BANDA':fontcolor=0x00e5ff:fontsize=32:x=(w-text_w)/2:y=300,"
-                f"drawtext=fontfile={FONT_BOLD}:text='PICO DE ATAQUE REGISTRADO\\:':fontcolor=white:fontsize=30:x=100:y=450,"
-                f"drawtext=fontfile={FONT_MONO}:text='%{{eif\\:940-120*t\\:d}} GBPS':fontcolor=0xff3344:fontsize=64:x=100:y=500,"
-                f"drawtext=fontfile={FONT_BOLD}:text='TASA DE ATAQUE\\: 14.8 MILLONES PPS (CRITICO)':fontcolor=0xffaa00:fontsize=26:x=100:y=600,"
-                f"drawtext=fontfile={FONT_REG}:text='ANOMALIA\\: SATURACION DE ENLACES PRIMARIOS':fontcolor=white@0.85:fontsize=26:x=100:y=650,"
-                f"drawbox=x=100:y=740:w=880:h=320:color=0x00223a@0.8:t=fill,"
-                f"drawbox=x=100:y=740:w=880:h=320:color=0x00e5ff@0.4:t=2,"
-                f"drawtext=fontfile={FONT_BOLD}:text='ANALISIS DE PAQUETES IP EN TIEMPO REAL':fontcolor=0x00e5ff:fontsize=22:x=130:y=765,"
-                f"drawbox=x=130:y=820:w='120+t*130':h=16:color=0xff3344@0.9:t=fill,"
-                f"drawtext=fontfile={FONT_REG}:text='PATRONES DE RANSOMWARE EN EJECUCION DETECTADOS':fontcolor=0xff8888:fontsize=22:x=130:y=860,"
-                f"drawtext=fontfile={FONT_MONO}:text='PROTOCOLO\\: BLOQUEO BGP Y QUARANTINE ON':fontcolor=0xffcc00:fontsize=22:x=130:y=900,"
-                f"vignette=PI/4,format=yuv420p"
+            "SH03": build_modern_broadcast_card(
+                "● TELEMETRÍA DE TRÁFICO MALICIOSO",
+                "PICO DE ATAQUE DDOS REGISTRADO",
+                "%{eif\:940-120*t\:d} GBPS",
+                "TASA DE PAQUETES: 14.8 MILLONES PPS (CRÍTICO)",
+                [
+                    ("• ANOMALÍA: SATURACIÓN DE ENLACES PRINCIPALES", "0xffaa00"),
+                    ("• ANÁLISIS IP: FIRMAS DE RANSOMWARE EN TIEMPO REAL", "0xff8888"),
+                    ("• PROTOCOLO: CUARENTENA DE NODOS ACTIVADA", "0x00ffff")
+                ],
+                accent_hex="0xff3344",
+                bg_hex="0x14080c"
             ),
-            "SH10": (
-                "0x06152b",
-                f"drawgrid=w=60:h=60:t=1:c=0x0099ff@0.14,"
-                f"drawbox=x=60:y=380:w=960:h=1160:color=0x00aaff@0.4:t=3,"
-                f"drawbox=x=60:y=280:w=960:h=70:color=0x061e3d@0.95:t=fill,"
-                f"drawtext=fontfile={FONT_BOLD}:text='TOPOLOGIA DE RED Y NODOS AISLADOS':fontcolor=0x00e5ff:fontsize=32:x=(w-text_w)/2:y=300,"
-                f"drawbox=x=140:y=480:w=800:h=460:color=0x004477@0.4:t=fill,"
-                f"drawbox=x=140:y=480:w=800:h=460:color=0x00d4ff@0.5:t=2,"
-                f"drawtext=fontfile={FONT_BOLD}:text='MAPA DE SERVIDORES Y FIREWALL PERIMETRAL':fontcolor=0xffaa00:fontsize=26:x=(w-text_w)/2:y=700,"
-                f"drawtext=fontfile={FONT_REG}:text='AISLAMIENTO DE SUBRED PARA CONTENER IMPACTO':fontcolor=0xff3344:fontsize=22:x=(w-text_w)/2:y=745,"
-                f"drawbox=x=140:y=990:w=800:h=480:color=0x041933@0.9:t=fill,"
-                f"drawbox=x=140:y=990:w=800:h=480:color=0x00aaff@0.3:t=2,"
-                f"drawtext=fontfile={FONT_BOLD}:text='ESTADO FORENSE DIGITAL\\:':fontcolor=0x00e5ff:fontsize=26:x=180:y=1030,"
-                f"drawtext=fontfile={FONT_REG}:text='• VECTOR DE ENTRADA\\: PARCHEADO':fontcolor=0x55ff88:fontsize=23:x=180:y=1080,"
-                f"drawtext=fontfile={FONT_REG}:text='• BASE DE DATOS\\: REVISION DE CIFRADO':fontcolor=0xffcc00:fontsize=23:x=180:y=1125,"
-                f"vignette=PI/4,format=yuv420p"
+            "SH10": build_modern_broadcast_card(
+                "● TOPOLOGÍA DE RED Y FIREWALL",
+                "AISLAMIENTO DE SUBREDES",
+                "NODOS AISLADOS",
+                "MAPA DE SERVIDORES Y CONTENCIÓN PERIMETRAL",
+                [
+                    ("• VECTOR DE ENTRADA: PARCHADO EN SISTEMAS CORE", "0x55ff88"),
+                    ("• BASES DE DATOS: INTEGRIDAD Y CIFRADO REVISADOS", "0xffcc00"),
+                    ("• TRÁFICO SEGURO: RESTABLECIÉNDOSE GRADUALMENTE", "white@0.9")
+                ],
+                accent_hex="0x00e5ff",
+                bg_hex="0x061426"
             ),
-            "SH11": (
-                "0x15161c",
-                f"drawbox=x=60:y=380:w=960:h=1160:color=0x00e5ff@0.4:t=3,"
-                f"drawbox=x=60:y=280:w=960:h=70:color=0x0f1f33@0.95:t=fill,"
-                f"drawtext=fontfile={FONT_BOLD}:text='ANALISIS FORENSE DIGITAL · REPORTE CVE':fontcolor=0x00e5ff:fontsize=30:x=(w-text_w)/2:y=300,"
-                f"drawbox=x=140:y=440:w=800:h=260:color=0x132238@0.9:t=fill,"
-                f"drawbox=x=140:y=440:w=800:h=260:color=0x00e5ff@0.6:t=3,"
-                f"drawtext=fontfile={FONT_BOLD}:text='CVE FORENSE ZERO-DAY':fontcolor=0xffaa00:fontsize=26:x=180:y=480,"
-                f"drawtext=fontfile={FONT_REG}:text='FIRMA CRIPTOGRAFICA DEL ATAQUE CONFIRMADA':fontcolor=white@0.85:fontsize=22:x=180:y=530,"
-                f"drawtext=fontfile={FONT_MONO}:text='HASH\\: SHA256-APT-CRITICAL-EXPLOIT':fontcolor=0x00ffff:fontsize=20:x=180:y=580,"
-                f"drawbox=x=140:y=740:w=800:h=320:color=0x11161d@0.95:t=fill,"
-                f"drawtext=fontfile={FONT_BOLD}:text='EVALUACION DE INCIDENTE POR EQUIPO DE CIBERDEFENSA':fontcolor=0x00e5ff:fontsize=21:x=170:y=770,"
-                f"vignette=PI/4,format=yuv420p"
+            "SH11": build_modern_broadcast_card(
+                "● ANÁLISIS FORENSE DIGITAL",
+                "EVIDENCIA Y REPORTE CVE",
+                "CVE ZERO-DAY",
+                "FIRMA CRIPTOGRÁFICA DEL ATAQUE CONFIRMADA",
+                [
+                    ("• PAYLOAD: SHA256-APT-EXPLOIT IDENTIFICADO", "0x00ffff"),
+                    ("• RESPONSABILIDAD: GRUPO AVANZADO DE CIBERCRIMEN", "0xffaa00"),
+                    ("• ESTADO: CONTENCIÓN TOTAL Y EVALUACIÓN FORENSE", "white@0.9")
+                ],
+                accent_hex="0x00e5ff",
+                bg_hex="0x09121f"
             ),
-            "SH13": (
-                "0x091220",
-                f"drawbox=x=60:y=380:w=960:h=1160:color=0x00ffff@0.4:t=4,"
-                f"drawbox=x=60:y=280:w=960:h=70:color=0x0e223b@0.95:t=fill,"
-                f"drawtext=fontfile={FONT_BOLD}:text='DEBATE · SEGURIDAD DIGITAL GLOBAL':fontcolor=0x00e5ff:fontsize=30:x=(w-text_w)/2:y=300,"
-                f"drawbox=x=120:y=460:w=840:h=380:color=0x132238@0.95:t=fill,"
-                f"drawbox=x=120:y=460:w=840:h=380:color=0xffe500@0.8:t=3,"
-                f"drawtext=fontfile={FONT_BOLD}:text='¿ESTAMOS REALMENTE PROTEGIDOS?':fontcolor=0xffe500:fontsize=36:x=(w-text_w)/2:y=530,"
-                f"drawtext=fontfile={FONT_REG}:text='¿O los servicios esenciales pueden caer':fontcolor=white:fontsize=30:x=(w-text_w)/2:y=610,"
-                f"drawtext=fontfile={FONT_REG}:text='en cualquier momento por un exploit?':fontcolor=white:fontsize=30:x=(w-text_w)/2:y=660,"
-                f"drawtext=fontfile={FONT_BOLD}:text='DEJA TU OPINION EN LOS COMENTARIOS':fontcolor=0x00ffff:fontsize=28:x=(w-text_w)/2:y=735,"
-                f"drawbox=x=120:y=900:w=840:h=140:color=0x1f2e46@0.9:t=fill,"
-                f"drawtext=fontfile={FONT_BOLD}:text='💬 COMENTA TU POSTURA':fontcolor=white:fontsize=30:x=170:y=950,"
-                f"drawbox=x=120:y=1080:w=840:h=140:color=0x1f2e46@0.9:t=fill,"
-                f"drawtext=fontfile={FONT_BOLD}:text='🔔 SIGUE AL RADAR PARA MAS NOTICIAS':fontcolor=white:fontsize=28:x=150:y=1135,"
-                f"vignette=PI/4,format=yuv420p"
+            "SH13": build_modern_broadcast_card(
+                "● DEBATE · CIBERSEGURIDAD GLOBAL",
+                "¿ESTAMOS REALMENTE PROTEGIDOS?",
+                "DEJA TU OPINIÓN",
+                "¿O los servicios esenciales pueden caer en cualquier momento?",
+                [
+                    ("💬 Comenta tu postura sobre la seguridad digital hoy", "0xffe500"),
+                    ("🔔 Sigue al Radar para enterarte de amenazas y fallos", "white@0.9"),
+                    ("⚡ Cobertura forense con fuentes especializadas", "0x00ffff")
+                ],
+                accent_hex="0xffe500",
+                bg_hex="0x091220",
+                footer_text="💬 COMENTA TU POSTURA · TIKTOK RADAR"
             ),
         }
     elif is_ai:
         cards = {
-            "SH01": (
-                "0x061324",
-                f"drawgrid=w=100:h=100:t=2:c=0x00e5ff@0.15,"
-                f"drawbox=x=60:y=380:w=960:h=1160:color=0x00e5ff@0.3:t=3,"
-                f"drawbox=x=60:y=280:w=960:h=70:color=0x0a1a2f@0.9:t=fill,"
-                f"drawtext=fontfile={FONT_BOLD}:text='RADAR DE LITOGRAFIA Y ARQUITECTURA DE CHIPS':fontcolor=0x00ffff:fontsize=30:x=(w-text_w)/2:y=300,"
-                f"drawtext=fontfile={FONT_BOLD}:text='CADENA GLOBAL DE SEMICONDUCTORES Y SUPERCOMPUTO':fontcolor=0xffcc00:fontsize=24:x=100:y=440,"
-                f"drawtext=fontfile={FONT_REG}:text='FABRICACION DE VANGUARDIA\\: PROCESO DE 2 NM EUV':fontcolor=white@0.85:fontsize=24:x=100:y=490,"
-                f"drawtext=fontfile={FONT_REG}:text='ESTADO DE FABRICACION\\: ALTA EFICIENCIA ENERGETICA':fontcolor=0x44ff88:fontsize=24:x=100:y=530,"
-                f"drawtext=fontfile={FONT_MONO}:text='WAFER FAB\\: 300MM HIGH-NA LITHOGRAPHY ACTIVE':fontcolor=0x00ffff:fontsize=22:x=100:y=1460,"
-                f"vignette=PI/4,format=yuv420p"
+            "SH01": build_modern_broadcast_card(
+                "● RADAR DE LITOGRAFÍA Y CHIPS",
+                "CADENA GLOBAL DE SEMICONDUCTORES",
+                "PROCESO 2 NM",
+                "SUPERCHIPS Y MODELOS FRONTERA DE IA",
+                [
+                    ("• LITOGRAFÍA: HIGH-NA EUV EN SALA BLANCA", "0x00ffff"),
+                    ("• EFICIENCIA: +40% RESPECTO A GENERACIÓN PREVIA", "0x55ff88"),
+                    ("• DISPUTA: CONTROL DE TECNOLOGÍA CRÍTICA DE CÓMPUTO", "0xffcc00")
+                ],
+                accent_hex="0x00e5ff",
+                bg_hex="0x061224"
             ),
-            "SH03": (
-                "0x081628",
-                f"drawgrid=w=80:h=80:t=1:c=0x00b4d8@0.12,"
-                f"drawbox=x=60:y=380:w=960:h=1160:color=0x00b4d8@0.35:t=2,"
-                f"drawbox=x=60:y=280:w=960:h=70:color=0x081c30@0.9:t=fill,"
-                f"drawtext=fontfile={FONT_BOLD}:text='POTENCIA DE CALCULO E INFERENCIA IA':fontcolor=0x00e5ff:fontsize=32:x=(w-text_w)/2:y=300,"
-                f"drawtext=fontfile={FONT_BOLD}:text='CAPACIDAD DE PROCESAMIENTO\\:':fontcolor=white:fontsize=30:x=100:y=450,"
-                f"drawtext=fontfile={FONT_MONO}:text='%{{eif\\:180-25*t\\:d}} TFLOPS':fontcolor=0x00ffff:fontsize=64:x=100:y=500,"
-                f"drawtext=fontfile={FONT_BOLD}:text='NODO LITOGRAFICO\\: 2 NM GATE-ALL-AROUND':fontcolor=0xffaa00:fontsize=26:x=100:y=600,"
-                f"drawtext=fontfile={FONT_REG}:text='ANCHO DE BANDA DE MEMORIA\\: HBM3E DE ALTA VELOCIDAD':fontcolor=white@0.85:fontsize=24:x=100:y=650,"
-                f"drawbox=x=100:y=740:w=880:h=320:color=0x00223a@0.8:t=fill,"
-                f"drawbox=x=100:y=740:w=880:h=320:color=0x00e5ff@0.4:t=2,"
-                f"drawtext=fontfile={FONT_BOLD}:text='ESCALAMIENTO DE MODELOS DE FRONTERA':fontcolor=0x00e5ff:fontsize=22:x=130:y=765,"
-                f"drawbox=x=130:y=820:w='120+t*130':h=16:color=0x00ffff@0.9:t=fill,"
-                f"drawtext=fontfile={FONT_REG}:text='REDUCCION DE LATENCIA EN CENTROS DE DATOS':fontcolor=0x55ff88:fontsize=22:x=130:y=860,"
-                f"drawtext=fontfile={FONT_MONO}:text='EFICIENCIA ENERGETICA\\: +40% FRENTE A GEN PREVIA':fontcolor=0xffcc00:fontsize=22:x=130:y=900,"
-                f"vignette=PI/4,format=yuv420p"
+            "SH03": build_modern_broadcast_card(
+                "● MÉTRICAS DE CÓMPUTO E INFERENCIA",
+                "POTENCIA DE PROCESAMIENTO",
+                "%{eif\:180-25*t\:d} TFLOPS",
+                "CAPACIDAD DE CÁLCULO EN TIEMPO REAL",
+                [
+                    ("• NODO: 2 NM GATE-ALL-AROUND (NANOSHEET)", "0xffaa00"),
+                    ("• ANCHO DE BANDA: MEMORIA HBM3E DE ULTRA VELOCIDAD", "white@0.9"),
+                    ("• LATENCIA: OPTIMIZADA PARA MODELOS MULTIMODALES", "0x55ff88")
+                ],
+                accent_hex="0x00e5ff",
+                bg_hex="0x07152b"
             ),
-            "SH10": (
-                "0x06182c",
-                f"drawgrid=w=60:h=60:t=1:c=0x0099ff@0.14,"
-                f"drawbox=x=60:y=380:w=960:h=1160:color=0x00aaff@0.4:t=3,"
-                f"drawbox=x=60:y=280:w=960:h=70:color=0x061e3d@0.95:t=fill,"
-                f"drawtext=fontfile={FONT_BOLD}:text='ARQUITECTURA DE SILICIO Y MATRIZ TENSOR':fontcolor=0x00e5ff:fontsize=30:x=(w-text_w)/2:y=300,"
-                f"drawbox=x=140:y=480:w=800:h=460:color=0x004477@0.4:t=fill,"
-                f"drawbox=x=140:y=480:w=800:h=460:color=0x00d4ff@0.5:t=2,"
-                f"drawtext=fontfile={FONT_BOLD}:text='SUBSISTEMA DE NUCLEOS DE IA Y MEMORIA APILADA':fontcolor=0xffaa00:fontsize=24:x=(w-text_w)/2:y=700,"
-                f"drawtext=fontfile={FONT_REG}:text='INTERCONEXION ULTRA RAPIDA CHIP-TO-CHIP':fontcolor=0x00ffff:fontsize=22:x=(w-text_w)/2:y=745,"
-                f"drawbox=x=140:y=990:w=800:h=480:color=0x041933@0.9:t=fill,"
-                f"drawtext=fontfile={FONT_BOLD}:text='INNOVACIONES CLAVE DE LITOGRAFIA\\:':fontcolor=0x00e5ff:fontsize=26:x=180:y=1030,"
-                f"drawtext=fontfile={FONT_REG}:text='• TRANSISTORES GAA (NANOSHEET)\\: ACTIVOS':fontcolor=0x55ff88:fontsize=23:x=180:y=1080,"
-                f"drawtext=fontfile={FONT_REG}:text='• ALIMENTACION TRASERA (BACKSIDE POWER)\\: INTEGRADA':fontcolor=white@0.9:fontsize=23:x=180:y=1125,"
-                f"vignette=PI/4,format=yuv420p"
+            "SH10": build_modern_broadcast_card(
+                "● BLUEPRINT DE SILICIO 3D",
+                "ARQUITECTURA DE MATRIZ TENSOR",
+                "DIAGRAMA 2NM",
+                "INTERCONEXIÓN ULTRA RÁPIDA CHIP-TO-CHIP",
+                [
+                    ("• TRANSISTORES GAA: MÁXIMA DENSIDAD INTEGRADA", "0x55ff88"),
+                    ("• ALIMENTACIÓN TRASERA (BACKSIDE POWER): ACTIVA", "white@0.9"),
+                    ("• DISIPACIÓN TÉRMICA: DISEÑADA PARA DATA CENTERS", "0x00ffff")
+                ],
+                accent_hex="0x00e5ff",
+                bg_hex="0x061529"
             ),
-            "SH11": (
-                "0x0f1826",
-                f"drawbox=x=60:y=380:w=960:h=1160:color=0x00e5ff@0.4:t=3,"
-                f"drawbox=x=60:y=280:w=960:h=70:color=0x091b30@0.95:t=fill,"
-                f"drawtext=fontfile={FONT_BOLD}:text='BENCHMARK OFICIAL Y PRUEBAS DE INFERENCIA':fontcolor=0x00e5ff:fontsize=28:x=(w-text_w)/2:y=300,"
-                f"drawbox=x=140:y=440:w=800:h=260:color=0x132238@0.9:t=fill,"
-                f"drawbox=x=140:y=440:w=800:h=260:color=0x00e5ff@0.6:t=3,"
-                f"drawtext=fontfile={FONT_BOLD}:text='RESULTADOS CERTIFICADOS DE LABORATORIO':fontcolor=0xffaa00:fontsize=26:x=180:y=480,"
-                f"drawtext=fontfile={FONT_REG}:text='MAXIMA VELOCIDAD DE RESPUESTA EN MODELOS FRONTERA':fontcolor=white@0.85:fontsize=22:x=180:y=530,"
-                f"drawtext=fontfile={FONT_MONO}:text='METRICA\\: TOKENS/SEG EN TIEMPO RECORD':fontcolor=0x00ffff:fontsize=20:x=180:y=580,"
-                f"drawbox=x=140:y=740:w=800:h=320:color=0x11161d@0.95:t=fill,"
-                f"drawtext=fontfile={FONT_BOLD}:text='IMPACTO DIRECTO EN LA INDUSTRIA DE INTELIGENCIA ARTIFICIAL':fontcolor=0x00e5ff:fontsize=20:x=170:y=770,"
-                f"vignette=PI/4,format=yuv420p"
+            "SH11": build_modern_broadcast_card(
+                "● BENCHMARK OFICIAL DE FRONTERA",
+                "PRUEBAS DE INFERENCIA EN ESTUDIO",
+                "BENCHMARK TEST",
+                "RESULTADOS CERTIFICADOS DE LABORATORIO",
+                [
+                    ("• VELOCIDAD: TOKENS POR SEGUNDO EN TIEMPO RÉCORD", "0x00ffff"),
+                    ("• RENDIMIENTO: SUPERA LÍMITES PREVIOS DE ARQUITECTURA", "0xffaa00"),
+                    ("• IMPACTO: DETERMINANTE PARA EL DESPLIEGUE GLOBAL", "white@0.9")
+                ],
+                accent_hex="0x00e5ff",
+                bg_hex="0x081628"
             ),
-            "SH13": (
-                "0x0a1422",
-                f"drawbox=x=60:y=380:w=960:h=1160:color=0x00ffff@0.4:t=4,"
-                f"drawbox=x=60:y=280:w=960:h=70:color=0x0e223b@0.95:t=fill,"
-                f"drawtext=fontfile={FONT_BOLD}:text='DEBATE · EL FUTURO DE LA INTELIGENCIA ARTIFICIAL':fontcolor=0x00e5ff:fontsize=28:x=(w-text_w)/2:y=300,"
-                f"drawbox=x=120:y=460:w=840:h=380:color=0x132238@0.95:t=fill,"
-                f"drawbox=x=120:y=460:w=840:h=380:color=0xffe500@0.8:t=3,"
-                f"drawtext=fontfile={FONT_BOLD}:text='¿ESTE SALTO NOS ACERCA A LA AGI?':fontcolor=0xffe500:fontsize=36:x=(w-text_w)/2:y=530,"
-                f"drawtext=fontfile={FONT_REG}:text='¿Crees que el hardware superará pronto':fontcolor=white:fontsize=30:x=(w-text_w)/2:y=610,"
-                f"drawtext=fontfile={FONT_REG}:text='las capacidades del cerebro humano?':fontcolor=white:fontsize=30:x=(w-text_w)/2:y=660,"
-                f"drawtext=fontfile={FONT_BOLD}:text='DEJA TU OPINION EN LOS COMENTARIOS':fontcolor=0x00ffff:fontsize=28:x=(w-text_w)/2:y=735,"
-                f"drawbox=x=120:y=900:w=840:h=140:color=0x1f2e46@0.9:t=fill,"
-                f"drawtext=fontfile={FONT_BOLD}:text='💬 DEJA TU PREDICCION':fontcolor=white:fontsize=30:x=170:y=950,"
-                f"drawbox=x=120:y=1080:w=840:h=140:color=0x1f2e46@0.9:t=fill,"
-                f"drawtext=fontfile={FONT_BOLD}:text='🔔 SIGUE AL RADAR PARA MAS NOTICIAS':fontcolor=white:fontsize=28:x=150:y=1135,"
-                f"vignette=PI/4,format=yuv420p"
+            "SH13": build_modern_broadcast_card(
+                "● DEBATE · EL FUTURO DE LA IA",
+                "¿ESTE SALTO NOS ACERCA A LA AGI?",
+                "DEJA TU OPINIÓN",
+                "¿Crees que el hardware superará pronto al cerebro humano?",
+                [
+                    ("💬 Deja tu predicción en los comentarios", "0xffe500"),
+                    ("🔔 Sigue al Radar para más análisis de tecnología", "white@0.9"),
+                    ("⚡ Reportes diarios con datos y fuentes oficiales", "0x00ffff")
+                ],
+                accent_hex="0xffe500",
+                bg_hex="0x081322",
+                footer_text="💬 DEJA TU PREDICCIÓN · TIKTOK RADAR"
             ),
         }
     elif is_space:
         cards = {
-            "SH01": (
-                "0x060f1c",
-                f"drawgrid=w=100:h=100:t=2:c=0x00e5ff@0.15,"
-                f"drawbox=x=60:y=380:w=960:h=1160:color=0x00e5ff@0.3:t=3,"
-                f"drawbox=x=60:y=280:w=960:h=70:color=0x0a1a2f@0.9:t=fill,"
-                f"drawtext=fontfile={FONT_BOLD}:text='CENTRO DE CONTROL · RASTREO ORBITAL DEEP SPACE':fontcolor=0x00ffff:fontsize=30:x=(w-text_w)/2:y=300,"
-                f"drawtext=fontfile={FONT_BOLD}:text='TELEMETRIA DE MISION PLANETARIA NASA / ESA':fontcolor=0xffcc00:fontsize=26:x=100:y=440,"
-                f"drawtext=fontfile={FONT_REG}:text='TRAYECTORIA\\: MANIOBRA DE APROXIMACION':fontcolor=white@0.85:fontsize=24:x=100:y=490,"
-                f"drawtext=fontfile={FONT_REG}:text='COMUNICACION\\: SENAL ENLAZADA A RED ESPACIAL':fontcolor=0x44ff88:fontsize=24:x=100:y=530,"
-                f"drawtext=fontfile={FONT_MONO}:text='ORBIT\\: 410 KM ALTITUDE · INCLINATION NOMINAL':fontcolor=0x00ffff:fontsize=22:x=100:y=1460,"
-                f"vignette=PI/4,format=yuv420p"
+            "SH01": build_modern_broadcast_card(
+                "● DEEP SPACE NETWORK · CENTRO DE CONTROL",
+                "RASTREO ORBITAL DE MISIÓN",
+                "ÓRBITA 410 KM",
+                "TELEMETRÍA PLANETARIA NASA / ESA",
+                [
+                    ("• TRAYECTORIA: MANIOBRA DE APROXIMACIÓN NOMINAL", "white@0.9"),
+                    ("• ENLACE: RED DE ESPACIO PROFUNDO CONECTADA", "0x55ff88"),
+                    ("• ESTADO: PARÁMETROS DE NAVEGACIÓN EN TOLERANCIA", "0x00ffff")
+                ],
+                accent_hex="0x00e5ff",
+                bg_hex="0x050e1a"
             ),
-            "SH03": (
-                "0x081324",
-                f"drawgrid=w=80:h=80:t=1:c=0x00b4d8@0.12,"
-                f"drawbox=x=60:y=380:w=960:h=1160:color=0x00b4d8@0.35:t=2,"
-                f"drawbox=x=60:y=280:w=960:h=70:color=0x081c30@0.9:t=fill,"
-                f"drawtext=fontfile={FONT_BOLD}:text='VELOCIDAD Y ALTURA DE DESCENSO ORBITAL':fontcolor=0x00e5ff:fontsize=30:x=(w-text_w)/2:y=300,"
-                f"drawtext=fontfile={FONT_BOLD}:text='VELOCIDAD DE APROXIMACION\\:':fontcolor=white:fontsize=30:x=100:y=450,"
-                f"drawtext=fontfile={FONT_MONO}:text='%{{eif\\:27800-1400*t\\:d}} KM/H':fontcolor=0x00ffff:fontsize=60:x=100:y=500,"
-                f"drawtext=fontfile={FONT_BOLD}:text='TASA DE FRENADO\\: PROPULSION CONTROLADA':fontcolor=0xffaa00:fontsize=26:x=100:y=600,"
-                f"drawtext=fontfile={FONT_REG}:text='ANGULO DE REENTRADA\\: PARAMETROS EN TOLERANCIA':fontcolor=white@0.85:fontsize=24:x=100:y=650,"
-                f"drawbox=x=100:y=740:w=880:h=320:color=0x00223a@0.8:t=fill,"
-                f"drawtext=fontfile={FONT_BOLD}:text='MONITOREO DE NAVEGACION AUTONOMA EN VIVO':fontcolor=0x00e5ff:fontsize=22:x=130:y=765,"
-                f"drawbox=x=130:y=820:w='120+t*130':h=16:color=0x00ffff@0.9:t=fill,"
-                f"drawtext=fontfile={FONT_REG}:text='PROPULSORES IONICOS Y TOBERAS CALIBRADAS':fontcolor=0x55ff88:fontsize=22:x=130:y=860,"
-                f"vignette=PI/4,format=yuv420p"
+            "SH03": build_modern_broadcast_card(
+                "● TELEMETRÍA DE APROXIMACIÓN",
+                "VELOCIDAD Y ALTURA DE DESCENSO",
+                "%{eif\:27800-1400*t\:d} KM/H",
+                "FRENADO CONTROLADO Y REENTRADA",
+                [
+                    ("• PROPULSIÓN: TOBERAS Y RETROCOHETES ACTIVOS", "0xffaa00"),
+                    ("• ÁNGULO DE DESCENSO: CORRECCIÓN MILIMÉTRICA", "0x00ffff"),
+                    ("• NAVEGACIÓN: ALGORITMO AUTÓNOMO EN TIEMPO REAL", "white@0.9")
+                ],
+                accent_hex="0x00e5ff",
+                bg_hex="0x061122"
             ),
-            "SH10": (
-                "0x051326",
-                f"drawgrid=w=60:h=60:t=1:c=0x0099ff@0.14,"
-                f"drawbox=x=60:y=380:w=960:h=1160:color=0x00aaff@0.4:t=3,"
-                f"drawbox=x=60:y=280:w=960:h=70:color=0x061e3d@0.95:t=fill,"
-                f"drawtext=fontfile={FONT_BOLD}:text='BLUEPRINT TECNICO Y ESQUEMA DE PROPULSION':fontcolor=0x00e5ff:fontsize=30:x=(w-text_w)/2:y=300,"
-                f"drawbox=x=140:y=480:w=800:h=460:color=0x004477@0.4:t=fill,"
-                f"drawbox=x=140:y=480:w=800:h=460:color=0x00d4ff@0.5:t=2,"
-                f"drawtext=fontfile={FONT_BOLD}:text='SUBSISTEMA DE TOBERAS Y ESCUDO TERMICO':fontcolor=0xffaa00:fontsize=24:x=(w-text_w)/2:y=700,"
-                f"drawbox=x=140:y=990:w=800:h=480:color=0x041933@0.9:t=fill,"
-                f"drawtext=fontfile={FONT_BOLD}:text='DIAGNOSTICO DE SENSORES Y PANELES SOLARES\\:':fontcolor=0x00e5ff:fontsize=24:x=180:y=1030,"
-                f"drawtext=fontfile={FONT_REG}:text='• DESPLIEGUE DE PANELES\\: COMPLETADO AL 100%':fontcolor=0x55ff88:fontsize=23:x=180:y=1080,"
-                f"drawtext=fontfile={FONT_REG}:text='• RESERVA DE COMBUSTIBLE\\: OPTIMA PARA RETORNO':fontcolor=white@0.9:fontsize=23:x=180:y=1125,"
-                f"vignette=PI/4,format=yuv420p"
+            "SH10": build_modern_broadcast_card(
+                "● BLUEPRINT TECNOLÓGICO 3D",
+                "ESQUEMA DE SONDA Y PROPULSIÓN",
+                "BLUEPRINT 3D",
+                "SUBSISTEMA DE ESCUDO TÉRMICO Y ENERGÍA",
+                [
+                    ("• PANELES SOLARES: DESPLIEGUE AL 100% OPERATIVO", "0x55ff88"),
+                    ("• COMBUSTIBLE: RESERVA ÓPTIMA PARA FASE FINAL", "white@0.9"),
+                    ("• SENSORES ÓPTICOS: CALIBRADOS PARA DESCENSO", "0x00ffff")
+                ],
+                accent_hex="0x00e5ff",
+                bg_hex="0x061224"
             ),
-            "SH11": (
-                "0x0b1626",
-                f"drawbox=x=60:y=380:w=960:h=1160:color=0x00e5ff@0.4:t=3,"
-                f"drawbox=x=60:y=280:w=960:h=70:color=0x091b30@0.95:t=fill,"
-                f"drawtext=fontfile={FONT_BOLD}:text='TELEMETRIA OFICIAL DE MISION ESPACIAL':fontcolor=0x00e5ff:fontsize=30:x=(w-text_w)/2:y=300,"
-                f"drawbox=x=140:y=440:w=800:h=260:color=0x132238@0.9:t=fill,"
-                f"drawtext=fontfile={FONT_BOLD}:text='DATOS TRANSMITIDOS POR ANTENAS DEEP SPACE':fontcolor=0xffaa00:fontsize=24:x=180:y=480,"
-                f"drawtext=fontfile={FONT_REG}:text='CONFIRMACION DE TRAYECTORIA POR AGENCIAS OFICIALES':fontcolor=white@0.85:fontsize=22:x=180:y=530,"
-                f"drawtext=fontfile={FONT_MONO}:text='STATUS\\: MISSION OBJECTIVE SUCCESSFUL':fontcolor=0x00ffff:fontsize=20:x=180:y=580,"
-                f"vignette=PI/4,format=yuv420p"
+            "SH11": build_modern_broadcast_card(
+                "● TELEMETRÍA OFICIAL CERTIFICADA",
+                "DATOS CONFIRMADOS POR AGENCIA",
+                "MISIÓN EXITOSA",
+                "SEÑAL TRANSMITIDA DESDE ESPACIO PROFUNDO",
+                [
+                    ("• TRAYECTORIA: INSERTADA EN VENTANA TARGET", "0x55ff88"),
+                    ("• INSTRUMENTOS: RECOLECCIÓN DE DATOS ACTIVA", "0x00ffff"),
+                    ("• COMUNICADO: HITO HISTÓRICO PARA FUTURAS MISIONES", "white@0.9")
+                ],
+                accent_hex="0x00e5ff",
+                bg_hex="0x071326"
             ),
-            "SH13": (
-                "0x07111e",
-                f"drawbox=x=60:y=380:w=960:h=1160:color=0x00ffff@0.4:t=4,"
-                f"drawbox=x=60:y=280:w=960:h=70:color=0x0e223b@0.95:t=fill,"
-                f"drawtext=fontfile={FONT_BOLD}:text='DEBATE · EL FUTURO DE LA EXPLORACION ESPACIAL':fontcolor=0x00e5ff:fontsize=28:x=(w-text_w)/2:y=300,"
-                f"drawbox=x=120:y=460:w=840:h=380:color=0x132238@0.95:t=fill,"
-                f"drawbox=x=120:y=460:w=840:h=380:color=0xffe500@0.8:t=3,"
-                f"drawtext=fontfile={FONT_BOLD}:text='¿HABRA COLONIAS EN ESTA DECADA?':fontcolor=0xffe500:fontsize=36:x=(w-text_w)/2:y=530,"
-                f"drawtext=fontfile={FONT_REG}:text='¿Lograremos establecer bases humanas en':fontcolor=white:fontsize=30:x=(w-text_w)/2:y=610,"
-                f"drawtext=fontfile={FONT_REG}:text='la Luna o Marte antes del 2030?':fontcolor=white:fontsize=30:x=(w-text_w)/2:y=660,"
-                f"drawtext=fontfile={FONT_BOLD}:text='DEJA TU PREDICCION EN LOS COMENTARIOS':fontcolor=0x00ffff:fontsize=28:x=(w-text_w)/2:y=735,"
-                f"drawbox=x=120:y=900:w=840:h=140:color=0x1f2e46@0.9:t=fill,"
-                f"drawtext=fontfile={FONT_BOLD}:text='💬 DEJA TU PREDICCION':fontcolor=white:fontsize=30:x=170:y=950,"
-                f"drawbox=x=120:y=1080:w=840:h=140:color=0x1f2e46@0.9:t=fill,"
-                f"drawtext=fontfile={FONT_BOLD}:text='🔔 SIGUE AL RADAR PARA MAS NOTICIAS':fontcolor=white:fontsize=28:x=150:y=1135,"
-                f"vignette=PI/4,format=yuv420p"
+            "SH13": build_modern_broadcast_card(
+                "● DEBATE · FRONTERA ESPACIAL",
+                "¿HABRÁ COLONIAS EN ESTA DÉCADA?",
+                "DEJA TU PREDICCIÓN",
+                "¿Lograremos bases permanentes en la Luna antes de 2030?",
+                [
+                    ("💬 Deja tu predicción en los comentarios", "0xffe500"),
+                    ("🔔 Sigue al Radar para explorar la ciencia espacial", "white@0.9"),
+                    ("⚡ Reportes con fuentes directas de NASA y ESA", "0x00ffff")
+                ],
+                accent_hex="0xffe500",
+                bg_hex="0x07111e",
+                footer_text="💬 COMPARTE TU PREDICCIÓN · TIKTOK RADAR"
             ),
         }
     else:
-        # Default: Aviación / Incidentes Aéreos
+        # Default: Aviación
         cards = {
-            "SH01": (
-                "0x060f1e",
-                f"drawgrid=w=120:h=120:t=2:c=0x00e5ff@0.15,"
-                f"drawbox=x=60:y=380:w=960:h=1160:color=0x00e5ff@0.3:t=3,"
-                f"drawbox=x=80:y=400:w=920:h=1120:color=0x0088cc@0.15:t=1,"
-                f"drawbox=x='60+mod(t*220\\,960)':y=380:w=4:h=1160:color=0x00ffff@0.5:t=fill,"
-                f"drawbox=x='540-180-40*sin(t*3)':y='960-180-40*sin(t*3)':w='360+80*sin(t*3)':h='360+80*sin(t*3)':color=0xffaa00@0.35:t=2,"
-                f"drawbox=x=60:y=280:w=960:h=70:color=0x0a1a2f@0.9:t=fill,"
-                f"drawtext=fontfile={FONT_BOLD}:text='RADAR TACTICO EN VIVO · MONITOREO 3D':fontcolor=0x00ffff:fontsize=32:x=(w-text_w)/2:y=300,"
-                f"drawtext=fontfile={FONT_BOLD}:text='SISTEMA DE RASTREO SATELITAL / AERONAVAL':fontcolor=0xffcc00:fontsize=28:x=100:y=440,"
-                f"drawtext=fontfile={FONT_REG}:text='SECTOR\\: ESPACIO AEREO / RUTA COMERCIAL':fontcolor=white@0.85:fontsize=24:x=100:y=490,"
-                f"drawtext=fontfile={FONT_REG}:text='ESTADO DE FRECUENCIA\\: ALERTA CRITICA ACTIVA':fontcolor=0xff3344:fontsize=24:x=100:y=530,"
-                f"drawtext=fontfile={FONT_MONO}:text='COORDS\\: 25.7617 N\\, 80.1918 W · BEACON ON':fontcolor=0x00ffff:fontsize=22:x=100:y=1460,"
-                f"vignette=PI/4,format=yuv420p"
+            "SH01": build_modern_broadcast_card(
+                "● RADAR TÁCTICO EN VIVO · MONITOREO",
+                "ESPACIO AÉREO INTERNACIONAL",
+                "ALERTA EN VUELO",
+                "SISTEMA DE RASTREO SATELITAL Y AERONAVAL",
+                [
+                    ("• COORDENADAS: 25.76 N, 80.19 W · BEACON ACTIVO", "0x00ffff"),
+                    ("• ESTADO: DESCENSO CRÍTICO Y PÉRDIDA DE CONTACTO", "0xff3344"),
+                    ("• PROTOCOLO: ASISTENCIA TÁCTICA DE CONTROL EN TIERRA", "white@0.9")
+                ],
+                accent_hex="0x00e5ff",
+                bg_hex="0x060f1e"
             ),
-            "SH03": (
-                "0x091424",
-                f"drawgrid=w=80:h=80:t=1:c=0x00b4d8@0.12,"
-                f"drawbox=x=60:y=380:w=960:h=1160:color=0x00b4d8@0.35:t=2,"
-                f"drawbox=x=60:y=280:w=960:h=70:color=0x081c30@0.9:t=fill,"
-                f"drawtext=fontfile={FONT_BOLD}:text='REGISTRO DE TELEMETRIA Y PARAMETROS':fontcolor=0x00e5ff:fontsize=32:x=(w-text_w)/2:y=300,"
-                f"drawtext=fontfile={FONT_BOLD}:text='ALTITUD DETECTADA\\:':fontcolor=white:fontsize=30:x=100:y=450,"
-                f"drawtext=fontfile={FONT_MONO}:text='%{{eif\\:18200-3200*t\\:d}} FT':fontcolor=0xff3344:fontsize=64:x=100:y=500,"
-                f"drawtext=fontfile={FONT_BOLD}:text='TASA DE DESCENSO\\: -3\\,400 FPM (CRITICO)':fontcolor=0xffaa00:fontsize=28:x=100:y=600,"
-                f"drawtext=fontfile={FONT_REG}:text='ANGULO DE ATAQUE\\: +14.2 DEG · ANOMALIA':fontcolor=white@0.85:fontsize=26:x=100:y=650,"
-                f"drawbox=x=100:y=740:w=880:h=320:color=0x00223a@0.8:t=fill,"
-                f"drawbox=x=100:y=740:w=880:h=320:color=0x00e5ff@0.4:t=2,"
-                f"drawtext=fontfile={FONT_BOLD}:text='PERFIL DE TRAYECTORIA EN TIEMPO REAL':fontcolor=0x00e5ff:fontsize=22:x=130:y=765,"
-                f"drawbox=x=130:y=820:w='120+t*130':h=16:color=0xff3344@0.9:t=fill,"
-                f"drawtext=fontfile={FONT_REG}:text='PERDIDA SUBITA DE SENAL DE RADAR SECUNDARIO':fontcolor=0xff8888:fontsize=22:x=130:y=860,"
-                f"drawtext=fontfile={FONT_MONO}:text='CANAL DE TRANSPONDER\\: 7700 [EMERGENCIA]':fontcolor=0xffcc00:fontsize=22:x=130:y=900,"
-                f"drawtext=fontfile={FONT_REG}:text='FRECUENCIA DE CONTACTO TIERRA\\: PERDIDA 12S':fontcolor=white@0.8:fontsize=22:x=130:y=940,"
-                f"vignette=PI/4,format=yuv420p"
+            "SH03": build_modern_broadcast_card(
+                "● REGISTRO DE TELEMETRÍA DE CABINA",
+                "ALTITUD Y TASA DE DESCENSO",
+                "%{eif\:18200-3200*t\:d} FT",
+                "TASA DE DESCENSO: -3,400 PIES/MIN (CRÍTICO)",
+                [
+                    ("• ÁNGULO DE ATAQUE: +14.2° · ALERTA SONORA ACTIVA", "0xffaa00"),
+                    ("• TRANSPONDER: CÓDIGO 7700 DE EMERGENCIA EMITIDO", "0xff3344"),
+                    ("• CONTACTO TIERRA: MANIOBRAS DE RECUPERACIÓN", "white@0.9")
+                ],
+                accent_hex="0xffaa00",
+                bg_hex="0x140d08"
             ),
-            "SH10": (
-                "0x051329",
-                f"drawgrid=w=60:h=60:t=1:c=0x0099ff@0.14,"
-                f"drawbox=x=60:y=380:w=960:h=1160:color=0x00aaff@0.4:t=3,"
-                f"drawbox=x=60:y=280:w=960:h=70:color=0x061e3d@0.95:t=fill,"
-                f"drawtext=fontfile={FONT_BOLD}:text='ESQUEMA TECNICO Y PLANO ESTRUCTURAL':fontcolor=0x00e5ff:fontsize=32:x=(w-text_w)/2:y=300,"
-                f"drawbox=x=140:y=480:w=800:h=460:color=0x004477@0.4:t=fill,"
-                f"drawbox=x=140:y=480:w=800:h=460:color=0x00d4ff@0.5:t=2,"
-                f"drawbox=x=220:y=560:w=640:h=300:color=0x00d4ff@0.3:t=1,"
-                f"drawbox=x=480:y=510:w=160:h=400:color=0xff9900@0.4:t=2,"
-                f"drawtext=fontfile={FONT_BOLD}:text='SUBSISTEMA DE CONTROL DE TIMON Y EMPUJE':fontcolor=0xffaa00:fontsize=26:x=(w-text_w)/2:y=700,"
-                f"drawtext=fontfile={FONT_REG}:text='PUNTO DE PRESION HIDRAULICA CRITICA':fontcolor=0xff3344:fontsize=22:x=(w-text_w)/2:y=745,"
-                f"drawbox=x=140:y=990:w=800:h=480:color=0x041933@0.9:t=fill,"
-                f"drawbox=x=140:y=990:w=800:h=480:color=0x00aaff@0.3:t=2,"
-                f"drawtext=fontfile={FONT_BOLD}:text='EVALUACION DE COMPONENTES CRITICOS\\:':fontcolor=0x00e5ff:fontsize=26:x=180:y=1030,"
-                f"drawtext=fontfile={FONT_REG}:text='• CIRCUITO PRIMARIO\\: SOBRECARGA DINAMICA':fontcolor=white@0.9:fontsize=23:x=180:y=1080,"
-                f"drawtext=fontfile={FONT_REG}:text='• VALVULAS DE COMPENSACION\\: SIN RESPUESTA':fontcolor=0xff7777:fontsize=23:x=180:y=1125,"
-                f"drawtext=fontfile={FONT_REG}:text='• INTEGRIDAD DEL FUSELAJE TRASERO\\: OK':fontcolor=0x55ff88:fontsize=23:x=180:y=1170,"
-                f"drawtext=fontfile={FONT_MONO}:text='ESTADO FORENSE\\: DICTAMEN EN INVESTIGACION':fontcolor=0xffcc00:fontsize=23:x=180:y=1220,"
-                f"vignette=PI/4,format=yuv420p"
+            "SH10": build_modern_broadcast_card(
+                "● BLUEPRINT TÉCNICO Y FUSELAJE",
+                "EVALUACIÓN ESTRUCTURAL DE AERONAVE",
+                "BLUEPRINT 3D",
+                "SUBSISTEMA DE CONTROL DE TIMÓN Y EMPUJE",
+                [
+                    ("• PRESIÓN HIDRÁULICA: SOBRECARGA EN MANDOS", "0xff7777"),
+                    ("• SUPERFICIES DE CONTROL: ESTABILIZACIÓN MANUAL", "0x55ff88"),
+                    ("• FUSELAJE: INTEGRIDAD ESTRUCTURAL SIN FISURAS", "white@0.9")
+                ],
+                accent_hex="0x00e5ff",
+                bg_hex="0x061428"
             ),
-            "SH11": (
-                "0x161311",
-                f"drawbox=x=60:y=380:w=960:h=1160:color=0xff6600@0.4:t=3,"
-                f"drawbox=x=60:y=280:w=960:h=70:color=0x261408@0.95:t=fill,"
-                f"drawtext=fontfile={FONT_BOLD}:text='EVIDENCIA OFICIAL Y REGISTRO FORENSE':fontcolor=0xff8833:fontsize=32:x=(w-text_w)/2:y=300,"
-                f"drawbox=x=140:y=440:w=800:h=260:color=0x2e1705@0.9:t=fill,"
-                f"drawbox=x=140:y=440:w=800:h=260:color=0xff6600@0.8:t=3,"
-                f"drawbox=x=170:y=470:w=160:h=200:color=0xff5500@0.9:t=fill,"
-                f"drawtext=fontfile={FONT_BOLD}:text='FLIGHT':fontcolor=black:fontsize=26:x=200:y=520,"
-                f"drawtext=fontfile={FONT_BOLD}:text='RECORDER':fontcolor=black:fontsize=22:x=180:y=560,"
-                f"drawtext=fontfile={FONT_BOLD}:text='DO NOT OPEN':fontcolor=black:fontsize=16:x=185:y=600,"
-                f"drawtext=fontfile={FONT_BOLD}:text='UNIDAD FDR RECUPERADA':fontcolor=0xffaa00:fontsize=28:x=360:y=480,"
-                f"drawtext=fontfile={FONT_REG}:text='REGISTROS DE VOZ Y DATOS DE IMPACTO':fontcolor=white@0.85:fontsize=22:x=360:y=530,"
-                f"drawtext=fontfile={FONT_REG}:text='ESTADO FISICO\\: INTEGRO / ACCESO AUTORIZADO':fontcolor=0x44ff88:fontsize=22:x=360:y=575,"
-                f"drawtext=fontfile={FONT_MONO}:text='SERIAL\\: FDR-NTSB-2026-X4':fontcolor=0x00ffff:fontsize=20:x=360:y=625,"
-                f"drawbox=x=140:y=740:w=800:h=320:color=0x11161d@0.95:t=fill,"
-                f"drawbox=x=140:y=740:w=800:h=320:color=0x00e5ff@0.3:t=2,"
-                f"drawtext=fontfile={FONT_BOLD}:text='ONDA DE AUDIO CABINA CVR (ULTIMOS 12 SEG)':fontcolor=0x00e5ff:fontsize=22:x=170:y=770,"
-                f"drawbox=x=170:y=850:w='140+160*abs(sin(t*8))':h=8:color=0x00ffff:t=fill,"
-                f"drawbox=x=350:y=830:w='120+180*abs(sin(t*12))':h=10:color=0xffaa00:t=fill,"
-                f"drawbox=x=520:y=810:w='160+220*abs(sin(t*16))':h=12:color=0xff3344:t=fill,"
-                f"drawtext=fontfile={FONT_REG}:text='CORRELACION TEMPORAL\\: CONFIRMADA CON RADAR':fontcolor=white@0.8:fontsize=21:x=170:y=990,"
-                f"drawbox=x=140:y=1100:w=800:h=370:color=0x1f1a18@0.9:t=fill,"
-                f"drawtext=fontfile={FONT_BOLD}:text='INSPECCION OFICIAL EN CURSO':fontcolor=0xffcc00:fontsize=24:x=180:y=1130,"
-                f"drawtext=fontfile={FONT_REG}:text='• ORGANISMO\\: SEGURIDAD EN EL TRANSPORTE':fontcolor=white@0.85:fontsize=22:x=180:y=1180,"
-                f"drawtext=fontfile={FONT_REG}:text='• DICTAMEN PRELIMINAR\\: ESTIMADO EN 14 DIAS':fontcolor=white@0.85:fontsize=22:x=180:y=1225,"
-                f"vignette=PI/4,format=yuv420p"
+            "SH11": build_modern_broadcast_card(
+                "● EVIDENCIA OFICIAL FORENSE",
+                "REGISTROS DE CAJA NEGRA FDR Y CVR",
+                "UNIDAD FDR",
+                "REGISTRO DE VOZ Y DATOS DE IMPACTO",
+                [
+                    ("• ESTADO FÍSICO: ÍNTEGRO / ACCESO AUTORIZADO", "0x55ff88"),
+                    ("• AUDIO CVR: CORRELACIONADO CON PANTALLAS DE RADAR", "0x00ffff"),
+                    ("• INSPECCIÓN OFICIAL: DICTAMEN TÉCNICO EN CURSO", "white@0.9")
+                ],
+                accent_hex="0xff6600",
+                bg_hex="0x180f08"
             ),
-            "SH13": (
-                "0x0a101d",
-                f"drawbox=x=60:y=380:w=960:h=1160:color=0x00ffff@0.4:t=4,"
-                f"drawbox=x=60:y=280:w=960:h=70:color=0x0e223b@0.95:t=fill,"
-                f"drawtext=fontfile={FONT_BOLD}:text='DICTAMEN FINAL · DEBATE DE LA COMUNIDAD':fontcolor=0x00e5ff:fontsize=30:x=(w-text_w)/2:y=300,"
-                f"drawbox=x=120:y=460:w=840:h=380:color=0x132238@0.95:t=fill,"
-                f"drawbox=x=120:y=460:w=840:h=380:color=0xffe500@0.8:t=3,"
-                f"drawtext=fontfile={FONT_BOLD}:text='¿QUE OPINAS DE ESTE SUCESO?':fontcolor=0xffe500:fontsize=38:x=(w-text_w)/2:y=530,"
-                f"drawtext=fontfile={FONT_REG}:text='¿Las medidas fueron suficientes o':fontcolor=white:fontsize=30:x=(w-text_w)/2:y=610,"
-                f"drawtext=fontfile={FONT_REG}:text='hubo negligencia evitable?':fontcolor=white:fontsize=30:x=(w-text_w)/2:y=660,"
-                f"drawtext=fontfile={FONT_BOLD}:text='DEJA TU OPINION EN LOS COMENTARIOS':fontcolor=0x00ffff:fontsize=28:x=(w-text_w)/2:y=735,"
-                f"drawbox=x=120:y=900:w=840:h=140:color=0x1f2e46@0.9:t=fill,"
-                f"drawbox=x=120:y=900:w=840:h=140:color=0x00e5ff@0.4:t=2,"
-                f"drawtext=fontfile={FONT_BOLD}:text='💬 COMENTA TU POSTURA':fontcolor=white:fontsize=30:x=170:y=950,"
-                f"drawtext=fontfile={FONT_BOLD}:text='REPORTE 24/7':fontcolor=0xffcc00:fontsize=22:x=700:y=955,"
-                f"drawbox=x=120:y=1080:w=840:h=140:color=0x1f2e46@0.9:t=fill,"
-                f"drawbox=x=120:y=1080:w=840:h=140:color=0x00e5ff@0.4:t=2,"
-                f"drawtext=fontfile={FONT_BOLD}:text='🔔 SIGUE AL RADAR PARA MAS NOTICIAS':fontcolor=white:fontsize=28:x=150:y=1135,"
-                f"drawtext=fontfile={FONT_REG}:text='INFORMACION VERIFICADA CON FUENTES OFICIALES':fontcolor=white@0.6:fontsize=22:x=(w-text_w)/2:y=1380,"
-                f"vignette=PI/4,format=yuv420p"
+            "SH13": build_modern_broadcast_card(
+                "● DEBATE CIUDADANO · SEGURIDAD AÉREA",
+                "¿QUÉ PROTOCOLO DEBIÓ REFORZARSE?",
+                "DEJA TU COMENTARIO",
+                "¿La pericia de la tripulación evitó una catástrofe mayor?",
+                [
+                    ("💬 Deja tu punto de vista en los comentarios", "0xffe500"),
+                    ("🔔 Sigue al Radar para más análisis de seguridad", "white@0.9"),
+                    ("⚡ Información oficial contrastada con peritos", "0x00ffff")
+                ],
+                accent_hex="0xffe500",
+                bg_hex="0x09101c",
+                footer_text="💬 COMENTA TU POSTURA · TIKTOK RADAR"
             ),
         }
 
     if shot_id in cards:
         bg, vf = cards[shot_id]
     else:
-        # Tarjeta genérica broadcast de respaldo
-        bg_colors = ["0x07111e", "0x101828", "0x181124", "0x1f0d18", "0x091926"]
-        bg = bg_colors[shot_idx % len(bg_colors)]
-        vf = (
-            f"drawgrid=w=90:h=90:t=2:c=0x00ffff@0.12,"
-            f"drawbox=x='120+60*sin(t*1.5)':y='520+40*cos(t*1.2)':w=840:h=760:color=0x00e5ff@0.18:t=4,"
-            f"drawbox=x=90:y=490:w=900:h=820:color=0xffaa00@0.25:t=2,"
-            f"drawtext=fontfile={FONT_BOLD}:"
-            f"text='{shot_id} · {shot_type}':fontcolor=0x00ffff:fontsize=42:x=(w-text_w)/2:y=780,"
-            f"drawtext=fontfile={FONT_REG}:"
-            f"text='SIMULACION TACTICA 3D · RADAR ACTIVO':fontcolor=white@0.85:fontsize=28:x=(w-text_w)/2:y=860,"
-            f"vignette=PI/4,format=yuv420p"
+        bg, vf = build_modern_broadcast_card(
+            f"● {shot_id} · RADAR ACTIVO",
+            shot_type,
+            "TELEMETRIA EN VIVO",
+            "SIMULACION BROADCAST 3D",
+            [("• SISTEMA DE MONITOREO TACTICO ON", "0x00ffff"), ("• ANALISIS DE DATOS EN TIEMPO REAL", "white@0.9")]
         )
 
     cmd = [

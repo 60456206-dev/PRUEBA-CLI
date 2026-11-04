@@ -16,6 +16,8 @@ import os
 import re
 import subprocess
 import sys
+import urllib.request
+import urllib.parse
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, Any, List, Optional
@@ -44,9 +46,10 @@ PROD_CONFIG = load_production_config()
 STYLE_PREFIX = (
     PROD_CONFIG.get("consistencia_visual", {}).get("estilo_maestro")
     or (
-        "Vertical 9:16, modern stylized 3D cinematic animation, Arcane and Spider-Verse "
-        "tactical news thriller aesthetic, Unreal Engine 5 volumetric lighting, rich stylized textures, "
-        "no photorealism, no uncanny valley. "
+        "Vertical 9:16, high-end stylized 3D cinematic animation, RTX ray tracing reflections, "
+        "Unreal Engine 5.4 Lumen global illumination, Octane path tracer quality, rich tactile PBR textures, "
+        "volumetric atmospheric fog, cinematic shallow depth of field, vivid dramatic lighting, "
+        "masterpiece render, no photorealism, no uncanny valley, no flat surfaces. "
     )
 )
 if not STYLE_PREFIX.endswith(". ") and not STYLE_PREFIX.endswith("."):
@@ -212,7 +215,7 @@ def build_shot_prompts(
             {"id": "SH01", "sec": "0-4s", "dur": 4.0, "ia_dur": "5s", "render_mode": "infographic", "type": "Radar Sísmico INDECI", "action": "Radar sismológico en tiempo real con coordenadas del Perú y alerta roja.", "visual_en": "Tactical emergency command center in Peru with a 3D topographic radar screen pulsing over coastal territory with amber fault lines.", "fallback_en": "Stylized 3D holographic topographical map of Peru with pulsing amber fault lines and emergency telemetry."},
             {"id": "SH02", "sec": "4-9s", "dur": 5.0, "ia_dur": "5s", "render_mode": "flow", "type": "Respuesta Operativa", "action": "Vehículos de emergencia con balizas avanzando por carretera bajo lluvia torrencial.", "visual_en": "Stylized 3D emergency convoy with flashing red and blue lights speeding down a wet highway amidst heavy rain and mist, volumetric headlights.", "fallback_en": "Stylized 3D emergency response vehicles driving through rain at night with flashing lights."},
             {"id": "SH03", "sec": "9-14s", "dur": 5.0, "ia_dur": "5s", "render_mode": "infographic", "type": "Parámetros de Emergencia", "action": "Telemetría de aceleración sísmica y precipitaciones fluviales en aumento.", "visual_en": "Futuristic 3D seismic telemetry screen displaying fluctuating Richter graphs and emergency alert bars in glowing red.", "fallback_en": "Stylized 3D digital seismograph monitor with glowing red telemetry curves."},
-            {"id": "SH04", "sec": "14-18s", "dur": 4.0, "ia_dur": "5s", "render_mode": "flow", "type": "Especialista en Terreno", "action": "Primer plano a brigadista de auxilio con chaleco táctico observando el río desbordado.", "visual_en": "Tight close-up of a stylized 3D emergency rescue worker in a high-vis orange jacket, raindrops on helmet, serious determined expression.", "fallback_en": "Stylized 3D rescue worker in rain gear with focused expression under stormy weather."},
+            {"id": "SH04", "sec": "14-18s", "dur": 4.0, "ia_dur": "5s", "render_mode": "flow", "type": "Especialista en Terreno", "action": "Primer plano a brigadista de auxilio con chaleco táctico observando el río desbordado.", "visual_en": "Tight close-up of a stylized 3D emergency rescue worker in a high-vis orange jacket, raindrops on helmet, serious determined expression, clear facial anatomy, no face mask or cloth covering, raytraced reflections on wet skin.", "fallback_en": "Stylized 3D rescue worker in rain gear with focused expression under stormy weather, clean face without mask, raytraced lighting."},
             {"id": "SH05", "sec": "18-22s", "dur": 4.0, "ia_dur": "5s", "render_mode": "flow", "type": "Coordinación de Radio", "action": "Manos operando transmisor de radiofrecuencia y trazando ruta en mapa de satélite.", "visual_en": "Close-up of gloved hands adjusting VHF radio dials and marking tactical routes on a glowing digital tablet map.", "fallback_en": "Close-up of stylized 3D hands operating a communications radio console."},
             {"id": "SH06", "sec": "22-26s", "dur": 4.0, "ia_dur": "5s", "render_mode": "flow", "type": "Macro de Alerta", "action": "Macro a altavoz de alarma perimétrica y luces estroboscópicas de advertencia.", "visual_en": "Extreme macro of an outdoor civil defense siren and flashing amber strobe light vibrating in heavy rain.", "fallback_en": "Macro close-up of an amber emergency beacon flashing on a metal pole in rain."},
             {"id": "SH07", "sec": "26-30s", "dur": 4.0, "ia_dur": "5s", "render_mode": "flow", "type": "Acción Perimetral", "action": "Cuadrilla desplegando barreras de contención y guiando el tránsito en zona vulnerable.", "visual_en": "Dynamic tracking shot of emergency responders placing reflective barriers and directing traffic under dark cloudy sky.", "fallback_en": "Stylized 3D emergency crew placing safety barriers on a road under rain."},
@@ -244,7 +247,7 @@ def build_shot_prompts(
             {"id": "SH01", "sec": "0-4s", "dur": 4.0, "ia_dur": "5s", "render_mode": "infographic", "type": "Radar de Silicio y Chips", "action": "Mapa 3D de la cadena global de semiconductores y nodos litográficos.", "visual_en": "Dark high-tech room with a glowing 3D holographic silicon wafer floating above a global semiconductor supply chain map.", "fallback_en": "Stylized 3D holographic semiconductor silicon wafer floating above a digital grid."},
             {"id": "SH02", "sec": "4-9s", "dur": 5.0, "ia_dur": "5s", "render_mode": "flow", "type": "Sala Blanca EUV", "action": "Instalación de litografía ultravioleta con atmósfera presurizada e iluminación dorada.", "visual_en": "Ultra-modern cleanroom laboratory with golden monochromatic lighting, robotic tracks, and ultra-high-precision machinery.", "fallback_en": "Stylized 3D cleanroom semiconductor facility with golden lighting and robotic arms."},
             {"id": "SH03", "sec": "9-14s", "dur": 5.0, "ia_dur": "5s", "render_mode": "infographic", "type": "Métricas de Cómputo", "action": "Telemetría de potencia de cálculo TFLOPs y salto a proceso de 2 nanómetros.", "visual_en": "Futuristic 3D dashboard showing transistor density metrics scaling to 2nm and performance curves climbing in bright cyan.", "fallback_en": "Stylized 3D digital telemetry screen showing chip performance graphs and glowing metrics."},
-            {"id": "SH04", "sec": "14-18s", "dur": 4.0, "ia_dur": "5s", "render_mode": "flow", "type": "Ingeniero de Litografía", "action": "Ingeniero en traje blanco antiestático inspeccionando oblea de silicio con visor.", "visual_en": "Tight close-up of a stylized 3D cleanroom engineer in a white protective bunny suit, looking through an electron microscope.", "fallback_en": "Stylized 3D technician in white cleanroom suit inspecting a wafer under a microscope."},
+            {"id": "SH04", "sec": "14-18s", "dur": 4.0, "ia_dur": "5s", "render_mode": "flow", "type": "Ingeniero de Litografía", "action": "Ingeniero en traje blanco antiestático inspeccionando oblea de silicio con visor.", "visual_en": "Tight close-up of a stylized 3D tech researcher in sleek white cleanroom jacket with open collar and clear protective safety goggles, looking through an electron microscope, sharp expressive facial features, clean jawline, no cloth mask, raytraced reflections.", "fallback_en": "Stylized 3D technician in white cleanroom jacket with clear safety glasses inspecting a wafer under a microscope, clean facial features, no face mask, raytraced lighting."},
             {"id": "SH05", "sec": "18-22s", "dur": 4.0, "ia_dur": "5s", "render_mode": "flow", "type": "Manipulación Robótica", "action": "Brazo robótico de ultra precisión transfiriendo una oblea de 300 mm con vacío.", "visual_en": "Close-up of a sleek robotic gripper delicately lifting a glowing 300mm silicon wafer with millimeter precision.", "fallback_en": "Close-up of a stylized 3D robotic arm holding a circular silicon wafer."},
             {"id": "SH06", "sec": "22-26s", "dur": 4.0, "ia_dur": "5s", "render_mode": "flow", "type": "Macro a Microarquitectura", "action": "Macro extremo a los circuitos integrados de silicio reflejando colores irisados.", "visual_en": "Extreme macro of microscopic silicon die surface showing intricate multi-layer nano-circuits with rainbow reflections.", "fallback_en": "Extreme macro of a stylized 3D microchip surface with glowing intricate golden pathways."},
             {"id": "SH07", "sec": "26-30s", "dur": 4.0, "ia_dur": "5s", "render_mode": "flow", "type": "Láser High-NA EUV", "action": "Haz de luz láser ultravioleta extremo grabando patrones nanométricos a gran velocidad.", "visual_en": "Dynamic tracking shot of intense deep-ultraviolet laser pulses etching micro-patterns onto a photosensitive silicon layer.", "fallback_en": "Stylized 3D laser beam etching microscopic patterns on a metallic surface."},
@@ -304,99 +307,101 @@ def build_shot_prompts(
     return shots
 
 
+def generate_dynamic_news_script(news: Dict[str, Any], genre_label: str) -> str:
+    """
+    Genera un guión periodístico ágil, intrigante y de alto impacto para TikTok Noticias
+    utilizando Gemini 3.5 Flash / 3.8 Flash con estructura de periodismo explicativo (Vox/Johnny Harris):
+    1. Contexto previo y gancho intrigante (0-12s): contextualiza el hecho para que cualquiera entienda.
+    2. Datos duros, nombres y cifras concretas de la noticia (12-40s).
+    3. Conflicto y consecuencias a futuro (40-52s).
+    4. Pregunta polarizante y curiosidad para comentarios (52-62s).
+    Longitud calibrada: 145-160 palabras para asegurar >60s de locución monetizable en TikTok.
+    """
+    title = news.get("title", "")
+    source = news.get("source_name", "Prensa Oficial")
+    summary = news.get("summary", "")
+    key = os.getenv("GEMINI_API_KEY")
+
+    if key:
+        prompt = f"""Eres el mejor guionista y showrunner de TikTok Noticias (estilo documental ágil de alta retención, tipo Vox o Johnny Harris).
+Escribe un guión de locución para un vídeo vertical de TikTok de exactamente 61 a 64 segundos (entre 145 y 160 palabras exactas para superar 60 segundos de locución).
+
+Noticia: {title}
+Fuente oficial: {source}
+Categoría: {genre_label}
+Resumen / Datos clave: {summary}
+
+ESTRUCTURA OBLIGATORIA:
+1. CONTEXTO Y GANCHO INTRIGANTE (0-12s): NO lances la noticia en seco ni abras con titulares en pregunta. Explica primero el contexto intrigante de fondo para que cualquier persona entienda por qué esto es crucial y qué estaba en juego antes de soltar la noticia principal.
+2. EL SUCESO Y CIFRAS EXACTAS (12-40s): Cita los datos reales, cifras concretas, nombres de empresas, países, regiones o instituciones involucradas. Cero relleno corporativo o frases vacías como "las autoridades evalúan la magnitud".
+3. CONFLICTO Y CONSECUENCIAS (40-52s): El choque real, el peligro desatado o por qué esto cambia las cosas a futuro.
+4. PREGUNTA FINAL Y LLAMADO AL DEBATE (52-62s): Cierre con una pregunta provocadora que despierte curiosidad genuina para que los usuarios discutan en los comentarios.
+
+REGLAS DE ESTILO:
+- En español neutro, apasionado, con signos de admiración en momentos de tensión y ritmo dinámico.
+- Longitud estricta: entre 145 y 160 palabras.
+- Devuelve ÚNICAMENTE el texto que leerá el locutor en voz alta, sin encabezados, sin corchetes, sin etiquetas de tiempo."""
+
+        for model in ["gemini-3.5-flash-lite", "gemini-3.8-flash", "gemini-flash-latest"]:
+            try:
+                url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={key}"
+                body = {"contents": [{"parts": [{"text": prompt}]}]}
+                req = urllib.request.Request(url, data=json.dumps(body).encode(), headers={"Content-Type": "application/json"})
+                with urllib.request.urlopen(req, timeout=20) as resp:
+                    data = json.load(resp)
+                    text = data["candidates"][0]["content"]["parts"][0]["text"].strip()
+                    words = text.split()
+                    if len(words) >= 125:
+                        print(f"[PIPELINE-AI] ✅ Guión dinámico con contexto generado por {model} ({len(words)} palabras)", flush=True)
+                        return text
+            except Exception as e:
+                print(f"[PIPELINE-AI] ⚠️ Error generando guión con {model}: {e}", flush=True)
+
+    # Fallback dinámico inteligente si no hay conexión externa
+    title_clean = re.sub(r"^[¿\s]+|[?!\s]+$", "", title)
+    return (
+        f"Para entender la magnitud de lo que acaba de ocurrir, debemos mirar lo que estaba en juego detrás de escena. "
+        f"Durante meses, la tensión fue en aumento hasta que hoy se confirmó una noticia que cambia el panorama por completo: {title_clean}. "
+        f"De acuerdo con los reportes oficiales contrastados por la redacción de {source}, los datos confirman un impacto inmediato que toma por sorpresa al sector. "
+        f"Las cifras sobre la mesa revelan una brecha crítica entre lo que se esperaba y la realidad operativa en el terreno. "
+        f"Especialistas advierten que las consecuencias no tardarán en sentirse, alterando el equilibrio de fuerzas y obligando a tomar decisiones drásticas en las próximas horas. "
+        f"Lo que parecía un incidente aislado ahora se perfila como un punto de inflexión irreversible. "
+        f"¿Consideras que esta situación se pudo haber evitado o era una crisis inevitable desde el principio? "
+        f"Déjame tu opinión en los comentarios."
+    )
+
+
 def generate_monetizable_storyboard(news: Dict[str, Any]) -> Dict[str, Any]:
     """
-    Genera el desglose editorial completo para 61–65 segundos (13 planos, 135-140 palabras)
-    siguiendo la fórmula de Noticiero 3D Estilizado para Google Flow / Veo.
+    Genera el desglose editorial completo para 61–65 segundos (13 planos, 145-160 palabras)
+    siguiendo la fórmula de Noticiero 3D Estilizado para Google Flow / Veo con contexto previo y curiosidad.
     """
     title = news["title"]
     source = news["source_name"]
     link = news["link"]
     title_low = title.lower()
 
-    is_peru_disaster = news.get("is_peru_priority", False) or any(k in title_low for k in ["perú", "peru", "lima", "arequipa", "piura", "indeci", "sismo", "huaico", "terremoto", "panamericana", "el niño", "rpp", "andina"])
+    is_peru_disaster = news.get("is_peru_priority", False) or any(k in title_low for k in ["perú", "peru", "lima", "arequipa", "piura", "indeci", "sismo", "huaico", "terremoto", "panamericana", "el niño", "rpp", "andina", "lluvia"])
     is_aviation = any(k in title_low for k in ["avión", "aeronave", "vuelo", "accidente", "aircraft", "flight", "plane", "pilot", "mayday", "crash", "haiti", "boeing", "airbus", "aerotime"])
     is_cyber = any(k in title_low for k in ["ciberataque", "hackeo", "neveras", "hacker", "ransomware", "malware", "exploit", "apt", "breach", "zero-day", "cyber"])
     is_ai = any(k in title_low for k in ["gemini", "google", "ia", "ai", "openai", "chip", "2 nm", "robot", "nvidia", "deepseek", "chatgpt", "apple", "semiconduct", "dram", "nand", "euv", "silicon", "hardware", "cpu", "gpu", "micron", "intel", "amd", "tsmc", "techcrunch", "tom's hardware"])
     is_space = any(k in title_low for k in ["espacio", "nasa", "esa", "marte", "luna", "cohete", "spacex", "telescopio", "asteroide", "planetary", "space", "starship", "orbit", "landing"])
 
-    if is_peru_disaster and not is_aviation:
-        script = (
-            f"Alerta de última hora en el Perú. {title}. "
-            f"Según los reportes oficiales confirmados por los centros de monitoreo y la redacción de {source}, "
-            "la emergencia se registró hace pocas horas activando de inmediato el desplazamiento de cuadrillas de auxilio y unidades de primera respuesta. "
-            "En el lugar de los hechos, las autoridades evalúan la magnitud de los daños materiales y atienden a las personas afectadas en el perímetro de seguridad. "
-            "Organismos oficiales como Indeci y la Policía Nacional han emitido recomendaciones urgentes a la ciudadanía para evitar zonas de riesgo y mantener las vías despejadas. "
-            "Equipos de rescate continúan trabajando en la zona mientras se elabora el informe técnico de daños y pérdidas. "
-            "El país sigue de cerca la evolución de este suceso en las próximas horas. "
-            "¿Consideras que las autoridades actuaron con la rapidez necesaria ante esta emergencia? "
-            "Déjame tu opinión en los comentarios."
+    genre_label = "G1_PERU_DESASTRES" if (is_peru_disaster and not is_aviation) else (
+        "G1_AVIACION" if is_aviation else (
+            "G2_CIBERATAQUES" if is_cyber else (
+                "G3_IA_HARDWARE" if is_ai else (
+                    "G4_ESPACIO" if is_space else "NOTICIAS_GLOBAL"
+                )
+            )
         )
-    elif is_aviation:
-        script = (
-            "En solo doce segundos, una emergencia aérea de máxima gravedad desató las alarmas en el espacio aéreo internacional. "
-            f"Según los informes oficiales confirmados por la autoridad aeronáutica y la redacción de {source}, "
-            "la aeronave experimentó una maniobra crítica mientras los controladores en tierra perdían temporalmente el contacto de telemetría. "
-            "Adentro de la cabina, las luces de alerta se encendieron. Los pilotos forcejearon contra los mandos manteniendo la disciplina de vuelo, "
-            "mientras las alarmas de proximidad y ángulo de ataque resonaban en el habitáculo. "
-            "Los motores respondieron con máxima potencia mientras el equipo en tierra activaba de inmediato el protocolo de emergencia y rescate perimetral. "
-            "Peritos de seguridad aérea inspeccionan minuciosamente los registros de vuelo y las grabadoras de voz para determinar la causa exacta del incidente. "
-            "Los expertos aseguran que la pericia de la tripulación evitó lo que pudo ser una tragedia irreparable. "
-            "¿Crees que los protocolos de aviación comercial deberían reforzarse aún más ante estas situaciones? "
-            "Déjame tu opinión en los comentarios."
-        )
-    elif is_cyber:
-        script = (
-            "Un ciberataque de alta sofisticación acaba de encender las alertas de seguridad digital en infraestructuras clave. "
-            f"De acuerdo con investigaciones reveladas hoy por {source}, grupos de hackers avanzados lograron infiltrar sistemas críticos "
-            "aprovechando vulnerabilidades de día cero que eludieron los sistemas tradicionales de detección. "
-            "En cuestión de minutos, las líneas de monitoreo detectaron anomalías en el tráfico de datos y códigos maliciosos ejecutándose en segundo plano. "
-            "Equipos de respuesta a incidentes aislaron los servidores afectados para impedir una filtración masiva o el bloqueo total de operaciones. "
-            "Agencias de ciberseguridad internacional advierten que este tipo de ataques coordinados pone a prueba la resiliencia de servicios esenciales en todo el mundo. "
-            "Las investigaciones continúan para identificar el origen y contener réplicas del exploit. "
-            "¿Estamos realmente protegidos frente a ciberataques que puedan paralizar servicios esenciales de la noche a la mañana? "
-            "Déjame tu opinión en los comentarios."
-        )
-    elif is_space:
-        script = (
-            "Una misión espacial acaba de lograr un hito sin precedentes en la exploración planetaria de nueva generación. "
-            f"Según los comunicados técnicos oficiales difundidos hoy por {source}, "
-            "nuevos experimentos de navegación autónoma y sensores ópticos han demostrado una precisión extraordinaria para maniobras de descenso extremo. "
-            "En el centro de control de misión, los científicos siguieron minuto a minuto el comportamiento de la telemetría en tiempo real, "
-            "verificando que los propulsores y algoritmos de posicionamiento corrigieron la trayectoria con exactitud milimétrica. "
-            "Este logro tecnológico allana el camino definitivo para futuros aterrizajes tripulados en la Luna y las misiones más ambiciosas hacia Marte. "
-            "La frontera espacial vive hoy una de sus épocas más emocionantes de descubrimiento e innovación tecnológica. "
-            "¿Crees que la humanidad logrará establecer su primera colonia permanente fuera de la Tierra en esta década? "
-            "Déjame tu opinión en los comentarios."
-        )
-    elif is_ai:
-        script = (
-            "La batalla por el liderazgo en inteligencia artificial y la arquitectura de superchips acaba de dar un salto determinante. "
-            f"Reportes tecnológicos de última hora contrastados por {source} señalan avances clave en litografía y nuevos modelos de frontera "
-            "que buscan romper las barreras actuales de eficiencia energética y potencia de cálculo. "
-            "En los laboratorios de innovación, los ingenieros aceleran el despliegue de silicio de última generación capaz de procesar flujos de datos masivos "
-            "sin saturar la infraestructura de los centros de cómputo. "
-            "Analistas de la industria coinciden en que este salto marcará la competitividad digital y la soberanía tecnológica de las próximas décadas. "
-            "La evolución de la inteligencia artificial continúa a un ritmo imparable que transforma industrias enteras día a día. "
-            "¿Crees que estos saltos en hardware nos acercan a una inteligencia artificial general antes de lo esperado? "
-            "Déjame tu opinión en los comentarios."
-        )
-    else:
-        script = (
-            f"Atención a esta noticia de última hora que acaba de ser confirmada hoy. {title}. "
-            f"Según los reportes oficiales contrastados por la redacción de {source}, los acontecimientos se precipitaron hace pocas horas, "
-            "activando un protocolo inmediato de revisión entre las autoridades y los especialistas del sector. "
-            "Las primeras investigaciones técnicas de campo revelan datos críticos que cambian por completo las versiones preliminares. "
-            "Dentro de los centros de monitoreo, equipos especializados trabajan a contrarreloj para contener el impacto y medir las repercusiones a escala internacional. "
-            "Los organismos reguladores ya han exigido un informe pericial exhaustivo mientras se analizan las pruebas documentales registradas hasta el momento. "
-            "El desenlace de esta investigación marcará un precedente decisivo en las próximas semanas. "
-            "¿Crees que las medidas tomadas a tiempo evitarán una crisis mayor o ya es demasiado tarde? "
-            "Déjame tu opinión en los comentarios."
-        )
+    )
 
+    # Generación dinámica del guión con contexto y emoción (Vox/Johnny Harris)
+    script = generate_dynamic_news_script(news, genre_label)
     words = script.split()
     word_count = len(words)
-    est_duration = round(word_count / 2.2, 1)
+    est_duration = round(word_count / 2.3, 1)
     shots = build_shot_prompts(
         is_aviation=is_aviation,
         is_cyber=is_cyber,
@@ -416,15 +421,17 @@ def generate_monetizable_storyboard(news: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
-async def synthesize_voiceover(script: str, output_path: Path, voice: str = "Puck") -> float:
+async def synthesize_voiceover(script: str, output_path: Path, voice: str = "Fenrir") -> float:
     """
     Sintetiza la voz del locutor periodístico con Gemini 3.8 Flash TTS (con fallback a Edge-TTS)
-    y garantiza que la duración supere los 61.0 segundos para cumplir siempre con el requisito
+    con dirección actoral de alta energía, emoción dramática y ritmo ágil para TikTok.
+    Garantiza que la duración supere los 61.0 segundos para cumplir siempre con el requisito
     de monetización de TikTok Creator Rewards (>60s).
     """
     style = (
-        "Locución periodística de investigación urgente para noticiero broadcast de última hora. "
-        "Dicción clara y autoritaria, ritmo broadcast dinámico en español neutro, sin música."
+        "Locución apasionada, vibrante y con profunda emoción dramática para noticiero de última hora en TikTok. "
+        "Ritmo enérgico y acelerado, con inflexiones vivas de asombro y tensión periodística en las cifras y exclamaciones. "
+        "Cero monotonía, cero tono plano o robótico; locución llena de convicción, nervio y adrenalina."
     )
     dur = generate_speech(script, output_path, voice_gemini=voice, voice_edge="es-MX-JorgeNeural", style=style)
 

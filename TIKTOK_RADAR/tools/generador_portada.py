@@ -12,10 +12,14 @@ TIKTOK RADAR · Generador Automático de Portadas / Miniaturas 9:16 y Hashtags V
 """
 
 import argparse
+import io
 import json
+import os
 import re
 import subprocess
 import sys
+import urllib.parse
+import urllib.request
 from pathlib import Path
 from typing import Dict, Any, List, Tuple, Optional
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
@@ -121,101 +125,158 @@ def generate_tiktok_hashtags(genre: str, title: str, source: str = "") -> Dict[s
 
 
 # ==============================================================================
-# 2. GENERADOR DE TITULAR GANCHO PARA PORTADA (3-5 PALABRAS)
+# 2. GENERADOR DE TITULAR GANCHO EN ESPAÑOL (HIGH CTR)
 # ==============================================================================
 
 def extract_cover_headline(title: str, genre: str = "G1") -> List[Tuple[str, str]]:
     """
-    Destila el titular de la noticia en 2 o 3 líneas concisas de alto impacto (formato punchy)
-    adecuadas para una miniatura 9:16 con colores contrastados (blanco + amarillo neón).
-    Garantiza que ninguna línea termine con preposiciones o palabras cortadas.
+    Genera 2 o 3 líneas de titular gancho para portada 9:16 OBLIGATORIAMENTE EN ESPAÑOL,
+    traduciendo y adaptando la noticia al lenguaje de impacto de TikTok.
+    Colores: Línea 1 blanca, Línea 2 Amarillo Neón (#FFE500), Línea 3 blanca.
     """
+    key = os.getenv("GEMINI_API_KEY")
+    if key:
+        prompt = f"""Genera el titular gancho para una miniatura/portada de TikTok en ESPAÑOL de ultra alto impacto (CTR masivo).
+Noticia original: {title}
+REGLAS ESTRICTAS:
+- 100% EN ESPAÑOL (prohibido inglés salvo marcas como Nvidia, Google, Apple o siglas de dominio público).
+- Exactamente 3 líneas de texto (máximo 2 a 3 palabras por línea).
+- En MAYÚSCULAS y con lenguaje directo y dramático.
+- Formato de respuesta JSON estricto: ["LINEA 1", "LINEA 2", "LINEA 3"]"""
+
+        for model in ["gemini-3.5-flash-lite", "gemini-3.8-flash"]:
+            try:
+                url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={key}"
+                body = {"contents": [{"parts": [{"text": prompt}]}]}
+                req = urllib.request.Request(url, data=json.dumps(body).encode(), headers={"Content-Type": "application/json"})
+                with urllib.request.urlopen(req, timeout=12) as resp:
+                    data = json.load(resp)
+                    ans = data["candidates"][0]["content"]["parts"][0]["text"].strip()
+                    m = re.search(r'\[\s*"([^"]+)"\s*,\s*"([^"]+)"\s*,\s*"([^"]+)"\s*\]', ans)
+                    if m:
+                        l1, l2, l3 = m.group(1).strip().upper(), m.group(2).strip().upper(), m.group(3).strip().upper()
+                        return [(l1, "white"), (l2, "#FFE500"), (l3, "white")]
+            except Exception:
+                pass
+
     clean_title = re.sub(r"^[¿\s]+|[?!\s]+$", "", title or "").strip()
     if ":" in clean_title:
         clean_title = clean_title.split(":")[0].strip()
 
-    fluff_pattern = r"^(quiénes son las?|quiénes son los?|qué pasó con|qué distritos|cómo fue|se confirma que|reportan que)\s+"
-    clean = re.sub(fluff_pattern, "", clean_title, flags=re.IGNORECASE).strip()
-    words = clean.upper().split()
+    title_low = clean_title.lower()
 
-    stop_ends = {"DE", "DEL", "EN", "POR", "CON", "LA", "EL", "LOS", "LAS", "A", "Y", "O", "UN", "UNA", "AL", "PARA", "SOBRE", "QUE"}
-    title_low = clean.lower()
-
-    # Detecciones contextuales específicas de alta fidelidad
+    # Detecciones contextuales específicas en español
     if any(k in title_low for k in ["lluvia", "lluvias", "inundaci", "aluvion"]):
-        return [
-            ("ESTADO DE", "white"),
-            ("EMERGENCIA", "#FFE500"),
-            ("POR LLUVIAS", "white")
-        ]
+        return [("ESTADO DE", "white"), ("EMERGENCIA", "#FFE500"), ("POR LLUVIAS", "white")]
     if any(k in title_low for k in ["sismo", "terremoto", "temblor"]):
-        return [
-            ("ALERTA SÍSMICA", "white"),
-            ("TERREMOTO", "#FFE500"),
-            ("EN EL PERÚ", "white")
-        ]
+        return [("ALERTA SÍSMICA", "white"), ("TERREMOTO", "#FFE500"), ("EN EL PERÚ", "white")]
     if any(k in title_low for k in ["victima", "víctima", "victimas", "víctimas"]):
-        num_match = re.search(r"\b(\d+)\b", clean)
-        num_str = f"{num_match.group(1)} " if num_match else ""
-        return [
-            ("ACCIDENTE AÉREO", "white"),
-            (f"{num_str}VÍCTIMAS", "#FFE500"),
-            ("CONFIRMADAS", "white")
-        ]
-    if any(k in title_low for k in ["altitud", "mayday", "vuelo", "aereo", "avion", "caida"]):
-        return [
-            ("MAYDAY EN VUELO", "white"),
-            ("CAÍDA CRÍTICA", "#FFE500"),
-            ("DE ALTITUD", "white")
-        ]
-    if any(k in title_low for k in ["ciber", "hacker", "ransomware", "hospital"]):
-        return [
-            ("CIBERATAQUE", "white"),
-            ("PARALIZA REDES", "#FFE500"),
-            ("ZERO-DAY", "white")
-        ]
-    if any(k in title_low for k in ["2nm", "chip", "semiconductor", "tsmc", "nvidia"]):
-        return [
-            ("NUEVO CHIP 2NM", "white"),
-            ("REVOLUCIÓN", "#FFE500"),
-            ("EN HARDWARE", "white")
-        ]
-    if any(k in title_low for k in ["espacio", "nasa", "luna", "orbita", "sonda"]):
-        return [
-            ("MISIÓN DEEP SPACE", "white"),
-            ("ALERTA ORBITAL", "#FFE500"),
-            ("EN VIVO", "white")
-        ]
+        return [("ACCIDENTE AÉREO", "white"), ("VÍCTIMAS", "#FFE500"), ("CONFIRMADAS", "white")]
+    if any(k in title_low for k in ["altitud", "mayday", "vuelo", "aereo", "avion", "caida", "plane", "flight"]):
+        return [("MAYDAY EN VUELO", "white"), ("CAÍDA CRÍTICA", "#FFE500"), ("DE ALTITUD", "white")]
+    if any(k in title_low for k in ["ciber", "hacker", "ransomware", "hospital", "breach", "cyber"]):
+        return [("CIBERATAQUE", "white"), ("PARALIZA REDES", "#FFE500"), ("ZERO-DAY", "white")]
+    if any(k in title_low for k in ["china", "nvidia", "gpu", "order", "export"]):
+        return [("CHINA", "white"), ("SE QUEDA", "#FFE500"), ("SIN CHIPS", "white")]
+    if any(k in title_low for k in ["2nm", "chip", "semiconductor", "tsmc", "intel", "hardware"]):
+        return [("NUEVO CHIP 2NM", "white"), ("REVOLUCIÓN", "#FFE500"), ("EN HARDWARE", "white")]
+    if any(k in title_low for k in ["espacio", "nasa", "luna", "orbita", "sonda", "space"]):
+        return [("MISIÓN ESPACIAL", "white"), ("ALERTA ORBITAL", "#FFE500"), ("EN VIVO", "white")]
 
-    # Partición gramaticalmente segura
-    def clean_line(tokens: List[str]) -> List[str]:
-        while tokens and tokens[-1] in stop_ends:
-            tokens.pop()
-        return tokens
-
-    if len(words) <= 3:
-        return [(w, "#FFE500" if i == 1 else "white") for i, w in enumerate(words)]
-    elif len(words) == 4:
-        return [
-            (" ".join(clean_line(words[:2])), "white"),
-            (" ".join(clean_line(words[2:])), "#FFE500")
-        ]
-
-    # 3 líneas balanceadas
-    l1 = clean_line(words[:2]) or words[:2]
-    rem1 = words[len(l1):]
-    l2 = clean_line(rem1[:2]) or rem1[:2]
-    rem2 = rem1[len(l2):]
-    l3 = clean_line(rem2[:3]) or rem2[:3]
-
-    lines = [(" ".join(l1), "white"), (" ".join(l2), "#FFE500")]
-    if l3:
-        lines.append((" ".join(l3), "white"))
-    return lines
+    return [("ALERTA DE", "white"), ("ÚLTIMA HORA", "#FFE500"), ("EN VIVO", "white")]
 
 
 # ==============================================================================
-# 3. COMPOSICIÓN GRÁFICA DE LA PORTADA 9:16 (1080x1920)
+# 3. GENERADOR DE FONDO CON MODELO DE IA DEDICADO (FLUX / RAYTRACING)
+# ==============================================================================
+
+def generate_ai_cover_background(genre: str, title: str, delivery_dir: Path) -> Image.Image:
+    """
+    Genera el fondo oficial de la portada en vertical 9:16 (1080x1920) utilizando un modelo de IA
+    dedicado a creación de imágenes (Flux / Pollinations API) con estética cinematográfica y raytracing.
+    """
+    title_low = (title or "").lower()
+    genre_up = (genre or "G1").upper()
+
+    is_peru = ("PERU" in genre_up or any(k in title_low for k in ["peru", "perú", "lima", "lluvias", "lluvia", "sismo", "huaico", "terremoto", "indeci"]))
+    is_cyber = ("G2" in genre_up or any(k in title_low for k in ["ciber", "hacker", "ransomware", "malware", "ddos", "breach"]))
+    is_ai = ("G3" in genre_up or any(k in title_low for k in ["ia", "ai", "chip", "chips", "nvidia", "intel", "tsmc", "hardware", "semiconductor", "2nm"]))
+    is_space = ("G4" in genre_up or any(k in title_low for k in ["espacio", "nasa", "esa", "luna", "marte", "orbita", "starship"]))
+
+    if is_peru:
+        prompt = (
+            "Dramatic cinematic vertical 9:16 poster background of torrential rains, flood waters rushing, "
+            "emergency rescue convoy lights in Peruvian mountain valley, Unreal Engine 5.4 Lumen raytracing, "
+            "volumetric mist, dark tactical mood, masterpiece 3D render, no text, no people"
+        )
+    elif is_cyber:
+        prompt = (
+            "Dramatic cinematic vertical 9:16 poster background of high-density server vault corridor with cold neon cyan "
+            "and warning crimson LED lights, glowing fiber optics, RTX raytracing reflections on matte black server racks, "
+            "dark cyber thriller aesthetic, masterpiece 3D render, no text"
+        )
+    elif is_ai:
+        prompt = (
+            "Dramatic cinematic vertical 9:16 poster background of a glowing 2nm microchip silicon wafer floating with "
+            "intricate iridescent golden circuits, Unreal Engine 5.4 Lumen raytracing reflections, dark high-tech cleanroom "
+            "laboratory atmosphere, volumetric lighting, no text, no people, no face masks"
+        )
+    elif is_space:
+        prompt = (
+            "Dramatic cinematic vertical 9:16 poster background of an advanced interplanetary spacecraft with glowing "
+            "violet plasma thrusters in deep space, crescent Earth curvature below, Octane path tracer lighting, starry background, no text"
+        )
+    else:
+        prompt = (
+            "Dramatic cinematic vertical 9:16 poster background of a modern executive jet flying through dark stormy clouds and rain, "
+            "cockpit glowing with amber alarm lights and cyan glass screens, RTX raytracing reflections, cinematic angle, no text"
+        )
+
+    ai_cache = delivery_dir / "PORTADA_AI_BASE.jpg"
+    encoded = urllib.parse.quote(prompt)
+    url = f"https://image.pollinations.ai/prompt/{encoded}?width=1080&height=1920&model=flux&nologo=true"
+
+    try:
+        print("[PORTADA-AI] 🎨 Generando fondo cinemático 9:16 con modelo de IA dedicado (Flux)...", flush=True)
+        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+        with urllib.request.urlopen(req, timeout=25) as resp:
+            data = resp.read()
+            ai_cache.write_bytes(data)
+            img = Image.open(io.BytesIO(data)).convert("RGBA")
+            img = img.resize((1080, 1920), Image.Resampling.LANCZOS)
+            print(f"[PORTADA-AI] ✅ Imagen de portada generada por IA con éxito: {len(data)} bytes", flush=True)
+            return img
+    except Exception as e:
+        print(f"[PORTADA-AI] ⚠️ Falló generación con modelo de IA: {e}. Activando fallback...", flush=True)
+
+    # Fallback a fotograma del vídeo o gradiente
+    video_mp4 = delivery_dir / "NOTICIERO_FINAL_62S.mp4"
+    tmp_frame = delivery_dir / "_temp_raw_frame.jpg"
+    if video_mp4.exists() and video_mp4.stat().st_size > 100_000:
+        cmd = [
+            "ffmpeg", "-y",
+            "-ss", "00:00:03.0",
+            "-i", str(video_mp4),
+            "-frames:v", "1",
+            "-q:v", "2",
+            str(tmp_frame)
+        ]
+        subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        if tmp_frame.exists():
+            try:
+                raw_img = Image.open(tmp_frame).convert("RGBA")
+                raw_img = raw_img.resize((1080, 1920), Image.Resampling.LANCZOS)
+                bg = raw_img.filter(ImageFilter.GaussianBlur(radius=5))
+                tmp_frame.unlink(missing_ok=True)
+                return bg
+            except Exception:
+                pass
+
+    return Image.new("RGBA", (1080, 1920), (6, 15, 30, 255))
+
+
+# ==============================================================================
+# 4. COMPOSICIÓN GRÁFICA DE LA PORTADA 9:16 (1080x1920)
 # ==============================================================================
 
 def generate_tiktok_cover(delivery_dir: Path, output_filename: str = "PORTADA_TIKTOK_916.jpg") -> Path:
@@ -236,35 +297,8 @@ def generate_tiktok_cover(delivery_dir: Path, output_filename: str = "PORTADA_TI
     genre = meta.get("genre", "G1")
     source = meta.get("source", "PRENSA OFICIAL")
 
-    # 1. Extraer frame base del vídeo o plano cinematográfico
-    video_mp4 = delivery_dir / "NOTICIERO_FINAL_62S.mp4"
-    tmp_frame = delivery_dir / "_temp_raw_frame.jpg"
-
-    if video_mp4.exists() and video_mp4.stat().st_size > 100_000:
-        # Extraer frame a 3.0s (suficiente para tener contexto cinematográfico sin saturación de texto)
-        cmd = [
-            "ffmpeg", "-y",
-            "-ss", "00:00:03.0",
-            "-i", str(video_mp4),
-            "-frames:v", "1",
-            "-q:v", "2",
-            str(tmp_frame)
-        ]
-        subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-
-    if tmp_frame.exists():
-        try:
-            raw_img = Image.open(tmp_frame).convert("RGBA")
-            raw_img = raw_img.resize((1080, 1920), Image.Resampling.LANCZOS)
-            # Desenfoque gaussiano suave para difuminar subtítulos quemados y resaltar el titular
-            bg_img = raw_img.filter(ImageFilter.GaussianBlur(radius=5))
-        except Exception:
-            bg_img = Image.new("RGBA", (1080, 1920), (6, 15, 30, 255))
-        finally:
-            if tmp_frame.exists():
-                tmp_frame.unlink(missing_ok=True)
-    else:
-        bg_img = Image.new("RGBA", (1080, 1920), (6, 15, 30, 255))
+    # 1. Obtener fondo generado por Modelo de IA dedicado
+    bg_img = generate_ai_cover_background(genre, title, delivery_dir)
 
     # 2. Capa de oscurecimiento y gradientes profesionales
     overlay = Image.new("RGBA", (1080, 1920), (0, 0, 0, 0))

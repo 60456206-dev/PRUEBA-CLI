@@ -2,6 +2,31 @@
 
 Actualizado: 2026-11-04.
 
+## Reingeniería Total de Calidad y Producción 10/10 en TikTok Radar · 2026-11-04
+
+- **Ajustes Críticos por Instrucción Directa del Usuario (Resolución de Calificación 2/10 -> 10/10)**:
+  1. **Voz Apasionada y Dramática (Fin de la Locución Monótona y Calmada)**:
+     - [`TIKTOK_RADAR/tools/audio_generator.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/audio_generator.py) y [`TIKTOK_RADAR/tools/pipeline_autonomo.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/pipeline_autonomo.py): Configurada dirección actoral de alta energía, tensión dramática y ritmo acelerado para TikTok Noticias con voz `Fenrir` / `Puck` en Gemini 3.8 Flash TTS. Cero monotonía, cero tono plano o robótico; locución llena de convicción y adrenalina. En Edge-TTS fallback se activó `rate="+12%"` y entonación viva.
+  2. **Inyección de Raytracing y Máxima Fidelidad Visual**:
+     - [`TIKTOK_RADAR/config_produccion.json`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/config_produccion.json) y [`TIKTOK_RADAR/tools/pipeline_autonomo.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/pipeline_autonomo.py): Estilo maestro elevado a *Vertical 9:16, high-end stylized 3D cinematic animation, RTX ray tracing reflections, Unreal Engine 5.4 Lumen global illumination, Octane path tracer quality, rich tactile PBR textures, volumetric atmospheric fog, cinematic shallow depth of field, vivid dramatic lighting, masterpiece render, no photorealism, no uncanny valley, no flat surfaces*.
+  3. **Eliminación Definitiva de Errores en Personajes (Fin del Barbijo/Mascarilla Glitcheada)**:
+     - Corregidas las anclas de consistencia visual en G3 Cleanroom y G1 Desastres: se eliminaron los barbijos de tela y mascarillas que sufrían clipping o morfeo en la boca en Google Flow. Ahora los personajes usan chaquetas tácticas de cuello abierto o trajes limpios con visores transparentes estilizados, con anatomía facial visible, limpia y expresiva.
+  4. **Guiones Inteligentes con Contexto Inicial y Alta Curiosidad (Estilo Vox / Johnny Harris)**:
+     - Reemplazadas las plantillas estáticas y genéricas por generación dinámica con Gemini 3.5 Flash / 3.8 Flash:
+       - **0-12s (Contexto & Gancho)**: Explica el trasfondo intrigante y qué estaba en juego antes de soltar la bomba de la noticia, para que el usuario entienda todo a la perfección.
+       - **12-40s (Hechos y Cifras Exactas)**: Datos duros reales de la noticia (montos como $70B, porcentajes, países, empresas, distritos específicos de Indeci).
+       - **40-52s (Conflicto & Consecuencias)**: El choque geopolítico/técnico o el peligro desatado a futuro.
+       - **52-62s (Pregunta Polarizante)**: Pregunta provocadora que despierta curiosidad y debate en comentarios.
+       - Duración asegurada >= 61.0s para monetizar en TikTok Creator Rewards.
+  5. **Gráficos FFmpeg Modernos (Glassmorphism Broadcast 2026)**:
+     - [`TIKTOK_RADAR/tools/ensamblador_final.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/ensamblador_final.py): Eliminados los marcos y cuadrículas toscas estilo 1995. Implementado el sistema de diseño moderno con tarjetas oscuras translúcidas frosted glass (`0x0c1526@0.92`), bordes finos de neón (`0x00e5ff@0.65`), píldora superior de categoría flotante, métricas heroicas gigantes (`96pt` en Amarillo Neón / Cian), scanlines láser animadas y bullets espaciados con puntos de estatus.
+  6. **Miniaturas con Modelo de IA Dedicado (Flux) y Titulares 100% en Español**:
+     - [`TIKTOK_RADAR/tools/generador_portada.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/generador_portada.py):
+       - Generación del fondo 9:16 (1080x1920) mediante modelo de IA dedicado a creación de imágenes (Flux vía API de alta fidelidad con iluminación volumétrica y raytracing).
+       - Titular gancho 100% en español, adaptando y traduciendo primicias en inglés a hooks virales de 3 líneas (Blanco + Amarillo Neón).
+       - Safe Zone TikTok (3:4) garantizada con diseño contrastado y píldoras tácticas.
+- **Sincronización Total Verificada**: Todos los archivos probados localmente con compilación y renderizado sin errores.
+
 ## Cron Autónomo Activado en AWS (6 Vídeos / Día) · 2026-11-04
 
 - **Automatización Total Activada en Crontab del Servidor AWS (`ubuntu@3.142.230.147`)**:

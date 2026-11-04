@@ -9,8 +9,8 @@
     }
   },
   "consistencia_visual": {
-    "estilo_maestro": "Vertical 9:16, modern stylized 3D cinematic animation, Arcane and Spider-Verse tactical news thriller aesthetic, Unreal Engine 5 volumetric lighting, rich stylized textures, no photorealism, no uncanny valley",
-    "motor_render": "Unreal Engine 5 Volumetric / Octane Render Style",
+    "estilo_maestro": "Vertical 9:16, high-end stylized 3D cinematic animation, RTX ray tracing reflections, Unreal Engine 5.4 Lumen global illumination, Octane path tracer quality, rich tactile PBR textures, volumetric atmospheric fog, cinematic shallow depth of field, vivid dramatic lighting, masterpiece render, no photorealism, no uncanny valley, no flat surfaces",
+    "motor_render": "Unreal Engine 5.4 Lumen / Octane Raytracer Style",
     "resolucion": "1080x1920",
     "fps": 24,
     "paleta_colores": {
@@ -22,27 +22,27 @@
     },
     "anclas_por_categoria": {
       "G1_AVIACION": {
-        "personaje": "Stylized 3D male pilot with dark aviation headset, navy blue flight uniform, furrowed brow, focused expression, mouth closed",
+        "personaje": "Stylized 3D male pilot with dark aviation headset, navy blue flight uniform, furrowed brow, focused expression, mouth closed, sharp facial geometry, raytraced cockpit reflections",
         "aeronave": "Sleek white twin-engine executive jet with deep navy rim accents and bright wingtip strobe lights",
         "cabina": "Glass cockpit with dual glowing amber/cyan instrument panels, weather radar displays, and throttle quadrant"
       },
       "G1_PERU_DESASTRES": {
-        "personaje": "Stylized 3D emergency first responder in high-visibility orange-and-blue tactical jacket under heavy rain",
+        "personaje": "Stylized 3D emergency first responder in high-visibility orange-and-blue tactical jacket under heavy rain, determined facial expression, rain droplets on skin, clear facial anatomy, no face masks or cloth coverings",
         "entorno": "Peruvian coastal and andean valley terrain, wet asphalt, emergency convoy flashing red and blue lights",
         "sala_crisis": "INDECI/COEN crisis monitoring room with massive glowing satellite weather displays and topography maps"
       },
       "G2_CIBERATAQUES": {
-        "personaje": "Stylized 3D cybersecurity intelligence analyst in dark tech facility illuminated by cyan and amber monitor glow",
+        "personaje": "Stylized 3D cybersecurity intelligence analyst in dark tech bunker illuminated by cyan and amber monitor glow, focused intense gaze, clear expressive facial features, dark framed tactical glasses, no face coverings",
         "entorno": "High-density server vault with matte black racks, pulsing LED activity lights and fiber optic bundles",
         "elementos": "Holographic command terminal displays showing encrypted traffic matrices and packet inspection nodes"
       },
       "G3_IA_HARDWARE": {
-        "personaje": "Stylized 3D cleanroom semiconductor engineer wearing white anti-static bunny suit and protective visor",
-        "entorno": "Extreme ultraviolet (High-NA EUV) lithography cleanroom with sterile golden and monochromatic lighting",
-        "elementos": "Translucent glowing 300mm silicon wafer with iridescent 2nm micro-architecture circuit patterns"
+        "personaje": "Stylized 3D semiconductor elite researcher wearing sleek futuristic white cleanroom gear with transparent high-tech safety glasses, sharp visible expressive human eyes and face, clean facial geometry, absolutely no loose cloth face masks or mouth coverings",
+        "entorno": "Extreme ultraviolet (High-NA EUV) lithography cleanroom with sterile golden and monochromatic lighting, raytraced reflections",
+        "elementos": "Translucent glowing 300mm silicon wafer with iridescent 2nm micro-architecture circuit patterns, RTX subsurface scattering"
       },
       "G4_ESPACIO": {
-        "personaje": "Stylized 3D mission flight director in command center console wearing headset, tracking telemetry monitors",
+        "personaje": "Stylized 3D mission flight director in command center console wearing lightweight headset, focused eyes tracking telemetry monitors, clear expressive facial features, no face coverings",
         "entorno": "Deep space planetary orbit, atmospheric entry plasma trails, and robotic probe solar arrays",
         "elementos": "Precision navigation vector telemetry HUD, rocket thruster plume, and celestial horizon"
       }
