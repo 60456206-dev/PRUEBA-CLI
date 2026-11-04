@@ -2,6 +2,16 @@
 
 Actualizado: 2026-11-04.
 
+## Integración de Audio Broadcast: Gemini 3.8 Flash TTS + Epidemic Sound MCP · 2026-11-04
+
+- **Configuración de APIs de Estudio en AWS (`ubuntu@3.142.230.147`)**:
+  - Claves `GEMINI_API_KEY` y `EPIDEMIC_SOUND` configuradas y verificadas operativas (HTTP 200) tanto localmente como en el servidor AWS (`~/.api_keys.env` y `~/.bashrc`).
+  - Implementado [`TIKTOK_RADAR/tools/audio_generator.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/audio_generator.py) integrando:
+    1. **Locución Profesional Gemini 3.8 Flash TTS:** Dirección actoral periodística (`speech_metadata`), dicción clara y autoritaria para noticiero de última hora en español neutro, y garantía automática de duración `>= 61.0 s` para monetización en TikTok Creator Rewards. Fallback automático a `gemini-3.8-flash-lite-tts` y `edge-tts`.
+    2. **Música y Foley Epidemic Sound MCP:** Conexión directa al servidor MCP de Epidemic Sound con descarga de stems en estudio (`NEWS_THRILLER_BASS`, `NEWS_THRILLER_INSTRUMENTS`, `SFX_RISER_LOW`, `SFX_DARK_BOOM`) en `audio_assets/`.
+  - [`TIKTOK_RADAR/tools/pipeline_autonomo.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/pipeline_autonomo.py) y [`TIKTOK_RADAR/tools/ensamblador_final.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/ensamblador_final.py) actualizados para usar la nueva arquitectura de audio con ducking automático bajo la voz y masterización EBU R128 a `-14.8 LUFS`.
+  - Código sincronizado y probado exitosamente en AWS.
+
 ## Bot Propio de WhatsApp Web y Supervisión Permanente en AWS (`tiktok-whatsapp-bot`) · 2026-11-04
 
 - **Bot Propio Nativo 24/7 en AWS**:
