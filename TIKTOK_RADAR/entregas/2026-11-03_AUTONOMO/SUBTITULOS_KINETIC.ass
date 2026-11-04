@@ -1,0 +1,70 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 0
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: CapCutBouncing,DejaVu Sans,74,&H00FFFFFF,&H0000EAFF,&H00000000,&H90000000,-1,0,0,0,100,100,1.2,0,1,5.5,2.5,2,80,80,440,1
+Style: HookPill,DejaVu Sans,30,&H00FFFFFF,&H00FFFFFF,&H001818D8,&H00000000,-1,0,0,0,100,100,1.8,0,3,7.0,0.0,8,60,60,150,1
+Style: HookSource,DejaVu Sans,26,&H0000EAFF,&H0000EAFF,&H00000000,&HA0000000,-1,0,0,0,100,100,1.2,0,1,3.5,1.5,8,60,60,225,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 2,0:00:00.00,0:00:03.00,HookPill,,0,0,0,,{\fad(120,300)}🔴 ÚLTIMA HORA
+Dialogue: 2,0:00:00.00,0:00:03.00,HookSource,,0,0,0,,{\fad(120,300)}REPORTE OFICIAL · BBC MUNDO (INTERNACIONAL / IMPACTO)
+Dialogue: 1,0:00:00.10,0:00:00.91,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}EN SOLO {\c&H0000EAFF&}DOCE{\c&H00FFFFFF&}
+Dialogue: 1,0:00:00.91,0:00:02.12,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}{\c&H0000EAFF&}SEGUNDOS,{\c&H00FFFFFF&} UN AVIÓN
+Dialogue: 1,0:00:02.12,0:00:03.27,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}PRIVADO CON {\c&H0000EAFF&}NUEVE{\c&H00FFFFFF&}
+Dialogue: 1,0:00:03.27,0:00:04.35,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}{\c&H0000EAFF&}PERSONAS{\c&H00FFFFFF&} A BORDO
+Dialogue: 1,0:00:04.35,0:00:05.96,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}{\c&H0000EAFF&}DESAPARECIÓ{\c&H00FFFFFF&} POR COMPLETO
+Dialogue: 1,0:00:05.96,0:00:06.91,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}DE LOS {\c&H0000EAFF&}RADARES{\c&H00FFFFFF&}
+Dialogue: 1,0:00:06.91,0:00:07.72,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}EN {\c&H0000EAFF&}FLORIDA.{\c&H00FFFFFF&}
+Dialogue: 1,0:00:07.72,0:00:09.13,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}OCURRIÓ AL {\c&H0000EAFF&}ANOCHECER.{\c&H00FFFFFF&}
+Dialogue: 1,0:00:09.13,0:00:10.68,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}SEGÚN LA {\c&H00FFFF00&}ADMINISTRACIÓN{\c&H00FFFFFF&}
+Dialogue: 1,0:00:10.68,0:00:12.03,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}{\c&H00FFFF00&}FEDERAL{\c&H00FFFFFF&} DE {\c&H00FFFF00&}AVIACIÓN,{\c&H00FFFFFF&}
+Dialogue: 1,0:00:12.03,0:00:13.24,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}LA {\c&H0000EAFF&}AERONAVE{\c&H00FFFFFF&} VOLABA
+Dialogue: 1,0:00:13.24,0:00:14.12,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}EN {\c&H0000EAFF&}ALTITUD{\c&H00FFFFFF&} DE
+Dialogue: 1,0:00:14.12,0:00:15.53,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}{\c&H00FFFF00&}CRUCERO{\c&H00FFFFFF&} ESTABLE ANTES
+Dialogue: 1,0:00:15.53,0:00:16.41,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}DE {\c&H0000EAFF&}INICIAR{\c&H00FFFFFF&} UN
+Dialogue: 1,0:00:16.41,0:00:18.57,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}DESCENSO {\c&H00FFFF00&}VERTICAL{\c&H00FFFFFF&} INCONTROLABLE.
+Dialogue: 1,0:00:18.57,0:00:19.44,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}{\c&H0000EAFF&}ADENTRO{\c&H00FFFFFF&} DE LA
+Dialogue: 1,0:00:19.44,0:00:20.59,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}{\c&H00FFFF00&}CABINA,{\c&H00FFFFFF&} LAS LUCES
+Dialogue: 1,0:00:20.59,0:00:21.67,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}DE {\c&H0000EAFF&}EMERGENCIA{\c&H00FFFFFF&} SE
+Dialogue: 1,0:00:21.67,0:00:23.28,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}{\c&H0000EAFF&}ENCENDIERON.{\c&H00FFFFFF&} LOS PILOTOS
+Dialogue: 1,0:00:23.28,0:00:24.77,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}{\c&H0000EAFF&}FORCEJEARON{\c&H00FFFFFF&} CONTRA LOS
+Dialogue: 1,0:00:24.77,0:00:26.45,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}MANDOS {\c&H0000EAFF&}INTENTANDO{\c&H00FFFFFF&} NIVELAR
+Dialogue: 1,0:00:26.45,0:00:27.12,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}LAS ALAS,
+Dialogue: 1,0:00:27.12,0:00:28.34,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}MIENTRAS LA {\c&H0000EAFF&}ALARMA{\c&H00FFFFFF&}
+Dialogue: 1,0:00:28.34,0:00:29.82,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}DE {\c&H0000EAFF&}COLISIÓN{\c&H00FFFFFF&} ENSORDECÍA
+Dialogue: 1,0:00:29.82,0:00:30.83,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}EL {\c&H0000EAFF&}HABITÁCULO.{\c&H00FFFFFF&}
+Dialogue: 1,0:00:30.83,0:00:32.18,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}LOS {\c&H0000EAFF&}MOTORES{\c&H00FFFFFF&} RUGIERON
+Dialogue: 1,0:00:32.18,0:00:33.32,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}AL {\c&H0000EAFF&}MÁXIMO{\c&H00FFFFFF&} EMPUJE,
+Dialogue: 1,0:00:33.32,0:00:34.40,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}PERO LOS {\c&H00FFFF00&}TIMONES{\c&H00FFFFFF&}
+Dialogue: 1,0:00:34.40,0:00:35.55,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}YA NO {\c&H0000EAFF&}RESPONDÍAN.{\c&H00FFFFFF&}
+Dialogue: 1,0:00:35.55,0:00:36.49,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}{\c&H0000EAFF&}ENTRE{\c&H00FFFFFF&} NUBES DE
+Dialogue: 1,0:00:36.49,0:00:37.64,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}{\c&H0000EAFF&}TORMENTA{\c&H00FFFFFF&} Y LLUVIA
+Dialogue: 1,0:00:37.64,0:00:39.12,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}TORRENCIAL, EL {\c&H00FFFF00&}BIMOTOR{\c&H00FFFFFF&}
+Dialogue: 1,0:00:39.12,0:00:40.33,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}SE {\c&H0000EAFF&}PRECIPITÓ{\c&H00FFFFFF&} HACIA
+Dialogue: 1,0:00:40.33,0:00:41.14,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}LA {\c&H0000EAFF&}COSTA{\c&H00FFFFFF&} SIN
+Dialogue: 1,0:00:41.14,0:00:42.49,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}EMITIR {\c&H0000EAFF&}NINGUNA{\c&H00FFFFFF&} SEÑAL
+Dialogue: 1,0:00:42.49,0:00:43.30,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}DE {\c&H0000EAFF&}AUXILIO.{\c&H00FFFFFF&}
+Dialogue: 1,0:00:43.30,0:00:44.24,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}LOS {\c&H00FFFF00&}PERITOS{\c&H00FFFFFF&} DE
+Dialogue: 1,0:00:44.24,0:00:45.32,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}LA {\c&H00FFFF00&}NTSB{\c&H00FFFFFF&} ANALIZAN
+Dialogue: 1,0:00:45.32,0:00:46.13,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}{\c&H0000EAFF&}AHORA{\c&H00FFFFFF&} SI FUE
+Dialogue: 1,0:00:46.13,0:00:47.54,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}UNA FALLA {\c&H0000EAFF&}ESTRUCTURAL{\c&H00FFFFFF&}
+Dialogue: 1,0:00:47.54,0:00:48.76,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}{\c&H0000EAFF&}CATASTRÓFICA{\c&H00FFFFFF&} O UNA
+Dialogue: 1,0:00:48.76,0:00:50.51,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}{\c&H0000EAFF&}DESORIENTACIÓN{\c&H00FFFFFF&} ESPACIAL EN
+Dialogue: 1,0:00:50.51,0:00:51.59,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}PLENA {\c&H0000EAFF&}TORMENTA.{\c&H00FFFFFF&}
+Dialogue: 1,0:00:51.59,0:00:52.67,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}LAS {\c&H0000EAFF&}CAJAS{\c&H00FFFFFF&} {\c&H0000EAFF&}NEGRAS{\c&H00FFFFFF&}
+Dialogue: 1,0:00:52.67,0:00:53.95,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}{\c&H0000EAFF&}TARDARÁN{\c&H00FFFFFF&} SEMANAS EN
+Dialogue: 1,0:00:53.95,0:00:55.50,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}{\c&H0000EAFF&}DESCIFRARSE.{\c&H00FFFFFF&} ¿CREES QUE
+Dialogue: 1,0:00:55.50,0:00:56.37,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}FUE UNA {\c&H0000EAFF&}FALLA{\c&H00FFFFFF&}
+Dialogue: 1,0:00:56.37,0:00:57.79,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}MECÁNICA {\c&H0000EAFF&}IMPOSIBLE{\c&H00FFFFFF&} DE
+Dialogue: 1,0:00:57.79,0:00:58.53,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}{\c&H0000EAFF&}SALVAR{\c&H00FFFFFF&} O UN
+Dialogue: 1,0:00:58.53,0:00:59.34,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}{\c&H0000EAFF&}ERROR{\c&H00FFFFFF&} DE LOS
+Dialogue: 1,0:00:59.34,0:01:00.55,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}{\c&H0000EAFF&}PILOTOS?{\c&H00FFFFFF&} DÉJAME TU
+Dialogue: 1,0:01:00.55,0:01:01.49,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}{\c&H0000EAFF&}OPINIÓN{\c&H00FFFFFF&} EN LOS
+Dialogue: 1,0:01:01.49,0:01:02.44,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}{\c&H0000EAFF&}COMENTARIOS.{\c&H00FFFFFF&}

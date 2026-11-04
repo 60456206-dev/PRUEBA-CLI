@@ -360,14 +360,33 @@ client.on('message_create', async (msg) => {
     return;
   }
 
-  // COMANDO 5: INICIAR PRODUCCIÓN (!generar)
+  // COMANDO 5: INICIAR PRODUCCIÓN (!generar / !generar todos / !generar 1..4)
   if (
-    lower === '!generar' ||
+    lower.startsWith('!generar') ||
     lower.includes('generar noticiero') ||
     lower.includes('iniciar produccion')
   ) {
-    await msg.reply('🤖 🚀 *Iniciando producción del Noticiero 3D en AWS...*\nTe enviaré los avances de cada plano y el vídeo final a este chat.');
-    const child = spawn('python3', ['tools/ejecutar_todo.py'], {
+    let args = ['tools/ejecutar_todo.py'];
+    let modeText = 'los 4 géneros diarios (Aviación, Ciberataques, IA, Espacio)';
+
+    if (lower.includes(' 1') || lower.includes('aviacion') || lower.includes('catastrofe')) {
+      args.push('--genre', 'G1');
+      modeText = 'Género 1 (🚨 Aviación & Catástrofes)';
+    } else if (lower.includes(' 2') || lower.includes('ciber') || lower.includes('hacker')) {
+      args.push('--genre', 'G2');
+      modeText = 'Género 2 (💻 Ciberataques & Amenazas)';
+    } else if (lower.includes(' 3') || lower.includes('ia') || lower.includes('tech') || lower.includes('robot')) {
+      args.push('--genre', 'G3');
+      modeText = 'Género 3 (🤖 Inteligencia Artificial & Tech)';
+    } else if (lower.includes(' 4') || lower.includes('espacio') || lower.includes('ciencia')) {
+      args.push('--genre', 'G4');
+      modeText = 'Género 4 (🚀 Espacio & Ciencia Extrema)';
+    } else {
+      args.push('--all');
+    }
+
+    await msg.reply(`🤖 🚀 *Iniciando producción autónoma en AWS...*\n🎯 *Objetivo:* ${modeText}.\n_No te preocupes por nada, el servidor trabaja solo mientras estás en clases y te entregará los vídeos aquí._`);
+    const child = spawn('python3', args, {
       cwd: WORKSPACE_DIR,
       detached: true,
       stdio: 'ignore',

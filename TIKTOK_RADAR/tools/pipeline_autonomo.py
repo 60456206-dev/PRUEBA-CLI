@@ -18,7 +18,7 @@ import subprocess
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 
 # Importar el escáner de noticias y generador de audio
 sys.path.append(str(Path(__file__).parent))
@@ -302,31 +302,40 @@ async def synthesize_voiceover(script: str, output_path: Path, voice: str = "Puc
     return dur
 
 
-def run_pipeline() -> Path:
-    print("1. Escaneando fuentes de noticias (Xataka, BBC Mundo, El País)...", flush=True)
-    news_items = scan_all_sources(max_per_source=4)
-    if not news_items:
-        raise RuntimeError("No se pudieron obtener noticias de los feeds RSS.")
+def run_pipeline(genre_key: Optional[str] = None) -> Path:
+    from news_radar import get_daily_4_genres
+    print("1. Escaneando y clasificando noticias en los 4 géneros clave...", flush=True)
+    daily_genres = get_daily_4_genres()
 
-    top_news = pick_top_news(news_items)
-    print("\n2. Noticia seleccionada automáticamente por impacto:")
+    if genre_key and genre_key in daily_genres:
+        top_news = daily_genres[genre_key]
+        suffix = genre_key.replace("G1_", "").replace("G2_", "").replace("G3_", "").replace("G4_", "")
+    else:
+        # Por defecto tomar el de mayor puntuación general
+        genre_key = max(daily_genres, key=lambda g: daily_genres[g].get("score", 1.0))
+        top_news = daily_genres[genre_key]
+        suffix = "AUTONOMO"
+
+    print(f"\n2. Noticia seleccionada para [{top_news.get('genre_label', genre_key)}]:")
     print(f"   [{top_news['source_name']}] {top_news['title']}")
 
     storyboard = generate_monetizable_storyboard(top_news)
 
     today_str = datetime.now().strftime("%Y-%m-%d")
-    delivery_dir = ENTREGAS_DIR / f"{today_str}_AUTONOMO"
+    folder_name = f"{today_str}_{suffix}"
+    delivery_dir = ENTREGAS_DIR / folder_name
     delivery_dir.mkdir(parents=True, exist_ok=True)
     (delivery_dir / "shots").mkdir(parents=True, exist_ok=True)
 
     audio_file = delivery_dir / "LOCUCION_NOTICIERO_62S.mp3"
-    print("\n3. Sintetizando locución periodística con Edge-TTS (es-MX-JorgeNeural)...", flush=True)
+    print("\n3. Sintetizando locución periodística con Gemini 3.8 Flash TTS / Edge-TTS...", flush=True)
     real_dur = asyncio.run(synthesize_voiceover(storyboard["script"], audio_file))
     print(f"   Audio generado con éxito: {audio_file.name} ({real_dur:.2f} s | Cumple >60s para TikTok Monetización)")
 
     report_file = delivery_dir / "PAQUETE_NOTICIERO_LISTO.md"
-    md_content = f"""# TikTok Radar · Paquete Noticiero Autónomo ({today_str})
+    md_content = f"""# TikTok Radar · Paquete Noticiero ({top_news.get('genre_label', genre_key)}) · {today_str}
 
+* **Género:** {top_news.get('genre_label', genre_key)}
 * **Titular Seleccionado:** {storyboard['title']}
 * **Fuente:** {storyboard['source']} ([Enlace directo]({storyboard['link']}))
 * **Duración de Audio Verificada:** **{real_dur:.2f} segundos** (Cumple requisito >60 s de TikTok Creator Rewards)
@@ -356,6 +365,8 @@ def run_pipeline() -> Path:
     meta_file = delivery_dir / "metadata.json"
     meta_file.write_text(json.dumps({
         "date": today_str,
+        "genre": genre_key,
+        "genre_label": top_news.get("genre_label", genre_key),
         "title": storyboard["title"],
         "source": storyboard["source"],
         "url": storyboard["link"],
@@ -374,4 +385,29 @@ def run_pipeline() -> Path:
 
 
 if __name__ == "__main__":
-    out = run_pipeline()
+    import argparse
+    parser = argparse.ArgumentParser(description="Pipeline autónomo TikTok Radar")
+    parser.add_argument("--genre", type=str, default=None, choices=[
+        "G1_AVIACION_CATASTROFES", "G2_CIBERATAQUES_HACKERS",
+        "G3_IA_ROBOTICA", "G4_ESPACIO_CIENCIA",
+        "G1", "G2", "G3", "G4"
+    ], help="Género específico a producir")
+    parser.add_argument("--all", action="store_true", help="Producir los 4 géneros del día en lote")
+    args = parser.parse_args()
+
+    genre_map = {
+        "G1": "G1_AVIACION_CATASTROFES",
+        "G2": "G2_CIBERATAQUES_HACKERS",
+        "G3": "G3_IA_ROBOTICA",
+        "G4": "G4_ESPACIO_CIENCIA",
+    }
+
+    if args.all:
+        for g in ["G1_AVIACION_CATASTROFES", "G2_CIBERATAQUES_HACKERS", "G3_IA_ROBOTICA", "G4_ESPACIO_CIENCIA"]:
+            print(f"\n=======================================================")
+            print(f"🚀 INICIANDO PRODUCCIÓN DE GÉNERO: {g}")
+            print(f"=======================================================")
+            run_pipeline(g)
+    else:
+        target_genre = genre_map.get(args.genre, args.genre)
+        out = run_pipeline(target_genre)
