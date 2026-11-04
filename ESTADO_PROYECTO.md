@@ -2,6 +2,24 @@
 
 Actualizado: 2026-11-04.
 
+## Cronograma Maestro: Producción Anticipada en AWS vs. Publicación en TikTok (6 Vídeos / Día) · 2026-11-04
+
+- **Ajuste Crítico de Cronograma con Margen Operativo de Descarga (Instrucción Expresa del Usuario)**:
+  - Los horarios objetivo acordados corresponden al momento en que el **usuario sube y publica** el vídeo en TikTok.
+  - La fábrica autónoma en AWS tarda entre **12 y 18 minutos** en generar el paquete completo (radar, guion, locución Gemini TTS, 8 planos Flow, 5 HUDs FFmpeg, portada 9:16 y hashtags).
+  - Para que el usuario reciba el material con **30 a 35 minutos de anticipación** y pueda descargarlo, revisarlo y publicarlo con calma a la hora exacta, **el servidor inicia la generación 50 minutos antes de cada publicación**.
+  - **Parrilla Diaria de 6 Vídeos (Hora Perú GMT-5 / UTC-5)**:
+    1. **07:00 AM (Subida TikTok)**: Servidor inicia a las **06:10 AM** (11:10 UTC) -> 🇵🇪 *Desastres Naturales Perú*. Llega a WhatsApp a las **~06:28 AM**.
+    2. **10:00 AM (Subida TikTok)**: Servidor inicia a las **09:10 AM** (14:10 UTC) -> ✈️ *Aviación Internacional*. Llega a WhatsApp a las **~09:28 AM**.
+    3. **01:00 PM (Subida TikTok)**: Servidor inicia a las **12:10 PM** (17:10 UTC) -> 💻 *Ciberataques & Hackers*. Llega a WhatsApp a las **~12:28 PM**.
+    4. **04:15 PM (Subida TikTok)**: Servidor inicia a las **03:25 PM** (20:25 UTC) -> 🤖 *Inteligencia Artificial*. Llega a WhatsApp a las **~03:43 PM**.
+    5. **07:15 PM (Subida TikTok)**: Servidor inicia a las **06:25 PM** (23:25 UTC) -> ⚙️ *Hardware & Chips 2nm*. Llega a WhatsApp a las **~06:43 PM**.
+    6. **09:45 PM (Subida TikTok)**: Servidor inicia a las **08:55 PM** (01:55 UTC) -> 🚀 *Espacio & Ciencia Extrema*. Llega a WhatsApp a las **~09:13 PM**.
+  - **Archivos Configurados y Sincronizados**:
+    - [`TIKTOK_RADAR/tools/lanzador_programado.sh`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/lanzador_programado.sh): Script ejecutable con entorno preparado para Cron.
+    - [`TIKTOK_RADAR/tools/crontab_6videos_peru.tab`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/crontab_6videos_peru.tab): Configuración de cron con horas UTC del servidor.
+    - Artefacto de investigación actualizado: [`ESTUDIO_HORARIOS_TIKTOK_2026.md`](file:///home/vscode/.gemini/antigravity-cli/brain/4f794728-a026-4425-8d6e-a1719ddda528/ESTUDIO_HORARIOS_TIKTOK_2026.md).
+
 ## Generador Automático de Portadas 9:16 y Entrega Completa con Hashtags en WhatsApp · 2026-11-04
 
 - **Generador Automático de Miniaturas / Portadas 9:16 ([`TIKTOK_RADAR/tools/generador_portada.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/generador_portada.py))**:

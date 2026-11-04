@@ -1,0 +1,26 @@
+# ==============================================================================
+# TIKTOK RADAR · Cronograma de Producción Autónoma en AWS (6 Vídeos / Día)
+# Hora del Servidor: UTC (Hora Perú + 5 horas)
+# El servidor inicia la generación 50 minutos ANTES de la hora en que subes a TikTok.
+# Te llega a WhatsApp ~32 minutos antes de publicar para que descargues con calma.
+# ==============================================================================
+SHELL=/bin/bash
+PATH=/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+# 1. 🇵🇪 VÍDEO 1 (Subes a TikTok a las 07:00 AM Perú) -> Inicia 06:10 AM Perú (11:10 UTC)
+10 11 * * * /bin/bash /home/ubuntu/TIKTOK-NEWS/tools/lanzador_programado.sh G1 0 "DESASTRES_PERU"
+
+# 2. ✈️ VÍDEO 2 (Subes a TikTok a las 10:00 AM Perú) -> Inicia 09:10 AM Perú (14:10 UTC)
+10 14 * * * /bin/bash /home/ubuntu/TIKTOK-NEWS/tools/lanzador_programado.sh G1 1 "AVIACION_GLOBAL"
+
+# 3. 💻 VÍDEO 3 (Subes a TikTok a las 01:00 PM Perú) -> Inicia 12:10 PM Perú (17:10 UTC)
+10 17 * * * /bin/bash /home/ubuntu/TIKTOK-NEWS/tools/lanzador_programado.sh G2 0 "CIBERATAQUES_SOC"
+
+# 4. 🤖 VÍDEO 4 (Subes a TikTok a las 04:15 PM Perú) -> Inicia 03:25 PM Perú (20:25 UTC)
+25 20 * * * /bin/bash /home/ubuntu/TIKTOK-NEWS/tools/lanzador_programado.sh G3 0 "INTELIGENCIA_ARTIFICIAL"
+
+# 5. ⚙️ VÍDEO 5 (Subes a TikTok a las 07:15 PM Perú) -> Inicia 06:25 PM Perú (23:25 UTC)
+25 23 * * * /bin/bash /home/ubuntu/TIKTOK-NEWS/tools/lanzador_programado.sh G3 1 "HARDWARE_CHIPS_2NM"
+
+# 6. 🚀 VÍDEO 6 (Subes a TikTok a las 09:45 PM Perú) -> Inicia 08:55 PM Perú (01:55 UTC)
+55 1 * * * /bin/bash /home/ubuntu/TIKTOK-NEWS/tools/lanzador_programado.sh G4 0 "ESPACIO_CIENCIA"
