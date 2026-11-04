@@ -426,13 +426,17 @@ client.on('message_create', async (msg) => {
   const fullCmd = `cd ${WORKSPACE_DIR} && ${agyCmd} --dangerously-skip-permissions -p ${JSON.stringify(prompt)}`;
 
   exec(fullCmd, { maxBuffer: 1024 * 1024 * 5, timeout: 120000 }, async (err, stdout, stderr) => {
-    if (err) {
-      const errOut = (stderr || err.message || '').slice(-250);
-      await msg.reply(`🤖 ⚠️ Error ejecutando agente en AWS:\n${errOut}`);
-      return;
+    try {
+      if (err) {
+        const errOut = (stderr || err.message || '').slice(-250);
+        await client.sendMessage(targetChat, `🤖 ⚠️ Error ejecutando agente en AWS:\n${errOut}`);
+        return;
+      }
+      const cleanOutput = stdout.trim() || 'El agente completó la consulta sin texto de salida.';
+      await client.sendMessage(targetChat, `🤖 *Antigravity AWS:*\n\n${cleanOutput}`);
+    } catch (sendErr) {
+      console.error('[WA-BOT] Error enviando respuesta de agy por WhatsApp:', sendErr.message);
     }
-    const cleanOutput = stdout.trim() || 'El agente completó la consulta sin texto de salida.';
-    await msg.reply(`🤖 *Antigravity AWS:*\n\n${cleanOutput}`);
   });
 });
 
