@@ -7,7 +7,7 @@ Actualizado: 2026-11-04.
 - **Ingesta Multi-Fuente Internacional Configurada por Categoría ([`tools/news_radar.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/news_radar.py))**:
   - **🚨 G1: Aviación, Catástrofes y Rescates**: AeroTime Global Aviation (incidentes aéreos y alertas de seguridad), El País Internacional, El Mundo Internacional, Infobae Última Hora y BBC Mundo. Keywords bilingües de impacto (emergencias, altitud, mayday, rescate, desastres).
   - **💻 G2: Ciberataques, Guerra Digital y Amenazas Críticas**: The Hacker News, BleepingComputer, SecurityWeek y Dark Reading. Cobertura de vulnerabilidades de día cero, ransomware, brechas e infraestructura crítica.
-  - **🤖 G3: Inteligencia Artificial, Robótica y Big Tech**: TechCrunch AI, Ars Technica Frontier, El País Tecnología y Xataka Tecnología (filtrada). Enfoque en litografía 2nm, modelos frontera, semiconductores y automatización.
+  - **🤖 G3: Inteligencia Artificial, Robótica y Big Tech**: Tom's Hardware (arquitectura de chips, semiconductores y hardware crítico), TechCrunch AI, Ars Technica Frontier, El País Tecnología y Xataka Tecnología (filtrada). Enfoque en High-NA EUV, 2nm, modelos frontera, GPUs y automatización.
   - **🚀 G4: Espacio, Ciencia Extrema y Fenómenos Anómalos**: NASA Breaking News, European Space Agency (ESA), Phys.org Space & Astronomy y EuropaPress Ciencia. Cobertura de misiones planetarias, telescopios y física extrema.
   - Módulo [`tools/pipeline_autonomo.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/pipeline_autonomo.py) enriquecido con guiones y storyboards especializados por categoría (aviación, ciberseguridad, espacio, IA y hardware).
 

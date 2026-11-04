@@ -142,6 +142,14 @@ FEEDS = [
         "allowed_genres": ["G2_CIBERATAQUES_HACKERS", "G3_IA_ROBOTICA"],
         "weight": 1.3,
     },
+    {
+        "id": "tomshardware",
+        "name": "Tom's Hardware",
+        "url": "https://www.tomshardware.com/feeds/news",
+        "primary_genre": "G3_IA_ROBOTICA",
+        "allowed_genres": ["G3_IA_ROBOTICA", "G2_CIBERATAQUES_HACKERS"],
+        "weight": 1.5,
+    },
 
     # -------------------------------------------------------------------------
     # 4. 🚀 G4: Espacio, Ciencia Extrema y Fenómenos Anómalos
@@ -201,7 +209,9 @@ GENRE_KEYWORDS = {
         "robot", "humanoide", "algoritmo", "chip", "nvidia", "supercomputadora",
         "deepfake", "automatización", "tesla", "revolución tecnológica", "claude",
         "deepseek", "artificial intelligence", "humanoid", "frontier model", "llm",
-        "tsmc", "2nm", "autonomous system"
+        "tsmc", "2nm", "autonomous system", "semiconductor", "semiconductores",
+        "silicon", "silicio", "gpu", "cpu", "dram", "nand", "euv", "high-na",
+        "intel", "amd", "hardware", "supercomputing", "datacenter", "data center", "memory crisis"
     ],
     "G4_ESPACIO_CIENCIA": [
         "espacio", "asteroide", "nasa", "marte", "luna", "cohete", "spacex",
