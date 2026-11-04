@@ -210,11 +210,11 @@ def build_modern_broadcast_card(
         f"drawtext=fontfile={FONT_BOLD}:text='{metric_val}':fontcolor=0xffe500:fontsize=96:x=110:y=550",
         f"drawtext=fontfile={FONT_REG}:text='{metric_label}':fontcolor=white@0.85:fontsize=26:x=110:y=680",
         f"drawbox=x=110:y=730:w=860:h=6:color=0x1e293b:t=fill",
-        f"drawbox=x=110:y=730:w='mod(t*340\,860)':h=6:color={accent_hex}:t=fill"
+        f"drawbox=x=110:y=730:w='mod(t*340\\,860)':h=6:color={accent_hex}:t=fill"
     ]
     by = 780
     for txt, col in bullets:
-        clean_txt = txt.replace(":", "\:")
+        clean_txt = txt.replace(":", "\\:")
         filters.append(f"drawtext=fontfile={FONT_REG}:text='{clean_txt}':fontcolor={col}:fontsize=24:x=110:y={by}")
         by += 48
 
@@ -266,7 +266,7 @@ def generate_infographic_vector_shot(
             "SH03": build_modern_broadcast_card(
                 "● PARÁMETROS EN TIEMPO REAL",
                 "NIVEL DE AFECTACIÓN DETECTADO",
-                "%{eif\:68-8*t\:d} ML",
+                r"%{eif\:68-8*t\:d} ML",
                 "MAGNITUD / PRECIPITACIÓN SÍSMICA Y PLUVIAL",
                 [
                     ("• INTENSIDAD ESTIMADA: GRADO V-VI (MERCALLI)", "0xffaa00"),
@@ -335,7 +335,7 @@ def generate_infographic_vector_shot(
             "SH03": build_modern_broadcast_card(
                 "● TELEMETRÍA DE TRÁFICO MALICIOSO",
                 "PICO DE ATAQUE DDOS REGISTRADO",
-                "%{eif\:940-120*t\:d} GBPS",
+                r"%{eif\:940-120*t\:d} GBPS",
                 "TASA DE PAQUETES: 14.8 MILLONES PPS (CRÍTICO)",
                 [
                     ("• ANOMALÍA: SATURACIÓN DE ENLACES PRINCIPALES", "0xffaa00"),
@@ -404,7 +404,7 @@ def generate_infographic_vector_shot(
             "SH03": build_modern_broadcast_card(
                 "● MÉTRICAS DE CÓMPUTO E INFERENCIA",
                 "POTENCIA DE PROCESAMIENTO",
-                "%{eif\:180-25*t\:d} TFLOPS",
+                r"%{eif\:180-25*t\:d} TFLOPS",
                 "CAPACIDAD DE CÁLCULO EN TIEMPO REAL",
                 [
                     ("• NODO: 2 NM GATE-ALL-AROUND (NANOSHEET)", "0xffaa00"),
@@ -473,7 +473,7 @@ def generate_infographic_vector_shot(
             "SH03": build_modern_broadcast_card(
                 "● TELEMETRÍA DE APROXIMACIÓN",
                 "VELOCIDAD Y ALTURA DE DESCENSO",
-                "%{eif\:27800-1400*t\:d} KM/H",
+                r"%{eif\:27800-1400*t\:d} KM/H",
                 "FRENADO CONTROLADO Y REENTRADA",
                 [
                     ("• PROPULSIÓN: TOBERAS Y RETROCOHETES ACTIVOS", "0xffaa00"),
@@ -543,7 +543,7 @@ def generate_infographic_vector_shot(
             "SH03": build_modern_broadcast_card(
                 "● REGISTRO DE TELEMETRÍA DE CABINA",
                 "ALTITUD Y TASA DE DESCENSO",
-                "%{eif\:18200-3200*t\:d} FT",
+                r"%{eif\:18200-3200*t\:d} FT",
                 "TASA DE DESCENSO: -3,400 PIES/MIN (CRÍTICO)",
                 [
                     ("• ÁNGULO DE ATAQUE: +14.2° · ALERTA SONORA ACTIVA", "0xffaa00"),
