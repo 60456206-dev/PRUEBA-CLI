@@ -204,41 +204,58 @@ def generate_monetizable_storyboard(news: Dict[str, Any]) -> Dict[str, Any]:
     link = news["link"]
     title_low = title.lower()
 
-    is_aviation = "avión" in title_low or "accidente" in title_low or "vuelo" in title_low
-    is_cyber = "ciberataque" in title_low or "hackeo" in title_low or "neveras" in title_low
+    is_aviation = any(k in title_low for k in ["avión", "aeronave", "vuelo", "accidente", "aircraft", "flight", "plane", "pilot", "mayday", "crash", "haiti", "boeing", "airbus"])
+    is_cyber = any(k in title_low for k in ["ciberataque", "hackeo", "neveras", "hacker", "ransomware", "malware", "exploit", "apt", "breach", "zero-day", "cyber"])
+    is_ai = any(k in title_low for k in ["gemini", "google", "ia", "ai", "openai", "chip", "2 nm", "robot", "nvidia", "deepseek", "chatgpt", "apple", "semiconduct"])
+    is_space = any(k in title_low for k in ["espacio", "nasa", "esa", "marte", "luna", "cohete", "spacex", "telescopio", "asteroide", "planetary", "space", "starship", "orbit", "landing"])
 
     if is_aviation:
         script = (
-            "En solo doce segundos, un avión privado con nueve personas a bordo desapareció por completo de los radares en Florida. "
-            "Ocurrió al anochecer. Según la Administración Federal de Aviación, la aeronave volaba en altitud de crucero estable "
-            "antes de iniciar un descenso vertical incontrolable. "
-            "Adentro de la cabina, las luces de emergencia se encendieron. Los pilotos forcejearon contra los mandos intentando nivelar las alas, "
-            "mientras la alarma de colisión ensordecía el habitáculo. "
-            "Los motores rugieron al máximo empuje, pero los timones ya no respondían. Entre nubes de tormenta y lluvia torrencial, "
-            "el bimotor se precipitó hacia la costa sin emitir ninguna señal de auxilio. "
-            "Los peritos de la NTSB analizan ahora si fue una falla estructural catastrófica o una desorientación espacial en plena tormenta. "
-            "Las cajas negras tardarán semanas en descifrarse. ¿Crees que fue una falla mecánica imposible de salvar o un error de los pilotos? "
+            "En solo doce segundos, una emergencia aérea de máxima gravedad desató las alarmas en el espacio aéreo internacional. "
+            f"Según los informes oficiales confirmados por la autoridad aeronáutica y la redacción de {source}, "
+            "la aeronave experimentó una maniobra crítica mientras los controladores en tierra perdían temporalmente el contacto de telemetría. "
+            "Adentro de la cabina, las luces de alerta se encendieron. Los pilotos forcejearon contra los mandos manteniendo la disciplina de vuelo, "
+            "mientras las alarmas de proximidad y ángulo de ataque resonaban en el habitáculo. "
+            "Los motores respondieron con máxima potencia mientras el equipo en tierra activaba de inmediato el protocolo de emergencia y rescate perimetral. "
+            "Peritos de seguridad aérea inspeccionan minuciosamente los registros de vuelo y las grabadoras de voz para determinar la causa exacta del incidente. "
+            "Los expertos aseguran que la pericia de la tripulación evitó lo que pudo ser una tragedia irreparable. "
+            "¿Crees que los protocolos de aviación comercial deberían reforzarse aún más ante estas situaciones? "
             "Déjame tu opinión en los comentarios."
         )
     elif is_cyber:
         script = (
-            "Un ciberataque silencioso acaba de paralizar decenas de cadenas de supermercados en Europa, destruyendo millones de euros en comida en pocas horas. "
-            "Parecía una falla técnica común, pero los investigadores confirmaron que hackers vulneraron los sistemas industriales de refrigeración a distancia. "
-            "En plena madrugada, los termostatos digitales fueron saboteados elevando la temperatura al máximo mientras los sensores marcaban lecturas falsas. "
-            "Cuando los trabajadores abrieron las tiendas, toneladas de productos frescos estaban totalmente arruinados sin que sonara una sola alarma. "
-            "Las agencias de ciberseguridad alertan que este ataque no buscaba dinero, sino poner a prueba el colapso de la cadena de suministro alimentaria. "
-            "Nuevas vulnerabilidades en redes inteligentes siguen activas hoy mismo. ¿Estamos preparados para un hackeo que afecte la comida de millones? "
+            "Un ciberataque de alta sofisticación acaba de encender las alertas de seguridad digital en infraestructuras clave. "
+            f"De acuerdo con investigaciones reveladas hoy por {source}, grupos de hackers avanzados lograron infiltrar sistemas críticos "
+            "aprovechando vulnerabilidades de día cero que eludieron los sistemas tradicionales de detección. "
+            "En cuestión de minutos, las líneas de monitoreo detectaron anomalías en el tráfico de datos y códigos maliciosos ejecutándose en segundo plano. "
+            "Equipos de respuesta a incidentes aislaron los servidores afectados para impedir una filtración masiva o el bloqueo total de operaciones. "
+            "Agencias de ciberseguridad internacional advierten que este tipo de ataques coordinados pone a prueba la resiliencia de servicios esenciales en todo el mundo. "
+            "Las investigaciones continúan para identificar el origen y contener réplicas del exploit. "
+            "¿Estamos realmente protegidos frente a ciberataques que puedan paralizar servicios esenciales de la noche a la mañana? "
             "Déjame tu opinión en los comentarios."
         )
-    elif "gemini" in title_low or "google" in title_low or "ia" in title_low:
+    elif is_space:
         script = (
-            "Google acaba de recibir un duro revés judicial en Europa que podría transformar para siempre el entrenamiento de la inteligencia artificial. "
-            "El Tribunal de Justicia de la Unión Europea determinó que el uso de noticias de medios para entrenar y responder con Gemini "
-            "podría violar derechos editoriales, abriendo la puerta a indemnizaciones millonarias en todo el continente. "
-            "Dentro de las oficinas tecnológicas, los equipos legales evalúan restringir de inmediato el acceso a fuentes periodísticas en tiempo real. "
-            "Mientras tanto, los grandes grupos editoriales celebran un precedente histórico que obligaría a las corporaciones tecnológicas a pagar por cada artículo que procesan. "
-            "Los expertos advierten que este fallo judicial cambiará por completo las reglas de internet este mismo año. "
-            "Si la inteligencia artificial tiene que pagar por cada noticia que lee, ¿las herramientas gratuitas desaparecerán para siempre? "
+            "Una misión espacial acaba de lograr un hito sin precedentes en la exploración planetaria de nueva generación. "
+            f"Según los comunicados técnicos oficiales difundidos hoy por {source}, "
+            "nuevos experimentos de navegación autónoma y sensores ópticos han demostrado una precisión extraordinaria para maniobras de descenso extremo. "
+            "En el centro de control de misión, los científicos siguieron minuto a minuto el comportamiento de la telemetría en tiempo real, "
+            "verificando que los propulsores y algoritmos de posicionamiento corrigieron la trayectoria con exactitud milimétrica. "
+            "Este logro tecnológico allana el camino definitivo para futuros aterrizajes tripulados en la Luna y las misiones más ambiciosas hacia Marte. "
+            "La frontera espacial vive hoy una de sus épocas más emocionantes de descubrimiento e innovación tecnológica. "
+            "¿Crees que la humanidad logrará establecer su primera colonia permanente fuera de la Tierra en esta década? "
+            "Déjame tu opinión en los comentarios."
+        )
+    elif is_ai:
+        script = (
+            "La batalla por el liderazgo en inteligencia artificial y la arquitectura de superchips acaba de dar un salto determinante. "
+            f"Reportes tecnológicos de última hora contrastados por {source} señalan avances clave en litografía y nuevos modelos de frontera "
+            "que buscan romper las barreras actuales de eficiencia energética y potencia de cálculo. "
+            "En los laboratorios de innovación, los ingenieros aceleran el despliegue de silicio de última generación capaz de procesar flujos de datos masivos "
+            "sin saturar la infraestructura de los centros de cómputo. "
+            "Analistas de la industria coinciden en que este salto marcará la competitividad digital y la soberanía tecnológica de las próximas décadas. "
+            "La evolución de la inteligencia artificial continúa a un ritmo imparable que transforma industrias enteras día a día. "
+            "¿Crees que estos saltos en hardware nos acercan a una inteligencia artificial general antes de lo esperado? "
             "Déjame tu opinión en los comentarios."
         )
     else:

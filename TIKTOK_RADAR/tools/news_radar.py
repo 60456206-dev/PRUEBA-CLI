@@ -27,7 +27,9 @@ BLACKLIST_TERMS = [
 ]
 
 FEEDS = [
-    # 1. Catástrofes, aviación y sucesos de impacto global
+    # -------------------------------------------------------------------------
+    # 1. 🚨 G1: Aviación, Catástrofes y Rescates
+    # -------------------------------------------------------------------------
     {
         "id": "infobae_mundo",
         "name": "Infobae Última Hora",
@@ -44,7 +46,34 @@ FEEDS = [
         "allowed_genres": ["G1_AVIACION_CATASTROFES", "G4_ESPACIO_CIENCIA"],
         "weight": 1.2,
     },
-    # 2. Ciberataques y espionaje
+    {
+        "id": "elpais_inter",
+        "name": "El País Internacional",
+        "url": "https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/internacional/portada",
+        "primary_genre": "G1_AVIACION_CATASTROFES",
+        "allowed_genres": ["G1_AVIACION_CATASTROFES"],
+        "weight": 1.3,
+    },
+    {
+        "id": "elmundo_inter",
+        "name": "El Mundo Internacional",
+        "url": "https://e00-elmundo.uecdn.es/elmundo/rss/internacional.xml",
+        "primary_genre": "G1_AVIACION_CATASTROFES",
+        "allowed_genres": ["G1_AVIACION_CATASTROFES"],
+        "weight": 1.2,
+    },
+    {
+        "id": "aerotime",
+        "name": "AeroTime Global Aviation",
+        "url": "https://www.aerotime.aero/feed",
+        "primary_genre": "G1_AVIACION_CATASTROFES",
+        "allowed_genres": ["G1_AVIACION_CATASTROFES"],
+        "weight": 1.5,
+    },
+
+    # -------------------------------------------------------------------------
+    # 2. 💻 G2: Ciberataques, Guerra Digital y Amenazas Críticas
+    # -------------------------------------------------------------------------
     {
         "id": "thehackernews",
         "name": "The Hacker News",
@@ -59,16 +88,35 @@ FEEDS = [
         "url": "https://www.bleepingcomputer.com/feed/",
         "primary_genre": "G2_CIBERATAQUES_HACKERS",
         "allowed_genres": ["G2_CIBERATAQUES_HACKERS"],
+        "weight": 1.4,
+    },
+    {
+        "id": "securityweek",
+        "name": "SecurityWeek",
+        "url": "https://feeds.feedburner.com/securityweek",
+        "primary_genre": "G2_CIBERATAQUES_HACKERS",
+        "allowed_genres": ["G2_CIBERATAQUES_HACKERS"],
+        "weight": 1.4,
+    },
+    {
+        "id": "darkreading",
+        "name": "Dark Reading",
+        "url": "https://www.darkreading.com/rss.xml",
+        "primary_genre": "G2_CIBERATAQUES_HACKERS",
+        "allowed_genres": ["G2_CIBERATAQUES_HACKERS"],
         "weight": 1.3,
     },
-    # 3. Inteligencia artificial y tecnología
+
+    # -------------------------------------------------------------------------
+    # 3. 🤖 G3: Inteligencia Artificial, Robótica y Big Tech
+    # -------------------------------------------------------------------------
     {
         "id": "elpais_tec",
         "name": "El País Tecnología & Ciber",
         "url": "https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/section/tecnologia/portada",
         "primary_genre": "G3_IA_ROBOTICA",
         "allowed_genres": ["G2_CIBERATAQUES_HACKERS", "G3_IA_ROBOTICA"],
-        "weight": 1.1,
+        "weight": 1.2,
     },
     {
         "id": "xataka",
@@ -78,7 +126,26 @@ FEEDS = [
         "allowed_genres": ["G3_IA_ROBOTICA", "G4_ESPACIO_CIENCIA"],
         "weight": 1.0,
     },
-    # 4. Espacio y ciencia extrema
+    {
+        "id": "techcrunch_ai",
+        "name": "TechCrunch AI",
+        "url": "https://techcrunch.com/category/artificial-intelligence/feed/",
+        "primary_genre": "G3_IA_ROBOTICA",
+        "allowed_genres": ["G3_IA_ROBOTICA"],
+        "weight": 1.5,
+    },
+    {
+        "id": "arstechnica",
+        "name": "Ars Technica Tech & Frontier",
+        "url": "https://feeds.arstechnica.com/arstechnica/technology-lab",
+        "primary_genre": "G3_IA_ROBOTICA",
+        "allowed_genres": ["G2_CIBERATAQUES_HACKERS", "G3_IA_ROBOTICA"],
+        "weight": 1.3,
+    },
+
+    # -------------------------------------------------------------------------
+    # 4. 🚀 G4: Espacio, Ciencia Extrema y Fenómenos Anómalos
+    # -------------------------------------------------------------------------
     {
         "id": "europapress_ciencia",
         "name": "EuropaPress Ciencia & Espacio",
@@ -93,6 +160,22 @@ FEEDS = [
         "url": "https://www.nasa.gov/news-release/feed/",
         "primary_genre": "G4_ESPACIO_CIENCIA",
         "allowed_genres": ["G4_ESPACIO_CIENCIA"],
+        "weight": 1.5,
+    },
+    {
+        "id": "esa_news",
+        "name": "European Space Agency (ESA)",
+        "url": "https://www.esa.int/rssfeed/Our_Activities/Space_News",
+        "primary_genre": "G4_ESPACIO_CIENCIA",
+        "allowed_genres": ["G4_ESPACIO_CIENCIA"],
+        "weight": 1.4,
+    },
+    {
+        "id": "phys_space",
+        "name": "Phys.org Space & Astronomy",
+        "url": "https://phys.org/rss-feed/space-news/",
+        "primary_genre": "G4_ESPACIO_CIENCIA",
+        "allowed_genres": ["G4_ESPACIO_CIENCIA"],
         "weight": 1.3,
     },
 ]
@@ -102,22 +185,30 @@ GENRE_KEYWORDS = {
         "avión", "aeronave", "vuelo", "aterrizaje", "piloto", "cabina", "altitud",
         "accidente", "choque", "desastre", "colisión", "catástrofe", "rescate",
         "emergencia", "naufragio", "tormenta", "huracán", "volcán", "terremoto",
-        "sismo", "explosión", "evacuación", "alerta roja", "radar", "marítimo"
+        "sismo", "explosión", "evacuación", "alerta roja", "radar", "marítimo",
+        "airplane", "plane", "aircraft", "flight", "cockpit", "altitude", "crash",
+        "mayday", "boeing", "airbus", "turbulence", "emergency landing", "aviation safety"
     ],
     "G2_CIBERATAQUES_HACKERS": [
         "ciberataque", "hackeo", "hackers", "ransomware", "malware", "espionaje",
         "filtración", "brecha", "infraestructura", "apagón", "servidores", "bancos",
-        "seguridad", "ciberseguridad", "vulnerabilidad", "phishing", "ciberdelincuencia"
+        "seguridad", "ciberseguridad", "vulnerabilidad", "phishing", "ciberdelincuencia",
+        "cyberattack", "data breach", "zero-day", "exploit", "critical infrastructure",
+        "ddos", "cyber threat", "apt", "infostealer", "cisa", "backdoor"
     ],
     "G3_IA_ROBOTICA": [
         "inteligencia artificial", "ia", "ai", "openai", "gemini", "google", "chatgpt",
         "robot", "humanoide", "algoritmo", "chip", "nvidia", "supercomputadora",
-        "deepfake", "automatización", "tesla", "revolut", "revolución tecnológica"
+        "deepfake", "automatización", "tesla", "revolución tecnológica", "claude",
+        "deepseek", "artificial intelligence", "humanoid", "frontier model", "llm",
+        "tsmc", "2nm", "autonomous system"
     ],
     "G4_ESPACIO_CIENCIA": [
         "espacio", "asteroide", "nasa", "marte", "luna", "cohete", "spacex",
         "telescopio", "james webb", "galaxia", "universo", "física", "cuántica",
-        "océano", "profundidades", "descubrimiento", "anomalía", "atmósfera"
+        "océano", "profundidades", "descubrimiento", "anomalía", "atmósfera",
+        "esa", "starship", "solar flare", "black hole", "cosmic", "supernova",
+        "exoplanet", "astronomy", "deep space", "spacecraft"
     ],
 }
 
