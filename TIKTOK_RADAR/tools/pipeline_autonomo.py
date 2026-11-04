@@ -20,11 +20,10 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, Any, List
 
-# Importar el escáner de noticias
+# Importar el escáner de noticias y generador de audio
 sys.path.append(str(Path(__file__).parent))
 from news_radar import scan_all_sources
-
-import edge_tts
+from audio_generator import generate_speech, probe_duration
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 ENTREGAS_DIR = ROOT_DIR / "entregas"
@@ -271,24 +270,35 @@ def generate_monetizable_storyboard(news: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
-async def synthesize_voiceover(script: str, output_path: Path, voice: str = "es-MX-JorgeNeural") -> float:
+async def synthesize_voiceover(script: str, output_path: Path, voice: str = "Puck") -> float:
     """
-    Sintetiza la voz del locutor periodístico y garantiza que la duración supere los 61.0 segundos
-    para cumplir siempre con el requisito de monetización de TikTok (>60s).
+    Sintetiza la voz del locutor periodístico con Gemini 3.8 Flash TTS (con fallback a Edge-TTS)
+    y garantiza que la duración supere los 61.0 segundos para cumplir siempre con el requisito
+    de monetización de TikTok Creator Rewards (>60s).
     """
-    for rate in ("+0%", "-4%", "-8%"):
-        communicate = edge_tts.Communicate(script, voice, rate=rate)
-        await communicate.save(str(output_path))
+    style = (
+        "Locución periodística de investigación urgente para noticiero broadcast de última hora. "
+        "Dicción clara y autoritaria, ritmo broadcast dinámico en español neutro, sin música."
+    )
+    dur = generate_speech(script, output_path, voice_gemini=voice, voice_edge="es-MX-JorgeNeural", style=style)
 
-        cmd = [
-            "ffprobe", "-v", "error",
-            "-show_entries", "format=duration",
-            "-of", "default=noprint_wrappers=1:nokey=1",
-            str(output_path)
-        ]
-        dur = float(subprocess.check_output(cmd).decode().strip())
-        if dur >= 61.0:
-            return dur
+    # Si la lectura queda por debajo de 61.0s, ajustar sutilmente el tempo para asegurar monetización (>60s)
+    if 0 < dur < 61.0:
+        factor = dur / 62.0  # e.g. 58s -> 0.935 (mantiene tono nativo imperceptiblemente más solemne)
+        if 0.5 <= factor <= 0.99:
+            print(f"[PIPELINE] Ajustando tempo ({factor:.3f}) para garantizar >61.0s de monetización...", flush=True)
+            adjusted_path = output_path.with_suffix(".adj.mp3")
+            cmd = [
+                "ffmpeg", "-y", "-i", str(output_path),
+                "-filter:a", f"atempo={factor:.4f}",
+                "-b:a", "192k",
+                str(adjusted_path)
+            ]
+            subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            adjusted_path.replace(output_path)
+            dur = probe_duration(output_path)
+            print(f"[PIPELINE] ✅ Duración final monetizable asegurada: {dur:.2f}s", flush=True)
+
     return dur
 
 

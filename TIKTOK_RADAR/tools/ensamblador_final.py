@@ -295,11 +295,39 @@ def synthesize_broadcast_audio_master(
     """
     Crea el diseño sonoro multicapa digno de estudio:
     1. Voz periodística ecualizada y comprimida.
-    2. Cama de tensión sintética (sub-bass 55Hz + armónico de suspenso 110Hz + pulso de radar).
-    3. Golpes/Whooshes sutiles en las transiciones clave.
-    4. Masterización EBU R128 a -14.8 LUFS.
+    2. Cama musical con stems reales de Epidemic Sound (BASS + INSTRUMENTS) o fallback sintético.
+    3. Masterización EBU R128 a -14.8 LUFS.
     """
-    # Expresión para pulsos de transición en segundos clave
+    assets_dir = ROOT_DIR / "audio_assets"
+    bass_file = assets_dir / "NEWS_THRILLER_BASS.mp3"
+    inst_file = assets_dir / "NEWS_THRILLER_INSTRUMENTS.mp3"
+
+    # Si los stems de Epidemic Sound están presentes, usarlos con ducking y mezcla broadcast
+    if bass_file.exists() and inst_file.exists():
+        filter_complex = (
+            f"[0:a]highpass=f=80,equalizer=f=3200:width_type=q:w=1.2:g=2.5,"
+            f"acompressor=threshold=-18dB:ratio=3:attack=10:release=120:makeup=2[voice];"
+            f"[1:a]atrim=0:{total_dur:.3f},asetpts=PTS-STARTPTS,volume=0.22,afade=t=in:st=0:d=1.0,afade=t=out:st={max(0.0, total_dur-2.0):.2f}:d=2.0[bass];"
+            f"[2:a]atrim=0:{total_dur:.3f},asetpts=PTS-STARTPTS,volume=0.18,afade=t=in:st=0:d=1.0,afade=t=out:st={max(0.0, total_dur-2.0):.2f}:d=2.0[inst];"
+            f"[voice][bass][inst]amix=inputs=3:duration=first:dropout_transition=2:weights='1.0 0.45 0.35',"
+            f"loudnorm=I=-14.8:TP=-1.0:LRA=9[aout]"
+        )
+        cmd = [
+            "ffmpeg", "-y",
+            "-i", str(voice_mp3),
+            "-stream_loop", "-1", "-i", str(bass_file),
+            "-stream_loop", "-1", "-i", str(inst_file),
+            "-filter_complex", filter_complex,
+            "-map", "[aout]",
+            "-t", f"{total_dur:.3f}",
+            "-c:a", "aac", "-b:a", "192k", "-ar", "48000",
+            str(master_m4a),
+        ]
+        log("Mezclando diseño sonoro con stems reales de Epidemic Sound (BASS + INSTRUMENTS)...")
+        subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        return
+
+    # Fallback sintético si no hay conexión o faltan los stems
     trans_pulses = " + ".join(
         [f"0.16*exp(-12*abs(t-{t:.2f}))*sin(2*PI*(95+40*(t-{t:.2f}))*t)" for t in transition_times]
     )
@@ -331,6 +359,7 @@ def synthesize_broadcast_audio_master(
         "-c:a", "aac", "-b:a", "192k", "-ar", "48000",
         str(master_m4a),
     ]
+    log("Mezclando con cama sintética de respaldo...")
     subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 
