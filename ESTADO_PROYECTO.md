@@ -2,6 +2,26 @@
 
 Actualizado: 2026-11-04.
 
+## Arquitectura Híbrida Activada (8 Flow + 5 FFmpeg) y Ahorro a 48 Créditos/Día · 2026-11-04
+
+- **Adopción de la Opción B Híbrida por Decisión del Usuario**:
+  - Para sostener la publicación de **6 vídeos diarios** (conforme al estudio de horarios de TikTok 2026) sin agotar cuotas (reducción de 78 a **48 créditos de Google Flow/día**), se implementó la arquitectura híbrida en todo el pipeline:
+  - **5 Planos Infográficos Broadcast Vectoriales (FFmpeg, 0 créditos)**:
+    - `SH01`: Radar táctico en vivo y cuadrícula de monitoreo aeronaval/satelital con barrido de haz, coordenadas y marco HUD.
+    - `SH03`: Telemetría digital y altímetro numérico animado en descenso crítico (`18,200 -> 2,000 FT`), tasa de descenso y alerta.
+    - `SH10`: Esquema técnico 3D y wireframe blueprint estructural de subsistemas de control.
+    - `SH11`: Evidencia oficial y registro forense de la unidad caja negra (FDR) y onda de audio CVR.
+    - `SH13`: Cierre interactivo con píldora CTA resaltada para incentivar comentarios, debate y retención en TikTok.
+  - **8 Planos Cinemáticos de Acción y Drama (Google Flow Veo, 8 créditos por vídeo)**:
+    - `SH02` (Entorno inicial), `SH04` (Primer plano de tensión facial), `SH05` (Acción física mandos), `SH06` (Macro horizonte artificial), `SH07` (Clímax exterior tormenta), `SH08` (Dinámica alerones), `SH09` (Palancas de empuje a fondo) y `SH12` (Panorama de rescate).
+  - **Módulos Actualizados**:
+    - [`tools/pipeline_autonomo.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/pipeline_autonomo.py): Etiqueta cada plano con `"render_mode": "flow"` o `"render_mode": "infographic"` y documenta el modo en `PAQUETE_NOTICIERO_LISTO.md`.
+    - [`tools/flow_generator.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/flow_generator.py): Omite automáticamente la inyección de los 5 planos infográficos en Flow, ahorrando créditos y acelerando la generación.
+    - [`tools/ensamblador_final.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/ensamblador_final.py): Sintetiza las 5 placas infográficas vectoriales tácticas personalizadas mediante FFmpeg `drawgrid`, `drawbox`, `drawtext`, `vignette` y animaciones dinámicas, integrándolas con transiciones broadcast `xfade`, diseño sonoro Epidemic Sound (-14.8 LUFS) y subtítulos Kinetic ASS.
+    - [`tools/ejecutar_todo.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/ejecutar_todo.py) y [`whatsapp_bot/bot.js`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/whatsapp_bot/bot.js): Adaptados al flujo híbrido.
+  - **Prueba End-to-End Exitosa Verificada**:
+    - `entregas/2026-11-04_AVIACION_CATASTROFES/NOTICIERO_FINAL_62S.mp4`: **62.0s**, 1080×1920 a 24 fps, audio -15.6 LUFS, 8.2 MB, monetizable >60s.
+
 ## Regla Fundamental Cronológica, Prioridad Perú en Desastres y Lote de 5 Vídeos · 2026-11-04
 
 - **Regla Fundamental Cronológica y Selección por Máxima Densidad Informativa ([`tools/news_radar.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/news_radar.py))**:

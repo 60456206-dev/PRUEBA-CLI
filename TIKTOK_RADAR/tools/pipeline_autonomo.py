@@ -69,11 +69,16 @@ def pick_top_news(news_list: List[Dict[str, Any]]) -> Dict[str, Any]:
 
 
 def build_shot_prompts(is_aviation: bool, is_cyber: bool) -> List[Dict[str, Any]]:
-    """Construye los 13 planos con prompt principal y fallback_prompt sanitizado (anti-bloqueo)."""
+    """
+    Construye los 13 planos bajo la Arquitectura Híbrida:
+    - 8 Planos Cinemáticos de Acción/Drama: Renderizados en Google Flow (Veo).
+    - 5 Planos Infográficos Broadcast HUD: Renderizados en FFmpeg Vector HUD sin costo de créditos (SH01, SH03, SH10, SH11, SH13).
+    """
     if is_aviation:
         raw_shots = [
             {
                 "id": "SH01", "sec": "0-4s", "dur": 4.0, "ia_dur": "5s",
+                "render_mode": "infographic",
                 "type": "Radar/Contexto 3D",
                 "action": "Radar 3D holográfico táctico con línea de vuelo amarilla que titila en ámbar y desciende.",
                 "visual_en": "Dark tactical control room with a glowing 3D holographic radar display over Florida coastline, a yellow flight trajectory line pulsing and curving sharply downward, floating telemetry numbers, dramatic camera push-in.",
@@ -81,6 +86,7 @@ def build_shot_prompts(is_aviation: bool, is_cyber: bool) -> List[Dict[str, Any]
             },
             {
                 "id": "SH02", "sec": "4-9s", "dur": 5.0, "ia_dur": "5s",
+                "render_mode": "flow",
                 "type": "Entorno Inicial",
                 "action": "Bimotor ejecutivo en vuelo nivelado al atardecer antes de la tormenta.",
                 "visual_en": "Sleek white twin-engine private jet flying smoothly in level cruise above golden and deep purple dusk clouds, warm sunset rim light reflecting on the fuselage, cinematic tracking shot.",
@@ -88,6 +94,7 @@ def build_shot_prompts(is_aviation: bool, is_cyber: bool) -> List[Dict[str, Any]
             },
             {
                 "id": "SH03", "sec": "9-14s", "dur": 5.0, "ia_dur": "5s",
+                "render_mode": "infographic",
                 "type": "Datos / Pantalla",
                 "action": "Telemetría digital y altímetro cayendo de 18.000 a 2.000 pies.",
                 "visual_en": "Close-up of a futuristic 3D digital flight telemetry monitor showing altitude numbers rapidly counting down from 18000 to 2000 feet with a red descending graph curve.",
@@ -95,6 +102,7 @@ def build_shot_prompts(is_aviation: bool, is_cyber: bool) -> List[Dict[str, Any]
             },
             {
                 "id": "SH04", "sec": "14-18s", "dur": 4.0, "ia_dur": "5s",
+                "render_mode": "flow",
                 "type": "Recreación Personaje",
                 "action": "Primer plano al piloto en cabina con sudor en la frente y tensión gestual.",
                 "visual_en": "Tight close-up inside a dark airplane cockpit, a stylized 3D male pilot with sweat beads on his furrowed forehead and focused eyes, amber instrument reflections on his headset, mouth closed in concentration.",
@@ -102,6 +110,7 @@ def build_shot_prompts(is_aviation: bool, is_cyber: bool) -> List[Dict[str, Any]
             },
             {
                 "id": "SH05", "sec": "18-22s", "dur": 4.0, "ia_dur": "5s",
+                "render_mode": "flow",
                 "type": "Acción Física",
                 "action": "Manos sujetando el timón con fuerza bajo luces de cabina.",
                 "visual_en": "Close-up of two gloved pilot hands gripping an aircraft control yoke firmly, pulling back slightly while cockpit dashboard indicators glow in warm red and cyan light.",
@@ -109,6 +118,7 @@ def build_shot_prompts(is_aviation: bool, is_cyber: bool) -> List[Dict[str, Any]
             },
             {
                 "id": "SH06", "sec": "22-26s", "dur": 4.0, "ia_dur": "5s",
+                "render_mode": "flow",
                 "type": "Macro Detalle",
                 "action": "Macro al panel de instrumentos con horizonte artificial inclinándose.",
                 "visual_en": "Extreme macro close-up of an aircraft glass cockpit artificial horizon indicator tilting steeply at a 45-degree angle with glowing amber warning chevrons.",
@@ -116,6 +126,7 @@ def build_shot_prompts(is_aviation: bool, is_cyber: bool) -> List[Dict[str, Any]
             },
             {
                 "id": "SH07", "sec": "26-30s", "dur": 4.0, "ia_dur": "5s",
+                "render_mode": "flow",
                 "type": "Escena Exterior Clímax",
                 "action": "Avión inclinado descendiendo entre nubes de tormenta y lluvia.",
                 "visual_en": "Dynamic 3D exterior tracking shot of a twin-engine jet banking and descending steeply through dense dark storm clouds and heavy rain streaks, bright wingtip strobe lights illuminating the mist.",
@@ -123,6 +134,7 @@ def build_shot_prompts(is_aviation: bool, is_cyber: bool) -> List[Dict[str, Any]
             },
             {
                 "id": "SH08", "sec": "30-34s", "dur": 4.0, "ia_dur": "5s",
+                "render_mode": "flow",
                 "type": "Dinámica de Movimiento",
                 "action": "Plano cercano a la cola y timón del avión vibrando por el viento.",
                 "visual_en": "Tight cinematic camera focused on the vertical tail fin and rudder of a jet vibrating under heavy wind turbulence amidst swirling dark clouds and rain.",
@@ -130,6 +142,7 @@ def build_shot_prompts(is_aviation: bool, is_cyber: bool) -> List[Dict[str, Any]
             },
             {
                 "id": "SH09", "sec": "34-38s", "dur": 4.0, "ia_dur": "5s",
+                "render_mode": "flow",
                 "type": "Reacción Crítica",
                 "action": "Mano empujando las palancas de potencia al máximo.",
                 "visual_en": "Close-up inside a cockpit of a pilot hand pushing twin throttle levers forward to full power, metallic console illuminated by dramatic cyan and amber instrument lighting.",
@@ -137,6 +150,7 @@ def build_shot_prompts(is_aviation: bool, is_cyber: bool) -> List[Dict[str, Any]
             },
             {
                 "id": "SH10", "sec": "38-44s", "dur": 5.0, "ia_dur": "5s",
+                "render_mode": "infographic",
                 "type": "Infografía Técnica 3D",
                 "action": "Modelo 3D wireframe del avión con la cola resaltada en naranja neón.",
                 "visual_en": "Stylized 3D technical explainer animation, a translucent blue wireframe model of a twin-engine jet rotating slowly over a dark navy background, with the tail rudder glowing in bright neon orange.",
@@ -144,6 +158,7 @@ def build_shot_prompts(is_aviation: bool, is_cyber: bool) -> List[Dict[str, Any]
             },
             {
                 "id": "SH11", "sec": "44-50s", "dur": 5.0, "ia_dur": "5s",
+                "render_mode": "infographic",
                 "type": "Evidencia Oficial",
                 "action": "Recreación 3D de la caja negra (FDR) con ondas de audio digitales.",
                 "visual_en": "Clean 3D broadcast graphic of an orange aviation flight data recorder box resting on a dark grid surface while glowing cyan digital soundwave bars pulse behind it.",
@@ -151,6 +166,7 @@ def build_shot_prompts(is_aviation: bool, is_cyber: bool) -> List[Dict[str, Any]
             },
             {
                 "id": "SH12", "sec": "50-56s", "dur": 5.5, "ia_dur": "5s",
+                "render_mode": "flow",
                 "type": "Panorama Tras el Suceso",
                 "action": "Costa al anochecer con haces de luz de barcos de búsqueda sobre el mar.",
                 "visual_en": "Wide atmospheric 3D shot of the dark ocean coastline at night with rescue boats casting long volumetric white searchlight beams across the gentle waves under a starry sky.",
@@ -158,6 +174,7 @@ def build_shot_prompts(is_aviation: bool, is_cyber: bool) -> List[Dict[str, Any]
             },
             {
                 "id": "SH13", "sec": "56-62.5s", "dur": 6.2, "ia_dur": "5s",
+                "render_mode": "infographic",
                 "type": "Cierre Interactivo",
                 "action": "Cámara lenta sobre el océano nocturno con holograma de pregunta para comentarios.",
                 "visual_en": "Cinematic slow camera drift over a dark moody ocean at night with a glowing 3D holographic question mark icon and digital news frame floating in the center.",
@@ -165,13 +182,15 @@ def build_shot_prompts(is_aviation: bool, is_cyber: bool) -> List[Dict[str, Any]
             },
         ]
     else:
+        infographic_ids = {"SH01", "SH03", "SH10", "SH11", "SH13"}
         raw_shots = [
             {
                 "id": f"SH{i:02d}",
                 "sec": f"{(i-1)*5}-{i*5}s",
                 "dur": 4.8,
                 "ia_dur": "5s",
-                "type": "Escena 3D Noticiero",
+                "render_mode": "infographic" if f"SH{i:02d}" in infographic_ids else "flow",
+                "type": "Infografía Táctica 3D" if f"SH{i:02d}" in infographic_ids else "Escena 3D Cinemática",
                 "action": f"Recreación 3D estilizada del plano {i} del reporte periodístico.",
                 "visual_en": f"Dramatic broadcast 3D news visualization scene {i}, glowing holographic data panels and expressive stylized 3D environment, slow cinematic camera movement.",
                 "fallback_en": f"Stylized 3D futuristic broadcast news studio hologram display scene {i} with cyan and amber lighting."
@@ -186,6 +205,7 @@ def build_shot_prompts(is_aviation: bool, is_cyber: bool) -> List[Dict[str, Any]
             "sec": s["sec"],
             "dur": s["dur"],
             "ia_dur": s["ia_dur"],
+            "render_mode": s.get("render_mode", "flow"),
             "type": s["type"],
             "action": s["action"],
             "prompt": STYLE_PREFIX + s["visual_en"],
@@ -402,11 +422,13 @@ def run_pipeline(genre_key: Optional[str] = None, rank_index: int = 0) -> Path:
 
 ---
 
-## Storyboard para Google Flow / Veo (13 Planos · 4–5 s)
+## Storyboard Híbrido (13 Planos · 8 Flow Cinemáticos + 5 FFmpeg Infográficos)
 
 """
     for s in storyboard["shots"]:
+        mode_label = "⚡ FFmpeg Vector HUD (Infográfico · 0 créditos)" if s.get("render_mode") == "infographic" else "🎬 Google Flow / Veo (Cinemático · 1 crédito)"
         md_content += f"### {s['id']} ({s['sec']}) · {s['type']}\n"
+        md_content += f"- **Modo de Producción:** {mode_label}\n"
         md_content += f"- **Duración montaje:** {s['dur']}s (Generar en Flow/Veo: **{s['ia_dur']}**)\n"
         md_content += f"- **Acción visual:** {s['action']}\n"
         md_content += f"- **Prompt Google Flow:** `{s['prompt']}`\n"

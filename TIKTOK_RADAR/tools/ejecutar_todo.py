@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """
-TIKTOK RADAR · Orquestador Maestro de Producción Autónoma (1-Click / Cron)
+TIKTOK RADAR · Orquestador Maestro de Producción Autónoma Híbrida (1-Click / Cron)
 Ejecuta de principio a fin las 3 fases en el servidor AWS:
   Fase 1 (`pipeline_autonomo.py`): Escaneo de noticias en vivo, guion monetizable (>60s),
-                                   13 prompts 3D con fallback y síntesis de voz Edge-TTS.
-  Fase 2 (`flow_generator.py`):    Inyección autónoma en Google Flow (Veo) con auto-curación,
-                                   checkpointing y descarga de los 13 clips (SH01..SH13).
-  Fase 3 (`ensamblador_final.py`): Edición algorítmica profesional (transiciones `xfade`,
-                                   cámara dinámica, subtítulos Kinetic ASS y audio -14.8 LUFS).
+                                   13 prompts con render_mode híbrido y síntesis de voz Gemini TTS.
+  Fase 2 (`flow_generator.py`):    Inyección autónoma en Google Flow Modo Híbrido (8 planos cinematográficos,
+                                   ahorrando créditos al omitir los 5 planos infográficos).
+  Fase 3 (`ensamblador_final.py`): Edición algorítmica profesional (5 infografías vectoriales HUD FFmpeg
+                                   + transiciones `xfade` + cámara dinámica + subtítulos Kinetic ASS + audio -14.8 LUFS).
 """
 
 import argparse
@@ -31,13 +31,13 @@ def produce_single_genre(genre_key: Optional[str] = None, skip_flow: bool = Fals
         print("")
 
     if not skip_flow:
-        print("[FASE 2] Iniciando Inyector Autónomo de Google Flow (Self-Healing)...")
+        print("[FASE 2] Iniciando Inyector Autónomo Google Flow Modo Híbrido (8 Planos Flow + 5 FFmpeg HUD)...")
         from flow_generator import run_flow_generator
         flow_ok = asyncio.run(run_flow_generator(delivery_dir))
         if not flow_ok:
             print(
                 "\n⚠️ [AVISO FASE 2] Algunos planos no se pudieron descargar de Flow en esta tanda. "
-                "El Ensamblador NLE completará automáticamente los planos faltantes con placas tácticas 3D.\n"
+                "El Ensamblador NLE completará automáticamente los planos faltantes con placas tácticas HUD 3D.\n"
             )
     else:
         print("[FASE 2] Omitida por bandera --skip-flow.\n")

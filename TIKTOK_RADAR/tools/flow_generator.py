@@ -489,7 +489,13 @@ async def run_flow_generator(delivery_dir: Path, max_shots: int = 13) -> bool:
 
     # Comprobar qué planos faltan por generar (Checkpointing)
     pending_shots = []
+    flow_shots = [s for s in shots if s.get("render_mode") != "infographic"]
+    infographic_count = len(shots) - len(flow_shots)
+
     for s in shots:
+        if s.get("render_mode") == "infographic":
+            log(f"⚡ [MODO HÍBRIDO] Omitiendo {s['id']} en Google Flow (se sintetiza en FFmpeg Vector HUD sin costo de créditos).")
+            continue
         out_mp4 = shots_dir / f"{s['id']}.mp4"
         if verify_mp4(out_mp4):
             log(f"✓ {s['id']}.mp4 ya existe y es válido (DECODE_OK). Saltando...")
@@ -497,7 +503,7 @@ async def run_flow_generator(delivery_dir: Path, max_shots: int = 13) -> bool:
             pending_shots.append(s)
 
     if not pending_shots:
-        log("🎉 Todos los planos (13/13) ya están generados y verificados en disco.")
+        log(f"🎉 Todos los planos cinematográficos ({len(flow_shots)}/{len(flow_shots)}) ya están listos (+ {infographic_count} infográficos FFmpeg).")
         return True
 
     if not PROFILE_DIR.exists():
@@ -566,9 +572,9 @@ async def run_flow_generator(delivery_dir: Path, max_shots: int = 13) -> bool:
         finally:
             await context.close()
 
-    completed = sum(1 for s in shots if verify_mp4(shots_dir / f"{s['id']}.mp4"))
-    log(f"Resumen de lote Flow: {completed}/{len(shots)} planos listos en {shots_dir}")
-    return completed == len(shots)
+    completed_flow = sum(1 for s in flow_shots if verify_mp4(shots_dir / f"{s['id']}.mp4"))
+    log(f"Resumen de lote Flow Híbrido: {completed_flow}/{len(flow_shots)} planos cinematográficos listos (+ {infographic_count} infográficos FFmpeg).")
+    return completed_flow == len(flow_shots)
 
 
 def main():

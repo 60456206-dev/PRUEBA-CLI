@@ -1,0 +1,71 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+WrapStyle: 0
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: CapCutBouncing,DejaVu Sans,74,&H00FFFFFF,&H0000EAFF,&H00000000,&H90000000,-1,0,0,0,100,100,1.2,0,1,5.5,2.5,2,80,80,440,1
+Style: HookPill,DejaVu Sans,30,&H00FFFFFF,&H00FFFFFF,&H001818D8,&H00000000,-1,0,0,0,100,100,1.8,0,3,7.0,0.0,8,60,60,150,1
+Style: HookSource,DejaVu Sans,26,&H0000EAFF,&H0000EAFF,&H00000000,&HA0000000,-1,0,0,0,100,100,1.2,0,1,3.5,1.5,8,60,60,225,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 2,0:00:00.00,0:00:03.00,HookPill,,0,0,0,,{\fad(120,300)}🔴 ÚLTIMA HORA
+Dialogue: 2,0:00:00.00,0:00:03.00,HookSource,,0,0,0,,{\fad(120,300)}REPORTE OFICIAL · AGENCIA ANDINA PERÚ
+Dialogue: 1,0:00:00.10,0:00:01.14,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}{\c&H0000EAFF&}ALERTA{\c&H00FFFFFF&} DE ÚLTIMA
+Dialogue: 1,0:00:01.14,0:00:01.78,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}HORA EN EL
+Dialogue: 1,0:00:01.78,0:00:02.76,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}PERÚ. {\c&H0000EAFF&}ESTADO{\c&H00FFFFFF&} DE
+Dialogue: 1,0:00:02.76,0:00:04.25,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}{\c&H0000EAFF&}EMERGENCIA{\c&H00FFFFFF&} POR LLUVIAS:
+Dialogue: 1,0:00:04.25,0:00:05.67,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}¿QUÉ {\c&H0000EAFF&}DISTRITOS{\c&H00FFFFFF&} INCLUYE
+Dialogue: 1,0:00:05.67,0:00:06.51,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}Y QUÉ {\c&H0000EAFF&}MEDIDAS{\c&H00FFFFFF&}
+Dialogue: 1,0:00:06.51,0:00:07.42,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}SE {\c&H0000EAFF&}DICTARÁN?.{\c&H00FFFFFF&}
+Dialogue: 1,0:00:07.42,0:00:08.59,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}SEGÚN LOS {\c&H0000EAFF&}REPORTES{\c&H00FFFFFF&}
+Dialogue: 1,0:00:08.59,0:00:10.21,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}OFICIALES {\c&H0000EAFF&}CONFIRMADOS{\c&H00FFFFFF&} POR
+Dialogue: 1,0:00:10.21,0:00:11.11,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}LOS {\c&H0000EAFF&}CENTROS{\c&H00FFFFFF&} DE
+Dialogue: 1,0:00:11.11,0:00:12.02,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}{\c&H0000EAFF&}MONITOREO{\c&H00FFFFFF&} Y LA
+Dialogue: 1,0:00:12.02,0:00:13.32,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}{\c&H0000EAFF&}REDACCIÓN{\c&H00FFFFFF&} DE AGENCIA
+Dialogue: 1,0:00:13.32,0:00:14.16,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}{\c&H0000EAFF&}ANDINA{\c&H00FFFFFF&} PERÚ,
+Dialogue: 1,0:00:14.16,0:00:15.20,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}LA {\c&H0000EAFF&}EMERGENCIA{\c&H00FFFFFF&} SE
+Dialogue: 1,0:00:15.20,0:00:16.43,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}{\c&H0000EAFF&}REGISTRÓ{\c&H00FFFFFF&} HACE POCAS
+Dialogue: 1,0:00:16.43,0:00:17.59,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}HORAS {\c&H0000EAFF&}ACTIVANDO{\c&H00FFFFFF&} DE
+Dialogue: 1,0:00:17.59,0:00:19.34,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}INMEDIATO EL {\c&H0000EAFF&}DESPLAZAMIENTO{\c&H00FFFFFF&}
+Dialogue: 1,0:00:19.34,0:00:20.38,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}DE {\c&H0000EAFF&}CUADRILLAS{\c&H00FFFFFF&} DE
+Dialogue: 1,0:00:20.38,0:00:21.55,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}{\c&H0000EAFF&}AUXILIO{\c&H00FFFFFF&} Y UNIDADES
+Dialogue: 1,0:00:21.55,0:00:22.91,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}DE PRIMERA {\c&H0000EAFF&}RESPUESTA.{\c&H00FFFFFF&}
+Dialogue: 1,0:00:22.91,0:00:23.62,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}EN EL {\c&H0000EAFF&}LUGAR{\c&H00FFFFFF&}
+Dialogue: 1,0:00:23.62,0:00:24.53,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}DE LOS {\c&H0000EAFF&}HECHOS,{\c&H00FFFFFF&}
+Dialogue: 1,0:00:24.53,0:00:26.02,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}LAS {\c&H0000EAFF&}AUTORIDADES{\c&H00FFFFFF&} EVALÚAN
+Dialogue: 1,0:00:26.02,0:00:26.92,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}LA {\c&H0000EAFF&}MAGNITUD{\c&H00FFFFFF&} DE
+Dialogue: 1,0:00:26.92,0:00:28.22,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}LOS DAÑOS {\c&H0000EAFF&}MATERIALES{\c&H00FFFFFF&}
+Dialogue: 1,0:00:28.22,0:00:28.99,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}Y {\c&H0000EAFF&}ATIENDEN{\c&H00FFFFFF&} A
+Dialogue: 1,0:00:28.99,0:00:30.42,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}LAS PERSONAS {\c&H0000EAFF&}AFECTADAS{\c&H00FFFFFF&}
+Dialogue: 1,0:00:30.42,0:00:31.39,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}EN EL {\c&H0000EAFF&}PERÍMETRO{\c&H00FFFFFF&}
+Dialogue: 1,0:00:31.39,0:00:32.30,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}DE {\c&H0000EAFF&}SEGURIDAD.{\c&H00FFFFFF&}
+Dialogue: 1,0:00:32.30,0:00:33.92,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}{\c&H0000EAFF&}ORGANISMOS{\c&H00FFFFFF&} OFICIALES COMO
+Dialogue: 1,0:00:33.92,0:00:34.63,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}{\c&H0000EAFF&}INDECI{\c&H00FFFFFF&} Y LA
+Dialogue: 1,0:00:34.63,0:00:35.93,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}POLICÍA {\c&H0000EAFF&}NACIONAL{\c&H00FFFFFF&} HAN
+Dialogue: 1,0:00:35.93,0:00:38.00,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}EMITIDO {\c&H0000EAFF&}RECOMENDACIONES{\c&H00FFFFFF&} URGENTES
+Dialogue: 1,0:00:38.00,0:00:38.98,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}A LA {\c&H0000EAFF&}CIUDADANÍA{\c&H00FFFFFF&}
+Dialogue: 1,0:00:38.98,0:00:40.08,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}PARA {\c&H0000EAFF&}EVITAR{\c&H00FFFFFF&} ZONAS
+Dialogue: 1,0:00:40.08,0:00:40.79,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}DE {\c&H0000EAFF&}RIESGO{\c&H00FFFFFF&} Y
+Dialogue: 1,0:00:40.79,0:00:41.89,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}{\c&H0000EAFF&}MANTENER{\c&H00FFFFFF&} LAS VÍAS
+Dialogue: 1,0:00:41.89,0:00:43.32,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}{\c&H0000EAFF&}DESPEJADAS.{\c&H00FFFFFF&} EQUIPOS DE
+Dialogue: 1,0:00:43.32,0:00:45.13,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}RESCATE CONTINÚAN {\c&H0000EAFF&}TRABAJANDO{\c&H00FFFFFF&}
+Dialogue: 1,0:00:45.13,0:00:45.78,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}EN LA ZONA
+Dialogue: 1,0:00:45.78,0:00:47.01,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}{\c&H0000EAFF&}MIENTRAS{\c&H00FFFFFF&} SE ELABORA
+Dialogue: 1,0:00:47.01,0:00:48.18,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}EL {\c&H0000EAFF&}INFORME{\c&H00FFFFFF&} TÉCNICO
+Dialogue: 1,0:00:48.18,0:00:48.82,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}DE {\c&H0000EAFF&}DAÑOS{\c&H00FFFFFF&} Y
+Dialogue: 1,0:00:48.82,0:00:49.93,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}{\c&H0000EAFF&}PÉRDIDAS.{\c&H00FFFFFF&} EL PAÍS
+Dialogue: 1,0:00:49.93,0:00:50.83,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}{\c&H0000EAFF&}SIGUE{\c&H00FFFFFF&} DE CERCA
+Dialogue: 1,0:00:50.83,0:00:51.80,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}LA {\c&H0000EAFF&}EVOLUCIÓN{\c&H00FFFFFF&} DE
+Dialogue: 1,0:00:51.80,0:00:52.71,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}ESTE {\c&H0000EAFF&}SUCESO{\c&H00FFFFFF&} EN
+Dialogue: 1,0:00:52.71,0:00:53.94,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}LAS {\c&H0000EAFF&}PRÓXIMAS{\c&H00FFFFFF&} HORAS.
+Dialogue: 1,0:00:53.94,0:00:55.17,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}{\c&H0000EAFF&}¿CONSIDERAS{\c&H00FFFFFF&} QUE LAS
+Dialogue: 1,0:00:55.17,0:00:56.73,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}{\c&H0000EAFF&}AUTORIDADES{\c&H00FFFFFF&} ACTUARON CON
+Dialogue: 1,0:00:56.73,0:00:58.02,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}LA RAPIDEZ {\c&H0000EAFF&}NECESARIA{\c&H00FFFFFF&}
+Dialogue: 1,0:00:58.02,0:00:59.39,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}ANTE ESTA {\c&H0000EAFF&}EMERGENCIA?{\c&H00FFFFFF&}
+Dialogue: 1,0:00:59.39,0:01:00.49,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}DÉJAME TU {\c&H0000EAFF&}OPINIÓN{\c&H00FFFFFF&}
+Dialogue: 1,0:01:00.49,0:01:01.72,CapCutBouncing,,0,0,0,,{\fscx82\fscy82\t(0,75,\fscx112\fscy112)\t(75,150,\fscx100\fscy100)}EN LOS {\c&H0000EAFF&}COMENTARIOS.{\c&H00FFFFFF&}

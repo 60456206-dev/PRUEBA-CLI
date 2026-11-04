@@ -128,7 +128,7 @@ function getProjectCondition() {
         `📊 *CONDICIÓN DEL PROYECTO (TIKTOK RADAR 3D)*\n\n` +
         `• *Última Entrega:* \`${dateFolder}\`\n` +
         `• *Noticia del Día:* _${newsTitle}_\n` +
-        `• *Planos 3D en Flow:* ${totalShots}/13 planos producidos.\n` +
+        `• *Arquitectura Híbrida:* ${totalShots}/8 planos Flow cinemáticos + 5 infográficos FFmpeg Vector HUD.\n` +
         `• *Vídeo Final (62s):* ${hasFinalVideo ? `✅ ENSAMBLADO Y LISTO (${finalVideoSize})` : '⏳ Pendiente de ensamblaje'}\n` +
         `• *Pipeline en Ejecución:* ${isRunning ? '🚀 ACTIVO EN ESTE MOMENTO' : '💤 En reposo (Listo para generar)'}\n` +
         `• *Estándar:* >60 s vertical 9:16 (Monetizable en TikTok Creator Rewards).\n\n` +
