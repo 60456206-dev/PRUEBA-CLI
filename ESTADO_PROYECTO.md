@@ -2,6 +2,25 @@
 
 Actualizado: 2026-11-04.
 
+## Generador Automático de Portadas 9:16 y Entrega Completa con Hashtags en WhatsApp · 2026-11-04
+
+- **Generador Automático de Miniaturas / Portadas 9:16 ([`TIKTOK_RADAR/tools/generador_portada.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/generador_portada.py))**:
+  - Implementado motor de diseño de portadas de alto CTR en resolución vertical 1080×1920:
+    - **Safe Zone TikTok (3:4)**: Los elementos visuales clave (cápsula de categoría, titular gancho y píldora de contexto) se ubican estrictamente entre Y=570 y Y=1220, garantizando que el diseño **nunca se corte** al verse en el grid del perfil de TikTok.
+    - **Fondo Cinematográfico con Desenfoque Suave**: Extrae automáticamente el fotograma base del vídeo (3.0s), aplicando desenfoque gaussiano y gradientes superior e inferior para neutralizar subtítulos quemados y maximizar el contraste.
+    - **Píldora / Badge de Alerta Superior**: Rectángulo redondeado rojo con baliza pulsante (`● ALERTA MAXIMA EN PERU`, `● EMERGENCIA AEREA EN VIVO`, `● CIBERATAQUE CRITICO EN VIVO`, `● GUERRA DE CHIPS Y HARDWARE`, etc.).
+    - **Titular Gancho (Headline Hook)**: Formateado en 2 a 3 líneas de impacto con tipografía bold gigante (68 pt), sombra profunda y trazo negro grueso de 7 px para corte agresivo, alternando blanco con Amarillo Neón (`#FFE500`).
+    - **Píldora Inferior Contextual**: Recuadro cian eléctrico con fuente y duración (`INFORME EN 60s · INDECI ACTIVA PROTOCOLO`, `RADAR TACTICO DE VUELO`, etc.).
+    - **Inspección Visual Cumplida**: Portadas revisadas visualmente con éxito en `entregas/2026-11-04_AVIACION_CATASTROFES/PORTADA_TIKTOK_916.jpg` y `entregas/2026-11-03_AUTONOMO/PORTADA_TIKTOK_916.jpg`.
+- **Generador de Hashtags y Copy Listo para Pegar en TikTok**:
+  - Produce el banco de hashtags óptimo combinando tags virales de alcance masivo (`#tiktoknoticias`, `#parati`, `#fyp`, `#ultimahora`) con tags temáticos específicos (Perú/INDECI, Aviación, Ciberseguridad, Chips 2nm, Espacio).
+  - Exporta `HASHTAGS_TIKTOK.txt` y actualiza `metadata.json` con `"hashtags"`, `"hashtags_str"` y `"tiktok_caption"`.
+- **Envío Automatizado e Integrado por WhatsApp Web ([`TIKTOK_RADAR/whatsapp_bot/bot.js`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/whatsapp_bot/bot.js) y [`tools/whatsapp_monitor.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/whatsapp_monitor.py))**:
+  - Al solicitar `!video` o al completarse la producción en AWS, el bot envía en secuencia:
+    1. **Primero**: La imagen de la portada oficial 9:16 (`PORTADA_TIKTOK_916.jpg`) con su instructivo de uso para el feed.
+    2. **Segundo**: El archivo de vídeo MP4 (`NOTICIERO_FINAL_62S.mp4`) con la descripción completa y el bloque de hashtags listo para copiar y pegar.
+  - Expone endpoint `POST /send-delivery` en `http://127.0.0.1:5050` para invocación directa desde el pipeline.
+
 ## Configuración Central de Consistencia Visual y Restricción Estricta de Infografías · 2026-11-04
 
 - **Archivo Maestro de Configuración Centralizada ([`TIKTOK_RADAR/config_produccion.json`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/config_produccion.json))**:

@@ -81,3 +81,18 @@ En solo doce segundos, un avión privado con nueve personas a bordo desapareció
 - **Acción visual:** Remate visual con caja de comentarios animada para detonar engagement.
 - **Prompt Google Flow:** `Vertical 9:16, modern stylized 3D animation, Arcane and tactical news thriller aesthetic. Remate visual con caja de comentarios animada para detonar engagement. Moody volumetric rim lighting, Unreal Engine 5 render style. No uncanny valley, no photorealism.`
 
+
+
+## Portada 9:16 y Hashtags de TikTok
+
+- **Portada Oficial 9:16:** `PORTADA_TIKTOK_916.jpg` (1080x1920 centrada en safe zone 3:4)
+- **Copy y Hashtags Listos para Pegar:**
+
+```text
+✈️ 🔴 QUIÉNES SON LAS 9 VÍCTIMAS DEL FATAL ACCIDENTE DEL AVIÓN PRIVADO QUE SE ESTRELLÓ EN FLORIDA
+
+🚨 Informe completo de última hora. ¿Qué crees que falló en los protocolos de vuelo? Déjame tu punto de vista 👇
+
+📡 Cobertura 24/7 en TikTok Radar.
+#aviacion #accidenteaereo #emergenciaaerea #vuelo #pilotos #cajanegra #boeing #aeropuerto #seguridadaerea #quiénes #víctimas #fatal #tiktoknoticias #noticiashoy #parati #fyp #ultimahora #viral #aprendecontiktok
+```

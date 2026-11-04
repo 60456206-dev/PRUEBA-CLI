@@ -20,7 +20,7 @@ const qrcode = require('qrcode-terminal');
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
-const { exec, spawn } = require('child_process');
+const { exec, spawn, execSync } = require('child_process');
 
 const PORT = process.env.PORT || 5050;
 const AUTH_DIR = path.join(os.homedir(), '.wwebjs_auth');
@@ -81,6 +81,70 @@ function findLatestVideo() {
   });
 
   return candidates[0];
+}
+
+async function sendDeliveryPackage(targetWid, deliveryDir) {
+  const vidPath = path.join(deliveryDir, 'NOTICIERO_FINAL_62S.mp4');
+  if (!fs.existsSync(vidPath)) {
+    throw new Error(`No existe el vídeo final en ${deliveryDir}`);
+  }
+
+  // 1. Asegurar portada 9:16 oficial
+  const coverPath = path.join(deliveryDir, 'PORTADA_TIKTOK_916.jpg');
+  if (!fs.existsSync(coverPath)) {
+    try {
+      execSync(`python3 tools/generador_portada.py --dir "${deliveryDir}"`, { cwd: WORKSPACE_DIR, timeout: 25000 });
+    } catch (e) {
+      console.warn('[WA-BOT] Aviso generando portada:', e.message);
+    }
+  }
+
+  // 2. Extraer metadatos y hashtags
+  let newsTitle = path.basename(deliveryDir);
+  let tiktokCaption = '';
+  let hashtags = '#tiktoknoticias #parati #fyp #ultimahora #noticiashoy';
+  const metaPath = path.join(deliveryDir, 'metadata.json');
+  if (fs.existsSync(metaPath)) {
+    try {
+      const meta = JSON.parse(fs.readFileSync(metaPath, 'utf8'));
+      newsTitle = meta.title || newsTitle;
+      tiktokCaption = meta.tiktok_caption || '';
+      hashtags = meta.hashtags_str || hashtags;
+    } catch (e) {}
+  }
+  const hashtagsPath = path.join(deliveryDir, 'HASHTAGS_TIKTOK.txt');
+  if (!tiktokCaption && fs.existsSync(hashtagsPath)) {
+    tiktokCaption = fs.readFileSync(hashtagsPath, 'utf8');
+  }
+
+  const stat = fs.statSync(vidPath);
+  const sizeMb = (stat.size / (1024 * 1024)).toFixed(1);
+
+  // 3. Enviar portada 9:16 primero como imagen
+  if (fs.existsSync(coverPath)) {
+    const coverMedia = MessageMedia.fromFilePath(coverPath);
+    await client.sendMessage(targetWid, coverMedia, {
+      caption: `🖼️ *PORTADA OFICIAL 9:16 (MINIATURA TIKTOK)*\n📌 *Titular:* ${newsTitle}\n📐 *Formato:* 1080x1920 (Safe Zone 3:4 centrado)\n💡 _Usa esta portada al subir tu vídeo a TikTok para maximizar clics._`
+    });
+    console.log(`[WA-BOT] 🖼️ Portada 9:16 enviada con éxito a ${targetWid}`);
+  }
+
+  // 4. Enviar vídeo final MP4 con descripción y hashtags listos para copiar
+  const videoCaption =
+    `🎬 *${newsTitle}*\n` +
+    `📦 Tamaño: ${sizeMb} MB | ⏱️ 62s (>60s Monetizable)\n\n` +
+    `📝 *TEXTO Y HASHTAGS LISTOS PARA COPIAR:*\n` +
+    `━━━━━━━━━━━━━━━━━━━━\n` +
+    `${tiktokCaption || hashtags}\n` +
+    `━━━━━━━━━━━━━━━━━━━━\n\n` +
+    `_Generado 100% de forma autónoma en tu servidor AWS._`;
+
+  const videoMedia = MessageMedia.fromFilePath(vidPath);
+  await client.sendMessage(targetWid, videoMedia, {
+    caption: videoCaption,
+    sendMediaAsDocument: false,
+  });
+  console.log(`[WA-BOT] 🎬 Vídeo enviado con éxito a ${targetWid}`);
 }
 
 function getProjectCondition() {
@@ -285,7 +349,7 @@ client.on('message_create', async (msg) => {
 
   const lower = body.toLowerCase();
 
-  // COMANDO 1: ENVIAR VÍDEO (!video / video / mandame el video)
+  // COMANDO 1: ENVIAR VÍDEO CON PORTADA Y HASHTAGS (!video / video / mandame el video)
   if (
     lower === '!video' ||
     lower === 'video' ||
@@ -299,18 +363,14 @@ client.on('message_create', async (msg) => {
       await msg.reply('🤖 Aún no hay vídeos en `entregas/`. Escribe *!generar* para producir uno.');
       return;
     }
+    const deliveryDir = path.dirname(vid.path);
     const sizeMb = (vid.size / (1024 * 1024)).toFixed(1);
-    await msg.reply(`🤖 📤 *Preparando envío del vídeo:* \`${vid.name}\` (${sizeMb} MB)... Un momento.`);
+    await msg.reply(`🤖 📤 *Preparando paquete completo para TikTok:* Portada 9:16 + Vídeo (${sizeMb} MB) + Hashtags...`);
     try {
-      const media = MessageMedia.fromFilePath(vid.path);
-      await client.sendMessage(targetChat, media, {
-        caption: `🎬 *${vid.name}*\n📦 Tamaño: ${sizeMb} MB\n⏱️ Noticiero vertical de última hora (>60s) producido en AWS.`,
-        sendMediaAsDocument: false,
-      });
-      console.log(`[WA-BOT] 📤 Vídeo enviado con éxito a +${senderNumber}`);
+      await sendDeliveryPackage(targetChat, deliveryDir);
     } catch (e) {
-      console.error('[WA-BOT] Error enviando vídeo:', e.message);
-      await msg.reply(`🤖 ⚠️ Error enviando archivo de vídeo: ${e.message}`);
+      console.error('[WA-BOT] Error enviando paquete:', e.message);
+      await msg.reply(`🤖 ⚠️ Error enviando paquete: ${e.message}`);
     }
     return;
   }
@@ -498,6 +558,34 @@ app.post('/send', async (req, res) => {
     return res.json({ success: true, target: targetWid });
   } catch (err) {
     console.error('[WA-BOT] Error al enviar mensaje:', err);
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/send-delivery', async (req, res) => {
+  if (!isReady) {
+    return res.status(503).json({ error: 'WhatsApp bot aún no está listo o autenticado.' });
+  }
+
+  loadOwner();
+  const { deliveryDir, phone } = req.body;
+  const targetWid = phone
+    ? `${phone.replace(/[^\d]/g, '')}@c.us`
+    : ownerWid;
+
+  if (!targetWid) {
+    return res.status(400).json({ error: 'No se especificó número y no hay dueño registrado.' });
+  }
+
+  try {
+    const dir = deliveryDir || (findLatestVideo() ? path.dirname(findLatestVideo().path) : null);
+    if (!dir || !fs.existsSync(dir)) {
+      return res.status(404).json({ error: 'Carpeta de entrega no encontrada.' });
+    }
+    await sendDeliveryPackage(targetWid, dir);
+    return res.json({ success: true, target: targetWid, deliveryDir: dir });
+  } catch (err) {
+    console.error('[WA-BOT] Error en /send-delivery:', err);
     return res.status(500).json({ error: err.message });
   }
 });

@@ -108,3 +108,18 @@ Alerta de última hora en el Perú. Estado de emergencia por lluvias: ¿qué dis
 - **Prompt Google Flow:** `Vertical 9:16, modern stylized 3D cinematic animation, Arcane and Spider-Verse tactical news thriller aesthetic, Unreal Engine 5 volumetric lighting, rich stylized textures, no photorealism, no uncanny valley. Dramatic broadcast 3D news visualization scene 13, glowing holographic data panels and expressive stylized 3D environment, slow cinematic camera movement.`
 - **Prompt Fallback (Anti-Bloqueo):** `Vertical 9:16, modern stylized 3D cinematic animation, Arcane and Spider-Verse tactical news thriller aesthetic, Unreal Engine 5 volumetric lighting, rich stylized textures, no photorealism, no uncanny valley. Stylized 3D futuristic broadcast news studio hologram display scene 13 with cyan and amber lighting.`
 
+
+
+## Portada 9:16 y Hashtags de TikTok
+
+- **Portada Oficial 9:16:** `PORTADA_TIKTOK_916.jpg` (1080x1920 centrada en safe zone 3:4)
+- **Copy y Hashtags Listos para Pegar:**
+
+```text
+🇵🇪 🔴 ESTADO DE EMERGENCIA POR LLUVIAS: ¿QUÉ DISTRITOS INCLUYE Y QUÉ MEDIDAS SE DICTARÁN?
+
+🚨 Informe completo de última hora. ¿Consideras que las autoridades están preparadas para esta emergencia? Comenta 👇
+
+📡 Cobertura 24/7 en TikTok Radar.
+#peru #noticiasperu #indeci #sismo #terremoto #emergenciaperu #lima #alertaperu #rppnoticias #noticiastiktok #estado #emergencia #lluvias #tiktoknoticias #noticiashoy #parati #fyp #ultimahora #viral #aprendecontiktok
+```

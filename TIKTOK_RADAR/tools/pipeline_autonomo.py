@@ -533,6 +533,8 @@ def run_pipeline(genre_key: Optional[str] = None, rank_index: int = 0) -> Path:
     report_file.write_text(md_content, encoding="utf-8")
 
     meta_file = delivery_dir / "metadata.json"
+    from generador_portada import generate_tiktok_hashtags
+    tag_info = generate_tiktok_hashtags(genre_key, storyboard["title"], storyboard["source"])
     meta_file.write_text(json.dumps({
         "date": today_str,
         "genre": genre_key,
@@ -547,6 +549,9 @@ def run_pipeline(genre_key: Optional[str] = None, rank_index: int = 0) -> Path:
         "audio_file": audio_file.name,
         "shots_count": len(storyboard["shots"]),
         "shots": storyboard["shots"],
+        "hashtags": tag_info["hashtags"],
+        "hashtags_str": tag_info["hashtags_str"],
+        "tiktok_caption": tag_info["tiktok_caption"],
     }, indent=2, ensure_ascii=False), encoding="utf-8")
 
     print("\n4. Paquete de producción completo exportado en:")

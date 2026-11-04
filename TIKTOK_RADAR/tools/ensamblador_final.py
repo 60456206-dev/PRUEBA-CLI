@@ -1008,6 +1008,15 @@ def assemble_final_video(delivery_dir: Path) -> Path:
         f"Duración: {stats['duration']}s | Audio: {stats['lufs']} LUFS | "
         f"Monetizable (>60s): {'SÍ' if stats['monetizable_tiktok'] else 'NO'}"
     )
+
+    # 5. Generar Portada Oficial 9:16 (1080x1920) y Banco de Hashtags para TikTok
+    try:
+        from generador_portada import generate_tiktok_cover
+        log("5/5 Generando Portada 9:16 (Safe Zone 3:4) y Hashtags optimizados para TikTok...")
+        generate_tiktok_cover(delivery_dir)
+    except Exception as e:
+        log(f"⚠️ Aviso al generar portada/hashtags: {e}")
+
     return final_mp4
 
 

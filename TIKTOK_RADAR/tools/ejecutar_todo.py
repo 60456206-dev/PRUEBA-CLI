@@ -45,6 +45,15 @@ def produce_single_genre(genre_key: Optional[str] = None, skip_flow: bool = Fals
     print("[FASE 3] Ejecutando Ensamblador Algorítmico CapCut NLE (Transiciones + Subtítulos Kinetic + Audio -14.8 LUFS)...")
     final_mp4 = assemble_final_video(delivery_dir)
     print(f"✅ VÍDEO COMPLETADO: {final_mp4}\n")
+
+    # Notificar y enviar a WhatsApp automáticamente (Portada 9:16 + Vídeo + Hashtags)
+    try:
+        from whatsapp_monitor import send_whatsapp_delivery
+        print(f"[WHATSAPP] Enviando paquete completo a WhatsApp (Portada 9:16 + Vídeo + Hashtags)...")
+        send_whatsapp_delivery(delivery_dir)
+    except Exception as e:
+        print(f"[WHATSAPP] Aviso al enviar entrega a WhatsApp: {e}")
+
     return final_mp4
 
 

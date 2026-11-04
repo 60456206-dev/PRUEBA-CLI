@@ -44,6 +44,42 @@ def load_config() -> Dict[str, Any]:
     }
 
 
+def send_whatsapp_delivery(delivery_dir: Path) -> bool:
+    """Envía el paquete completo de entrega a WhatsApp: Portada 9:16 + Vídeo MP4 + Copy y Hashtags."""
+    # 1. Asegurar que portada y hashtags existen
+    cover_jpg = delivery_dir / "PORTADA_TIKTOK_916.jpg"
+    if not cover_jpg.exists():
+        try:
+            from generador_portada import generate_tiktok_cover
+            generate_tiktok_cover(delivery_dir)
+        except Exception as e:
+            print(f"[MONITOR] Error generando portada: {e}")
+
+    # 2. Intentar envío automático por el bot propio (puerto 5050)
+    try:
+        payload = {"deliveryDir": str(Path(delivery_dir).resolve())}
+        data = json.dumps(payload).encode("utf-8")
+        req = urllib.request.Request(
+            "http://127.0.0.1:5050/send-delivery",
+            data=data,
+            headers={"Content-Type": "application/json", "User-Agent": "TikTokRadarMonitor/2.0"},
+        )
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            if resp.status == 200:
+                print(f"[MONITOR] ✅ Paquete de entrega enviado a WhatsApp: {delivery_dir.name}")
+                return True
+    except Exception as e:
+        print(f"[MONITOR] Aviso conectando a /send-delivery: {e}")
+
+    # Fallback: aviso estándar de texto
+    return send_whatsapp(
+        f"🎉 *¡NOTICIERO FINAL 62S TERMINADO!*\n"
+        f"📁 Carpeta: {delivery_dir.name}\n"
+        f"🚀 Listo para publicar en TikTok (>60s).\n"
+        f"💡 Escribe *!video* en este chat para recibir la Portada 9:16, el vídeo y los hashtags."
+    )
+
+
 def send_whatsapp(message: str, media_path: Optional[str] = None) -> bool:
     """Envía un mensaje o archivo directamente a WhatsApp usando primero el Bot Propio en AWS (puerto 5050),
     con fallback a CallMeBot o Twilio si el bot propio no está activo."""
@@ -169,14 +205,8 @@ def monitor_loop(poll_interval: int = 10) -> None:
                 final_mp4 = cur_dir / "NOTICIERO_FINAL_62S.mp4"
                 if final_mp4.exists() and not reported_final and final_mp4.stat().st_size > 1_000_000:
                     reported_final = True
-                    msg = (
-                        f"🎉 *¡NOTICIERO FINAL 62S TERMINADO!*\n"
-                        f"📁 Carpeta: {cur_dir.name}\n"
-                        f"📦 Tamaño: {final_mp4.stat().st_size / (1024*1024):.1f} MB\n"
-                        f"🚀 Listo para publicar en TikTok (>60s)."
-                    )
-                    print("[MONITOR] Notificando MÁSTER FINAL a WhatsApp...")
-                    send_whatsapp(msg)
+                    print(f"[MONITOR] Notificando y enviando MÁSTER FINAL + PORTADA 9:16 + HASHTAGS para {cur_dir.name}...")
+                    send_whatsapp_delivery(cur_dir)
 
         except Exception as e:
             print(f"[MONITOR AVISO] {e}", flush=True)
