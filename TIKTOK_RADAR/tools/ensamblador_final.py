@@ -161,13 +161,11 @@ ScaledBorderAndShadow: yes
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
 Style: CapCutBouncing,DejaVu Sans,74,&H00FFFFFF,&H0000EAFF,&H00000000,&H90000000,-1,0,0,0,100,100,1.2,0,1,5.5,2.5,2,80,80,440,1
-Style: HookPill,DejaVu Sans,30,&H00FFFFFF,&H00FFFFFF,&H001818D8,&H00000000,-1,0,0,0,100,100,1.8,0,3,7.0,0.0,8,60,60,150,1
-Style: HookSource,DejaVu Sans,26,&H0000EAFF,&H0000EAFF,&H00000000,&HA0000000,-1,0,0,0,100,100,1.2,0,1,3.5,1.5,8,60,60,225,1
+Style: HookPill,DejaVu Sans,28,&H00FFFFFF,&H00FFFFFF,&H001818D8,&H00000000,-1,0,0,0,100,100,1.8,0,3,6.0,0.0,8,60,60,95,1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
-Dialogue: 2,0:00:00.00,0:00:03.00,HookPill,,0,0,0,,{{\\fad(120,300)}}🔴 ÚLTIMA HORA
-Dialogue: 2,0:00:00.00,0:00:03.00,HookSource,,0,0,0,,{{\\fad(120,300)}}REPORTE OFICIAL · {source_name.upper()}
+Dialogue: 2,0:00:00.00,0:00:04.50,HookPill,,0,0,0,,{{\\fad(120,300)}}🔴 ÚLTIMA HORA
 """
 
     events = []
@@ -252,6 +250,17 @@ def generate_verified_source_card(source_name: str, genre: str, out_png: Path) -
     return out_png
 
 
+def escape_ffmpeg_drawtext(s: str) -> str:
+    """Escapa de forma robusta caracteres conflictivos en cadenas de texto para FFmpeg drawtext."""
+    if not s:
+        return ""
+    # Reemplazar apóstrofes para evitar romper delimitadores text='...'
+    clean = str(s).replace("'", "’")
+    # Escapar : a \:
+    clean = clean.replace(r"\:", ":").replace(":", r"\:")
+    return clean
+
+
 def build_modern_broadcast_card(
     badge: str,
     title: str,
@@ -262,28 +271,43 @@ def build_modern_broadcast_card(
     bg_hex: str = "0x0c121e",
     footer_text: str = "📡 INFORME OFICIAL BROADCAST · RADAR 24/7"
 ) -> tuple:
+    badge_esc = escape_ffmpeg_drawtext(badge)
+    title_esc = escape_ffmpeg_drawtext(title)
+
+    # Si metric_val contiene expresiones dinámicas de FFmpeg %{eif...}, no escapar su sintaxis interna
+    if "%{eif" in metric_val:
+        metric_val_esc = metric_val.replace("'", "’")
+    else:
+        metric_val_esc = escape_ffmpeg_drawtext(metric_val)
+
+    metric_label_esc = escape_ffmpeg_drawtext(metric_label)
+    footer_esc = escape_ffmpeg_drawtext(footer_text)
+
+    # Ajustar tamaño de fuente si la métrica es larga para evitar que se desborde horizontalmente
+    val_fontsize = 80 if len(metric_val) <= 12 else 52
+
     filters = [
-        f"drawbox=x=80:y=400:w=920:h=1120:color=0x111624@0.90:t=fill",
-        f"drawbox=x=80:y=400:w=920:h=1120:color={accent_hex}@0.70:t=2",
-        f"drawbox=x=120:y=440:w=440:h=48:color={accent_hex}@0.18:t=fill",
-        f"drawbox=x=120:y=440:w=440:h=48:color={accent_hex}:t=2",
-        f"drawtext=fontfile={FONT_BOLD}:text='{badge}':fontcolor={accent_hex}:fontsize=22:x=140:y=454",
-        f"drawtext=fontfile={FONT_BOLD}:text='{title}':fontcolor=white:fontsize=36:x=120:y=520",
-        f"drawtext=fontfile={FONT_BOLD}:text='{metric_val}':fontcolor=white:fontsize=84:x=120:y=580",
-        f"drawtext=fontfile={FONT_REG}:text='{metric_label}':fontcolor=white@0.85:fontsize=26:x=120:y=690",
-        f"drawbox=x=120:y=740:w=840:h=4:color=0x253045:t=fill",
-        f"drawbox=x=120:y=740:w='mod(t*320\\,840)':h=4:color={accent_hex}:t=fill"
+        f"drawbox=x=80:y=380:w=920:h=860:color=0x111624@0.90:t=fill",
+        f"drawbox=x=80:y=380:w=920:h=860:color={accent_hex}@0.70:t=2",
+        f"drawbox=x=120:y=415:w=440:h=48:color={accent_hex}@0.18:t=fill",
+        f"drawbox=x=120:y=415:w=440:h=48:color={accent_hex}:t=2",
+        f"drawtext=fontfile={FONT_BOLD}:text='{badge_esc}':fontcolor={accent_hex}:fontsize=22:x=140:y=429",
+        f"drawtext=fontfile={FONT_BOLD}:text='{title_esc}':fontcolor=white:fontsize=36:x=120:y=490",
+        f"drawtext=fontfile={FONT_BOLD}:text='{metric_val_esc}':fontcolor=white:fontsize={val_fontsize}:x=120:y=550",
+        f"drawtext=fontfile={FONT_REG}:text='{metric_label_esc}':fontcolor=white@0.85:fontsize=26:x=120:y=645",
+        f"drawbox=x=120:y=695:w=840:h=4:color=0x253045:t=fill",
+        f"drawbox=x=120:y=695:w='mod(t*320\\,840)':h=4:color={accent_hex}:t=fill"
     ]
-    by = 780
+    by = 735
     for txt, col in bullets:
-        clean_txt = txt.replace(":", "\\:")
+        clean_txt = escape_ffmpeg_drawtext(txt)
         filters.append(f"drawtext=fontfile={FONT_REG}:text='{clean_txt}':fontcolor={col}:fontsize=24:x=120:y={by}")
         by += 48
 
     filters.extend([
-        f"drawbox=x=120:y=1420:w=840:h=56:color=0x151d2d@0.9:t=fill",
-        f"drawbox=x=120:y=1420:w=840:h=56:color={accent_hex}@0.4:t=1",
-        f"drawtext=fontfile={FONT_BOLD}:text='{footer_text}':fontcolor={accent_hex}:fontsize=20:x=150:y=1438",
+        f"drawbox=x=120:y=1180:w=840:h=48:color=0x151d2d@0.9:t=fill",
+        f"drawbox=x=120:y=1180:w=840:h=48:color={accent_hex}@0.4:t=1",
+        f"drawtext=fontfile={FONT_BOLD}:text='{footer_esc}':fontcolor={accent_hex}:fontsize=20:x=150:y=1195",
         "vignette=PI/4,format=yuv420p"
     ])
     return bg_hex, ",".join(filters)
@@ -1004,7 +1028,7 @@ def assemble_final_video(delivery_dir: Path) -> Path:
 
     if has_badge:
         vf_complex = (
-            f"[0:v][2:v]overlay=x=(W-w)/2:y=200:enable='between(t,1.0,6.5)'[v_badged];"
+            f"[0:v][2:v]overlay=x=(W-w)/2:y=175:enable='between(t,0.5,5.5)'[v_badged];"
             f"[v_badged]ass={ass_path}[vout]"
         )
         cmd_final = [

@@ -32,6 +32,7 @@ ROOT_DIR = Path(__file__).resolve().parent.parent
 ENTREGAS_DIR = ROOT_DIR / "entregas"
 PROFILE_DIR = Path(os.path.expanduser("~/flow-profile"))
 FLOW_URL = "https://labs.google/fx/es/tools/flow"
+ACTIVE_VIDEO_MODEL = "Omni 1.1 Flash"
 
 
 def log(msg: str) -> None:
@@ -278,17 +279,31 @@ async def submit_prompt_to_flow(page: Page, prompt_text: str) -> bool:
             return False
         box = page.locator('div[role="textbox"], textarea').first
 
-    # Prefijo explícito para que el agente de Flow use siempre Omni 1.1 Flash (Vídeo) y nunca Nano Banana (Imagen)
-    video_directive = "Generate a video directly using Omni 1.1 Flash (text-to-video, do NOT generate images with Nano Banana): "
-    full_prompt = prompt_text if "Omni 1.1 Flash" in prompt_text else (video_directive + prompt_text)
+    global ACTIVE_VIDEO_MODEL
+    # Prefijo explícito según modelo activo (Omni 1.1 Flash o fallback a Veo 3.1 - Lite si hay límite de cuota)
+    if ACTIVE_VIDEO_MODEL == "Veo 3.1 - Lite":
+        video_directive = "Generate a video directly using Veo 3.1 - Lite (text-to-video, do NOT generate images): "
+    else:
+        video_directive = "Generate a video directly using Omni 1.1 Flash (text-to-video, do NOT generate images with Nano Banana): "
+
+    full_prompt = prompt_text if ("Omni 1.1 Flash" in prompt_text or "Veo 3.1" in prompt_text) else (video_directive + prompt_text)
 
     try:
         await box.click(force=True, timeout=5000)
         await asyncio.sleep(0.3)
         await box.fill(full_prompt)
-        await asyncio.sleep(0.7)
+        await asyncio.sleep(0.5)
+
+        # Disparar eventos nativos para que el botón de generación de Angular se active sin demoras
+        await box.evaluate("""el => {
+            el.dispatchEvent(new Event('input', { bubbles: true }));
+            el.dispatchEvent(new Event('change', { bubbles: true }));
+        }""")
+        await asyncio.sleep(0.5)
 
         gen_btn = page.locator(
+            'button.generate-icon-button, '
+            'button[type="submit"], '
             'button[aria-label="Iniciar generación"], '
             'button[aria-label*="generación"], '
             'button[aria-label*="Generate"], '
@@ -308,7 +323,7 @@ async def submit_prompt_to_flow(page: Page, prompt_text: str) -> bool:
         except Exception:
             pass
 
-        if await gen_btn.count() > 0:
+        if await gen_btn.count() > 0 and not await gen_btn.evaluate("el => el.disabled"):
             await gen_btn.click(force=True)
         else:
             await page.keyboard.press("Enter")
@@ -451,6 +466,34 @@ async def generate_single_shot(
 
             generating_tiles = [t for t in states if t["isGenerating"]]
             error_tiles = [t for t in states[:2] if t["isError"]]
+
+            # Detección proactiva de cuota agotada o mensajes de actividad inusual en el chat
+            global ACTIVE_VIDEO_MODEL
+            chat_status = await page.evaluate("""() => {
+                const bodyText = (document.body ? document.body.innerText : '').toLowerCase();
+                if (bodyText.includes('quota limit') || bodyText.includes('daily quota') || 
+                    bodyText.includes('reached your daily') || bodyText.includes('alternative like veo') ||
+                    bodyText.includes('switch to another model, such as veo')) {
+                    return 'quota_limit';
+                }
+                if (bodyText.includes('actividad inusual')) {
+                    return 'unusual_activity';
+                }
+                return null;
+            }""")
+
+            if chat_status == 'quota_limit' and ACTIVE_VIDEO_MODEL != "Veo 3.1 - Lite":
+                log(f"⚠️ Detectado límite de cuota diaria en Omni 1.1 Flash. Conmutando modelo activo a Veo 3.1 - Lite...")
+                ACTIVE_VIDEO_MODEL = "Veo 3.1 - Lite"
+                break
+            elif chat_status == 'unusual_activity':
+                log("⚠️ Advertencia de actividad inusual detectada en Flow. Pulsando Reintentar y aplicando espera preventiva...")
+                await page.evaluate("""() => {
+                    for (const b of document.querySelectorAll('button')) {
+                        if ((b.innerText||'').toLowerCase().includes('reintentar')) b.click();
+                    }
+                }""")
+                await asyncio.sleep(5)
 
             if error_tiles and not generating_tiles:
                 log(f"⚠️ Detectado error/bloqueo en tile de Flow para {shot_id}: {error_tiles[0]['preview']}")

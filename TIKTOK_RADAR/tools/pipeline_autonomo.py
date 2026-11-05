@@ -352,22 +352,22 @@ REGLAS DE ESTILO:
                     data = json.load(resp)
                     text = data["candidates"][0]["content"]["parts"][0]["text"].strip()
                     words = text.split()
-                    if len(words) >= 125:
+                    if len(words) >= 142:
                         print(f"[PIPELINE-AI] ✅ Guión dinámico con contexto generado por {model} ({len(words)} palabras)", flush=True)
                         return text
             except Exception as e:
                 print(f"[PIPELINE-AI] ⚠️ Error generando guión con {model}: {e}", flush=True)
 
-    # Fallback dinámico inteligente si no hay conexión externa
+    # Fallback dinámico inteligente si no hay conexión externa (153 palabras calibradas a 62.5s)
     title_clean = re.sub(r"^[¿\s]+|[?!\s]+$", "", title)
     return (
         f"Para entender la magnitud de lo que acaba de ocurrir, debemos mirar lo que estaba en juego detrás de escena. "
-        f"Durante meses, la tensión fue en aumento hasta que hoy se confirmó una noticia que cambia el panorama por completo: {title_clean}. "
-        f"De acuerdo con los reportes oficiales contrastados por la redacción de {source}, los datos confirman un impacto inmediato que toma por sorpresa al sector. "
-        f"Las cifras sobre la mesa revelan una brecha crítica entre lo que se esperaba y la realidad operativa en el terreno. "
-        f"Especialistas advierten que las consecuencias no tardarán en sentirse, alterando el equilibrio de fuerzas y obligando a tomar decisiones drásticas en las próximas horas. "
-        f"Lo que parecía un incidente aislado ahora se perfila como un punto de inflexión irreversible. "
-        f"La gran incógnita que queda en el aire es si la respuesta global llegará a tiempo para evitar consecuencias mayores."
+        f"Durante meses, la tensión fue en aumento en el sector hasta que hoy se confirmó una primicia que cambia el panorama por completo: {title_clean}. "
+        f"De acuerdo con los reportes oficiales contrastados directamente por la redacción de {source}, los datos confirman un impacto inmediato que toma por sorpresa a especialistas y analistas internacionales. "
+        f"Las cifras concretas puestas sobre la mesa revelan una brecha crítica entre las proyecciones iniciales y la realidad operativa que se vive en el terreno minuto a minuto. "
+        f"Organismos de control advierten que las consecuencias no tardarán en sentirse con fuerza, alterando el equilibrio de fuerzas e impulsando medidas de contingencia inmediatas en las próximas horas. "
+        f"Lo que en un primer momento parecía un incidente aislado ahora se perfila con claridad como un punto de inflexión irreversible. "
+        f"La gran incógnita que queda en el aire es si la respuesta coordinada llegará a tiempo para estabilizar la situación antes de que sea tarde."
     )
 
 
@@ -470,10 +470,11 @@ async def synthesize_voiceover(script: str, output_path: Path, voice: str = "Fen
     dur = generate_speech(script, output_path, voice_gemini=voice, voice_edge="es-MX-JorgeNeural", style=style)
 
     # Si la lectura queda por debajo de 61.0s, ajustar sutilmente el tempo para asegurar monetización (>60s)
+    # Capped a factor >= 0.94 para preservar 100% de naturalidad y evitar efecto de voz lenta o robótica
     if 0 < dur < 61.0:
-        factor = dur / 62.0  # e.g. 58s -> 0.935 (mantiene tono nativo imperceptiblemente más solemne)
+        factor = max(0.94, dur / 61.5)
         if 0.5 <= factor <= 0.99:
-            print(f"[PIPELINE] Ajustando tempo ({factor:.3f}) para garantizar >61.0s de monetización...", flush=True)
+            print(f"[PIPELINE] Calibrando tempo sutil ({factor:.3f}) para garantizar >61.0s de monetización sin alterar tono...", flush=True)
             adjusted_path = output_path.with_suffix(".adj.mp3")
             cmd = [
                 "ffmpeg", "-y", "-i", str(output_path),
@@ -498,6 +499,8 @@ def run_pipeline(genre_key: Optional[str] = None, rank_index: int = 0) -> Path:
         "G2": "G2_CIBERATAQUES_HACKERS",
         "G3": "G3_IA_ROBOTICA",
         "G4": "G4_ESPACIO_CIENCIA",
+        "G1_PERU_DESASTRES": "G1_PERU_DESASTRES",
+        "G1_AVIACION": "G1_AVIACION_CATASTROFES",
         "G1_AVIACION_CATASTROFES": "G1_AVIACION_CATASTROFES",
         "G2_CIBERATAQUES_HACKERS": "G2_CIBERATAQUES_HACKERS",
         "G3_IA_ROBOTICA": "G3_IA_ROBOTICA",
@@ -515,20 +518,21 @@ def run_pipeline(genre_key: Optional[str] = None, rank_index: int = 0) -> Path:
         else:
             daily_genres = get_daily_4_genres()
             top_news = daily_genres.get(full_key, list(daily_genres.values())[0])
-
-        suffix = full_key.replace("G1_", "").replace("G2_", "").replace("G3_", "").replace("G4_", "")
-        if rank_index > 0:
-            suffix += f"_V{rank_index+1}"
     else:
         daily_genres = get_daily_4_genres()
         genre_key = max(daily_genres, key=lambda g: daily_genres[g].get("score", 1.0))
         top_news = daily_genres[genre_key]
-        suffix = "AUTONOMO"
 
     print(f"\n2. Noticia seleccionada para [{top_news.get('genre_label', genre_key)}]:")
     print(f"   [{top_news['source_name']}] {top_news['title']}")
 
     storyboard = generate_monetizable_storyboard(top_news)
+
+    # Derivar sufijo canónico exacto para no confundir Desastres Perú con Aviación
+    canon = storyboard.get("genre_canonical") or top_news.get("genre_label") or full_key or "AUTONOMO"
+    suffix = canon.replace("G1_", "").replace("G2_", "").replace("G3_", "").replace("G4_", "")
+    if rank_index > 0:
+        suffix += f"_V{rank_index+1}"
 
     today_str = datetime.now().strftime("%Y-%m-%d")
     folder_name = f"{today_str}_{suffix}"

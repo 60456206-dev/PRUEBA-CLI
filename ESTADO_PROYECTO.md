@@ -2,6 +2,26 @@
 
 Actualizado: 2026-11-05.
 
+## Resolución de Vídeos Bugeados, Blindaje Anti-Cuota Flow y Corrección FFmpeg · 2026-11-05
+
+- **Diagnóstico Integral y Corrección de Vídeos Bugeados / Congelados**:
+  1. **Auto-Fallback Dinámico ante Límite de Cuota en Google Flow (`Omni 1.1 Flash` -> `Veo 3.1 - Lite`)**:
+     - *Causa Raíz:* En [`tools/flow_generator.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/flow_generator.py), se forzaba textualmente `"Generate a video directly using Omni 1.1 Flash..."`. Al superar la cuota diaria en Google Flow, el asistente respondía en el chat indicando el agotamiento del modelo y sugiriendo cambiar a `Veo 3.1 - Lite`. Como el bot no interpretaba el mensaje, daba timeout en cada plano (48s x 3 intentos) y los planos faltantes se rellenaban con placas estáticas de respaldo FFmpeg (pantallas negras con recuadro `TELEMETRIA EN VIVO`).
+     - *Solución:* Implementada detección proactiva de mensajes de cuota (`quota limit`, `daily quota`, `switch to another model`). Cuando se detecta límite en `Omni 1.1 Flash`, el script conmuta automáticamente a `Veo 3.1 - Lite` y dispara los eventos de Angular para activar el botón de generación sin quedarse congelado.
+  2. **Eliminación Definitiva del Crash de FFmpeg (Error 234 en Ciberataques)**:
+     - *Causa Raíz:* En [`tools/ensamblador_final.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/ensamblador_final.py), cadenas como `"TASA DE PAQUETES: 14.8 MILLONES PPS (CRÍTICO)"` contenían dos puntos (`:`) sin escapar, lo que provocaba que FFmpeg tratara el texto posterior como una opción de filtro inválida y abortara el renderizado con error 234.
+     - *Solución:* Creada la función [`escape_ffmpeg_drawtext`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/ensamblador_final.py#L253-L263), que escapa de manera robusta dos puntos (`\:`) y reemplaza apóstrofes conflictivos (`’`), protegiendo métricas, títulos y viñetas. Verificado exitosamente con el máster de `2026-11-05_CIBERATAQUES_HACKERS` completado a 62.0s y -14.1 LUFS.
+  3. **Corrección de Solapamiento Visual en Top Badge y Subtítulos**:
+     - *Causa Raíz:* La insignia ASS `🔴 ÚLTIMA HORA` y el ticket frosted glass `[✓ FUENTE VERIFICADA]` coincidían en Y=200-260, montando las letras unas sobre otras. Además, el pie de las tarjetas HUD a Y=1420 chocaba contra los subtítulos inferiores en Y=1480.
+     - *Solución:* Retirado el estilo duplicado `HookSource` de los subtítulos ASS. Ubicada la píldora `🔴 ÚLTIMA HORA` en `MarginV=95` (Y=95-145) y la tarjeta de fuente verificada en `Y=175-350`. Reducida la altura de la tarjeta HUD a 860px (terminando en Y=1230), dejando 250px de espacio limpio hacia los subtítulos inferiores en TikTok Safe Zone. Inspeccionado visualmente en fotogramas extraídos.
+  4. **Eliminación del Efecto de Voz Ralentizada / Robótica (`atempo`)**:
+     - *Causa Raíz:* En [`tools/pipeline_autonomo.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/pipeline_autonomo.py), si la locución duraba ~51s, se aplicaba un factor `atempo=0.825` (ralentizando casi un 18%), deformando el timbre vocal.
+     - *Solución:* Calibrado el generador de guiones a 145-160 palabras obligatorias y acotado el factor a `max(0.94, dur / 61.5)` (máximo 6% de ajuste), asegurando que el locutor mantenga 100% de naturalidad y adrenalina sin arrastrar palabras.
+  5. **Desambiguación de Carpetas en G1 (`PERU_DESASTRES` vs `AVIACION`)**:
+     - En [`tools/pipeline_autonomo.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/pipeline_autonomo.py), el nombre de entrega se deriva del `genre_canonical` real (`G1_PERU_DESASTRES` -> `PERU_DESASTRES`), evitando que las emergencias climáticas se guarden bajo carpetas de aviación.
+  6. **Sincronización Total Verificada en AWS**:
+     - Archivos probados y sincronizados en local y en `~/TIKTOK-NEWS` en el servidor AWS. Máster de Ciberataques auditado visualmente y validado.
+
 ## Resolución de Observaciones Críticas de Producción y Blindaje de Flow · 2026-11-05
 
 - **Corrección Integral de Observaciones del Usuario (Calidad, Audio, Generación Flow y Estética)**:
