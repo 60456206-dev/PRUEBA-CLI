@@ -247,10 +247,24 @@ def generate_infographic_vector_shot(
     title_low = (title or "").lower()
     genre_upper = (genre or "G1").upper()
 
-    is_peru = ("PERU" in genre_upper or any(k in title_low for k in ["perú", "peru", "lima", "arequipa", "piura", "indeci", "sismo", "huaico", "terremoto", "panamericana", "el niño", "rpp", "andina", "lluvia"]))
-    is_cyber = ("G2" in genre_upper or any(k in title_low for k in ["ciber", "hacker", "ransomware", "malware", "exploit", "breach", "zero-day"]))
-    is_ai = ("G3" in genre_upper or any(k in title_low for k in ["gemini", "google", "ia", "ai", "openai", "chip", "2 nm", "robot", "nvidia", "deepseek", "chatgpt", "semiconduct", "dram", "nand", "euv", "silicon", "hardware", "cpu", "gpu"]))
-    is_space = ("G4" in genre_upper or any(k in title_low for k in ["espacio", "nasa", "esa", "marte", "luna", "cohete", "spacex", "telescopio", "asteroide", "planetary", "space", "starship", "orbit"]))
+    def _kw(k: str, txt: str) -> bool:
+        return bool(re.search(rf"\b{re.escape(k)}\b", txt)) if len(k) <= 3 else (k in txt)
+
+    if "PERU" in genre_upper or "DESASTRE" in genre_upper:
+        is_peru, is_cyber, is_ai, is_space = True, False, False, False
+    elif "G2" in genre_upper or "CIBER" in genre_upper:
+        is_peru, is_cyber, is_ai, is_space = False, True, False, False
+    elif "G3" in genre_upper or "HARDWARE" in genre_upper or "ROBOTICA" in genre_upper:
+        is_peru, is_cyber, is_ai, is_space = False, False, True, False
+    elif "G4" in genre_upper or "ESPACIO" in genre_upper:
+        is_peru, is_cyber, is_ai, is_space = False, False, False, True
+    elif "AVIACION" in genre_upper:
+        is_peru, is_cyber, is_ai, is_space = False, False, False, False
+    else:
+        is_peru = any(_kw(k, title_low) for k in ["perú", "peru", "lima", "arequipa", "piura", "indeci", "sismo", "huaico", "terremoto", "panamericana", "el niño", "rpp", "andina", "lluvia"])
+        is_cyber = any(_kw(k, title_low) for k in ["ciber", "hacker", "ransomware", "malware", "exploit", "breach", "zero-day"])
+        is_ai = any(_kw(k, title_low) for k in ["gemini", "google", "ia", "ai", "openai", "chip", "2 nm", "robot", "nvidia", "deepseek", "chatgpt", "semiconduct", "dram", "nand", "euv", "silicon", "hardware", "cpu", "gpu"])
+        is_space = any(_kw(k, title_low) for k in ["espacio", "nasa", "esa", "marte", "luna", "cohete", "spacex", "telescopio", "asteroide", "planetary", "space", "starship", "orbit"])
 
     if is_peru:
         cards = {

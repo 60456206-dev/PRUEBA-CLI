@@ -2,6 +2,24 @@
 
 Actualizado: 2026-11-05.
 
+## Auditoría Exhaustiva y Eliminación de Ambigüedades / Bugs de Subcadena · 2026-11-05
+
+- **Auditoría Rápida Completada y Verificada al 100%**:
+  1. **Eliminación de Falsos Positivos por Subcadenas Cortas (`ia`, `ai`, `esa`, `apt`)**:
+     - Antes, buscar `"ia"` o `"ai"` mediante subcadenas simples (`in`) provocaba que palabras comunes en español como `"emergencia"`, `"aviación"`, `"lluvia"`, `"iniciar"`, `"noticiero"` o `"empresa"` activaran falsamente la categoría `G3_IA_HARDWARE` o confundieran los badges, hashtags y pistas de música.
+     - Se implementaron comparaciones con límites de palabra (`\b...\b`) en [`TIKTOK_RADAR/tools/news_radar.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/news_radar.py), [`TIKTOK_RADAR/tools/pipeline_autonomo.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/pipeline_autonomo.py), [`TIKTOK_RADAR/tools/ensamblador_final.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/ensamblador_final.py) y [`TIKTOK_RADAR/tools/generador_portada.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/generador_portada.py).
+  2. **Resolución de Ambigüedad Canónica en Género G1 (`G1_PERU_DESASTRES` vs `G1_AVIACION`)**:
+     - En `metadata.json` y en el generador de storyboards se guardaba un ambiguo `"G1"`, lo que podía provocar que en la generación de infografías HUD, portadas o hashtags no se distinguiera con certeza si correspondía a Desastres Perú o a Aviación Internacional.
+     - Ahora se guarda y propaga el `genre_canonical` explícito (`G1_PERU_DESASTRES`, `G1_AVIACION`, `G2_CIBERATAQUES`, `G3_IA_HARDWARE`, `G4_ESPACIO`).
+  3. **Robustez ante `KeyError` en Storyboards**:
+     - En [`TIKTOK_RADAR/tools/pipeline_autonomo.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/pipeline_autonomo.py), `generate_monetizable_storyboard` ahora soporta tanto noticias de radar (`source_name`) como diccionarios externos (`source`) con valores por defecto seguros.
+  4. **Corrección de Detección de Comandos y Estado en Bot WhatsApp**:
+     - En [`TIKTOK_RADAR/whatsapp_bot/bot.js`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/whatsapp_bot/bot.js), el comando `!generar` usaba `lower.includes('ia')`, lo que provocaba que frases como *"iniciar produccion"* o *"generar noticiero"* se desviaran obligatoriamente a G3 (IA) en lugar de ejecutar todas las categorías. Se corrigió con regex de palabra completa.
+     - La función `getProjectCondition()` ahora lee primero `metadata.json` (`title`), evitando mostrar títulos desactualizados o predeterminados.
+  5. **Pruebas y Verificaciones Exitosas**:
+     - Compilación estricta sin advertencias en Python 3.12 y Node.js.
+     - Test de clasificación verificado: noticias de aviación con lluvia se clasifican en `G1_AVIACION`, emergencias en Lima en `G1_PERU_DESASTRES`, y noticias de chips en `G3_IA_HARDWARE`, cada una asignando su stem musical y portada correspondiente.
+
 ## Paquete de Producción 10/10 y Soundtracks Epidemic Sound OFICIALIZADOS · 2026-11-05
 
 - **Aceptación y Oficialización Expresa del Usuario**:

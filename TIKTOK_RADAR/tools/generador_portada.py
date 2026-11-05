@@ -24,10 +24,57 @@ from pathlib import Path
 from typing import Dict, Any, List, Tuple, Optional
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 
+# Cargar claves de entorno automáticamente si existen
+for _env_p in [Path.home() / ".api_keys.env", Path("/workspaces/PRUEBA-CLI/.api_keys.env")]:
+    if _env_p.exists():
+        for _line in _env_p.read_text(encoding="utf-8").splitlines():
+            _line = _line.strip()
+            if _line.startswith("export "):
+                _line = _line[7:]
+            if "=" in _line and not _line.startswith("#"):
+                _k, _v = _line.split("=", 1)
+                os.environ.setdefault(_k.strip(), _v.strip().strip('"').strip("'"))
+
 ROOT_DIR = Path(__file__).resolve().parent.parent
 ENTREGAS_DIR = ROOT_DIR / "entregas"
 FONT_BOLD = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
 FONT_REG = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
+
+
+def _kw_match(k: str, txt: str) -> bool:
+    return bool(re.search(rf"\b{re.escape(k)}\b", txt)) if len(k) <= 3 else (k in txt)
+
+
+def _detect_category_flags(genre: str, title: str) -> Tuple[bool, bool, bool, bool]:
+    """Devuelve (is_peru, is_cyber, is_ai, is_space) sin falsos positivos por subcadenas cortas."""
+    title_low = (title or "").lower()
+    genre_up = (genre or "G1").upper()
+
+    if "PERU" in genre_up or "DESASTRE" in genre_up:
+        return True, False, False, False
+    if "G2" in genre_up or "CIBER" in genre_up:
+        return False, True, False, False
+    if "G3" in genre_up or "HARDWARE" in genre_up or "ROBOTICA" in genre_up:
+        return False, False, True, False
+    if "G4" in genre_up or "ESPACIO" in genre_up:
+        return False, False, False, True
+    if "AVIACION" in genre_up:
+        return False, False, False, False
+
+    is_peru = any(_kw_match(k, title_low) for k in [
+        "perú", "peru", "lima", "arequipa", "piura", "indeci", "sismo", "huaico", "terremoto",
+        "lluvias", "lluvia", "andina", "rpp", "el niño", "costa verde"
+    ])
+    is_cyber = any(_kw_match(k, title_low) for k in [
+        "ciber", "hacker", "ransomware", "malware", "exploit", "breach", "zero-day", "dark web", "ciberataque", "ddos"
+    ])
+    is_ai = any(_kw_match(k, title_low) for k in [
+        "ia", "ai", "chip", "chips", "semiconductor", "nvidia", "openai", "gemini", "hardware", "intel", "amd", "tsmc", "2nm"
+    ])
+    is_space = any(_kw_match(k, title_low) for k in [
+        "espacio", "nasa", "esa", "orbita", "luna", "marte", "satelite", "cohete", "james webb", "astronomia", "spacex", "starship"
+    ])
+    return is_peru, is_cyber, is_ai, is_space
 
 
 # ==============================================================================
@@ -36,22 +83,7 @@ FONT_REG = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
 
 def generate_tiktok_hashtags(genre: str, title: str, source: str = "") -> Dict[str, Any]:
     """Genera el lote de hashtags categorizados y el copy optimizado para máxima viralidad."""
-    title_low = (title or "").lower()
-    genre_upper = (genre or "G1").upper()
-
-    is_peru = ("PERU" in genre_upper or any(k in title_low for k in [
-        "perú", "peru", "lima", "arequipa", "piura", "indeci", "sismo", "huaico", "terremoto",
-        "lluvias", "lluvia", "andina", "rpp", "el niño", "costa verde"
-    ]))
-    is_cyber = ("G2" in genre_upper or any(k in title_low for k in [
-        "ciber", "hacker", "ransomware", "malware", "exploit", "breach", "zero-day", "dark web", "ciberataque"
-    ]))
-    is_ai = ("G3" in genre_upper or any(k in title_low for k in [
-        "ia", "ai", "chip", "chips", "semiconductor", "nvidia", "openai", "gemini", "hardware", "intel", "amd", "tsmc"
-    ]))
-    is_space = ("G4" in genre_upper or any(k in title_low for k in [
-        "espacio", "nasa", "esa", "orbita", "luna", "marte", "satelite", "cohete", "james webb", "astronomia", "spacex"
-    ]))
+    is_peru, is_cyber, is_ai, is_space = _detect_category_flags(genre, title)
 
     # Tags fundamentales de alcance masivo en TikTok
     core_tags = ["#tiktoknoticias", "#noticiashoy", "#parati", "#fyp", "#ultimahora", "#viral", "#aprendecontiktok"]
@@ -195,13 +227,7 @@ def generate_ai_cover_background(genre: str, title: str, delivery_dir: Path) -> 
     Genera el fondo oficial de la portada en vertical 9:16 (1080x1920) utilizando un modelo de IA
     dedicado a creación de imágenes (Flux / Pollinations API) con estética cinematográfica y raytracing.
     """
-    title_low = (title or "").lower()
-    genre_up = (genre or "G1").upper()
-
-    is_peru = ("PERU" in genre_up or any(k in title_low for k in ["peru", "perú", "lima", "lluvias", "lluvia", "sismo", "huaico", "terremoto", "indeci"]))
-    is_cyber = ("G2" in genre_up or any(k in title_low for k in ["ciber", "hacker", "ransomware", "malware", "ddos", "breach"]))
-    is_ai = ("G3" in genre_up or any(k in title_low for k in ["ia", "ai", "chip", "chips", "nvidia", "intel", "tsmc", "hardware", "semiconductor", "2nm"]))
-    is_space = ("G4" in genre_up or any(k in title_low for k in ["espacio", "nasa", "esa", "luna", "marte", "orbita", "starship"]))
+    is_peru, is_cyber, is_ai, is_space = _detect_category_flags(genre, title)
 
     if is_peru:
         prompt = (
@@ -331,12 +357,7 @@ def generate_tiktok_cover(delivery_dir: Path, output_filename: str = "PORTADA_TI
     f_foot = ImageFont.truetype(font_bold_path, 26)
 
     # 4. Badge Superior (Píldora Roja de Impacto)
-    title_low = title.lower()
-    genre_up = genre.upper()
-    is_peru = ("PERU" in genre_up or any(k in title_low for k in ["peru", "perú", "lima", "lluvias", "sismo", "indeci"]))
-    is_cyber = ("G2" in genre_up or any(k in title_low for k in ["ciber", "hacker", "ransomware", "malware"]))
-    is_ai = ("G3" in genre_up or any(k in title_low for k in ["ia", "chip", "nvidia", "intel"]))
-    is_space = ("G4" in genre_up or any(k in title_low for k in ["espacio", "nasa", "luna", "orbita"]))
+    is_peru, is_cyber, is_ai, is_space = _detect_category_flags(genre, title)
 
     if is_peru:
         badge_label = "ALERTA MAXIMA EN PERU"

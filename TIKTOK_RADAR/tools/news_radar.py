@@ -353,15 +353,23 @@ def is_duplicate_story(title_a: str, title_b: str) -> bool:
     return (len(inter) / min_len) >= 0.50
 
 
+def kw_match(kw: str, text: str) -> bool:
+    """Comprueba coincidencia de palabra clave evitando falsos positivos en siglas cortas (ia, ai, esa, apt, etc.)."""
+    if len(kw) <= 3:
+        return bool(re.search(rf"\b{re.escape(kw)}\b", text))
+    return kw in text
+
+
 def classify_genre(title: str, summary: str, default_genre: str, allowed_genres: Optional[List[str]] = None) -> str:
     combined = f"{title} {summary}".lower()
+    title_low = title.lower()
     scores = {k: 0 for k in GENRE_KEYWORDS}
     for genre, kws in GENRE_KEYWORDS.items():
         if allowed_genres and genre not in allowed_genres:
             continue
         for kw in kws:
-            if kw in combined:
-                scores[genre] += 3 if kw in title.lower() else 1
+            if kw_match(kw, combined):
+                scores[genre] += 3 if kw_match(kw, title_low) else 1
 
     valid_scores = {k: v for k, v in scores.items() if (not allowed_genres or k in allowed_genres)}
     best_genre = max(valid_scores, key=valid_scores.get)
@@ -416,8 +424,8 @@ def score_article(item: Dict[str, Any], now_ts: float) -> float:
 
     # 3. Regla Especial Perú: EXCLUSIVA para Desastres Naturales (NUNCA aplica a aviación)
     is_g1 = (item["genre"] == "G1_AVIACION_CATASTROFES")
-    has_peru = any(p in combined for p in PERU_LOCATIONS) or item.get("is_peru", False)
-    has_natural_disaster = any(d in combined for d in PERU_NATURAL_DISASTER_TERMS)
+    has_peru = any(kw_match(p, combined) for p in PERU_LOCATIONS) or item.get("is_peru", False)
+    has_natural_disaster = any(kw_match(d, combined) for d in PERU_NATURAL_DISASTER_TERMS)
 
     if is_g1 and has_peru and has_natural_disaster and not is_aviation:
         score += 60.0  # 🇵🇪 Prioridad #1 Nacional Perú EXCLUSIVA para Desastres Naturales
@@ -441,9 +449,10 @@ def score_article(item: Dict[str, Any], now_ts: float) -> float:
 
     # 6. Coincidencia con palabras clave del género
     genre_kws = GENRE_KEYWORDS.get(item["genre"], [])
-    kw_hits = [k for k in genre_kws if k in combined]
+    title_low = item["title"].lower()
+    kw_hits = [k for k in genre_kws if kw_match(k, combined)]
     for kw in kw_hits:
-        score += 2.5 if kw in item["title"].lower() else 1.0
+        score += 2.5 if kw_match(kw, title_low) else 1.0
 
     return round(score, 2)
 
@@ -510,7 +519,7 @@ def fetch_feed(feed_info: Dict[str, Any], max_items: int = 25) -> List[Dict[str,
 
             # Validar al menos una coincidencia temática o ser fuente nativa de la categoría
             combined = (title + " " + desc).lower()
-            keyword_matches = [kw for kw in GENRE_KEYWORDS.get(genre, []) if kw in combined]
+            keyword_matches = [kw for kw in GENRE_KEYWORDS.get(genre, []) if kw_match(kw, combined)]
             if not keyword_matches and not feed_info.get("is_peru") and not feed_info.get("is_aviation"):
                 continue
 
@@ -550,7 +559,7 @@ def get_top_news_by_genre(genre_key: str, limit: int = 5) -> List[Dict[str, Any]
     2. Comparación entre todas las fuentes y foros de la categoría.
     3. Selección de la noticia con más información, vistas potenciales y polémica.
     4. Deduplicación para que los N vídeos sean sobre temas distintos.
-    5. Prioridad nacional Perú para G1 si existen desastres en Perú.
+    5. En G1: Puesto #0 (rank 0) prioriza Desastres Perú y Puesto #1 (rank 1) garantiza Aviación Global.
     """
     all_news = scan_all_sources()
     genre_items = [item for item in all_news if item["genre"] == genre_key]
@@ -575,10 +584,20 @@ def get_top_news_by_genre(genre_key: str, limit: int = 5) -> List[Dict[str, Any]
                 break
         if not is_dup:
             unique_items.append(item)
-        if len(unique_items) >= limit:
+        if len(unique_items) >= max(limit, 8):
             break
 
-    return unique_items
+    # Regla de separación G1 para cronograma diario:
+    # Rank 0 = Desastres Perú (07:00 AM), Rank 1 = Aviación Internacional (10:00 AM)
+    if genre_key == "G1_AVIACION_CATASTROFES" and len(unique_items) >= 2:
+        if not unique_items[1].get("is_aviation_incident"):
+            for idx in range(2, len(unique_items)):
+                if unique_items[idx].get("is_aviation_incident"):
+                    av_item = unique_items.pop(idx)
+                    unique_items.insert(1, av_item)
+                    break
+
+    return unique_items[:limit]
 
 
 def get_daily_4_genres() -> Dict[str, Dict[str, Any]]:

@@ -175,8 +175,14 @@ function getProjectCondition() {
         hasFinalVideo = true;
         finalVideoSize = (fs.statSync(finalVid).size / (1024 * 1024)).toFixed(1) + ' MB';
       }
+      const metaFile = path.join(latest.full, 'metadata.json');
       const promptFile = path.join(latest.full, 'PROMPTS_PRODUCCION.json');
-      if (fs.existsSync(promptFile)) {
+      if (fs.existsSync(metaFile)) {
+        try {
+          const data = JSON.parse(fs.readFileSync(metaFile, 'utf8'));
+          newsTitle = data.title || data.noticia?.titulo || newsTitle;
+        } catch (e) {}
+      } else if (fs.existsSync(promptFile)) {
         try {
           const data = JSON.parse(fs.readFileSync(promptFile, 'utf8'));
           newsTitle = data.noticia?.titulo || data.tema || newsTitle;
@@ -436,16 +442,16 @@ client.on('message_create', async (msg) => {
       if (parsed >= 1 && parsed <= 10) count = parsed;
     }
 
-    if (lower.includes(' 1') || lower.includes('g1') || lower.includes('aviacion') || lower.includes('catastrofe') || lower.includes('peru')) {
+    if (/\b(g1|aviacion|aviación|catastrofe|catástrofe|peru|perú)\b/.test(lower)) {
       args.push('--genre', 'G1');
       modeText = `Género 1 (🚨 Aviación & Desastres Perú/Mundo)`;
-    } else if (lower.includes(' 2') || lower.includes('g2') || lower.includes('ciber') || lower.includes('hacker')) {
+    } else if (/\b(g2|ciber|ciberataque|hacker)\b/.test(lower)) {
       args.push('--genre', 'G2');
       modeText = `Género 2 (💻 Ciberataques & Amenazas)`;
-    } else if (lower.includes(' 3') || lower.includes('g3') || lower.includes('ia') || lower.includes('tech') || lower.includes('robot') || lower.includes('chip') || lower.includes('hardware')) {
+    } else if (/\b(g3|ia|ai|tech|robot|chip|chips|hardware)\b/.test(lower)) {
       args.push('--genre', 'G3');
       modeText = `Género 3 (🤖 IA, Chips & Hardware TechCrunch/Tom's)`;
-    } else if (lower.includes(' 4') || lower.includes('g4') || lower.includes('espacio') || lower.includes('ciencia')) {
+    } else if (/\b(g4|espacio|nasa|ciencia)\b/.test(lower)) {
       args.push('--genre', 'G4');
       modeText = `Género 4 (🚀 Espacio & Ciencia Extrema)`;
     } else {

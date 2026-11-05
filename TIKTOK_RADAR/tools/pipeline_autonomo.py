@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 """
-TIKTOK RADAR · Pipeline 100% Autónomo de Producción (< 60 min)
-1. Rastrea Xataka, BBC Mundo y El País en tiempo real.
-2. Selecciona automáticamente la noticia de mayor impacto.
-3. Genera el guion estructurado para monetizar en TikTok (61 a 65 segundos).
-4. Genera el storyboard de 13 planos con prompts optimizados para Google Flow / Veo (4-5s)
-   incluyendo prompts principales y fallback_prompts anti-bloqueo de políticas.
-5. Sintetiza la pista de locución periodística con Edge-TTS (voz neuronal).
-6. Exporta el paquete listo para producción en entregas/<fecha>_AUTONOMO/.
+TIKTOK RADAR · Pipeline 100% Autónomo de Producción (Calidad 10/10 · Monetizable >60s)
+1. Rastrea agencias y portales oficiales (RPP, AeroTime, The Hacker News, Tom's Hardware, TechCrunch, NASA, ESA).
+2. Selecciona automáticamente la noticia de mayor impacto por categoría y orden cronológico.
+3. Genera el guion dinámico con contexto inicial, cifras duras y pregunta polarizante (estilo Vox/Johnny Harris, 61-65s).
+4. Genera el storyboard híbrido de 13 planos (8 Flow Cinemáticos Raytracing + 5 FFmpeg Glassmorphic HUD).
+5. Sintetiza la locución apasionada y dramática con Gemini 3.8 Flash TTS (voz Fenrir) + auto-ajuste >61.0s.
+6. Exporta el paquete listo con género canónico exacto en entregas/<fecha>_<genero>/.
 """
 
 import asyncio
@@ -24,7 +23,7 @@ from typing import Dict, Any, List, Optional
 
 # Importar el escáner de noticias y generador de audio
 sys.path.append(str(Path(__file__).parent))
-from news_radar import scan_all_sources
+from news_radar import scan_all_sources, kw_match
 from audio_generator import generate_speech, probe_duration
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
@@ -376,26 +375,59 @@ def generate_monetizable_storyboard(news: Dict[str, Any]) -> Dict[str, Any]:
     Genera el desglose editorial completo para 61–65 segundos (13 planos, 145-160 palabras)
     siguiendo la fórmula de Noticiero 3D Estilizado para Google Flow / Veo con contexto previo y curiosidad.
     """
-    title = news["title"]
-    source = news["source_name"]
-    link = news["link"]
+    title = news.get("title", "Alerta de Última Hora")
+    source = news.get("source_name") or news.get("source", "PRENSA OFICIAL")
+    link = news.get("link", "")
     title_low = title.lower()
+    raw_genre = (news.get("genre") or "").upper()
 
-    is_peru_disaster = news.get("is_peru_priority", False) or any(k in title_low for k in ["perú", "peru", "lima", "arequipa", "piura", "indeci", "sismo", "huaico", "terremoto", "panamericana", "el niño", "rpp", "andina", "lluvia"])
-    is_aviation = any(k in title_low for k in ["avión", "aeronave", "vuelo", "accidente", "aircraft", "flight", "plane", "pilot", "mayday", "crash", "haiti", "boeing", "airbus", "aerotime"])
-    is_cyber = any(k in title_low for k in ["ciberataque", "hackeo", "neveras", "hacker", "ransomware", "malware", "exploit", "apt", "breach", "zero-day", "cyber"])
-    is_ai = any(k in title_low for k in ["gemini", "google", "ia", "ai", "openai", "chip", "2 nm", "robot", "nvidia", "deepseek", "chatgpt", "apple", "semiconduct", "dram", "nand", "euv", "silicon", "hardware", "cpu", "gpu", "micron", "intel", "amd", "tsmc", "techcrunch", "tom's hardware"])
-    is_space = any(k in title_low for k in ["espacio", "nasa", "esa", "marte", "luna", "cohete", "spacex", "telescopio", "asteroide", "planetary", "space", "starship", "orbit", "landing"])
-
-    genre_label = "G1_PERU_DESASTRES" if (is_peru_disaster and not is_aviation) else (
-        "G1_AVIACION" if is_aviation else (
-            "G2_CIBERATAQUES" if is_cyber else (
-                "G3_IA_HARDWARE" if is_ai else (
-                    "G4_ESPACIO" if is_space else "NOTICIAS_GLOBAL"
-                )
-            )
-        )
+    is_peru_disaster = (
+        news.get("is_peru_priority", False)
+        or any(kw_match(k, title_low) for k in ["perú", "peru", "lima", "arequipa", "piura", "indeci", "sismo", "huaico", "terremoto", "panamericana", "el niño", "rpp", "andina", "lluvia"])
     )
+    is_aviation = (
+        news.get("is_aviation_incident", False)
+        or news.get("is_aviation", False)
+        or any(kw_match(k, title_low) for k in ["avión", "aeronave", "vuelo", "accidente", "aircraft", "flight", "plane", "pilot", "mayday", "crash", "haiti", "boeing", "airbus", "aerotime"])
+    )
+    is_cyber = (
+        "G2" in raw_genre
+        or any(kw_match(k, title_low) for k in ["ciberataque", "hackeo", "neveras", "hacker", "ransomware", "malware", "exploit", "apt", "breach", "zero-day", "cyber"])
+    )
+    is_ai = (
+        "G3" in raw_genre
+        or any(kw_match(k, title_low) for k in ["gemini", "google", "ia", "ai", "openai", "chip", "2 nm", "robot", "nvidia", "deepseek", "chatgpt", "apple", "semiconduct", "dram", "nand", "euv", "silicon", "hardware", "cpu", "gpu", "micron", "intel", "amd", "tsmc", "techcrunch", "tom's hardware"])
+    )
+    is_space = (
+        "G4" in raw_genre
+        or any(kw_match(k, title_low) for k in ["espacio", "nasa", "esa", "marte", "luna", "cohete", "spacex", "telescopio", "asteroide", "planetary", "space", "starship", "orbit", "landing"])
+    )
+
+    # Prioridad estricta según categoría de la fuente para evitar falsos cruces
+    if "G2" in raw_genre:
+        genre_label = "G2_CIBERATAQUES"
+        is_cyber, is_ai, is_space, is_aviation, is_peru_disaster = True, False, False, False, False
+    elif "G3" in raw_genre:
+        genre_label = "G3_IA_HARDWARE"
+        is_ai, is_cyber, is_space, is_aviation, is_peru_disaster = True, False, False, False, False
+    elif "G4" in raw_genre:
+        genre_label = "G4_ESPACIO"
+        is_space, is_ai, is_cyber, is_aviation, is_peru_disaster = True, False, False, False, False
+    elif is_peru_disaster and not is_aviation:
+        genre_label = "G1_PERU_DESASTRES"
+        is_peru_disaster, is_aviation, is_cyber, is_ai, is_space = True, False, False, False, False
+    elif is_aviation or "G1" in raw_genre:
+        genre_label = "G1_AVIACION"
+        is_aviation, is_peru_disaster, is_cyber, is_ai, is_space = True, False, False, False, False
+    elif is_cyber:
+        genre_label = "G2_CIBERATAQUES"
+    elif is_ai:
+        genre_label = "G3_IA_HARDWARE"
+    elif is_space:
+        genre_label = "G4_ESPACIO"
+    else:
+        genre_label = "G1_AVIACION"
+        is_aviation = True
 
     # Generación dinámica del guión con contexto y emoción (Vox/Johnny Harris)
     script = generate_dynamic_news_script(news, genre_label)
@@ -414,6 +446,7 @@ def generate_monetizable_storyboard(news: Dict[str, Any]) -> Dict[str, Any]:
         "title": title,
         "source": source,
         "link": link,
+        "genre_canonical": genre_label,
         "script": script,
         "word_count": word_count,
         "est_duration": est_duration,
@@ -540,12 +573,13 @@ def run_pipeline(genre_key: Optional[str] = None, rank_index: int = 0) -> Path:
     report_file.write_text(md_content, encoding="utf-8")
 
     meta_file = delivery_dir / "metadata.json"
+    canonical_genre = storyboard.get("genre_canonical") or genre_key
     from generador_portada import generate_tiktok_hashtags
-    tag_info = generate_tiktok_hashtags(genre_key, storyboard["title"], storyboard["source"])
+    tag_info = generate_tiktok_hashtags(canonical_genre, storyboard["title"], storyboard["source"])
     meta_file.write_text(json.dumps({
         "date": today_str,
-        "genre": genre_key,
-        "genre_label": top_news.get("genre_label", genre_key),
+        "genre": canonical_genre,
+        "genre_label": top_news.get("genre_label", canonical_genre),
         "title": storyboard["title"],
         "source": storyboard["source"],
         "url": storyboard["link"],
