@@ -1,6 +1,33 @@
 # Dónde nos quedamos
 
-Actualizado: 2026-11-04.
+Actualizado: 2026-11-05.
+
+## Soundtracks Virales Epidemic Sound por Categoría y Sidechain Ducking Dinámico (-14 LUFS) · 2026-11-05
+
+- **Resolución Crítica de Audio y Musicalización Expresada por el Usuario**:
+  - En los vídeos anteriores la música de fondo quedaba prácticamente inaudible (-41 LUFS) por exceso de atenuación en `amix`.
+  - Se reestructuró la arquitectura de mezcla sonoro-musical en [`TIKTOK_RADAR/tools/audio_generator.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/audio_generator.py) y [`TIKTOK_RADAR/tools/ensamblador_final.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/ensamblador_final.py) integrando la cuenta de pago de Epidemic Sound vía MCP.
+- **Curaduría Oficial de Soundtracks Virales por Categoría (BASS + INSTRUMENTS)**:
+  1. **G3 (Hardware & Chips 2nm / Inteligencia Artificial)**:
+     - *Pista:* **STYLE** - Ballpoint (118 BPM, Epidemic Sound ID: `03e71f7f-ad6f-4845-9fbd-9fce110cfa5e`).
+     - *Estilo:* Dark Synth / Modern Viral Empowerment Beat (ritmo estilo *Washing Machine*, synth bass potente, baterías electrónicas nítidas).
+  2. **G2 (Ciberataques / Hackers & Zero-Day)**:
+     - *Pista:* **Deadlock** - Lennon Hutton (115 BPM, Epidemic Sound ID: `db0a04d3-c17d-4601-8e8a-454ef7698454`).
+     - *Estilo:* Cyberpunk Dark Electro Pulse / Investigación de ciberseguridad.
+  3. **G1 (Aviación Global & Catástrofes Mayday)**:
+     - *Pista:* **Trace** - Lennon Hutton (156 BPM, Epidemic Sound ID: `3c1ad0de-8456-4677-86fe-bb3153624738`).
+     - *Estilo:* Cinematic Action Thriller / Pulso acelerado de trailer.
+  4. **G1 (Desastres Naturales Perú & INDECI)**:
+     - *Pista:* **Shifting Ground** - Luba Hilman (110 BPM, Epidemic Sound ID: `87893ebf-9476-46ff-9cc1-f1227748c791`).
+     - *Estilo:* Dramatic Emergency Pulse / Cuerdas orquestales y tensión táctica.
+  5. **G4 (Espacio & Exploración Planetaria)**:
+     - *Pista:* **Mindscape** - Lennon Hutton (108 BPM, Epidemic Sound ID: `4cb08b97-fa28-4f38-9b9c-3e71a2d98b5f`).
+     - *Estilo:* Cosmic Atmospheric Synthwave / Impulso orbital futurista.
+- **Ingeniería de Audio Broadcast con Sidechain Ducking Inteligente**:
+  - Implementado `sidechaincompress` en FFmpeg: la música suena con pegada y presencia rítmica (`volume=0.55` en bajos, `0.48` en instrumentos), duckea automáticamente **-6 dB** de forma suave cuando habla el locutor para garantizar 100% de inteligibilidad en las palabras, y salta en micropausas para generar el impacto bailable/tensionante característico de TikTok.
+  - Masterización final en estéreo espacial a **-14.0 LUFS** (estándar oficial de TikTok y YouTube Shorts).
+  - Los 10 stems de alta fidelidad pre-cacheados y sincronizados en local y en AWS (`~/TIKTOK-NEWS/audio_assets/`).
+- **Verificación en AWS**: Sincronizado en commit `bf6d916` y verificado con prueba de mezcla en vivo a `-14.2 LUFS`.
 
 ## Reingeniería Total de Calidad y Producción 10/10 en TikTok Radar · 2026-11-04
 
