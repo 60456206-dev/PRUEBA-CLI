@@ -31,6 +31,10 @@ import sys
 from pathlib import Path
 from typing import Dict, Any, List, Tuple, Optional
 
+_tools_dir = str(Path(__file__).resolve().parent)
+if _tools_dir not in sys.path:
+    sys.path.insert(0, _tools_dir)
+
 ROOT_DIR = Path(__file__).resolve().parent.parent
 ENTREGAS_DIR = ROOT_DIR / "entregas"
 
@@ -735,26 +739,43 @@ def synthesize_broadcast_audio_master(
     total_dur: float,
     transition_times: List[float],
     master_m4a: Path,
+    genre: str = "G1",
 ) -> None:
     """
-    Crea el diseño sonoro multicapa digno de estudio:
-    1. Voz periodística ecualizada y comprimida.
-    2. Cama musical con stems reales de Epidemic Sound (BASS + INSTRUMENTS) o fallback sintético.
-    3. Masterización EBU R128 a -14.8 LUFS.
+    Crea el diseño sonoro multicapa profesional para TikTok:
+    1. Voz periodística procesada con compresión y realce de presencia broadcast.
+    2. Stems oficiales de Epidemic Sound por categoría (BASS + INSTRUMENTS):
+       - G3 (IA/Hardware): STYLE - Ballpoint (118 BPM, estilo viral moderno, empowering beat).
+       - G2 (Ciberataques): Deadlock - Lennon Hutton (115 BPM, cyberpunk pulse).
+       - G1 (Aviación): Trace - Lennon Hutton (156 BPM, cinematic action trailer).
+       - G1 (Perú Desastres): Shifting Ground - Luba Hilman (110 BPM, dramatic orchestral pulse).
+       - G4 (Espacio): Mindscape - Lennon Hutton (108 BPM, futuristic space synthwave).
+    3. Sidechain Ducking Dinámico: La música está presente y con pegada (bailable/tensionante),
+       duckea automáticamente -6dB cuando habla la voz y salta en micropausas para dar ritmo TikTok.
+    4. Masterización EBU R128 a -14.0 LUFS en estéreo espacial 48kHz.
     """
-    assets_dir = ROOT_DIR / "audio_assets"
-    bass_file = assets_dir / "NEWS_THRILLER_BASS.mp3"
-    inst_file = assets_dir / "NEWS_THRILLER_INSTRUMENTS.mp3"
+    try:
+        from audio_generator import get_genre_soundtrack
+        bass_file, inst_file = get_genre_soundtrack(genre, ROOT_DIR / "audio_assets")
+    except Exception:
+        assets_dir = ROOT_DIR / "audio_assets"
+        bass_file = assets_dir / "NEWS_THRILLER_BASS.mp3"
+        inst_file = assets_dir / "NEWS_THRILLER_INSTRUMENTS.mp3"
 
     # Si los stems de Epidemic Sound están presentes, usarlos con ducking y mezcla broadcast
     if bass_file.exists() and inst_file.exists():
         filter_complex = (
-            f"[0:a]highpass=f=80,equalizer=f=3200:width_type=q:w=1.2:g=2.5,"
-            f"acompressor=threshold=-18dB:ratio=3:attack=10:release=120:makeup=2[voice];"
-            f"[1:a]atrim=0:{total_dur:.3f},asetpts=PTS-STARTPTS,volume=0.22,afade=t=in:st=0:d=1.0,afade=t=out:st={max(0.0, total_dur-2.0):.2f}:d=2.0[bass];"
-            f"[2:a]atrim=0:{total_dur:.3f},asetpts=PTS-STARTPTS,volume=0.18,afade=t=in:st=0:d=1.0,afade=t=out:st={max(0.0, total_dur-2.0):.2f}:d=2.0[inst];"
-            f"[voice][bass][inst]amix=inputs=3:duration=first:dropout_transition=2:weights='1.0 0.45 0.35',"
-            f"loudnorm=I=-14.8:TP=-1.0:LRA=9[aout]"
+            f"[0:a]aformat=channel_layouts=stereo,highpass=f=75,equalizer=f=3000:width_type=q:w=1.2:g=2.5,"
+            f"acompressor=threshold=-18dB:ratio=3.5:attack=10:release=100:makeup=2,"
+            f"asplit=2[voice_main][voice_sidechain];"
+            f"[1:a]atrim=0:{total_dur:.3f},asetpts=PTS-STARTPTS,volume=0.55,"
+            f"afade=t=in:st=0:d=0.8,afade=t=out:st={max(0.0, total_dur-2.0):.2f}:d=2.0[bass];"
+            f"[2:a]atrim=0:{total_dur:.3f},asetpts=PTS-STARTPTS,volume=0.48,"
+            f"afade=t=in:st=0:d=0.8,afade=t=out:st={max(0.0, total_dur-2.0):.2f}:d=2.0[inst];"
+            f"[bass][inst]amix=inputs=2:duration=first:normalize=0[bg_music];"
+            f"[bg_music][voice_sidechain]sidechaincompress=threshold=0.10:ratio=3.5:attack=20:release=260[bg_ducked];"
+            f"[voice_main][bg_ducked]amix=inputs=2:duration=first:normalize=0[mixed];"
+            f"[mixed]loudnorm=I=-14.0:TP=-1.0:LRA=7[aout]"
         )
         cmd = [
             "ffmpeg", "-y",
@@ -764,10 +785,10 @@ def synthesize_broadcast_audio_master(
             "-filter_complex", filter_complex,
             "-map", "[aout]",
             "-t", f"{total_dur:.3f}",
-            "-c:a", "aac", "-b:a", "192k", "-ar", "48000",
+            "-c:a", "aac", "-b:a", "192k", "-ar", "48000", "-ac", "2",
             str(master_m4a),
         ]
-        log("Mezclando diseño sonoro con stems reales de Epidemic Sound (BASS + INSTRUMENTS)...")
+        log(f"Mezclando diseño sonoro viral Epidemic Sound ({bass_file.name} + {inst_file.name}) con ducking sidechain...")
         subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         return
 
@@ -786,12 +807,12 @@ def synthesize_broadcast_audio_master(
     )
 
     filter_complex = (
-        f"[0:a]highpass=f=80,equalizer=f=3200:width_type=q:w=1.2:g=2.5,"
+        f"[0:a]aformat=channel_layouts=stereo,highpass=f=75,equalizer=f=3000:width_type=q:w=1.2:g=2.5,"
         f"acompressor=threshold=-18dB:ratio=3:attack=10:release=120:makeup=2[voice];"
         f"aevalsrc='{aeval_expr}':s=48000:d={total_dur:.3f},"
         f"lowpass=f=1800,afade=t=in:st=0:d=1.0,afade=t=out:st={max(0.0, total_dur-2.0):.2f}:d=2.0[bg];"
-        f"[voice][bg]amix=inputs=2:duration=first:dropout_transition=2:weights='1.0 0.28',"
-        f"loudnorm=I=-14.8:TP=-1.0:LRA=9[aout]"
+        f"[voice][bg]amix=inputs=2:duration=first:dropout_transition=2:weights='1.0 0.45',"
+        f"loudnorm=I=-14.0:TP=-1.0:LRA=7[aout]"
     )
 
     cmd = [
@@ -800,7 +821,7 @@ def synthesize_broadcast_audio_master(
         "-filter_complex", filter_complex,
         "-map", "[aout]",
         "-t", f"{total_dur:.3f}",
-        "-c:a", "aac", "-b:a", "192k", "-ar", "48000",
+        "-c:a", "aac", "-b:a", "192k", "-ar", "48000", "-ac", "2",
         str(master_m4a),
     ]
     log("Mezclando con cama sintética de respaldo...")
@@ -892,9 +913,9 @@ def assemble_final_video(delivery_dir: Path) -> Path:
     transition_times = build_transition_video(norm_clips, clip_durations, trans_dur, silent_xfade_mp4)
 
     # 4. Mezclar audio multicapa y quemar subtítulos Kinetic
-    master_audio_m4a = work_dir / "audio_master_148lufs.m4a"
-    log("4/4 Sintetizando banda sonora de tensión + SFX whooshes + Masterización EBU R128 (-14.8 LUFS)...")
-    synthesize_broadcast_audio_master(voice_mp3, total_dur, transition_times, master_audio_m4a)
+    master_audio_m4a = work_dir / "audio_master_140lufs.m4a"
+    log("4/4 Sintetizando banda sonora viral Epidemic Sound + Sidechain Ducking (-14.0 LUFS)...")
+    synthesize_broadcast_audio_master(voice_mp3, total_dur, transition_times, master_audio_m4a, genre=genre)
 
     final_mp4 = delivery_dir / "NOTICIERO_FINAL_62S.mp4"
     log(f"Quemando subtítulos Kinetic y exportando máster final: {final_mp4.name}...")

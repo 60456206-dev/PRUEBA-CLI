@@ -1,3 +1,4 @@
 STANDALONE_TIKTOK_RADAR/
 __pycache__/
 *.pyc
+TIKTOK_RADAR/audio_assets/

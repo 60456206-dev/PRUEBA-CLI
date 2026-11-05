@@ -58,5 +58,41 @@
       "G3_IA_HARDWARE": "Radar de semiconductores, Densidad de transistores, Diagrama de silicio 2nm, Benchmark de rendimiento",
       "G4_ESPACIO": "Rastreo orbital Deep Space, Velocidad y altura de descenso, Diagrama de sonda, Telemetría oficial"
     }
+  },
+  "diseno_sonoro_epidemic_sound": {
+    "motor_audio": "Stems Multicapa (BASS + INSTRUMENTS) con Sidechain Ducking Dinámico en Estéreo Espacial",
+    "estandar_lufs": -14.0,
+    "pistas_por_categoria": {
+      "G3_IA_HARDWARE": {
+        "titulo": "STYLE - Ballpoint",
+        "bpm": 118,
+        "estilo": "Dark Synth / Modern Viral Empowerment Beat (Washing Machine / Tech Energy)",
+        "stems": ["G3_TECH_STYLE_BASS.mp3", "G3_TECH_STYLE_INSTRUMENTS.mp3"]
+      },
+      "G2_CIBERATAQUES": {
+        "titulo": "Deadlock - Lennon Hutton",
+        "bpm": 115,
+        "estilo": "Cyberpunk Dark Electro Pulse / Urgent Hacker Investigation",
+        "stems": ["G2_CYBER_DEADLOCK_BASS.mp3", "G2_CYBER_DEADLOCK_INSTRUMENTS.mp3"]
+      },
+      "G1_AVIACION": {
+        "titulo": "Trace - Lennon Hutton",
+        "bpm": 156,
+        "estilo": "Cinematic Action Thriller / High Altitude Tension Pulse",
+        "stems": ["G1_AVIATION_TRACE_BASS.mp3", "G1_AVIATION_TRACE_INSTRUMENTS.mp3"]
+      },
+      "G1_PERU_DESASTRES": {
+        "titulo": "Shifting Ground - Luba Hilman",
+        "bpm": 110,
+        "estilo": "Dramatic Emergency Pulse / Heavy Orchestral Tension",
+        "stems": ["G1_PERU_SHIFTING_BASS.mp3", "G1_PERU_SHIFTING_INSTRUMENTS.mp3"]
+      },
+      "G4_ESPACIO": {
+        "titulo": "Mindscape - Lennon Hutton",
+        "bpm": 108,
+        "estilo": "Cosmic Atmospheric Synthwave / Futuristic Orbit Drive",
+        "stems": ["G4_SPACE_MINDSCAPE_BASS.mp3", "G4_SPACE_MINDSCAPE_INSTRUMENTS.mp3"]
+      }
+    }
   }
 }

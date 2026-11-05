@@ -35,7 +35,59 @@ MCP_URL = "https://www.epidemicsound.com/a/mcp-service/mcp"
 DEFAULT_ASSETS_DIR = Path(__file__).resolve().parent.parent / "audio_assets"
 DEFAULT_ASSETS_DIR.mkdir(parents=True, exist_ok=True)
 
-# Tracks y SFX preseleccionados de Epidemic Sound para Noticiero 3D de alta tensión
+# ==============================================================================
+# Catálogo Maestro de Soundtracks Virales Epidemic Sound por Categoría
+# Seleccionados para máxima retención, ritmo bailable/tensionante y empoderamiento
+# ==============================================================================
+GENRE_SOUNDTRACK_CATALOG = {
+    "G3_IA_HARDWARE": {
+        "title": "STYLE",
+        "artist": "Ballpoint",
+        "bpm": 118,
+        "style": "Dark Synth / Modern Viral Empowerment Beat (Washing Machine / Tech Energy)",
+        "id": "03e71f7f-ad6f-4845-9fbd-9fce110cfa5e",
+        "bass_file": "G3_TECH_STYLE_BASS.mp3",
+        "inst_file": "G3_TECH_STYLE_INSTRUMENTS.mp3"
+    },
+    "G2_CIBERATAQUES": {
+        "title": "Deadlock",
+        "artist": "Lennon Hutton",
+        "bpm": 115,
+        "style": "Cyberpunk Dark Electro Pulse / Urgent Hacker Investigation",
+        "id": "db0a04d3-c17d-4601-8e8a-454ef7698454",
+        "bass_file": "G2_CYBER_DEADLOCK_BASS.mp3",
+        "inst_file": "G2_CYBER_DEADLOCK_INSTRUMENTS.mp3"
+    },
+    "G1_AVIACION": {
+        "title": "Trace",
+        "artist": "Lennon Hutton",
+        "bpm": 156,
+        "style": "Cinematic Action Thriller / High Altitude Tension Pulse",
+        "id": "3c1ad0de-8456-4677-86fe-bb3153624738",
+        "bass_file": "G1_AVIATION_TRACE_BASS.mp3",
+        "inst_file": "G1_AVIATION_TRACE_INSTRUMENTS.mp3"
+    },
+    "G1_PERU_DESASTRES": {
+        "title": "Shifting Ground",
+        "artist": "Luba Hilman",
+        "bpm": 110,
+        "style": "Dramatic Emergency Pulse / Heavy Orchestral Tension",
+        "id": "87893ebf-9476-46ff-9cc1-f1227748c791",
+        "bass_file": "G1_PERU_SHIFTING_BASS.mp3",
+        "inst_file": "G1_PERU_SHIFTING_INSTRUMENTS.mp3"
+    },
+    "G4_ESPACIO": {
+        "title": "Mindscape",
+        "artist": "Lennon Hutton",
+        "bpm": 108,
+        "style": "Cosmic Atmospheric Synthwave / Futuristic Orbit Drive",
+        "id": "4cb08b97-fa28-4f38-9b9c-3e71a2d98b5f",
+        "bass_file": "G4_SPACE_MINDSCAPE_BASS.mp3",
+        "inst_file": "G4_SPACE_MINDSCAPE_INSTRUMENTS.mp3"
+    }
+}
+
+# Stems y SFX complementarios
 EPIDEMIC_PRESETS = {
     "music": [
         ("NEWS_THRILLER_BASS", "55900695-564d-45bd-bde7-672cca5e827e", "BASS", "Oro (Bass) - Tensión oscura de noticiero"),
@@ -49,6 +101,78 @@ EPIDEMIC_PRESETS = {
         ("SFX_RUMBLE_RISING", "bfaede35-d903-46d5-9c01-548e591177d3", "Low Rising Rumble - Tensión continua de fondo"),
     ]
 }
+
+
+def get_genre_soundtrack(genre: str, target_dir: Optional[Path] = None) -> Tuple[Path, Path]:
+    """
+    Devuelve las rutas locales de los stems (BASS, INSTRUMENTS) oficiales de Epidemic Sound
+    para el género de noticia seleccionado. Si no existen localmente, intenta descargarlos vía MCP.
+    """
+    assets_dir = target_dir or DEFAULT_ASSETS_DIR
+    genre_upper = (genre or "G1").upper()
+
+    # Selección inteligente de categoría musical (comprobando aviación y desastres antes de tokens cortos)
+    if any(k in genre_upper for k in ["AVIACION", "AVIACIÓN", "MAYDAY", "VUELO", "AEREO", "AÉREO", "AVION", "AVIÓN", "ACCIDENTE"]):
+        key = "G1_AVIACION"
+    elif any(k in genre_upper for k in ["PERU", "PERÚ", "DESASTRES", "INDECI", "LLUVIA", "SISMO", "HUAICO"]):
+        key = "G1_PERU_DESASTRES"
+    elif any(k in genre_upper for k in ["G2", "CIBER", "HACKER", "CYBER", "RANSOMWARE"]):
+        key = "G2_CIBERATAQUES"
+    elif any(k in genre_upper for k in ["G4", "ESPACIO", "NASA", "ORBITA", "ÓRBITA", "CIENCIA", "STARSHIP"]):
+        key = "G4_ESPACIO"
+    elif any(k in genre_upper for k in ["G3", "ROBOTICA", "ROBÓTICA", "HARDWARE", "CHIP", "SEMICONDUCTOR"]) or re.search(r"\bIA\b|\bAI\b", genre_upper):
+        key = "G3_IA_HARDWARE"
+    else:
+        key = "G3_IA_HARDWARE"
+
+    entry = GENRE_SOUNDTRACK_CATALOG[key]
+    bass_path = assets_dir / entry["bass_file"]
+    inst_path = assets_dir / entry["inst_file"]
+
+    # Si ya existen, retornarlos inmediatamente
+    if bass_path.exists() and inst_path.exists():
+        return bass_path, inst_path
+
+    # Si falta alguno y hay credenciales de Epidemic Sound, intentar descarga
+    key_env = os.getenv("EPIDEMIC_SOUND") or EPIDEMIC_SOUND
+    if key_env:
+        try:
+            sid, _ = mcp_call({
+                "jsonrpc": "2.0",
+                "id": 1,
+                "method": "initialize",
+                "params": {
+                    "protocolVersion": "2024-11-05",
+                    "capabilities": {},
+                    "clientInfo": {"name": "tiktok_radar", "version": "2.0.0"},
+                },
+            })
+            for stem_type, path in [("BASS", bass_path), ("INSTRUMENTS", inst_path)]:
+                if not path.exists():
+                    _, res = mcp_call({
+                        "jsonrpc": "2.0",
+                        "id": 80,
+                        "method": "tools/call",
+                        "params": {
+                            "name": "DownloadRecording",
+                            "arguments": {"id": entry["id"], "options": {"fileType": "MP3", "stemType": stem_type}},
+                        },
+                    }, sid)
+                    txt = res["result"]["content"][0]["text"]
+                    url = json.loads(txt)["data"]["recordingDownload"]["assetUrl"]
+                    download_file(url, path)
+            if bass_path.exists() and inst_path.exists():
+                return bass_path, inst_path
+        except Exception as e:
+            print(f"[AUDIO-EPIDEMIC] Aviso al descargar stems de {key}: {e}", flush=True)
+
+    # Fallback general a los archivos ya cacheados
+    fb_bass = assets_dir / "NEWS_THRILLER_BASS.mp3"
+    fb_inst = assets_dir / "NEWS_THRILLER_INSTRUMENTS.mp3"
+    if fb_bass.exists() and fb_inst.exists():
+        return fb_bass, fb_inst
+
+    return bass_path, inst_path
 
 
 def probe_duration(path: Path) -> float:
