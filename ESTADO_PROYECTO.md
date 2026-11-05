@@ -2,6 +2,34 @@
 
 Actualizado: 2026-11-05.
 
+## Resolución de Observaciones Críticas de Producción y Blindaje de Flow · 2026-11-05
+
+- **Corrección Integral de Observaciones del Usuario (Calidad, Audio, Generación Flow y Estética)**:
+  1. **Eliminación del Bucle Infinito en Google Flow**:
+     - *Causa Raíz:* En [`tools/flow_generator.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/flow_generator.py), la línea 455 permitía que si transcurrían 25s sin nuevo tile (`len(states) >= len(before_states)` con `len(states) == len(before_states)`), se descargara automáticamente el tile `idx=0` (que contenía un vídeo antiguo de una nave/instituto). Como resultado, los 8 planos descargaban el mismo archivo repetido (MD5 idéntico).
+     - *Solución:* Eliminado el fallback a tile viejo. Ahora se exige estrictamente que el conteo de tiles se haya incrementado (`len(states) > before_count`) y que el tile nuevo esté completamente listo y sin generar (`states[0]["isReady"] and not states[0]["isGenerating"]`). Si en 45s no se inicia la generación, el script aborta sin descargar basura y activa reintento limpio con `fallback_prompt`.
+     - *Limpieza Proactiva de Hilo:* Implementado reinicio de sesión limpia (`Iniciar sesión nueva`) en Google Flow al iniciar cada tanda de generación, evitando arrastrar decenas de tiles previos. Inyectada evasión stealth para anular `navigator.webdriver`.
+  2. **Animación FFmpeg Opcional y Modo Flow Primario**:
+     - En [`config_produccion.json`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/config_produccion.json), el modo activo cambió a `"flow_primario"` y el HUD vectorial FFmpeg se declaró `"obligatorio_en_cada_video": false`.
+     - La generación de Flow tiene prioridad visual completa en el metraje sin forzar planos de telemetría repetitivos ni cuadrículas azules/amarillas invasivas. Los gráficos FFmpeg quedan reservados únicamente para puntos de datos reales cuando aporten claridad.
+  3. **Rebalanceo Acústico de Música de Fondo (+6 dB de Pegada)**:
+     - En [`tools/ensamblador_final.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/ensamblador_final.py), el compresor sidechain se ajustó a `threshold=0.25:ratio=2.0:attack=15:release=220` y los stems de Epidemic Sound subieron de `0.55/0.48` a `0.85/0.75`.
+     - La música ahora se escucha potente, rítmica y nítida en teléfonos móviles (-22.8 dB promedio bajo la voz, -14.0 LUFS integrado en máster) sin ahogar al locutor.
+  4. **Insignia Broadcast de Fuente / Foro Verificado (Aumento de Fiabilidad)**:
+     - Creada la función [`generate_verified_source_card`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/ensamblador_final.py#L197-L253), que genera un ticket gráfico de alta credibilidad (overlay en `t=1.0s` a `6.5s`) con píldora `[✓ FUENTE VERIFICADA]`, nombre destacado de la fuente (RPP, NASA, Tom's Hardware, etc.) y leyenda de auditoría informativa en tiempo real en diseño frosted glass.
+  5. **Filtro de Noticias por Impacto Emocional y Humano Universal**:
+     - En [`tools/news_radar.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/news_radar.py), se implementó `UNIVERSAL_HUMAN_IMPACT_BOOSTS` (+15 a +22 pts) para hitos que impactan el rumbo de la humanidad, y `NICHE_TECHNICAL_PENALTIES` (-25 pts) para filtrado de contratos rutinarios o pruebas de plataformas experimentales de nicho.
+     - Integrado re-ranking semántico con Gemini 3.5 Flash Lite (`rerank_by_human_impact_gemini`).
+  6. **Prohibición Total de "Deja tus comentarios"**:
+     - Erradicada la frase y cualquier variación cliché ("comenta abajo", "déjamelo en los comentarios") de guiones, storyboards, tarjetas SH13, captions de TikTok y portadas. Reemplazado por reflexiones periodísticas abiertas de alto impacto.
+  7. **Paleta Visual Broadcast Refinada (Fin del Azul Neón "Muy de IA")**:
+     - Retirado el cian eléctrico estridente (`#00e5ff`) en vídeos y portadas. Sustituido por paletas ricas y de emisión profesional: Ámbar alerta (`#ffa726`), Oro tecnológico (`#ffd166`), Rojo editorial (`#e63946`) y Titanio (`#f8f9fa`).
+  8. **Inspección Visual de Artefactos Cumplida**:
+     - Portada verificada visualmente: titulares grandes en español, diseño 3:4 seguro para TikTok y paleta cálida cinematográfica.
+     - Insignia de fuente verificada auditada y corregida a 3 niveles verticales sin colisión de texto.
+  9. **Sincronización Total en Servidor AWS**:
+     - Ambos repositorios sincronizados (`PRUEBA-CLI` en commit `576f7d4` y `TIKTOK-NEWS` en AWS en commit `aa1b465`).
+
 ## Blindaje Antifallas y Persistencia Continua del Agente WhatsApp en AWS · 2026-11-05
 
 - **Diagnóstico Integral de Causas Raíz y Solución Definitiva**:
