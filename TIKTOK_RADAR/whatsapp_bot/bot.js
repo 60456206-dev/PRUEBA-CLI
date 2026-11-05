@@ -497,16 +497,34 @@ client.on('message_create', async (msg) => {
   }
 
   // CUALQUIER OTRA CONSULTA -> Enviar a Antigravity (`agy`)
-  await msg.reply('🤖 *Antigravity pensando en AWS...* ⏳');
+  try {
+    await msg.reply('🤖 *Antigravity pensando en AWS...* ⏳');
+  } catch (replyErr) {
+    console.error('[WA-BOT] Error enviando acuse de recibo:', replyErr.message);
+  }
 
   const agyCmd = fs.existsSync(AGY_BIN) ? AGY_BIN : 'agy';
   const prompt = `Eres el Agente Antigravity en el servidor AWS de TikTok Radar. El usuario te escribe desde WhatsApp: "${body}". Responde en español de forma muy concisa, profesional y directa para WhatsApp:`;
-  const fullCmd = `cd ${WORKSPACE_DIR} && ${agyCmd} --dangerously-skip-permissions -p ${JSON.stringify(prompt)}`;
 
-  exec(fullCmd, { maxBuffer: 1024 * 1024 * 5, timeout: 120000 }, async (err, stdout, stderr) => {
+  const child = spawn(agyCmd, ['--dangerously-skip-permissions', '-p', prompt], {
+    cwd: WORKSPACE_DIR,
+    stdio: ['ignore', 'pipe', 'pipe']
+  });
+
+  let stdout = '';
+  let stderr = '';
+  child.stdout.on('data', (d) => { stdout += d.toString(); });
+  child.stderr.on('data', (d) => { stderr += d.toString(); });
+
+  const timeoutId = setTimeout(() => {
+    try { child.kill('SIGKILL'); } catch (e) {}
+  }, 90000);
+
+  child.on('close', async (code) => {
+    clearTimeout(timeoutId);
     try {
-      if (err) {
-        const errOut = (stderr || err.message || '').slice(-250);
+      if (code !== 0 && !stdout.trim()) {
+        const errOut = (stderr || `Error código ${code}`).slice(-250);
         await client.sendMessage(targetChat, `🤖 ⚠️ Error ejecutando agente en AWS:\n${errOut}`);
         return;
       }
@@ -605,6 +623,16 @@ process.on('uncaughtException', (err) => {
 process.on('unhandledRejection', (err) => {
   console.error('[WA-BOT REJECTION]', err);
 });
+
+const gracefulShutdown = async (signal) => {
+  console.log(`[WA-BOT] 🛑 Recibida señal ${signal}. Cerrando cliente WhatsApp y Chromium limpiamente...`);
+  try {
+    if (client) await client.destroy();
+  } catch (e) {}
+  process.exit(0);
+};
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 
 app.listen(PORT, '127.0.0.1', () => {
   console.log(`[WA-BOT] 🌐 Servidor HTTP API escuchando internamente en http://127.0.0.1:${PORT}`);
