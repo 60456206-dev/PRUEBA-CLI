@@ -1,10 +1,11 @@
 {
   "_descripcion": "Configuración Central de Producción, Consistencia Visual y Modo de Render (TikTok Radar)",
   "modo_produccion": {
-    "activo": "hibrido",
+    "activo": "flow_primario",
     "opciones": {
-      "hibrido": "8 Planos Cinemáticos Flow (Acción/Drama) + 5 Planos Infográficos FFmpeg Vector HUD (48 créditos/día para 6 vídeos)",
-      "flow_puro": "13 Planos 100% Cinemáticos en Google Flow (78 créditos/día para 6 vídeos)",
+      "flow_primario": "Google Flow como motor visual primario para máxima consistencia y referencias visuales ricas. Gráficos FFmpeg nativos reservados únicamente para cuando aporten valor real o telemetría necesaria (NO obligatorios en cada vídeo).",
+      "flow_puro": "13 Planos 100% Cinemáticos en Google Flow",
+      "hibrido_selectivo": "Planos Flow para acción/drama y placas técnicas selectivas únicamente cuando el tema lo justifique",
       "demo": "Renderizado NLE instantáneo de prueba sin invocar Google Flow (0 créditos)"
     }
   },
@@ -14,17 +15,18 @@
     "resolucion": "1080x1920",
     "fps": 24,
     "paleta_colores": {
-      "fondo_noche": "0x060f1e",
-      "cian_tactico": "0x00e5ff",
+      "fondo_noche": "0x0c121e",
       "ambar_alerta": "0xffaa00",
-      "rojo_critico": "0xff3344",
-      "amarillo_neon": "0xffe500"
+      "rojo_editorial": "0xee3344",
+      "dorado_tecnologico": "0xf4a261",
+      "blanco_titanio": "0xf5f7fa",
+      "solar_espacio": "0xffb703"
     },
     "anclas_por_categoria": {
       "G1_AVIACION": {
         "personaje": "Stylized 3D male pilot with dark aviation headset, navy blue flight uniform, furrowed brow, focused expression, mouth closed, sharp facial geometry, raytraced cockpit reflections",
         "aeronave": "Sleek white twin-engine executive jet with deep navy rim accents and bright wingtip strobe lights",
-        "cabina": "Glass cockpit with dual glowing amber/cyan instrument panels, weather radar displays, and throttle quadrant"
+        "cabina": "Glass cockpit with dual glowing amber/warm instrument panels, weather radar displays, and throttle quadrant"
       },
       "G1_PERU_DESASTRES": {
         "personaje": "Stylized 3D emergency first responder in high-visibility orange-and-blue tactical jacket under heavy rain, determined facial expression, rain droplets on skin, clear facial anatomy, no face masks or cloth coverings",
@@ -32,7 +34,7 @@
         "sala_crisis": "INDECI/COEN crisis monitoring room with massive glowing satellite weather displays and topography maps"
       },
       "G2_CIBERATAQUES": {
-        "personaje": "Stylized 3D cybersecurity intelligence analyst in dark tech bunker illuminated by cyan and amber monitor glow, focused intense gaze, clear expressive facial features, dark framed tactical glasses, no face coverings",
+        "personaje": "Stylized 3D cybersecurity intelligence analyst in dark tech bunker illuminated by amber and crimson monitor glow, focused intense gaze, clear expressive facial features, dark framed tactical glasses, no face coverings",
         "entorno": "High-density server vault with matte black racks, pulsing LED activity lights and fiber optic bundles",
         "elementos": "Holographic command terminal displays showing encrypted traffic matrices and packet inspection nodes"
       },
@@ -49,19 +51,14 @@
     }
   },
   "reglas_infografias_ffmpeg": {
-    "solo_en_planos_de_datos": true,
-    "explicacion": "Los gráficos FFmpeg Vector HUD SOLO se aplican a los planos de contexto, telemetría, esquemas técnicos, evidencias y debate (SH01, SH03, SH10, SH11, SH13). Los planos de acción humana, rostros y tensión SIEMPRE se generan en Flow como animación cinemática 3D.",
-    "temas_dinamicos": {
-      "G1_AVIACION": "Radar táctico de vuelo, Altímetro dinámico, Blueprint fuselaje, Caja negra FDR y audio CVR",
-      "G1_PERU_DESASTRES": "Monitoreo satelital INDECI, Sismograma/Escala Richter, Mapa de epicentro, Reporte oficial COEN",
-      "G2_CIBERATAQUES": "Centro SOC, Gráfico de tráfico DDoS, Topología de red, CVE y análisis forense",
-      "G3_IA_HARDWARE": "Radar de semiconductores, Densidad de transistores, Diagrama de silicio 2nm, Benchmark de rendimiento",
-      "G4_ESPACIO": "Rastreo orbital Deep Space, Velocidad y altura de descenso, Diagrama de sonda, Telemetría oficial"
-    }
+    "obligatorio_en_cada_video": false,
+    "explicacion": "Los gráficos FFmpeg nativos NO son un recurso obligatorio en cada vídeo. Se utilizan únicamente cuando el guion requiera explícitamente un dato numérico duro, telemetría o documento forense y donde visualmente se vea bien, dando prioridad a las referencias cinemáticas y consistencia visual.",
+    "intro_cinematica": true
   },
   "diseno_sonoro_epidemic_sound": {
-    "motor_audio": "Stems Multicapa (BASS + INSTRUMENTS) con Sidechain Ducking Dinámico en Estéreo Espacial",
+    "motor_audio": "Stems Multicapa (BASS + INSTRUMENTS) con Ducking Suave y Presencia Musical TikTok en Estéreo Espacial",
     "estandar_lufs": -14.0,
+    "ducking_suave_db": -4.0,
     "pistas_por_categoria": {
       "G3_IA_HARDWARE": {
         "titulo": "STYLE - Ballpoint",

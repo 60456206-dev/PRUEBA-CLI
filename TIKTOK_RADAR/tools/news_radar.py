@@ -305,6 +305,31 @@ POLEMIC_KEYWORDS = [
     "breach", "exposed", "emergency", "urgent", "clash", "fight", "collapse", "crisis"
 ]
 
+# NUEVO FILTRO: Impacto Humano, Trascendencia para la Humanidad e Interés Masivo para Todo Público
+UNIVERSAL_HUMAN_IMPACT_BOOSTS = [
+    # Avances que cambian el rumbo de la humanidad / civilización / vida diaria
+    "cambia el rumbo", "cambia la humanidad", "cura", "enfermedad", "revoluciona",
+    "histórico", "hito histórico", "vida extraterrestre", "agua en", "señal extraterrestre",
+    "nuevo planeta", "asteroide", "amenaza a la tierra", "inteligencia sobrehumana",
+    "humanoides", "robot en hogares", "fusión nuclear", "energía infinita", "revolución cuántica",
+    "milagro", "rescate heroico", "sobreviviente", "tragedia masiva", "emergencia nacional",
+    "apagón masivo", "crisis global", "peligro inminente", "alerta mundial", "pandemia",
+    "breakthrough", "cure", "alien", "extraterrestrial", "life on", "historic milestone",
+    "transforms humanity", "humanity", "existential", "quantum supremacy", "nuclear fusion",
+    "massive blackout", "unprecedented", "game-changer", "world-first", "humanoid robot"
+]
+
+# PENALIZACIÓN ESTRICTA: Minucias técnicas, contratos administrativos o noticias de nicho "rebuscadas"
+NICHE_TECHNICAL_PENALTIES = [
+    "experimental aircraft", "flight research", "research platform", "grant",
+    "contract", "contractor", "procurement", "licitación", "convenio", "acuerdo comercial",
+    "adjudicación", "subsidio", "routine maintenance", "patch notes", "firmware update",
+    "benchmarking", "benchmark suite", "minor update", "driver update", "beta release",
+    "guidelines", "committee", "workshop", "comité", "reunión técnica", "estudio preliminar",
+    "vuelo de prueba rutinario", "prueba estática", "inspección de rutina", "revisión de protocolo",
+    "mantenimiento programado", "aerotime reports that a", "small partnership"
+]
+
 
 def is_blacklisted(text: str) -> bool:
     t = text.lower()
@@ -454,6 +479,25 @@ def score_article(item: Dict[str, Any], now_ts: float) -> float:
     for kw in kw_hits:
         score += 2.5 if kw_match(kw, title_low) else 1.0
 
+    # 7. NUEVO FILTRO: Trascendencia Humana e Impacto Emocional para Todo Público
+    # Bonifica avances que cambian el rumbo de la humanidad, misterios globales y alta emoción
+    human_boost_hits = [k for k in UNIVERSAL_HUMAN_IMPACT_BOOSTS if k in combined]
+    if human_boost_hits:
+        boost_pts = min(22.0, len(human_boost_hits) * 7.0)
+        score += boost_pts
+        item["human_impact_level"] = "ALTO"
+    else:
+        item["human_impact_level"] = "NORMAL"
+
+    # 8. FILTRO NEGATIVO: Penalización estricta a tecnicismos rebuscados o contratos administrativos de nicho
+    niche_penalties = [k for k in NICHE_TECHNICAL_PENALTIES if k in combined]
+    if niche_penalties:
+        penalty_pts = min(25.0, len(niche_penalties) * 9.0)
+        score -= penalty_pts
+        item["is_niche_rebuscada"] = True
+    else:
+        item["is_niche_rebuscada"] = False
+
     return round(score, 2)
 
 
@@ -552,6 +596,65 @@ def scan_all_sources() -> List[Dict[str, Any]]:
     return all_news
 
 
+def rerank_by_human_impact_gemini(candidates: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """
+    Utiliza Gemini para evaluar el porcentaje de interés de cada noticia para cualquier persona común
+    y su nivel de impacto emocional / trascendencia para la humanidad.
+    Filtra noticias rebuscadas o de nicho hiper-específico.
+    """
+    import os
+    key = os.getenv("GEMINI_API_KEY")
+    if not key or len(candidates) <= 1:
+        return candidates
+
+    try:
+        sample_list = candidates[:6]
+        items_text = "\n".join([
+            f"[{idx}] Fuente: {c['source_name']} | Título: {c['title']} | Resumen: {c['summary'][:180]}"
+            for idx, c in enumerate(sample_list)
+        ])
+
+        prompt = f"""Eres el director de contenidos de un noticiero masivo de TikTok para todo público (NO para un nicho cerrado).
+Tu objetivo es seleccionar la noticia que de verdad le importe conocer a CUALQUIER PERSONA COMÚN, evaluando su nivel de impacto emocional y trascendencia general (ej. avances que cambien el rumbo de la humanidad, amenazas directas, fenómenos masivos, descubrimientos históricos).
+DESCARTA O RELEGA noticias rebuscadas, contratos administrativos, licitaciones o minucias técnicas que solo le interesan a un especialista.
+
+Evalúa estas {len(sample_list)} noticias y ordénalas de MAYOR A MENOR impacto para el público general:
+{items_text}
+
+Responde ÚNICAMENTE con un JSON con los índices ordenados y el motivo breve:
+{{"ranked_indices": [0, 1, ...], "top_reason": "breve justificación"}}"""
+
+        body = json.dumps({"contents": [{"parts": [{"text": prompt}]}]}).encode("utf-8")
+        req = urllib.request.Request(
+            f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent?key={key}",
+            data=body,
+            headers={"Content-Type": "application/json"}
+        )
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            data = json.load(resp)
+            ans = data["candidates"][0]["content"]["parts"][0]["text"].strip()
+            # Buscar el bloque JSON
+            m = re.search(r'\{.*"ranked_indices"\s*:\s*\[([0-9,\s]+)\].*\}', ans, re.DOTALL)
+            if m:
+                ranked_idx_list = [int(x.strip()) for x in m.group(1).split(",") if x.strip().isdigit()]
+                reranked = []
+                seen = set()
+                for idx in ranked_idx_list:
+                    if 0 <= idx < len(sample_list) and idx not in seen:
+                        reranked.append(sample_list[idx])
+                        seen.add(idx)
+                for idx, c in enumerate(sample_list):
+                    if idx not in seen:
+                        reranked.append(c)
+                # Conservar los candidatos restantes fuera del top 6
+                reranked.extend(candidates[6:])
+                return reranked
+    except Exception as e:
+        print(f"[RADAR-AI] Aviso al clasificar impacto humano con Gemini: {e}")
+
+    return candidates
+
+
 def get_top_news_by_genre(genre_key: str, limit: int = 5) -> List[Dict[str, Any]]:
     """
     Obtiene las mejores N noticias para un género específico, aplicando:
@@ -586,6 +689,17 @@ def get_top_news_by_genre(genre_key: str, limit: int = 5) -> List[Dict[str, Any]
             unique_items.append(item)
         if len(unique_items) >= max(limit, 8):
             break
+
+    # Aplicar re-ranking con IA por Impacto Humano y Emocional para todo público
+    if genre_key != "G1_AVIACION_CATASTROFES":
+        unique_items = rerank_by_human_impact_gemini(unique_items)
+    else:
+        # En G1, preservar el puesto 0 si es prioridad nacional Indeci y reordenar el resto
+        if unique_items and unique_items[0].get("is_peru_priority"):
+            rest = rerank_by_human_impact_gemini(unique_items[1:])
+            unique_items = [unique_items[0]] + rest
+        else:
+            unique_items = rerank_by_human_impact_gemini(unique_items)
 
     # Regla de separación G1 para cronograma diario:
     # Rank 0 = Desastres Perú (07:00 AM), Rank 1 = Aviación Internacional (10:00 AM)

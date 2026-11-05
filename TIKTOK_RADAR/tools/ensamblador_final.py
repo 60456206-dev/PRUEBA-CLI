@@ -194,38 +194,96 @@ FONT_REG = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
 FONT_MONO = "/usr/share/fonts/truetype/dejavu/DejaVuSansMono-Bold.ttf"
 
 
+def generate_verified_source_card(source_name: str, genre: str, out_png: Path) -> Path:
+    """
+    Genera una tarjeta gráfica de alta credibilidad (overlay broadcast) que muestra la
+    fuente oficial o foro verificado (RPP, NASA, Tom's Hardware, Hacker News, etc.)
+    para certificar la fiabilidad del reporte y dar máxima confianza al espectador.
+    """
+    from PIL import Image, ImageDraw, ImageFont
+
+    W, H = 880, 175
+    img = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(img)
+
+    font_bold_p = FONT_BOLD if Path(FONT_BOLD).exists() else "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf"
+    font_reg_p = FONT_REG if Path(FONT_REG).exists() else "/usr/share/fonts/truetype/liberation/LiberationSans.ttf"
+
+    f_badge = ImageFont.truetype(font_bold_p, 19)
+    f_title = ImageFont.truetype(font_bold_p, 36)
+    f_sub = ImageFont.truetype(font_reg_p, 19)
+
+    # Color temático sutil para el borde y el icono
+    genre_up = (genre or "").upper()
+    if "PERU" in genre_up or "DESASTRE" in genre_up:
+        border_col = (255, 170, 0, 230)
+        tag_bg = (215, 35, 35)
+    elif "G2" in genre_up or "CIBER" in genre_up:
+        border_col = (230, 57, 70, 230)
+        tag_bg = (180, 20, 30)
+    elif "G3" in genre_up or "HARDWARE" in genre_up or "IA" in genre_up:
+        border_col = (244, 162, 97, 230)
+        tag_bg = (200, 75, 40)
+    elif "G4" in genre_up or "ESPACIO" in genre_up:
+        border_col = (255, 183, 3, 230)
+        tag_bg = (120, 35, 180)
+    else:
+        border_col = (251, 133, 0, 230)
+        tag_bg = (210, 40, 20)
+
+    # Tarjeta oscura frosted glass
+    draw.rounded_rectangle([(0, 0), (W - 1, H - 1)], radius=18, fill=(14, 18, 26, 235), outline=border_col, width=2)
+
+    # Nivel 1 (Superior): Píldora de verificación + Rótulo institucional
+    draw.rounded_rectangle([(25, 20), (275, 58)], radius=10, fill=tag_bg)
+    draw.text((40, 28), "✓ FUENTE VERIFICADA", font=f_badge, fill=(255, 255, 255))
+    draw.text((298, 28), "AUDITORÍA INFORMATIVA · RADAR 24/7", font=f_badge, fill=(205, 218, 235))
+
+    # Nivel 2 (Medio): Nombre grande de la fuente / foro oficial
+    src_text = source_name.upper().strip()
+    if len(src_text) > 34:
+        src_text = src_text[:32] + "..."
+    draw.text((25, 72), src_text, font=f_title, fill=(255, 255, 255))
+
+    # Nivel 3 (Inferior): Leyenda de certificación directa
+    draw.text((25, 128), "ORIGEN DIRECTO CERTIFICADO · COBERTURA EN TIEMPO REAL", font=f_sub, fill=(170, 188, 212))
+
+    img.save(out_png, "PNG")
+    return out_png
+
+
 def build_modern_broadcast_card(
     badge: str,
     title: str,
     metric_val: str,
     metric_label: str,
     bullets: list,
-    accent_hex: str = "0x00e5ff",
-    bg_hex: str = "0x060c18",
-    footer_text: str = "⚡ REPORTE OFICIAL BROADCAST · RADAR 24/7"
+    accent_hex: str = "0xffaa00",
+    bg_hex: str = "0x0c121e",
+    footer_text: str = "📡 INFORME OFICIAL BROADCAST · RADAR 24/7"
 ) -> tuple:
     filters = [
-        f"drawbox=x=70:y=360:w=940:h=1200:color=0x0c1526@0.92:t=fill",
-        f"drawbox=x=70:y=360:w=940:h=1200:color={accent_hex}@0.65:t=2",
-        f"drawbox=x=110:y=400:w=420:h=50:color={accent_hex}@0.18:t=fill",
-        f"drawbox=x=110:y=400:w=420:h=50:color={accent_hex}:t=2",
-        f"drawtext=fontfile={FONT_BOLD}:text='{badge}':fontcolor={accent_hex}:fontsize=22:x=130:y=414",
-        f"drawtext=fontfile={FONT_BOLD}:text='{title}':fontcolor=white:fontsize=36:x=110:y=490",
-        f"drawtext=fontfile={FONT_BOLD}:text='{metric_val}':fontcolor=0xffe500:fontsize=96:x=110:y=550",
-        f"drawtext=fontfile={FONT_REG}:text='{metric_label}':fontcolor=white@0.85:fontsize=26:x=110:y=680",
-        f"drawbox=x=110:y=730:w=860:h=6:color=0x1e293b:t=fill",
-        f"drawbox=x=110:y=730:w='mod(t*340\\,860)':h=6:color={accent_hex}:t=fill"
+        f"drawbox=x=80:y=400:w=920:h=1120:color=0x111624@0.90:t=fill",
+        f"drawbox=x=80:y=400:w=920:h=1120:color={accent_hex}@0.70:t=2",
+        f"drawbox=x=120:y=440:w=440:h=48:color={accent_hex}@0.18:t=fill",
+        f"drawbox=x=120:y=440:w=440:h=48:color={accent_hex}:t=2",
+        f"drawtext=fontfile={FONT_BOLD}:text='{badge}':fontcolor={accent_hex}:fontsize=22:x=140:y=454",
+        f"drawtext=fontfile={FONT_BOLD}:text='{title}':fontcolor=white:fontsize=36:x=120:y=520",
+        f"drawtext=fontfile={FONT_BOLD}:text='{metric_val}':fontcolor=white:fontsize=84:x=120:y=580",
+        f"drawtext=fontfile={FONT_REG}:text='{metric_label}':fontcolor=white@0.85:fontsize=26:x=120:y=690",
+        f"drawbox=x=120:y=740:w=840:h=4:color=0x253045:t=fill",
+        f"drawbox=x=120:y=740:w='mod(t*320\\,840)':h=4:color={accent_hex}:t=fill"
     ]
     by = 780
     for txt, col in bullets:
         clean_txt = txt.replace(":", "\\:")
-        filters.append(f"drawtext=fontfile={FONT_REG}:text='{clean_txt}':fontcolor={col}:fontsize=24:x=110:y={by}")
+        filters.append(f"drawtext=fontfile={FONT_REG}:text='{clean_txt}':fontcolor={col}:fontsize=24:x=120:y={by}")
         by += 48
 
     filters.extend([
-        f"drawbox=x=110:y=1380:w=860:h=60:color=0x111c2e@0.9:t=fill",
-        f"drawbox=x=110:y=1380:w=860:h=60:color={accent_hex}@0.4:t=1",
-        f"drawtext=fontfile={FONT_BOLD}:text='{footer_text}':fontcolor={accent_hex}:fontsize=22:x=140:y=1400",
+        f"drawbox=x=120:y=1420:w=840:h=56:color=0x151d2d@0.9:t=fill",
+        f"drawbox=x=120:y=1420:w=840:h=56:color={accent_hex}@0.4:t=1",
+        f"drawtext=fontfile={FONT_BOLD}:text='{footer_text}':fontcolor={accent_hex}:fontsize=20:x=150:y=1438",
         "vignette=PI/4,format=yuv420p"
     ])
     return bg_hex, ",".join(filters)
@@ -321,18 +379,18 @@ def generate_infographic_vector_shot(
                 bg_hex="0x1a0f08"
             ),
             "SH13": build_modern_broadcast_card(
-                "● DEBATE CIUDADANO · TIKTOK",
-                "¿LAS MEDIDAS FUERON SUFICIENTES?",
-                "DEJA TU REPORTE",
-                "¿Las autoridades actuaron a tiempo o faltó prevención?",
+                "● REPORTE Y BALANCE NACIONAL",
+                "MONITOREO DE EMERGENCIA EN CURSO",
+                "ALERTA ACTIVA",
+                "DESPLIEGUE CONTINUO DE PRIMERA RESPUESTA",
                 [
-                    ("💬 Comenta tu testimonio o reporte desde tu región", "0xffe500"),
-                    ("🔔 Sigue al Radar para el seguimiento en tiempo real", "white@0.9"),
-                    ("⚡ Información contrastada con fuentes de primera línea", "0x00ffff")
+                    ("• COEN / INDECI: SEGUIMIENTO EN LAS PRÓXIMAS HORAS", "0xffaa00"),
+                    ("• BRIGADAS: ATENCIÓN A POBLACIONES VULNERABLES", "white@0.9"),
+                    ("• CANAL OFICIAL: INFORMACIÓN VERIFICADA EN TIEMPO REAL", "0x55ff88")
                 ],
-                accent_hex="0xffe500",
-                bg_hex="0x0d131f",
-                footer_text="💬 TU OPINIÓN ES CLAVE · COMENTA ABAJO"
+                accent_hex="0xffaa00",
+                bg_hex="0x120c0a",
+                footer_text="📡 PROTOCOLO DE ALERTA CONTINUO · TIKTOK RADAR"
             ),
         }
     elif is_cyber:
@@ -344,11 +402,11 @@ def generate_infographic_vector_shot(
                 "INCIDENTE CRÍTICO EN INFRAESTRUCTURA DE RED",
                 [
                     ("• OBJETIVO: SERVIDORES Y SERVICIOS ESENCIALES", "white@0.9"),
-                    ("• VECTOR: EXPLOIT DE DÍA CERO DETECTADO", "0xff3344"),
-                    ("• MITIGACIÓN: FIREWALL Y FILTRADO BGP EN VIVO", "0x00ffff")
+                    ("• VECTOR: EXPLOIT DE DÍA CERO DETECTADO", "0xee3344"),
+                    ("• MITIGACIÓN: FIREWALL Y FILTRADO BGP EN VIVO", "0xffaa00")
                 ],
-                accent_hex="0x00e5ff",
-                bg_hex="0x060f1c"
+                accent_hex="0xee3344",
+                bg_hex="0x12090d"
             ),
             "SH03": build_modern_broadcast_card(
                 "● TELEMETRÍA DE TRÁFICO MALICIOSO",
@@ -358,9 +416,9 @@ def generate_infographic_vector_shot(
                 [
                     ("• ANOMALÍA: SATURACIÓN DE ENLACES PRINCIPALES", "0xffaa00"),
                     ("• ANÁLISIS IP: FIRMAS DE RANSOMWARE EN TIEMPO REAL", "0xff8888"),
-                    ("• PROTOCOLO: CUARENTENA DE NODOS ACTIVADA", "0x00ffff")
+                    ("• PROTOCOLO: CUARENTENA DE NODOS ACTIVADA", "0x55ff88")
                 ],
-                accent_hex="0xff3344",
+                accent_hex="0xee3344",
                 bg_hex="0x14080c"
             ),
             "SH10": build_modern_broadcast_card(
@@ -373,8 +431,8 @@ def generate_infographic_vector_shot(
                     ("• BASES DE DATOS: INTEGRIDAD Y CIFRADO REVISADOS", "0xffcc00"),
                     ("• TRÁFICO SEGURO: RESTABLECIÉNDOSE GRADUALMENTE", "white@0.9")
                 ],
-                accent_hex="0x00e5ff",
-                bg_hex="0x061426"
+                accent_hex="0xee3344",
+                bg_hex="0x110912"
             ),
             "SH11": build_modern_broadcast_card(
                 "● ANÁLISIS FORENSE DIGITAL",
@@ -382,26 +440,26 @@ def generate_infographic_vector_shot(
                 "CVE ZERO-DAY",
                 "FIRMA CRIPTOGRÁFICA DEL ATAQUE CONFIRMADA",
                 [
-                    ("• PAYLOAD: SHA256-APT-EXPLOIT IDENTIFICADO", "0x00ffff"),
-                    ("• RESPONSABILIDAD: GRUPO AVANZADO DE CIBERCRIMEN", "0xffaa00"),
+                    ("• PAYLOAD: SHA256-APT-EXPLOIT IDENTIFICADO", "0xffaa00"),
+                    ("• RESPONSABILIDAD: GRUPO AVANZADO DE CIBERCRIMEN", "0xee3344"),
                     ("• ESTADO: CONTENCIÓN TOTAL Y EVALUACIÓN FORENSE", "white@0.9")
                 ],
-                accent_hex="0x00e5ff",
-                bg_hex="0x09121f"
+                accent_hex="0xee3344",
+                bg_hex="0x110a14"
             ),
             "SH13": build_modern_broadcast_card(
-                "● DEBATE · CIBERSEGURIDAD GLOBAL",
-                "¿ESTAMOS REALMENTE PROTEGIDOS?",
-                "DEJA TU OPINIÓN",
-                "¿O los servicios esenciales pueden caer en cualquier momento?",
+                "● BALANCE FORENSE · CIBERDEFENSA",
+                "EVALUACIÓN DE IMPACTO Y RESILIENCIA",
+                "ANÁLISIS EN VIVO",
+                "FORTALECIMIENTO DE INFRAESTRUCTURAS CRÍTICAS",
                 [
-                    ("💬 Comenta tu postura sobre la seguridad digital hoy", "0xffe500"),
-                    ("🔔 Sigue al Radar para enterarte de amenazas y fallos", "white@0.9"),
-                    ("⚡ Cobertura forense con fuentes especializadas", "0x00ffff")
+                    ("• CONTENCIÓN: PARCHES DE EMERGENCIA APLICADOS", "0x55ff88"),
+                    ("• AUDITORÍA: REVISIÓN DE INTEGRIDAD EN CURSO", "white@0.9"),
+                    ("• RADAR FORENSE: MONITOREO DE AMENAZAS 24/7", "0xffaa00")
                 ],
-                accent_hex="0xffe500",
-                bg_hex="0x091220",
-                footer_text="💬 COMENTA TU POSTURA · TIKTOK RADAR"
+                accent_hex="0xee3344",
+                bg_hex="0x140a0e",
+                footer_text="📡 REPORTE DE CIBERSEGURIDAD · TIKTOK RADAR"
             ),
         }
     elif is_ai:
@@ -412,12 +470,12 @@ def generate_infographic_vector_shot(
                 "PROCESO 2 NM",
                 "SUPERCHIPS Y MODELOS FRONTERA DE IA",
                 [
-                    ("• LITOGRAFÍA: HIGH-NA EUV EN SALA BLANCA", "0x00ffff"),
+                    ("• LITOGRAFÍA: HIGH-NA EUV EN SALA BLANCA", "0xf4a261"),
                     ("• EFICIENCIA: +40% RESPECTO A GENERACIÓN PREVIA", "0x55ff88"),
-                    ("• DISPUTA: CONTROL DE TECNOLOGÍA CRÍTICA DE CÓMPUTO", "0xffcc00")
+                    ("• DISPUTA: CONTROL DE TECNOLOGÍA CRÍTICA DE CÓMPUTO", "white@0.9")
                 ],
-                accent_hex="0x00e5ff",
-                bg_hex="0x061224"
+                accent_hex="0xf4a261",
+                bg_hex="0x120e0a"
             ),
             "SH03": build_modern_broadcast_card(
                 "● MÉTRICAS DE CÓMPUTO E INFERENCIA",
@@ -425,12 +483,12 @@ def generate_infographic_vector_shot(
                 r"%{eif\:180-25*t\:d} TFLOPS",
                 "CAPACIDAD DE CÁLCULO EN TIEMPO REAL",
                 [
-                    ("• NODO: 2 NM GATE-ALL-AROUND (NANOSHEET)", "0xffaa00"),
+                    ("• NODO: 2 NM GATE-ALL-AROUND (NANOSHEET)", "0xf4a261"),
                     ("• ANCHO DE BANDA: MEMORIA HBM3E DE ULTRA VELOCIDAD", "white@0.9"),
                     ("• LATENCIA: OPTIMIZADA PARA MODELOS MULTIMODALES", "0x55ff88")
                 ],
-                accent_hex="0x00e5ff",
-                bg_hex="0x07152b"
+                accent_hex="0xf4a261",
+                bg_hex="0x120d09"
             ),
             "SH10": build_modern_broadcast_card(
                 "● BLUEPRINT DE SILICIO 3D",
@@ -440,37 +498,37 @@ def generate_infographic_vector_shot(
                 [
                     ("• TRANSISTORES GAA: MÁXIMA DENSIDAD INTEGRADA", "0x55ff88"),
                     ("• ALIMENTACIÓN TRASERA (BACKSIDE POWER): ACTIVA", "white@0.9"),
-                    ("• DISIPACIÓN TÉRMICA: DISEÑADA PARA DATA CENTERS", "0x00ffff")
+                    ("• DISIPACIÓN TÉRMICA: DISEÑADA PARA DATA CENTERS", "0xf4a261")
                 ],
-                accent_hex="0x00e5ff",
-                bg_hex="0x061529"
+                accent_hex="0xf4a261",
+                bg_hex="0x130e09"
             ),
             "SH11": build_modern_broadcast_card(
                 "● BENCHMARK OFICIAL DE FRONTERA",
                 "PRUEBAS DE INFERENCIA EN ESTUDIO",
-                "BENCHMARK TEST",
+                "NUEVO RÉCORD",
                 "RESULTADOS CERTIFICADOS DE LABORATORIO",
                 [
-                    ("• VELOCIDAD: TOKENS POR SEGUNDO EN TIEMPO RÉCORD", "0x00ffff"),
-                    ("• RENDIMIENTO: SUPERA LÍMITES PREVIOS DE ARQUITECTURA", "0xffaa00"),
+                    ("• VELOCIDAD: TOKENS POR SEGUNDO EN TIEMPO RÉCORD", "0xf4a261"),
+                    ("• RENDIMIENTO: SUPERA LÍMITES PREVIOS DE ARQUITECTURA", "0x55ff88"),
                     ("• IMPACTO: DETERMINANTE PARA EL DESPLIEGUE GLOBAL", "white@0.9")
                 ],
-                accent_hex="0x00e5ff",
-                bg_hex="0x081628"
+                accent_hex="0xf4a261",
+                bg_hex="0x130e08"
             ),
             "SH13": build_modern_broadcast_card(
-                "● DEBATE · EL FUTURO DE LA IA",
-                "¿ESTE SALTO NOS ACERCA A LA AGI?",
-                "DEJA TU OPINIÓN",
-                "¿Crees que el hardware superará pronto al cerebro humano?",
+                "● FRONTERA GLOBAL DE SILICIO",
+                "IMPACTO EN LA INDUSTRIA Y SOCIEDAD",
+                "NUEVO HORIZONTE",
+                "CARRERA POR LA SUPREMACÍA DE CÓMPUTO",
                 [
-                    ("💬 Deja tu predicción en los comentarios", "0xffe500"),
-                    ("🔔 Sigue al Radar para más análisis de tecnología", "white@0.9"),
-                    ("⚡ Reportes diarios con datos y fuentes oficiales", "0x00ffff")
+                    ("• DISPUTA: CONTROL DE LITOGRAFÍA EXTREMA HIGH-NA", "0xf4a261"),
+                    ("• EFICIENCIA: REVOLUCIÓN EN CENTROS DE DATOS", "0x55ff88"),
+                    ("• SEGUIMIENTO: AVANCES QUE TRANSFORMAN LA HUMANIDAD", "white@0.9")
                 ],
-                accent_hex="0xffe500",
-                bg_hex="0x081322",
-                footer_text="💬 DEJA TU PREDICCIÓN · TIKTOK RADAR"
+                accent_hex="0xf4a261",
+                bg_hex="0x140e08",
+                footer_text="📡 FRONTERA TECNOLÓGICA · TIKTOK RADAR"
             ),
         }
     elif is_space:
@@ -483,10 +541,10 @@ def generate_infographic_vector_shot(
                 [
                     ("• TRAYECTORIA: MANIOBRA DE APROXIMACIÓN NOMINAL", "white@0.9"),
                     ("• ENLACE: RED DE ESPACIO PROFUNDO CONECTADA", "0x55ff88"),
-                    ("• ESTADO: PARÁMETROS DE NAVEGACIÓN EN TOLERANCIA", "0x00ffff")
+                    ("• ESTADO: PARÁMETROS DE NAVEGACIÓN EN TOLERANCIA", "0xffb703")
                 ],
-                accent_hex="0x00e5ff",
-                bg_hex="0x050e1a"
+                accent_hex="0xffb703",
+                bg_hex="0x100a16"
             ),
             "SH03": build_modern_broadcast_card(
                 "● TELEMETRÍA DE APROXIMACIÓN",
@@ -495,11 +553,11 @@ def generate_infographic_vector_shot(
                 "FRENADO CONTROLADO Y REENTRADA",
                 [
                     ("• PROPULSIÓN: TOBERAS Y RETROCOHETES ACTIVOS", "0xffaa00"),
-                    ("• ÁNGULO DE DESCENSO: CORRECCIÓN MILIMÉTRICA", "0x00ffff"),
+                    ("• ÁNGULO DE DESCENSO: CORRECCIÓN MILIMÉTRICA", "0xffb703"),
                     ("• NAVEGACIÓN: ALGORITMO AUTÓNOMO EN TIEMPO REAL", "white@0.9")
                 ],
-                accent_hex="0x00e5ff",
-                bg_hex="0x061122"
+                accent_hex="0xffb703",
+                bg_hex="0x100918"
             ),
             "SH10": build_modern_broadcast_card(
                 "● BLUEPRINT TECNOLÓGICO 3D",
@@ -509,10 +567,10 @@ def generate_infographic_vector_shot(
                 [
                     ("• PANELES SOLARES: DESPLIEGUE AL 100% OPERATIVO", "0x55ff88"),
                     ("• COMBUSTIBLE: RESERVA ÓPTIMA PARA FASE FINAL", "white@0.9"),
-                    ("• SENSORES ÓPTICOS: CALIBRADOS PARA DESCENSO", "0x00ffff")
+                    ("• SENSORES ÓPTICOS: CALIBRADOS PARA DESCENSO", "0xffb703")
                 ],
-                accent_hex="0x00e5ff",
-                bg_hex="0x061224"
+                accent_hex="0xffb703",
+                bg_hex="0x100918"
             ),
             "SH11": build_modern_broadcast_card(
                 "● TELEMETRÍA OFICIAL CERTIFICADA",
@@ -521,25 +579,25 @@ def generate_infographic_vector_shot(
                 "SEÑAL TRANSMITIDA DESDE ESPACIO PROFUNDO",
                 [
                     ("• TRAYECTORIA: INSERTADA EN VENTANA TARGET", "0x55ff88"),
-                    ("• INSTRUMENTOS: RECOLECCIÓN DE DATOS ACTIVA", "0x00ffff"),
+                    ("• INSTRUMENTOS: RECOLECCIÓN DE DATOS ACTIVA", "0xffb703"),
                     ("• COMUNICADO: HITO HISTÓRICO PARA FUTURAS MISIONES", "white@0.9")
                 ],
-                accent_hex="0x00e5ff",
-                bg_hex="0x071326"
+                accent_hex="0xffb703",
+                bg_hex="0x110918"
             ),
             "SH13": build_modern_broadcast_card(
-                "● DEBATE · FRONTERA ESPACIAL",
-                "¿HABRÁ COLONIAS EN ESTA DÉCADA?",
-                "DEJA TU PREDICCIÓN",
-                "¿Lograremos bases permanentes en la Luna antes de 2030?",
+                "● HORIZONTE CÓSMICO · CIENCIA",
+                "NUEVA ERA EN EXPLORACIÓN PLANETARIA",
+                "MISIÓN EN CURSO",
+                "HITO HISTÓRICO PARA LA INVESTIGACIÓN ESPACIAL",
                 [
-                    ("💬 Deja tu predicción en los comentarios", "0xffe500"),
-                    ("🔔 Sigue al Radar para explorar la ciencia espacial", "white@0.9"),
-                    ("⚡ Reportes con fuentes directas de NASA y ESA", "0x00ffff")
+                    ("• TELEMETRÍA: PARÁMETROS NOMINALES EN TIEMPO REAL", "0x55ff88"),
+                    ("• INSTRUMENTOS: DATOS CIENTÍFICOS EN TRANSMISIÓN", "white@0.9"),
+                    ("• RADAR CÓSMICO: COBERTURA DIRECTA DE MISIONES", "0xffb703")
                 ],
-                accent_hex="0xffe500",
-                bg_hex="0x07111e",
-                footer_text="💬 COMPARTE TU PREDICCIÓN · TIKTOK RADAR"
+                accent_hex="0xffb703",
+                bg_hex="0x110a18",
+                footer_text="📡 CIENCIA Y ESPACIO · TIKTOK RADAR"
             ),
         }
     else:
@@ -551,12 +609,12 @@ def generate_infographic_vector_shot(
                 "ALERTA EN VUELO",
                 "SISTEMA DE RASTREO SATELITAL Y AERONAVAL",
                 [
-                    ("• COORDENADAS: 25.76 N, 80.19 W · BEACON ACTIVO", "0x00ffff"),
-                    ("• ESTADO: DESCENSO CRÍTICO Y PÉRDIDA DE CONTACTO", "0xff3344"),
+                    ("• COORDENADAS: 25.76 N, 80.19 W · BEACON ACTIVO", "0xfb8500"),
+                    ("• ESTADO: DESCENSO CRÍTICO Y PÉRDIDA DE CONTACTO", "0xee3344"),
                     ("• PROTOCOLO: ASISTENCIA TÁCTICA DE CONTROL EN TIERRA", "white@0.9")
                 ],
-                accent_hex="0x00e5ff",
-                bg_hex="0x060f1e"
+                accent_hex="0xfb8500",
+                bg_hex="0x100d08"
             ),
             "SH03": build_modern_broadcast_card(
                 "● REGISTRO DE TELEMETRÍA DE CABINA",
@@ -565,7 +623,7 @@ def generate_infographic_vector_shot(
                 "TASA DE DESCENSO: -3,400 PIES/MIN (CRÍTICO)",
                 [
                     ("• ÁNGULO DE ATAQUE: +14.2° · ALERTA SONORA ACTIVA", "0xffaa00"),
-                    ("• TRANSPONDER: CÓDIGO 7700 DE EMERGENCIA EMITIDO", "0xff3344"),
+                    ("• TRANSPONDER: CÓDIGO 7700 DE EMERGENCIA EMITIDO", "0xee3344"),
                     ("• CONTACTO TIERRA: MANIOBRAS DE RECUPERACIÓN", "white@0.9")
                 ],
                 accent_hex="0xffaa00",
@@ -581,8 +639,8 @@ def generate_infographic_vector_shot(
                     ("• SUPERFICIES DE CONTROL: ESTABILIZACIÓN MANUAL", "0x55ff88"),
                     ("• FUSELAJE: INTEGRIDAD ESTRUCTURAL SIN FISURAS", "white@0.9")
                 ],
-                accent_hex="0x00e5ff",
-                bg_hex="0x061428"
+                accent_hex="0xfb8500",
+                bg_hex="0x110d08"
             ),
             "SH11": build_modern_broadcast_card(
                 "● EVIDENCIA OFICIAL FORENSE",
@@ -591,25 +649,25 @@ def generate_infographic_vector_shot(
                 "REGISTRO DE VOZ Y DATOS DE IMPACTO",
                 [
                     ("• ESTADO FÍSICO: ÍNTEGRO / ACCESO AUTORIZADO", "0x55ff88"),
-                    ("• AUDIO CVR: CORRELACIONADO CON PANTALLAS DE RADAR", "0x00ffff"),
+                    ("• AUDIO CVR: CORRELACIONADO CON PANTALLAS DE RADAR", "0xfb8500"),
                     ("• INSPECCIÓN OFICIAL: DICTAMEN TÉCNICO EN CURSO", "white@0.9")
                 ],
                 accent_hex="0xff6600",
-                bg_hex="0x180f08"
+                bg_hex="0x140d08"
             ),
             "SH13": build_modern_broadcast_card(
-                "● DEBATE CIUDADANO · SEGURIDAD AÉREA",
-                "¿QUÉ PROTOCOLO DEBIÓ REFORZARSE?",
-                "DEJA TU COMENTARIO",
-                "¿La pericia de la tripulación evitó una catástrofe mayor?",
+                "● BALANCE DE SEGURIDAD AÉREA",
+                "INVESTIGACIÓN Y DICTAMEN OFICIAL",
+                "PERITAJE ACTIVO",
+                "ANÁLISIS DE DATOS FDR Y REGISTROS DE VUELO",
                 [
-                    ("💬 Deja tu punto de vista en los comentarios", "0xffe500"),
-                    ("🔔 Sigue al Radar para más análisis de seguridad", "white@0.9"),
-                    ("⚡ Información oficial contrastada con peritos", "0x00ffff")
+                    ("• AUTORIDADES: FAA Y NTSB EXAMINAN LA SECUENCIA", "white@0.9"),
+                    ("• TELEMETRÍA: CORRELACIÓN CON PANTALLAS DE CONTROL", "0xffaa00"),
+                    ("• SEGUIMIENTO: DICTAMEN TÉCNICO EN DESARROLLO", "0x55ff88")
                 ],
-                accent_hex="0xffe500",
-                bg_hex="0x09101c",
-                footer_text="💬 COMENTA TU POSTURA · TIKTOK RADAR"
+                accent_hex="0xfb8500",
+                bg_hex="0x140c08",
+                footer_text="📡 SEGURIDAD AÉREA GLOBAL · TIKTOK RADAR"
             ),
         }
 
@@ -653,7 +711,8 @@ def prepare_normalized_shot(
     has_valid_raw = raw_mp4.exists() and raw_mp4.stat().st_size > 25_000
     fps = 24
 
-    if not is_infographic and has_valid_raw:
+    # Prioridad absoluta a la animación visual cinematográfica de Flow si el plano existe
+    if has_valid_raw:
         is_tense = 3 <= shot_idx <= 8  # SH04 a SH09: planos de tensión en cabina y descenso
         # Dinamismo de cámara CapCut: alternar acercamiento (punch-in) y alejamiento (pull-back)
         zoom_in = (shot_idx % 2 == 0)
@@ -776,18 +835,18 @@ def synthesize_broadcast_audio_master(
         bass_file = assets_dir / "NEWS_THRILLER_BASS.mp3"
         inst_file = assets_dir / "NEWS_THRILLER_INSTRUMENTS.mp3"
 
-    # Si los stems de Epidemic Sound están presentes, usarlos con ducking y mezcla broadcast
+    # Si los stems de Epidemic Sound están presentes, usarlos con ducking suave y mezcla broadcast con pegada
     if bass_file.exists() and inst_file.exists():
         filter_complex = (
-            f"[0:a]aformat=channel_layouts=stereo,highpass=f=75,equalizer=f=3000:width_type=q:w=1.2:g=2.5,"
-            f"acompressor=threshold=-18dB:ratio=3.5:attack=10:release=100:makeup=2,"
+            f"[0:a]aformat=channel_layouts=stereo,highpass=f=80,equalizer=f=3200:width_type=q:w=1.2:g=2.0,"
+            f"acompressor=threshold=-16dB:ratio=3:attack=10:release=100:makeup=2,"
             f"asplit=2[voice_main][voice_sidechain];"
-            f"[1:a]atrim=0:{total_dur:.3f},asetpts=PTS-STARTPTS,volume=0.55,"
-            f"afade=t=in:st=0:d=0.8,afade=t=out:st={max(0.0, total_dur-2.0):.2f}:d=2.0[bass];"
-            f"[2:a]atrim=0:{total_dur:.3f},asetpts=PTS-STARTPTS,volume=0.48,"
-            f"afade=t=in:st=0:d=0.8,afade=t=out:st={max(0.0, total_dur-2.0):.2f}:d=2.0[inst];"
+            f"[1:a]atrim=0:{total_dur:.3f},asetpts=PTS-STARTPTS,volume=0.85,"
+            f"afade=t=in:st=0:d=0.5,afade=t=out:st={max(0.0, total_dur-2.0):.2f}:d=2.0[bass];"
+            f"[2:a]atrim=0:{total_dur:.3f},asetpts=PTS-STARTPTS,volume=0.75,"
+            f"afade=t=in:st=0:d=0.5,afade=t=out:st={max(0.0, total_dur-2.0):.2f}:d=2.0[inst];"
             f"[bass][inst]amix=inputs=2:duration=first:normalize=0[bg_music];"
-            f"[bg_music][voice_sidechain]sidechaincompress=threshold=0.10:ratio=3.5:attack=20:release=260[bg_ducked];"
+            f"[bg_music][voice_sidechain]sidechaincompress=threshold=0.25:ratio=2.0:attack=15:release=220[bg_ducked];"
             f"[voice_main][bg_ducked]amix=inputs=2:duration=first:normalize=0[mixed];"
             f"[mixed]loudnorm=I=-14.0:TP=-1.0:LRA=7[aout]"
         )
@@ -802,7 +861,7 @@ def synthesize_broadcast_audio_master(
             "-c:a", "aac", "-b:a", "192k", "-ar", "48000", "-ac", "2",
             str(master_m4a),
         ]
-        log(f"Mezclando diseño sonoro viral Epidemic Sound ({bass_file.name} + {inst_file.name}) con ducking sidechain...")
+        log(f"Mezclando diseño sonoro viral Epidemic Sound ({bass_file.name} + {inst_file.name}) con ducking sidechain suave...")
         subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         return
 
@@ -931,22 +990,53 @@ def assemble_final_video(delivery_dir: Path) -> Path:
     log("4/4 Sintetizando banda sonora viral Epidemic Sound + Sidechain Ducking (-14.0 LUFS)...")
     synthesize_broadcast_audio_master(voice_mp3, total_dur, transition_times, master_audio_m4a, genre=genre)
 
+    # Generar tarjeta oficial de fuente verificada para proyectar fiabilidad
+    badge_png = work_dir / "source_badge.png"
+    has_badge = False
+    try:
+        generate_verified_source_card(source_name, genre, badge_png)
+        has_badge = badge_png.exists()
+    except Exception as e:
+        log(f"Aviso al generar tarjeta de fuente verificada: {e}")
+
     final_mp4 = delivery_dir / "NOTICIERO_FINAL_62S.mp4"
-    log(f"Quemando subtítulos Kinetic y exportando máster final: {final_mp4.name}...")
-    cmd_final = [
-        "ffmpeg", "-y",
-        "-i", str(silent_xfade_mp4),
-        "-i", str(master_audio_m4a),
-        "-vf", f"ass={ass_path}",
-        "-map", "0:v:0",
-        "-map", "1:a:0",
-        "-t", f"{total_dur:.3f}",
-        "-r", "24",
-        "-c:v", "libx264", "-profile:v", "high", "-pix_fmt", "yuv420p", "-preset", "veryfast", "-crf", "19",
-        "-c:a", "copy",
-        "-movflags", "+faststart",
-        str(final_mp4),
-    ]
+    log(f"Quemando subtítulos Kinetic{' y acreditación oficial de fuente' if has_badge else ''} en máster final...")
+
+    if has_badge:
+        vf_complex = (
+            f"[0:v][2:v]overlay=x=(W-w)/2:y=200:enable='between(t,1.0,6.5)'[v_badged];"
+            f"[v_badged]ass={ass_path}[vout]"
+        )
+        cmd_final = [
+            "ffmpeg", "-y",
+            "-i", str(silent_xfade_mp4),
+            "-i", str(master_audio_m4a),
+            "-i", str(badge_png),
+            "-filter_complex", vf_complex,
+            "-map", "[vout]",
+            "-map", "1:a:0",
+            "-t", f"{total_dur:.3f}",
+            "-r", "24",
+            "-c:v", "libx264", "-profile:v", "high", "-pix_fmt", "yuv420p", "-preset", "veryfast", "-crf", "19",
+            "-c:a", "copy",
+            "-movflags", "+faststart",
+            str(final_mp4),
+        ]
+    else:
+        cmd_final = [
+            "ffmpeg", "-y",
+            "-i", str(silent_xfade_mp4),
+            "-i", str(master_audio_m4a),
+            "-vf", f"ass={ass_path}",
+            "-map", "0:v:0",
+            "-map", "1:a:0",
+            "-t", f"{total_dur:.3f}",
+            "-r", "24",
+            "-c:v", "libx264", "-profile:v", "high", "-pix_fmt", "yuv420p", "-preset", "veryfast", "-crf", "19",
+            "-c:a", "copy",
+            "-movflags", "+faststart",
+            str(final_mp4),
+        ]
     subprocess.run(cmd_final, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
     # Limpiar archivos temporales de construcción

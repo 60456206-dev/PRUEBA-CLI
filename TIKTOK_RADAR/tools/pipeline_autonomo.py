@@ -99,8 +99,8 @@ def build_shot_prompts(
     - Modo Híbrido: 8 Planos Cinemáticos Flow + 5 Planos Infográficos Vector HUD FFmpeg (0 créditos).
     - Modo Flow Puro: 13 Planos 100% Cinemáticos en Flow si está configurado en config_produccion.json.
     """
-    active_mode = PROD_CONFIG.get("modo_produccion", {}).get("activo", "hibrido")
-    is_full_flow = (active_mode == "flow_puro")
+    active_mode = PROD_CONFIG.get("modo_produccion", {}).get("activo", "flow_primario")
+    is_full_flow = (active_mode in ["flow_puro", "flow_primario"])
 
     if is_aviation:
         raw_shots = [
@@ -334,11 +334,13 @@ ESTRUCTURA OBLIGATORIA:
 1. CONTEXTO Y GANCHO INTRIGANTE (0-12s): NO lances la noticia en seco ni abras con titulares en pregunta. Explica primero el contexto intrigante de fondo para que cualquier persona entienda por qué esto es crucial y qué estaba en juego antes de soltar la noticia principal.
 2. EL SUCESO Y CIFRAS EXACTAS (12-40s): Cita los datos reales, cifras concretas, nombres de empresas, países, regiones o instituciones involucradas. Cero relleno corporativo o frases vacías como "las autoridades evalúan la magnitud".
 3. CONFLICTO Y CONSECUENCIAS (40-52s): El choque real, el peligro desatado o por qué esto cambia las cosas a futuro.
-4. PREGUNTA FINAL Y LLAMADO AL DEBATE (52-62s): Cierre con una pregunta provocadora que despierte curiosidad genuina para que los usuarios discutan en los comentarios.
+4. REFLEXIÓN Y PREGUNTA FINAL ABIERTA (52-62s): Cierre con una reflexión intrigante o pregunta provocadora sobre el futuro, las consecuencias para la sociedad o el rumbo de la humanidad.
+   ESTRICTAMENTE PROHIBIDO decir "deja tus comentarios", "déjamelo en los comentarios", "comenta abajo" ni frases clichés similares. Cierra con fuerza dramática y elegancia.
 
 REGLAS DE ESTILO:
 - En español neutro, apasionado, con signos de admiración en momentos de tensión y ritmo dinámico.
 - Longitud estricta: entre 145 y 160 palabras.
+- Cero muletillas de "deja tus comentarios" o "comenta abajo".
 - Devuelve ÚNICAMENTE el texto que leerá el locutor en voz alta, sin encabezados, sin corchetes, sin etiquetas de tiempo."""
 
         for model in ["gemini-3.5-flash-lite", "gemini-3.8-flash", "gemini-flash-latest"]:
@@ -365,8 +367,7 @@ REGLAS DE ESTILO:
         f"Las cifras sobre la mesa revelan una brecha crítica entre lo que se esperaba y la realidad operativa en el terreno. "
         f"Especialistas advierten que las consecuencias no tardarán en sentirse, alterando el equilibrio de fuerzas y obligando a tomar decisiones drásticas en las próximas horas. "
         f"Lo que parecía un incidente aislado ahora se perfila como un punto de inflexión irreversible. "
-        f"¿Consideras que esta situación se pudo haber evitado o era una crisis inevitable desde el principio? "
-        f"Déjame tu opinión en los comentarios."
+        f"La gran incógnita que queda en el aire es si la respuesta global llegará a tiempo para evitar consecuencias mayores."
     )
 
 

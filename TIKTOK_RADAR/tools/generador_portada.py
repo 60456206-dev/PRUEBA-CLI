@@ -93,28 +93,28 @@ def generate_tiktok_hashtags(genre: str, title: str, source: str = "") -> Dict[s
         cat_tags = ["#peru", "#noticiasperu", "#indeci", "#sismo", "#terremoto", "#emergenciaperu", "#lima", "#alertaperu", "#rppnoticias", "#noticiastiktok"]
         topic_emoji = "🇵🇪"
         category_name = "EMERGENCIA NACIONAL PERÚ"
-        question_cta = "¿Consideras que las autoridades están preparadas para esta emergencia? Comenta 👇"
+        question_cta = "Las brigadas y organismos de primera respuesta mantienen el despliegue activo en la zona."
     elif is_cyber:
         cat_tags = ["#ciberseguridad", "#hackers", "#seguridadinformatica", "#ransomware", "#tecnologia", "#darkweb", "#cybersecurity", "#ciberataque", "#techtok"]
         topic_emoji = "💻"
         category_name = "ALERTA DE CIBERSEGURIDAD"
-        question_cta = "¿Crees que los sistemas bancarios y de salud son realmente seguros? Deja tu opinión 👇"
+        question_cta = "El incidente pone a prueba la resiliencia de los sistemas críticos frente a vectores de última generación."
     elif is_ai:
         cat_tags = ["#inteligenciaartificial", "#ia", "#chips", "#hardware", "#semiconductores", "#nvidia", "#tecnologia", "#futuro", "#techcrunch", "#techtok"]
         topic_emoji = "🤖"
         category_name = "TECNOLOGÍA & GUERRA DE CHIPS"
-        question_cta = "¿Crees que este nuevo avance superará la inteligencia humana pronto? Te leo en comentarios 👇"
+        question_cta = "Un avance decisivo en la arquitectura de cómputo que redefine la carrera global de hardware."
     elif is_space:
         cat_tags = ["#espacio", "#nasa", "#astronomia", "#universo", "#ciencia", "#exploracionespacial", "#satelite", "#cohete", "#cienciatiktok"]
         topic_emoji = "🚀"
         category_name = "MISIÓN ESPACIAL & CIENCIA EXTREMA"
-        question_cta = "¿Tendremos colonias humanas en la Luna antes del 2030? Comenta tu predicción 👇"
+        question_cta = "Un hito astronómico que abre una nueva era en la comprensión de nuestro sistema y el cosmos."
     else:
         # Default: Aviación
         cat_tags = ["#aviacion", "#accidenteaereo", "#emergenciaaerea", "#vuelo", "#pilotos", "#cajanegra", "#boeing", "#aeropuerto", "#seguridadaerea"]
         topic_emoji = "✈️"
         category_name = "AVIACIÓN & SEGURIDAD AÉREA"
-        question_cta = "¿Qué crees que falló en los protocolos de vuelo? Déjame tu punto de vista 👇"
+        question_cta = "Las autoridades aeronáuticas y peritos analizan los parámetros de vuelo para el dictamen oficial."
 
     # Extracción de palabras clave del título
     clean_words = re.findall(r"[a-záéíóúñA-ZÁÉÍÓÚÑ0-9]{4,}", title)
@@ -341,10 +341,48 @@ def generate_tiktok_cover(delivery_dir: Path, output_filename: str = "PORTADA_TI
         alpha = int(255 * factor)
         draw_ov.line([(0, y), (1080, y)], fill=(6, 12, 24, alpha))
 
+    # Determinación de colores adaptativos por temática (sin saturación de azul eléctrico)
+    is_peru, is_cyber, is_ai, is_space = _detect_category_flags(genre, title)
+    if is_peru:
+        accent_hex = "#FFAA00"
+        border_rgba = (255, 170, 0, 220)
+        inner_rgba = (255, 70, 70, 110)
+        badge_bg = (215, 25, 35)
+        badge_label = "ALERTA MAXIMA EN PERU"
+        sub_text = "INFORME EN 60s · INDECI ACTIVA PROTOCOLO"
+    elif is_cyber:
+        accent_hex = "#E63946"
+        border_rgba = (230, 57, 70, 220)
+        inner_rgba = (241, 250, 238, 90)
+        badge_bg = (180, 20, 30)
+        badge_label = "CIBERATAQUE CRITICO EN VIVO"
+        sub_text = "INFORME EN 60s · CENTRO SOC ALERTA ZERO-DAY"
+    elif is_ai:
+        accent_hex = "#F4A261"
+        border_rgba = (244, 162, 97, 220)
+        inner_rgba = (231, 111, 81, 100)
+        badge_bg = (200, 75, 40)
+        badge_label = "GUERRA DE CHIPS Y HARDWARE"
+        sub_text = "INFORME EN 60s · LITOGRAFIA 2NM HIGH-NA"
+    elif is_space:
+        accent_hex = "#FFB703"
+        border_rgba = (255, 183, 3, 220)
+        inner_rgba = (157, 78, 221, 110)
+        badge_bg = (120, 35, 180)
+        badge_label = "MISIÓN ESPACIAL EN VIVO"
+        sub_text = "INFORME EN 60s · TELEMETRIA DEEP SPACE NASA"
+    else:
+        accent_hex = "#FB8500"
+        border_rgba = (251, 133, 0, 220)
+        inner_rgba = (255, 255, 255, 90)
+        badge_bg = (210, 30, 30)
+        badge_label = "EMERGENCIA AEREA EN VIVO"
+        sub_text = "INFORME EN 60s · RADAR TACTICO DE VUELO"
+
     # Caja central táctica en Safe Zone TikTok 3:4 (Y: 570 a 1220)
     center_box = [(40, 570), (1040, 1220)]
-    draw_ov.rounded_rectangle(center_box, radius=28, fill=(8, 16, 28, 238), outline=(0, 229, 255, 190), width=3)
-    draw_ov.rounded_rectangle([(46, 576), (1034, 1214)], radius=22, fill=(0, 0, 0, 0), outline=(255, 170, 0, 90), width=1)
+    draw_ov.rounded_rectangle(center_box, radius=28, fill=(14, 18, 26, 240), outline=border_rgba, width=3)
+    draw_ov.rounded_rectangle([(46, 576), (1034, 1214)], radius=22, fill=(0, 0, 0, 0), outline=inner_rgba, width=1)
 
     img = Image.alpha_composite(bg_img, overlay)
     draw = ImageDraw.Draw(img)
@@ -356,33 +394,15 @@ def generate_tiktok_cover(delivery_dir: Path, output_filename: str = "PORTADA_TI
     f_sub = ImageFont.truetype(font_bold_path, 28)
     f_foot = ImageFont.truetype(font_bold_path, 26)
 
-    # 4. Badge Superior (Píldora Roja de Impacto)
-    is_peru, is_cyber, is_ai, is_space = _detect_category_flags(genre, title)
-
-    if is_peru:
-        badge_label = "ALERTA MAXIMA EN PERU"
-        sub_text = "INFORME EN 60s · INDECI ACTIVA PROTOCOLO"
-    elif is_cyber:
-        badge_label = "CIBERATAQUE CRITICO EN VIVO"
-        sub_text = "INFORME EN 60s · CENTRO SOC ALERTA ZERO-DAY"
-    elif is_ai:
-        badge_label = "GUERRA DE CHIPS Y HARDWARE"
-        sub_text = "INFORME EN 60s · LITOGRAFIA 2NM HIGH-NA"
-    elif is_space:
-        badge_label = "MISIÓN ESPACIAL EN VIVO"
-        sub_text = "INFORME EN 60s · TELEMETRIA DEEP SPACE NASA"
-    else:
-        badge_label = "EMERGENCIA AEREA EN VIVO"
-        sub_text = "INFORME EN 60s · RADAR TACTICO DE VUELO"
-
+    # 4. Badge Superior (Píldora de Impacto)
     badge_bbox = f_badge.getbbox(badge_label)
     bw = badge_bbox[2] - badge_bbox[0] + 70
     bh = 60
     bx = (1080 - bw) // 2
     by = 610
 
-    # Dibujar cápsula con punto de luz rojo de alerta
-    draw.rounded_rectangle([(bx, by), (bx + bw, by + bh)], radius=30, fill=(225, 15, 35), outline=(255, 255, 255), width=2)
+    # Dibujar cápsula con punto de luz de alerta
+    draw.rounded_rectangle([(bx, by), (bx + bw, by + bh)], radius=30, fill=badge_bg, outline=(255, 255, 255), width=2)
     draw.ellipse([(bx + 18, by + 18), (bx + 42, by + 42)], fill=(255, 255, 255))
     draw.ellipse([(bx + 23, by + 23), (bx + 37, by + 37)], fill=(255, 220, 0))
     draw.text((bx + 52, by + 12), badge_label, font=f_badge, fill="white")
@@ -407,21 +427,21 @@ def generate_tiktok_cover(delivery_dir: Path, output_filename: str = "PORTADA_TI
     sh = 52
     sx = (1080 - sw) // 2
     sy = 1120
-    draw.rounded_rectangle([(sx, sy), (sx + sw, sy + sh)], radius=16, fill=(12, 28, 48), outline=(0, 229, 255), width=2)
-    draw.text((sx + 20, sy + 11), sub_text, font=f_sub, fill="#00E5FF")
+    draw.rounded_rectangle([(sx, sy), (sx + sw, sy + sh)], radius=16, fill=(18, 24, 34), outline=border_rgba, width=2)
+    draw.text((sx + 20, sy + 11), sub_text, font=f_sub, fill=accent_hex)
 
     # 7. Rótulos informativos fuera de la caja
-    foot_text = "RADAR 24/7 · COMENTA TU OPINION ▼"
+    foot_text = "RADAR 24/7 · REPORTE OFICIAL VERIFICADO"
     fb_box = f_foot.getbbox(foot_text)
     fw = fb_box[2] - fb_box[0]
     fx = (1080 - fw) // 2
-    draw.text((fx, 1540), foot_text, font=f_foot, fill="#AAAAAA")
+    draw.text((fx, 1540), foot_text, font=f_foot, fill="#CCCCCC")
 
     top_text = f"INFORME ESPECIAL · {source.upper()}"
     tb_box = f_foot.getbbox(top_text)
     tw = tb_box[2] - tb_box[0]
     tx = (1080 - tw) // 2
-    draw.text((tx, 340), top_text, font=f_foot, fill="#00E5FF")
+    draw.text((tx, 340), top_text, font=f_foot, fill="#F0F0F0")
 
     # 8. Exportar portada final
     out_cover_jpg = delivery_dir / output_filename
