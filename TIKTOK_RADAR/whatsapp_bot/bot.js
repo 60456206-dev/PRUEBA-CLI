@@ -241,6 +241,49 @@ function getFailureReport() {
 }
 
 // -----------------------------------------------------------------------------
+// Utilidad: Limpieza de locks huérfanos de Chrome
+// -----------------------------------------------------------------------------
+function cleanStaleChromeLocks(dir) {
+  try {
+    const lockFiles = ['SingletonLock', 'SingletonCookie', 'SingletonSocket'];
+    function walk(d) {
+      if (!fs.existsSync(d)) return;
+      const files = fs.readdirSync(d);
+      for (const f of files) {
+        const full = path.join(d, f);
+        try {
+          const st = fs.lstatSync(full);
+          if (st.isDirectory() && !st.isSymbolicLink()) {
+            walk(full);
+          } else if (lockFiles.includes(f) || st.isSymbolicLink()) {
+            fs.unlinkSync(full);
+            console.log(`[WA-BOT] 🧹 Eliminado lock residual de Chrome: ${full}`);
+          }
+        } catch (e) {}
+      }
+    }
+    walk(dir);
+  } catch (e) {}
+}
+
+cleanStaleChromeLocks(AUTH_DIR);
+
+// Helper para envío seguro a prueba de marcos desprendidos y IDs @lid
+async function safeReply(msg, text, targetChat) {
+  try {
+    return await msg.reply(text);
+  } catch (err1) {
+    try {
+      if (targetChat) {
+        return await client.sendMessage(targetChat, text);
+      }
+    } catch (err2) {
+      console.error('[WA-BOT] ⚠️ Error en envío seguro:', err2.message);
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
 // Cliente WhatsApp Web (Con Google Chrome headless nativo)
 // -----------------------------------------------------------------------------
 const chromePath = fs.existsSync('/usr/bin/google-chrome')
@@ -262,6 +305,12 @@ const client = new Client({
       '--no-first-run',
       '--no-zygote',
       '--disable-gpu',
+      '--js-flags="--max-old-space-size=512"',
+      '--renderer-process-limit=2',
+      '--disable-extensions',
+      '--disable-component-update',
+      '--disable-default-apps',
+      '--disk-cache-size=33554432',
     ],
   },
 });
@@ -305,235 +354,295 @@ client.on('ready', async () => {
   } else {
     console.log(`[WA-BOT] Esperando primer mensaje de tu número personal para registrarte como dueño...`);
   }
+
+  // Recuperar mensajes no leídos del dueño si los hubo durante el reinicio
+  setTimeout(async () => {
+    try {
+      const chats = await client.getChats();
+      for (const chat of chats) {
+        if (chat.unreadCount > 0 && (chat.id._serialized === ownerWid || chat.isUser)) {
+          console.log(`[WA-BOT] 📬 Recuperando ${chat.unreadCount} mensaje(s) pendiente(s) en ${chat.name || chat.id.user}...`);
+          const unreadMsgs = await chat.fetchMessages({ limit: Math.min(5, chat.unreadCount) });
+          for (const umsg of unreadMsgs) {
+            if (!umsg.fromMe && umsg.body && !umsg.body.startsWith('🤖')) {
+              console.log(`[WA-BOT] ⚡ Procesando mensaje recuperado post-reinicio: "${umsg.body}"`);
+              client.emit('message_create', umsg);
+            }
+          }
+          await chat.sendSeen().catch(() => {});
+        }
+      }
+    } catch (unreadErr) {
+      console.warn('[WA-BOT] Aviso en lectura de pendientes:', unreadErr.message);
+    }
+  }, 2500);
 });
 
 client.on('disconnected', (reason) => {
   console.warn(`[WA-BOT] ⚠️ Desconectado de WhatsApp (${reason}). Reconectando en 5s...`);
   isReady = false;
+  cleanStaleChromeLocks(AUTH_DIR);
   setTimeout(() => {
     client.initialize().catch((err) => console.error('[WA-BOT] Error al reinicializar:', err));
   }, 5000);
 });
 
+// Watchdog proactivo de salud (revisión periódica cada 60s)
+let watchdogFailCount = 0;
+setInterval(async () => {
+  if (!isReady) return;
+  try {
+    const statePromise = client.getState();
+    const timeoutPromise = new Promise((_, rej) => setTimeout(() => rej(new Error('Timeout de estado')), 12000));
+    const state = await Promise.race([statePromise, timeoutPromise]);
+    if (state === 'CONNECTED') {
+      watchdogFailCount = 0;
+    } else {
+      watchdogFailCount++;
+      console.warn(`[WA-BOT WATCHDOG] Estado inusual: ${state} (${watchdogFailCount}/3)`);
+    }
+  } catch (e) {
+    watchdogFailCount++;
+    console.warn(`[WA-BOT WATCHDOG] Alerta de verificación (${e.message}). Intentos: ${watchdogFailCount}/3`);
+  }
+
+  if (watchdogFailCount >= 3) {
+    console.error('[WA-BOT WATCHDOG] 🚨 Watchdog detectó sesión congelada. Auto-recuperando cliente...');
+    watchdogFailCount = 0;
+    isReady = false;
+    try { await client.destroy(); } catch (e) {}
+    cleanStaleChromeLocks(AUTH_DIR);
+    setTimeout(() => {
+      client.initialize().catch(err => console.error('[WA-BOT] Error en auto-recuperación:', err));
+    }, 3000);
+  }
+}, 60000);
+
 // -----------------------------------------------------------------------------
 // Interacción Bidireccional: Mensajes del Dueño hacia el Bot
 // -----------------------------------------------------------------------------
 client.on('message_create', async (msg) => {
-  // Ignorar mensajes que el propio bot envía para evitar loops infinitos
-  if (msg.body && msg.body.startsWith('🤖')) return;
-
-  const senderWid = msg.from;
-  const isIncoming = !msg.fromMe;
-  const isSelfChat = msg.fromMe && (msg.to === botWid || msg.from === botWid);
-
-  // Solo procesar si viene de un chat externo o es self-chat
-  if (!isIncoming && !isSelfChat) return;
-
-  const targetChat = isIncoming ? senderWid : msg.to;
-  const senderNumber = targetChat.replace(/@.*$/, '');
-  const body = (msg.body || '').trim();
-  if (!body) return;
-
-  console.log(`[WA-BOT] 💬 Mensaje recibido de +${senderNumber}: "${body}"`);
-
-  // Registro dinámico del Dueño:
-  // Si no hay dueño registrado, o el dueño registrado era el propio bot,
-  // el primer usuario humano que escriba se registra automáticamente como dueño.
-  const isOwnerCurrentBot = ownerWid && botWid && ownerWid.startsWith(client.info.wid.user);
-  if (isIncoming && (!ownerWid || isOwnerCurrentBot || body.toLowerCase().startsWith('!vincular') || body.toLowerCase().startsWith('!admin'))) {
-    ownerWid = senderWid;
-    try {
-      fs.writeFileSync(OWNER_FILE, JSON.stringify({
-        ownerWid: senderWid,
-        phone: senderNumber,
-        botNumber: client.info.wid.user,
-        registeredAt: new Date().toISOString()
-      }, null, 2));
-      console.log(`[WA-BOT] 👑 ¡Registrado +${senderNumber} como Dueño/Administrador de AWS!`);
-    } catch (e) {}
-  }
-
-  const lower = body.toLowerCase();
-
-  // COMANDO 1: ENVIAR VÍDEO CON PORTADA Y HASHTAGS (!video / video / mandame el video)
-  if (
-    lower === '!video' ||
-    lower === 'video' ||
-    lower.includes('enviar video') ||
-    lower.includes('mandame el video') ||
-    lower.includes('pasame el video') ||
-    lower.includes('ultimo video')
-  ) {
-    const vid = findLatestVideo();
-    if (!vid) {
-      await msg.reply('🤖 Aún no hay vídeos en `entregas/`. Escribe *!generar* para producir uno.');
-      return;
-    }
-    const deliveryDir = path.dirname(vid.path);
-    const sizeMb = (vid.size / (1024 * 1024)).toFixed(1);
-    await msg.reply(`🤖 📤 *Preparando paquete completo para TikTok:* Portada 9:16 + Vídeo (${sizeMb} MB) + Hashtags...`);
-    try {
-      await sendDeliveryPackage(targetChat, deliveryDir);
-    } catch (e) {
-      console.error('[WA-BOT] Error enviando paquete:', e.message);
-      await msg.reply(`🤖 ⚠️ Error enviando paquete: ${e.message}`);
-    }
-    return;
-  }
-
-  // COMANDO 2: CONDICIÓN DEL PROYECTO (!condicion / !proyecto / condicion / proyecto / como va)
-  if (
-    lower === '!condicion' ||
-    lower === '!proyecto' ||
-    lower === '!avance' ||
-    lower === 'condicion' ||
-    lower === 'proyecto' ||
-    lower.includes('como va el proyecto') ||
-    lower.includes('estado del proyecto')
-  ) {
-    const report = await getProjectCondition();
-    await msg.reply(report);
-    return;
-  }
-
-  // COMANDO 3: REPORTE DE FALLAS (!fallas / !errores / !reporte / fallas / errores)
-  if (
-    lower === '!fallas' ||
-    lower === '!errores' ||
-    lower === '!reporte' ||
-    lower === 'fallas' ||
-    lower === 'errores' ||
-    lower.includes('reporte de fallas') ||
-    lower.includes('hubo fallas')
-  ) {
-    const failureReport = getFailureReport();
-    await msg.reply(failureReport);
-    return;
-  }
-
-  // COMANDO 4: ESTADO DEL SERVIDOR AWS (!estado / estado / servidor / ram / cpu)
-  if (
-    lower === '!estado' ||
-    lower === '!servidor' ||
-    lower === 'estado' ||
-    lower === 'servidor' ||
-    lower.includes('estado del servidor')
-  ) {
-    exec('uptime && free -h && df -h /', async (err, stdout) => {
-      const text = stdout || 'No se pudo obtener información del sistema.';
-      await msg.reply(`🤖 *ESTADO DEL SERVIDOR AWS:*\n\`\`\`\n${text}\n\`\`\``);
-    });
-    return;
-  }
-
-  // COMANDO 5: INICIAR PRODUCCIÓN (!generar / !generar todos / !generar 1..4 / !generar 5 g3)
-  if (
-    lower.startsWith('!generar') ||
-    lower.includes('generar noticiero') ||
-    lower.includes('iniciar produccion')
-  ) {
-    let args = ['tools/ejecutar_todo.py'];
-    let modeText = 'los 4 géneros diarios (Aviación, Ciberataques, IA, Espacio)';
-
-    const countMatch = lower.match(/(\d+)\s*(?:videos?|noticias?)/) || lower.match(/!generar\s+(\d+)/);
-    let count = 1;
-    if (countMatch) {
-      const parsed = parseInt(countMatch[1]);
-      if (parsed >= 1 && parsed <= 10) count = parsed;
-    }
-
-    if (/\b(g1|aviacion|aviación|catastrofe|catástrofe|peru|perú)\b/.test(lower)) {
-      args.push('--genre', 'G1');
-      modeText = `Género 1 (🚨 Aviación & Desastres Perú/Mundo)`;
-    } else if (/\b(g2|ciber|ciberataque|hacker)\b/.test(lower)) {
-      args.push('--genre', 'G2');
-      modeText = `Género 2 (💻 Ciberataques & Amenazas)`;
-    } else if (/\b(g3|ia|ai|tech|robot|chip|chips|hardware)\b/.test(lower)) {
-      args.push('--genre', 'G3');
-      modeText = `Género 3 (🤖 IA, Chips & Hardware TechCrunch/Tom's)`;
-    } else if (/\b(g4|espacio|nasa|ciencia)\b/.test(lower)) {
-      args.push('--genre', 'G4');
-      modeText = `Género 4 (🚀 Espacio & Ciencia Extrema)`;
-    } else {
-      args.push('--all');
-    }
-
-    if (count > 1 && args.includes('--genre')) {
-      args.push('--count', count.toString());
-      modeText += ` [Lote de ${count} vídeos ordenados por cronología y polémica]`;
-    }
-
-    await msg.reply(`🤖 🚀 *Iniciando producción autónoma en AWS...*\n🎯 *Objetivo:* ${modeText}.\n_No te preocupes por nada, el servidor trabaja solo mientras estás en clases y te entregará los vídeos aquí._`);
-    const child = spawn('python3', args, {
-      cwd: WORKSPACE_DIR,
-      detached: true,
-      stdio: 'ignore',
-    });
-    child.unref();
-    return;
-  }
-
-  // COMANDO 6: DETENER PRODUCCIÓN (!parar)
-  if (lower === '!parar' || lower === 'detener' || lower === 'cancelar') {
-    exec('pkill -f ejecutar_todo.py || true', async () => {
-      await msg.reply('🤖 🛑 Se ha enviado la orden de detener cualquier producción en curso.');
-    });
-    return;
-  }
-
-  // COMANDO 7: AYUDA / MENÚ
-  if (lower === '!ayuda' || lower === 'ayuda' || lower === 'help' || lower === 'menu') {
-    const helpText =
-      `🤖 *COMANDOS DISPONIBLES EN TU AGENTE ANTIGRAVITY AWS:*\n\n` +
-      `• *!video* o *video*: Te envío el último vídeo MP4 generado al chat.\n` +
-      `• *!condicion* o *proyecto*: Revisa el avance del noticiero, planos 3D y estado.\n` +
-      `• *!fallas* o *errores*: Auditoría de fallas o confirmación de estabilidad.\n` +
-      `• *!estado* o *servidor*: Métricas en vivo (CPU, RAM, Disco) de AWS.\n` +
-      `• *!generar*: Arranca la producción completa del día en AWS.\n` +
-      `• *!parar*: Detiene los procesos de render en curso.\n\n` +
-      `_O pregúntame lo que quieras con lenguaje natural y Antigravity te responderá._`;
-    await msg.reply(helpText);
-    return;
-  }
-
-  // CUALQUIER OTRA CONSULTA -> Enviar a Antigravity (`agy`)
   try {
-    await msg.reply('🤖 *Antigravity pensando en AWS...* ⏳');
-  } catch (replyErr) {
-    console.error('[WA-BOT] Error enviando acuse de recibo:', replyErr.message);
-  }
+    // Ignorar mensajes que el propio bot envía para evitar loops infinitos
+    if (msg.body && msg.body.startsWith('🤖')) return;
 
-  const agyCmd = fs.existsSync(AGY_BIN) ? AGY_BIN : 'agy';
-  const prompt = `Eres el Agente Antigravity en el servidor AWS de TikTok Radar. El usuario te escribe desde WhatsApp: "${body}". Responde en español de forma muy concisa, profesional y directa para WhatsApp:`;
+    const senderWid = msg.from;
+    const isIncoming = !msg.fromMe;
+    const isSelfChat = msg.fromMe && (msg.to === botWid || msg.from === botWid);
 
-  const child = spawn(agyCmd, ['--dangerously-skip-permissions', '-p', prompt], {
-    cwd: WORKSPACE_DIR,
-    stdio: ['ignore', 'pipe', 'pipe']
-  });
+    // Solo procesar si viene de un chat externo o es self-chat
+    if (!isIncoming && !isSelfChat) return;
 
-  let stdout = '';
-  let stderr = '';
-  child.stdout.on('data', (d) => { stdout += d.toString(); });
-  child.stderr.on('data', (d) => { stderr += d.toString(); });
+    const targetChat = isIncoming ? senderWid : msg.to;
+    const senderNumber = targetChat.replace(/@.*$/, '');
+    const body = (msg.body || '').trim();
+    if (!body) return;
 
-  const timeoutId = setTimeout(() => {
-    try { child.kill('SIGKILL'); } catch (e) {}
-  }, 90000);
+    console.log(`[WA-BOT] 💬 Mensaje recibido de +${senderNumber}: "${body}"`);
 
-  child.on('close', async (code) => {
-    clearTimeout(timeoutId);
-    try {
-      if (code !== 0 && !stdout.trim()) {
-        const errOut = (stderr || `Error código ${code}`).slice(-250);
-        await client.sendMessage(targetChat, `🤖 ⚠️ Error ejecutando agente en AWS:\n${errOut}`);
+    // Registro dinámico del Dueño:
+    // Si no hay dueño registrado, o el dueño registrado era el propio bot,
+    // el primer usuario humano que escriba se registra automáticamente como dueño.
+    const isOwnerCurrentBot = ownerWid && botWid && ownerWid.startsWith(client.info.wid.user);
+    if (isIncoming && (!ownerWid || isOwnerCurrentBot || body.toLowerCase().startsWith('!vincular') || body.toLowerCase().startsWith('!admin'))) {
+      ownerWid = senderWid;
+      try {
+        fs.writeFileSync(OWNER_FILE, JSON.stringify({
+          ownerWid: senderWid,
+          phone: senderNumber,
+          botNumber: client.info.wid.user,
+          registeredAt: new Date().toISOString()
+        }, null, 2));
+        console.log(`[WA-BOT] 👑 ¡Registrado +${senderNumber} como Dueño/Administrador de AWS!`);
+      } catch (e) {}
+    }
+
+    const lower = body.toLowerCase();
+
+    // COMANDO 1: ENVIAR VÍDEO CON PORTADA Y HASHTAGS (!video / video / mandame el video)
+    if (
+      lower === '!video' ||
+      lower === 'video' ||
+      lower.includes('enviar video') ||
+      lower.includes('mandame el video') ||
+      lower.includes('pasame el video') ||
+      lower.includes('ultimo video')
+    ) {
+      const vid = findLatestVideo();
+      if (!vid) {
+        await safeReply(msg, '🤖 Aún no hay vídeos en `entregas/`. Escribe *!generar* para producir uno.', targetChat);
         return;
       }
-      const cleanOutput = stdout.trim() || 'El agente completó la consulta sin texto de salida.';
-      await client.sendMessage(targetChat, `🤖 *Antigravity AWS:*\n\n${cleanOutput}`);
-    } catch (sendErr) {
-      console.error('[WA-BOT] Error enviando respuesta de agy por WhatsApp:', sendErr.message);
+      const deliveryDir = path.dirname(vid.path);
+      const sizeMb = (vid.size / (1024 * 1024)).toFixed(1);
+      await safeReply(msg, `🤖 📤 *Preparando paquete completo para TikTok:* Portada 9:16 + Vídeo (${sizeMb} MB) + Hashtags...`, targetChat);
+      try {
+        await sendDeliveryPackage(targetChat, deliveryDir);
+      } catch (e) {
+        console.error('[WA-BOT] Error enviando paquete:', e.message);
+        await safeReply(msg, `🤖 ⚠️ Error enviando paquete: ${e.message}`, targetChat);
+      }
+      return;
     }
-  });
+
+    // COMANDO 2: CONDICIÓN DEL PROYECTO (!condicion / !proyecto / condicion / proyecto / como va)
+    if (
+      lower === '!condicion' ||
+      lower === '!proyecto' ||
+      lower === '!avance' ||
+      lower === 'condicion' ||
+      lower === 'proyecto' ||
+      lower.includes('como va el proyecto') ||
+      lower.includes('estado del proyecto')
+    ) {
+      const report = await getProjectCondition();
+      await safeReply(msg, report, targetChat);
+      return;
+    }
+
+    // COMANDO 3: REPORTE DE FALLAS (!fallas / !errores / !reporte / fallas / errores)
+    if (
+      lower === '!fallas' ||
+      lower === '!errores' ||
+      lower === '!reporte' ||
+      lower === 'fallas' ||
+      lower === 'errores' ||
+      lower.includes('reporte de fallas') ||
+      lower.includes('hubo fallas')
+    ) {
+      const failureReport = getFailureReport();
+      await safeReply(msg, failureReport, targetChat);
+      return;
+    }
+
+    // COMANDO 4: ESTADO DEL SERVIDOR AWS (!estado / estado / servidor / ram / cpu)
+    if (
+      lower === '!estado' ||
+      lower === '!servidor' ||
+      lower === 'estado' ||
+      lower === 'servidor' ||
+      lower.includes('estado del servidor')
+    ) {
+      exec('uptime && free -h && df -h /', async (err, stdout) => {
+        const text = stdout || 'No se pudo obtener información del sistema.';
+        await safeReply(msg, `🤖 *ESTADO DEL SERVIDOR AWS:*\n\`\`\`\n${text}\n\`\`\``, targetChat);
+      });
+      return;
+    }
+
+    // COMANDO 5: INICIAR PRODUCCIÓN (!generar / !generar todos / !generar 1..4 / !generar 5 g3)
+    if (
+      lower.startsWith('!generar') ||
+      lower.includes('generar noticiero') ||
+      lower.includes('iniciar produccion')
+    ) {
+      let args = ['tools/ejecutar_todo.py'];
+      let modeText = 'los 4 géneros diarios (Aviación, Ciberataques, IA, Espacio)';
+
+      const countMatch = lower.match(/(\d+)\s*(?:videos?|noticias?)/) || lower.match(/!generar\s+(\d+)/);
+      let count = 1;
+      if (countMatch) {
+        const parsed = parseInt(countMatch[1]);
+        if (parsed >= 1 && parsed <= 10) count = parsed;
+      }
+
+      if (/\b(g1|aviacion|aviación|catastrofe|catástrofe|peru|perú)\b/.test(lower)) {
+        args.push('--genre', 'G1');
+        modeText = `Género 1 (🚨 Aviación & Desastres Perú/Mundo)`;
+      } else if (/\b(g2|ciber|ciberataque|hacker)\b/.test(lower)) {
+        args.push('--genre', 'G2');
+        modeText = `Género 2 (💻 Ciberataques & Amenazas)`;
+      } else if (/\b(g3|ia|ai|tech|robot|chip|chips|hardware)\b/.test(lower)) {
+        args.push('--genre', 'G3');
+        modeText = `Género 3 (🤖 IA, Chips & Hardware TechCrunch/Tom's)`;
+      } else if (/\b(g4|espacio|nasa|ciencia)\b/.test(lower)) {
+        args.push('--genre', 'G4');
+        modeText = `Género 4 (🚀 Espacio & Ciencia Extrema)`;
+      } else {
+        args.push('--all');
+      }
+
+      if (count > 1 && args.includes('--genre')) {
+        args.push('--count', count.toString());
+        modeText += ` [Lote de ${count} vídeos ordenados por cronología y polémica]`;
+      }
+
+      await safeReply(msg, `🤖 🚀 *Iniciando producción autónoma en AWS...*\n🎯 *Objetivo:* ${modeText}.\n_No te preocupes por nada, el servidor trabaja solo mientras estás en clases y te entregará los vídeos aquí._`, targetChat);
+      const child = spawn('python3', args, {
+        cwd: WORKSPACE_DIR,
+        detached: true,
+        stdio: 'ignore',
+      });
+      child.unref();
+      return;
+    }
+
+    // COMANDO 6: DETENER PRODUCCIÓN (!parar)
+    if (lower === '!parar' || lower === 'detener' || lower === 'cancelar') {
+      exec('pkill -f ejecutar_todo.py || true', async () => {
+        await safeReply(msg, '🤖 🛑 Se ha enviado la orden de detener cualquier producción en curso.', targetChat);
+      });
+      return;
+    }
+
+    // COMANDO 7: AYUDA / MENÚ
+    if (lower === '!ayuda' || lower === 'ayuda' || lower === 'help' || lower === 'menu') {
+      const helpText =
+        `🤖 *COMANDOS DISPONIBLES EN TU AGENTE ANTIGRAVITY AWS:*\n\n` +
+        `• *!video* o *video*: Te envío el último vídeo MP4 generado al chat.\n` +
+        `• *!condicion* o *proyecto*: Revisa el avance del noticiero, planos 3D y estado.\n` +
+        `• *!fallas* o *errores*: Auditoría de fallas o confirmación de estabilidad.\n` +
+        `• *!estado* o *servidor*: Métricas en vivo (CPU, RAM, Disco) de AWS.\n` +
+        `• *!generar*: Arranca la producción completa del día en AWS.\n` +
+        `• *!parar*: Detiene los procesos de render en curso.\n\n` +
+        `_O pregúntame lo que quieras con lenguaje natural y Antigravity te responderá._`;
+      await safeReply(msg, helpText, targetChat);
+      return;
+    }
+
+    // CUALQUIER OTRA CONSULTA -> Enviar a Antigravity (`agy`)
+    await safeReply(msg, '🤖 *Antigravity pensando en AWS...* ⏳', targetChat);
+
+    const agyCmd = fs.existsSync(AGY_BIN) ? AGY_BIN : 'agy';
+    const prompt = `Eres el Agente Antigravity en el servidor AWS de TikTok Radar. El usuario te escribe desde WhatsApp: "${body}". Responde en español de forma muy concisa, profesional y directa para WhatsApp:`;
+
+    const child = spawn(agyCmd, ['--dangerously-skip-permissions', '-p', prompt], {
+      cwd: WORKSPACE_DIR,
+      stdio: ['ignore', 'pipe', 'pipe']
+    });
+
+    let stdout = '';
+    let stderr = '';
+    child.stdout.on('data', (d) => { stdout += d.toString(); });
+    child.stderr.on('data', (d) => { stderr += d.toString(); });
+
+    const timeoutId = setTimeout(() => {
+      try { child.kill('SIGKILL'); } catch (e) {}
+    }, 90000);
+
+    child.on('close', async (code) => {
+      clearTimeout(timeoutId);
+      try {
+        if (code !== 0 && !stdout.trim()) {
+          const errOut = (stderr || `Error código ${code}`).slice(-250);
+          await safeReply(msg, `🤖 ⚠️ Error ejecutando agente en AWS:\n${errOut}`, targetChat);
+          return;
+        }
+        const cleanOutput = stdout.trim() || 'El agente completó la consulta sin texto de salida.';
+        await safeReply(msg, `🤖 *Antigravity AWS:*\n\n${cleanOutput}`, targetChat);
+      } catch (sendErr) {
+        console.error('[WA-BOT] Error enviando respuesta de agy por WhatsApp:', sendErr.message);
+      }
+    });
+  } catch (globalErr) {
+    console.error('[WA-BOT CRITICAL HANDLER ERROR]:', globalErr);
+    try {
+      const fallbackTarget = (!msg.fromMe ? msg.from : msg.to) || ownerWid;
+      if (fallbackTarget) {
+        await client.sendMessage(fallbackTarget, `🤖 ⚠️ Hubo una incidencia interna al procesar el mensaje: ${globalErr.message}`);
+      }
+    } catch (e) {}
+  }
 });
 
 // -----------------------------------------------------------------------------

@@ -2,6 +2,23 @@
 
 Actualizado: 2026-11-05.
 
+## Blindaje Antifallas y Persistencia Continua del Agente WhatsApp en AWS · 2026-11-05
+
+- **Diagnóstico Integral de Causas Raíz y Solución Definitiva**:
+  1. **Eliminación de Marcos Desprendidos (`Detached Frame`) y Errores en `@lid`**:
+     - Las respuestas directas con `msg.reply()` fallaban cuando Puppeteer recargaba el marco de WhatsApp Web o recibía mensajes desde identificadores de privacidad (`@lid`).
+     - Se implementó la función envolvente [`safeReply`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/whatsapp_bot/bot.js#L268-L280) con fallback automático directo a `client.sendMessage(targetChat, ...)`, y se blindó el listener principal de mensajes dentro de un bloque global `try/catch`.
+  2. **Watchdog Activo de Autocuración (Auto-Healing cada 60s)**:
+     - Implementado monitoreo periódico del estado de la sesión (`client.getState()`). Si la sesión sufre una desconexión silenciosa o se congela por 3 ciclos consecutivos, el bot destruye los subprocesos de Chrome huérfanos, limpia locks residuales y se reconecta de manera autónoma sin intervención humana.
+  3. **Limpieza Automática de Bloqueos Residuales de Chromium**:
+     - Función [`cleanStaleChromeLocks`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/whatsapp_bot/bot.js#L245-L266) añadida al inicio y en cada desconexión para purgar `SingletonLock`, `SingletonCookie` y `SingletonSocket` en `~/.wwebjs_auth/session`.
+  4. **Recuperación Proactiva de Mensajes No Leídos Post-Reinicio**:
+     - En el evento `'ready'`, el bot ahora escanea y atiende automáticamente cualquier mensaje pendiente enviado por el usuario durante una ventana de reinicio o desconexión, impidiendo que los mensajes queden en el limbo.
+  5. **Límites de Memoria para Prevenir el Asesino OOM de Linux**:
+     - Configurados flags de Chromium (`--js-flags="--max-old-space-size=512"`, `--renderer-process-limit=2`, `--disk-cache-size=33554432`) y añadido un archivo swap de 4 GB en AWS para absorber cualquier pico de consumo de RAM sin matar el servicio.
+  6. **Apagado Limpio Inmediato (Graceful Shutdown) y Timeout Reducido**:
+     - Captura de señales `SIGTERM`/`SIGINT` para cerrar el navegador en <0.5s y configuración `TimeoutStopSec=10` en systemd.
+
 ## Auditoría Exhaustiva y Eliminación de Ambigüedades / Bugs de Subcadena · 2026-11-05
 
 - **Auditoría Rápida Completada y Verificada al 100%**:
