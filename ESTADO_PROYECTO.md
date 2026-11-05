@@ -2,6 +2,14 @@
 
 Actualizado: 2026-11-05.
 
+## Estado Actual: Fábrica Autónoma Pausada por Instrucción del Usuario · 2026-11-05
+
+- **Pausa Total de Producción Programada**:
+  - **Crontab desactivado:** Se eliminaron las tareas programadas de `cron` en el servidor AWS (`ubuntu@3.142.230.147`) para detener cualquier generación automática de vídeos y preservar los **2 puntos restantes de Google Flow**.
+  - **Copia de respaldo guardada:** El cronograma completo de 6 vídeos diarios quedó respaldado en `~/crontab_activo.backup.tab` en AWS para poder reactivarlo en un solo clic (`crontab ~/crontab_activo.backup.tab`) cuando el usuario lo disponga.
+  - **Sin procesos activos:** Verificado que no hay procesos de renderizado ni navegadores huérfanos consumiendo CPU ni puntos.
+  - **Bot de WhatsApp en reposo:** El servicio `tiktok-whatsapp-bot.service` permanece activo únicamente para responder consultas del usuario (`!estado`) sin disparar producciones automáticas.
+
 ## Resolución de Vídeos Bugeados, Blindaje Anti-Cuota Flow y Corrección FFmpeg · 2026-11-05
 
 - **Diagnóstico Integral y Corrección de Vídeos Bugeados / Congelados**:
