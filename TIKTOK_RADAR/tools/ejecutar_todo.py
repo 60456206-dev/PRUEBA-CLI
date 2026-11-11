@@ -64,8 +64,10 @@ def main():
     parser.add_argument("--genre", type=str, default=None, choices=[
         "G1_AVIACION_CATASTROFES", "G2_CIBERATAQUES_HACKERS",
         "G3_IA_ROBOTICA", "G4_ESPACIO_CIENCIA",
-        "G1", "G2", "G3", "G4"
-    ], help="Producir un género específico")
+        "G1_PERU_DESASTRES",
+        "G1", "G2", "G3", "G4", "AUTO",
+        "SLOT_1", "SLOT_2", "TECH", "CIENCIA"
+    ], help="Producir un género específico, slot diario o AUTO para radar dinámico")
     parser.add_argument("--rank", type=int, default=0, help="Posición de noticia ordenada (0 = más reciente / mayor score)")
     parser.add_argument("--count", type=int, default=1, help="Número de vídeos a producir en serie para el género (ej: 5)")
     parser.add_argument("--all", action="store_true", help="Producir los 4 géneros automáticamente en lote")
@@ -80,6 +82,11 @@ def main():
         "G2": "G2_CIBERATAQUES_HACKERS",
         "G3": "G3_IA_ROBOTICA",
         "G4": "G4_ESPACIO_CIENCIA",
+        "SLOT_1": "SLOT_1",
+        "SLOT_2": "SLOT_2",
+        "TECH": "SLOT_2",
+        "CIENCIA": "SLOT_2",
+        "AUTO": None,
     }
 
     if args.all:

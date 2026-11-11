@@ -1,5 +1,28 @@
 {
   "_descripcion": "Configuración Central de Producción, Consistencia Visual y Modo de Render (TikTok Radar)",
+  "produccion_diaria": {
+    "videos_por_dia": 2,
+    "estrategia": "Opción B: 2 Vídeos Especializados al Estilo Veritasium",
+    "estandar": "Obra Maestra 10/10 Estilo Veritasium (Explicación por Primeros Principios + Estética Chiaroscuro)",
+    "horarios_publicacion_peru": [
+      {
+        "slot": 1,
+        "horario_subida_tiktok": "13:00",
+        "descripcion": "☀️ Almuerzo / Impacto Nacional y Global (G1: Desastres Perú INDECI o Aviación Internacional)",
+        "especializacion": "G1_IMPACTO_PERU_AVIACION",
+        "inicio_servidor_peru": "12:10",
+        "inicio_servidor_utc": "17:10"
+      },
+      {
+        "slot": 2,
+        "horario_subida_tiktok": "20:30",
+        "descripcion": "🌙 Prime Time Noche / Frontera Tecnológica y Científica (G3: Chips 2nm & IA, G2: Ciberdefensa, G4: Espacio)",
+        "especializacion": "TECH_CIENCIA_FRONTERA",
+        "inicio_servidor_peru": "19:40",
+        "inicio_servidor_utc": "00:40"
+      }
+    ]
+  },
   "modo_produccion": {
     "activo": "flow_primario",
     "opciones": {
@@ -10,43 +33,44 @@
     }
   },
   "consistencia_visual": {
-    "estilo_maestro": "Vertical 9:16, high-end stylized 3D cinematic animation, RTX ray tracing reflections, Unreal Engine 5.4 Lumen global illumination, Octane path tracer quality, rich tactile PBR textures, volumetric atmospheric fog, cinematic shallow depth of field, vivid dramatic lighting, masterpiece render, no photorealism, no uncanny valley, no flat surfaces",
-    "motor_render": "Unreal Engine 5.4 Lumen / Octane Raytracer Style",
+    "estilo_maestro": "Vertical 9:16, prestigious scientific and technical documentary aesthetic, dramatic chiaroscuro studio lighting, deep carbon background shadows with directional rim light, tactile textured surface patina inspired by Veritasium and Jakub Misiek illustrations, subtle analog film grain, volumetric atmosphere, clean surgical vector schematics, shallow depth of field, slow continuous camera push-in, masterpiece quality, no plastic CGI surfaces, no uncanny valley",
+    "motor_render": "Veritasium Tactile Documentary & Chiaroscuro Cinematic",
     "resolucion": "1080x1920",
     "fps": 24,
     "paleta_colores": {
-      "fondo_noche": "0x0c121e",
+      "fondo_carbon": "0x12161a",
+      "pizarra_mate": "0x1b222a",
+      "amarillo_azufre": "0xe2e062",
       "ambar_alerta": "0xffaa00",
       "rojo_editorial": "0xee3344",
       "dorado_tecnologico": "0xf4a261",
-      "blanco_titanio": "0xf5f7fa",
-      "solar_espacio": "0xffb703"
+      "blanco_titanio": "0xf5f7fa"
     },
     "anclas_por_categoria": {
       "G1_AVIACION": {
-        "personaje": "Stylized 3D male pilot with dark aviation headset, navy blue flight uniform, furrowed brow, focused expression, mouth closed, sharp facial geometry, raytraced cockpit reflections",
-        "aeronave": "Sleek white twin-engine executive jet with deep navy rim accents and bright wingtip strobe lights",
-        "cabina": "Glass cockpit with dual glowing amber/warm instrument panels, weather radar displays, and throttle quadrant"
+        "personaje": "Stylized 3D male pilot in textured navy flight uniform under dramatic chiaroscuro cockpit lighting, focused determined eyes, sharp expressive facial geometry, subtle skin texture, no loose coverings, directional amber instrument glow",
+        "aeronave": "Matte finish twin-engine executive jet banking through dark moody storm clouds, fine tactile metal wing rivets, wingtip strobe lights cutting through mist",
+        "cabina": "Glass cockpit in deep shadow, surgical amber and warm indicators, tactile throttle levers, slow camera push-in"
       },
       "G1_PERU_DESASTRES": {
-        "personaje": "Stylized 3D emergency first responder in high-visibility orange-and-blue tactical jacket under heavy rain, determined facial expression, rain droplets on skin, clear facial anatomy, no face masks or cloth coverings",
-        "entorno": "Peruvian coastal and andean valley terrain, wet asphalt, emergency convoy flashing red and blue lights",
-        "sala_crisis": "INDECI/COEN crisis monitoring room with massive glowing satellite weather displays and topography maps"
+        "personaje": "Stylized 3D Peruvian emergency first responder in high-visibility textured tactical jacket, realistic rain streaks on skin, serious focused gaze, clear facial anatomy, no face masks, directional rim lighting against dark Andean mountain backdrop",
+        "entorno": "Peruvian andean and coastal terrain under dramatic chiaroscuro storm clouds, wet asphalt with tactile reflections, emergency convoy beacon lights cutting through fog",
+        "sala_crisis": "INDECI/COEN crisis operations command in deep shadows with high-contrast topographic maps and satellite radar feeds"
       },
       "G2_CIBERATAQUES": {
-        "personaje": "Stylized 3D cybersecurity intelligence analyst in dark tech bunker illuminated by amber and crimson monitor glow, focused intense gaze, clear expressive facial features, dark framed tactical glasses, no face coverings",
-        "entorno": "High-density server vault with matte black racks, pulsing LED activity lights and fiber optic bundles",
-        "elementos": "Holographic command terminal displays showing encrypted traffic matrices and packet inspection nodes"
+        "personaje": "Stylized 3D cybersecurity intelligence analyst in dark tech bunker illuminated by dramatic amber and crimson monitor glow, focused intense gaze, tactical dark-framed glasses, clear expressive facial features, no face coverings",
+        "entorno": "High-density server vault in deep carbon shadows, matte black racks with tactile brushed metal texture, pulsing LED activity lights and fiber optic bundles",
+        "elementos": "Clean surgical vector threat topology, illuminated node matrices, high-contrast terminal traces"
       },
       "G3_IA_HARDWARE": {
-        "personaje": "Stylized 3D semiconductor elite researcher wearing sleek futuristic white cleanroom gear with transparent high-tech safety glasses, sharp visible expressive human eyes and face, clean facial geometry, absolutely no loose cloth face masks or mouth coverings",
-        "entorno": "Extreme ultraviolet (High-NA EUV) lithography cleanroom with sterile golden and monochromatic lighting, raytraced reflections",
-        "elementos": "Translucent glowing 300mm silicon wafer with iridescent 2nm micro-architecture circuit patterns, RTX subsurface scattering"
+        "personaje": "Stylized 3D semiconductor researcher in sleek textured white cleanroom gear with transparent high-tech safety glasses, sharp visible expressive human eyes, clean facial geometry, absolutely no loose cloth face masks or mouth coverings",
+        "entorno": "Extreme ultraviolet (High-NA EUV) lithography cleanroom with sterile monochromatic golden chiaroscuro lighting, tactile matte surfaces and vacuum chambers",
+        "elementos": "Glowing 300mm silicon wafer with iridescent 2nm micro-architecture circuit patterns, fine tactile sub-micron traces, directional spotlight"
       },
       "G4_ESPACIO": {
-        "personaje": "Stylized 3D mission flight director in command center console wearing lightweight headset, focused eyes tracking telemetry monitors, clear expressive facial features, no face coverings",
-        "entorno": "Deep space planetary orbit, atmospheric entry plasma trails, and robotic probe solar arrays",
-        "elementos": "Precision navigation vector telemetry HUD, rocket thruster plume, and celestial horizon"
+        "personaje": "Stylized 3D mission flight director in command center console wearing lightweight headset, focused eyes tracking telemetry monitors, clear expressive facial features, no face coverings, dramatic rim light",
+        "entorno": "Deep space planetary orbit in deep black contrast, atmospheric entry plasma trails, and robotic probe solar arrays with tactile metallic foil textures",
+        "elementos": "Precision orbital vector schematics, rocket thruster plume, and high-contrast celestial horizon"
       }
     }
   },

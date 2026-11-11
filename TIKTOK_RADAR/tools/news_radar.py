@@ -626,7 +626,7 @@ Responde ÚNICAMENTE con un JSON con los índices ordenados y el motivo breve:
 
         body = json.dumps({"contents": [{"parts": [{"text": prompt}]}]}).encode("utf-8")
         req = urllib.request.Request(
-            f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent?key={key}",
+            f"https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-lite-latest:generateContent?key={key}",
             data=body,
             headers={"Content-Type": "application/json"}
         )

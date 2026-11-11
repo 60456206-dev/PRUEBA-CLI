@@ -1,0 +1,17 @@
+# ==============================================================================
+# TIKTOK RADAR · Cronograma de Producción de Élite en AWS (2 Vídeos / Día)
+# Estándar: Obra Maestra 10/10 Estilo Veritasium (Opción B: Slots Especializados)
+# Hora del Servidor: UTC (Hora Perú + 5 horas)
+# El servidor inicia la generación 50 minutos ANTES de la hora de subida a TikTok.
+# Entrega a WhatsApp con ~32 minutos de antelación para revisión y descarga tranquila.
+# ==============================================================================
+SHELL=/bin/bash
+PATH=/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+# 1. ☀️ VÍDEO 1 - ALMUERZO (Subida TikTok: 01:00 PM Perú) -> Inicia 12:10 PM Perú (17:10 UTC)
+# Especialización: G1 (Emergencias y Desastres Perú INDECI / Incidentes de Aviación Internacional)
+10 17 * * * /bin/bash /home/ubuntu/TIKTOK-NEWS/tools/lanzador_programado.sh SLOT_1 0 "SLOT_1_G1_IMPACTO"
+
+# 2. 🌙 VÍDEO 2 - PRIME TIME NOCHE (Subida TikTok: 08:30 PM Perú) -> Inicia 07:40 PM Perú (00:40 UTC)
+# Especialización: Frontera Tecnológica y Científica Veritasium (Chips 2nm, IA, Ciberdefensa, Espacio)
+40 0 * * * /bin/bash /home/ubuntu/TIKTOK-NEWS/tools/lanzador_programado.sh SLOT_2 0 "SLOT_2_TECH_CIENCIA"

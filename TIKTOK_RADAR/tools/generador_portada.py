@@ -225,37 +225,40 @@ REGLAS ESTRICTAS:
 def generate_ai_cover_background(genre: str, title: str, delivery_dir: Path) -> Image.Image:
     """
     Genera el fondo oficial de la portada en vertical 9:16 (1080x1920) utilizando un modelo de IA
-    dedicado a creación de imágenes (Flux / Pollinations API) con estética cinematográfica y raytracing.
+    dedicado a creación de imágenes (Flux / Pollinations API) con estética documental y claroscuro de Veritasium.
     """
     is_peru, is_cyber, is_ai, is_space = _detect_category_flags(genre, title)
 
+    base_style = (
+        "Vertical 9:16, prestigious scientific documentary poster aesthetic, dramatic chiaroscuro studio lighting, "
+        "deep carbon vignetted shadows with directional rim light, tactile textured surface patina inspired by Veritasium "
+        "and Jakub Misiek illustrations, subtle analog film grain, high subject contrast, masterpiece quality, no text, no captions"
+    )
+
     if is_peru:
         prompt = (
-            "Dramatic cinematic vertical 9:16 poster background of torrential rains, flood waters rushing, "
-            "emergency rescue convoy lights in Peruvian mountain valley, Unreal Engine 5.4 Lumen raytracing, "
-            "volumetric mist, dark tactical mood, masterpiece 3D render, no text, no people"
+            f"{base_style}, torrential Peruvian rainstorm with dramatic amber rescue beacons cutting through dense valley fog, "
+            f"wet tactile asphalt and rushing floodwaters in deep shadow, emergency response mood"
         )
     elif is_cyber:
         prompt = (
-            "Dramatic cinematic vertical 9:16 poster background of high-density server vault corridor with cold neon cyan "
-            "and warning crimson LED lights, glowing fiber optics, RTX raytracing reflections on matte black server racks, "
-            "dark cyber thriller aesthetic, masterpiece 3D render, no text"
+            f"{base_style}, matte black server vault corridor in deep carbon shadows, single dramatic spotlight on fiber optic cables, "
+            f"subtle warning crimson and sulfur yellow LED pulse, cyber thriller investigation mood"
         )
     elif is_ai:
         prompt = (
-            "Dramatic cinematic vertical 9:16 poster background of a glowing 2nm microchip silicon wafer floating with "
-            "intricate iridescent golden circuits, Unreal Engine 5.4 Lumen raytracing reflections, dark high-tech cleanroom "
-            "laboratory atmosphere, volumetric lighting, no text, no people, no face masks"
+            f"{base_style}, single glowing 2nm microchip silicon wafer floating in dark cleanroom space, monochromatic golden chiaroscuro "
+            f"lighting, intricate iridescent nanometer circuit patterns, fine tactile sub-micron traces"
         )
     elif is_space:
         prompt = (
-            "Dramatic cinematic vertical 9:16 poster background of an advanced interplanetary spacecraft with glowing "
-            "violet plasma thrusters in deep space, crescent Earth curvature below, Octane path tracer lighting, starry background, no text"
+            f"{base_style}, interplanetary probe floating in deep black cosmic void, subtle warm sunlight rim illuminating "
+            f"tactile metallic thermal foil and solar arrays, distant pale Earth curvature in darkness"
         )
     else:
         prompt = (
-            "Dramatic cinematic vertical 9:16 poster background of a modern executive jet flying through dark stormy clouds and rain, "
-            "cockpit glowing with amber alarm lights and cyan glass screens, RTX raytracing reflections, cinematic angle, no text"
+            f"{base_style}, twin-engine jet banking through deep dark moody storm clouds, dramatic directional amber cockpit glow, "
+            f"tactile metal wing texture with rivets, wingtip beacon cutting through volumetric mist"
         )
 
     ai_cache = delivery_dir / "PORTADA_AI_BASE.jpg"

@@ -45,10 +45,10 @@ PROD_CONFIG = load_production_config()
 STYLE_PREFIX = (
     PROD_CONFIG.get("consistencia_visual", {}).get("estilo_maestro")
     or (
-        "Vertical 9:16, high-end stylized 3D cinematic animation, RTX ray tracing reflections, "
-        "Unreal Engine 5.4 Lumen global illumination, Octane path tracer quality, rich tactile PBR textures, "
-        "volumetric atmospheric fog, cinematic shallow depth of field, vivid dramatic lighting, "
-        "masterpiece render, no photorealism, no uncanny valley, no flat surfaces. "
+        "Vertical 9:16, prestigious scientific and technical documentary aesthetic, dramatic chiaroscuro studio lighting, "
+        "deep carbon background shadows with directional rim light, tactile textured surface patina inspired by Veritasium and Jakub Misiek illustrations, "
+        "subtle analog film grain, volumetric atmosphere, clean surgical vector schematics, shallow depth of field, slow continuous camera push-in, "
+        "masterpiece quality, no plastic CGI surfaces, no uncanny valley. "
     )
 )
 if not STYLE_PREFIX.endswith(". ") and not STYLE_PREFIX.endswith("."):
@@ -203,10 +203,10 @@ def build_shot_prompts(
             {
                 "id": "SH13", "sec": "56-62.5s", "dur": 6.2, "ia_dur": "5s",
                 "render_mode": "infographic",
-                "type": "Cierre Interactivo",
-                "action": "Cámara lenta sobre el océano nocturno con holograma de pregunta para comentarios.",
-                "visual_en": "Cinematic slow camera drift over a dark moody ocean at night with a glowing 3D holographic question mark icon and digital news frame floating in the center.",
-                "fallback_en": "Stylized 3D glowing cyan question mark hologram floating over a dark blue digital background."
+                "type": "Cierre Documental Veritasium",
+                "action": "Cámara lenta sobre el océano nocturno con ficha documental sobria de reflexión final.",
+                "visual_en": "Cinematic slow camera drift over a dark moody ocean at night with subtle volumetric moonlight, clean minimal documentary title card dissolving into view, no cartoon holograms.",
+                "fallback_en": "Stylized cinematic slow camera drift over a dark moody ocean at night with elegant documentary lighting."
             },
         ]
     elif is_peru:
@@ -223,7 +223,7 @@ def build_shot_prompts(
             {"id": "SH10", "sec": "38-44s", "dur": 5.0, "ia_dur": "5s", "render_mode": "infographic", "type": "Mapa Geodésico", "action": "Mapa 3D del departamento afectado con radio de impacto y rutas habilitadas.", "visual_en": "Holographic 3D geodetic blueprint map of the Peruvian region highlighting danger zones in bright red and safe corridors in green.", "fallback_en": "Stylized 3D holographic terrain map showing highlighted rescue zones in neon orange."},
             {"id": "SH11", "sec": "44-50s", "dur": 5.0, "ia_dur": "5s", "render_mode": "infographic", "type": "Reporte Oficial", "action": "Ficha oficial de balance técnico emitida por organismos de defensa nacional.", "visual_en": "Broadcast official report card graphic with emergency agency badges and rolling status metrics on dark textured background.", "fallback_en": "Clean 3D broadcast news report graphic with checkmark badges and digital text data."},
             {"id": "SH12", "sec": "50-56s", "dur": 5.5, "ia_dur": "5s", "render_mode": "flow", "type": "Panorama de Apoyo", "action": "Amanecer sobre el valle con cuadrillas brindando apoyo humanitario a los pobladores.", "visual_en": "Wide panoramic 3D cinematic shot of a valley at dawn with emergency tents, rescue trucks, and peaceful golden morning light.", "fallback_en": "Stylized 3D landscape at dawn with relief tents and morning sunlight."},
-            {"id": "SH13", "sec": "56-62.5s", "dur": 6.2, "ia_dur": "5s", "render_mode": "infographic", "type": "Debate Ciudadano", "action": "Tarjeta final de cierre con pregunta comunitaria sobre la respuesta a la emergencia.", "visual_en": "Cinematic slow camera drift with a glowing 3D question mark and community feedback prompt frame.", "fallback_en": "Stylized 3D glowing cyan question mark over a dark blue background."},
+            {"id": "SH13", "sec": "56-62.5s", "dur": 6.2, "ia_dur": "5s", "render_mode": "infographic", "type": "Cierre Documental Veritasium", "action": "Ficha final sobria con balance y reflexión sobre la preparación y resiliencia nacional.", "visual_en": "Cinematic slow camera drift over dark Peruvian mountain valley at dusk, minimal documentary report card in deep carbon and amber, serious high-prestige finish.", "fallback_en": "Stylized slow cinematic camera drift over Peruvian valley at dusk with warm ambient light."},
         ]
     elif is_cyber:
         raw_shots = [
@@ -239,7 +239,7 @@ def build_shot_prompts(
             {"id": "SH10", "sec": "38-44s", "dur": 5.0, "ia_dur": "5s", "render_mode": "infographic", "type": "Topología de Red", "action": "Esquema 3D wireframe de nodos de red con los servidores infectados aislados en rojo.", "visual_en": "Translucent 3D wireframe network topology diagram showing compromised nodes quarantined in neon red cages.", "fallback_en": "3D holographic network diagram showing isolated data nodes highlighted in orange."},
             {"id": "SH11", "sec": "44-50s", "dur": 5.0, "ia_dur": "5s", "render_mode": "infographic", "type": "Análisis Forense CVE", "action": "Ficha técnica de la vulnerabilidad de día cero y firma criptográfica del exploit.", "visual_en": "Broadcast cybersecurity forensic dossier showing hexadecimal payload strings, CVE identifier, and threat level badge.", "fallback_en": "Stylized 3D digital security audit dossier with cryptographic hashes and warning badges."},
             {"id": "SH12", "sec": "50-56s", "dur": 5.5, "ia_dur": "5s", "render_mode": "flow", "type": "Estabilidad Recuperada", "action": "Centro de monitoreo volviendo a estado seguro con pantallas en verde esmeralda.", "visual_en": "Wide atmospheric 3D shot of the cyber operations center calming down as wall monitors transition from red to calm emerald green.", "fallback_en": "Stylized 3D tech operations center with monitors glowing in green stability mode."},
-            {"id": "SH13", "sec": "56-62.5s", "dur": 6.2, "ia_dur": "5s", "render_mode": "infographic", "type": "Pregunta de Ciberseguridad", "action": "Cierre interactivo preguntando sobre la vulnerabilidad de servicios esenciales.", "visual_en": "Slow camera drift with a glowing 3D question mark and digital news debate frame for comments.", "fallback_en": "Stylized 3D glowing cyan question mark over a dark digital background."},
+            {"id": "SH13", "sec": "56-62.5s", "dur": 6.2, "ia_dur": "5s", "render_mode": "infographic", "type": "Cierre Documental Veritasium", "action": "Reflexión final sobre la fragilidad digital y el equilibrio de la infraestructura crítica.", "visual_en": "Cinematic slow camera drift through a silent server corridor in deep carbon shadows with soft amber status indicators, minimal documentary card.", "fallback_en": "Stylized 3D dark server room with minimal documentary ambient light."},
         ]
     elif is_ai:
         raw_shots = [
@@ -255,7 +255,7 @@ def build_shot_prompts(
             {"id": "SH10", "sec": "38-44s", "dur": 5.0, "ia_dur": "5s", "render_mode": "infographic", "type": "Diagrama de Silicio 2nm", "action": "Esquema 3D wireframe de la arquitectura de núcleos y memoria HBM3e apilada.", "visual_en": "3D wireframe schematic blueprint of stacked 3D silicon chiplet architecture with high-bandwidth memory glowing in neon amber.", "fallback_en": "3D holographic wireframe blueprint of an advanced computer processor architecture."},
             {"id": "SH11", "sec": "44-50s", "dur": 5.0, "ia_dur": "5s", "render_mode": "infographic", "type": "Benchmark de Rendimiento", "action": "Ficha oficial de rendimiento de cálculo comparando con la generación previa.", "visual_en": "Broadcast official hardware benchmark card showing throughput gain bars and energy efficiency indices on dark glass.", "fallback_en": "Clean 3D broadcast hardware benchmark chart comparing processor speeds."},
             {"id": "SH12", "sec": "50-56s", "dur": 5.5, "ia_dur": "5s", "render_mode": "flow", "type": "Granja de Supercómputo", "action": "Vista panorámica del centro de cómputo de frontera operando a pleno rendimiento.", "visual_en": "Wide atmospheric 3D cinematic shot of a vast AI supercomputing data center with thousands of glowing racks extending to the horizon.", "fallback_en": "Stylized 3D panoramic view of a massive modern data center at night."},
-            {"id": "SH13", "sec": "56-62.5s", "dur": 6.2, "ia_dur": "5s", "render_mode": "infographic", "type": "Pregunta de IA y Hardware", "action": "Cierre interactivo preguntando sobre la llegada de la inteligencia artificial general.", "visual_en": "Cinematic slow camera drift with a glowing 3D question mark and tech debate frame for TikTok comments.", "fallback_en": "Stylized 3D glowing cyan question mark over a dark digital background."},
+            {"id": "SH13", "sec": "56-62.5s", "dur": 6.2, "ia_dur": "5s", "render_mode": "infographic", "type": "Cierre Documental Veritasium", "action": "Reflexión final profunda sobre el límite físico del silicio y el destino de la inteligencia.", "visual_en": "Cinematic slow camera drift over a floating dark silicon wafer illuminated by a single warm golden rim light, minimal documentary title card dissolving, no cartoon holograms.", "fallback_en": "Stylized cinematic slow camera drift over glowing silicon in dark space with golden light."},
         ]
     elif is_space:
         raw_shots = [
@@ -271,7 +271,7 @@ def build_shot_prompts(
             {"id": "SH10", "sec": "38-44s", "dur": 5.0, "ia_dur": "5s", "render_mode": "infographic", "type": "Blueprint de la Sonda", "action": "Modelo 3D wireframe de la sonda espacial con escudo térmico resaltado en ámbar.", "visual_en": "Stylized 3D wireframe blueprint of an interplanetary spacecraft rotating in dark studio with ablative heat shield in neon amber.", "fallback_en": "3D holographic wireframe blueprint of a spacecraft rotating in a dark digital space."},
             {"id": "SH11", "sec": "44-50s", "dur": 5.0, "ia_dur": "5s", "render_mode": "infographic", "type": "Telemetría Oficial NASA/ESA", "action": "Ficha oficial de datos transmitidos por la Red de Espacio Profundo.", "visual_en": "Broadcast official space telemetry graphic showing signal strength bars, mission elapsed time, and orbital parameters.", "fallback_en": "Clean 3D broadcast space mission data card with antenna signal meters."},
             {"id": "SH12", "sec": "50-56s", "dur": 5.5, "ia_dur": "5s", "render_mode": "flow", "type": "Horizonte Cósmico", "action": "Vista panorámica de la nave alejándose hacia su destino cósmico.", "visual_en": "Wide atmospheric 3D shot of the spacecraft cruising gracefully toward a distant glowing planet under a field of brilliant stars.", "fallback_en": "Stylized 3D wide view of a spaceship flying toward a distant planet in starry space."},
-            {"id": "SH13", "sec": "56-62.5s", "dur": 6.2, "ia_dur": "5s", "render_mode": "infographic", "type": "Pregunta de Exploración", "action": "Cierre interactivo preguntando sobre el establecimiento de colonias humanas en el espacio.", "visual_en": "Cinematic slow camera drift over a starry cosmos with a glowing 3D question mark and space exploration debate frame.", "fallback_en": "Stylized 3D glowing cyan question mark over a dark starry background."},
+            {"id": "SH13", "sec": "56-62.5s", "dur": 6.2, "ia_dur": "5s", "render_mode": "infographic", "type": "Cierre Documental Veritasium", "action": "Reflexión final sobre el lugar de la humanidad frente a la inmensidad del cosmos.", "visual_en": "Cinematic slow camera drift pulling away into the deep cosmic void, Earth becoming a fragile pale blue dot in darkness, minimal documentary title card dissolving, no cartoon holograms.", "fallback_en": "Stylized cinematic slow camera drift over deep starry cosmos with subtle celestial rim light."},
         ]
     else:
         raw_shots = [
@@ -309,11 +309,12 @@ def build_shot_prompts(
 def generate_dynamic_news_script(news: Dict[str, Any], genre_label: str) -> str:
     """
     Genera un guión periodístico ágil, intrigante y de alto impacto para TikTok Noticias
-    utilizando Gemini 3.5 Flash / 3.8 Flash con estructura de periodismo explicativo (Vox/Johnny Harris):
-    1. Contexto previo y gancho intrigante (0-12s): contextualiza el hecho para que cualquiera entienda.
-    2. Datos duros, nombres y cifras concretas de la noticia (12-40s).
-    3. Conflicto y consecuencias a futuro (40-52s).
-    4. Pregunta polarizante y curiosidad para comentarios (52-62s).
+    siguiendo la fórmula explicativa por primeros principios de Veritasium:
+    1. Paradoja o misterio de entrada (0-10s): plantea un hecho contra-intuitivo que despierta curiosidad.
+    2. El peligro real y las apuestas tangibles (10-25s): consecuencias críticas, datos y cifras concretas.
+    3. Deconstrucción por primeros principios con analogía simple (25-45s).
+    4. La solución maestra o giro técnico (45-55s).
+    5. Cierre filosófico y reflexión profunda sobre el futuro o impacto en la humanidad (55-62s).
     Longitud calibrada: 145-160 palabras para asegurar >60s de locución monetizable en TikTok.
     """
     title = news.get("title", "")
@@ -322,7 +323,7 @@ def generate_dynamic_news_script(news: Dict[str, Any], genre_label: str) -> str:
     key = os.getenv("GEMINI_API_KEY")
 
     if key:
-        prompt = f"""Eres el mejor guionista y showrunner de TikTok Noticias (estilo documental ágil de alta retención, tipo Vox o Johnny Harris).
+        prompt = f"""Eres el mejor guionista de divulgación científica y periodismo explicativo de alta retención del mundo (con el estándar exacto de Veritasium).
 Escribe un guión de locución para un vídeo vertical de TikTok de exactamente 61 a 64 segundos (entre 145 y 160 palabras exactas para superar 60 segundos de locución).
 
 Noticia: {title}
@@ -330,20 +331,21 @@ Fuente oficial: {source}
 Categoría: {genre_label}
 Resumen / Datos clave: {summary}
 
-ESTRUCTURA OBLIGATORIA:
-1. CONTEXTO Y GANCHO INTRIGANTE (0-12s): NO lances la noticia en seco ni abras con titulares en pregunta. Explica primero el contexto intrigante de fondo para que cualquier persona entienda por qué esto es crucial y qué estaba en juego antes de soltar la noticia principal.
-2. EL SUCESO Y CIFRAS EXACTAS (12-40s): Cita los datos reales, cifras concretas, nombres de empresas, países, regiones o instituciones involucradas. Cero relleno corporativo o frases vacías como "las autoridades evalúan la magnitud".
-3. CONFLICTO Y CONSECUENCIAS (40-52s): El choque real, el peligro desatado o por qué esto cambia las cosas a futuro.
-4. REFLEXIÓN Y PREGUNTA FINAL ABIERTA (52-62s): Cierre con una reflexión intrigante o pregunta provocadora sobre el futuro, las consecuencias para la sociedad o el rumbo de la humanidad.
-   ESTRICTAMENTE PROHIBIDO decir "deja tus comentarios", "déjamelo en los comentarios", "comenta abajo" ni frases clichés similares. Cierra con fuerza dramática y elegancia.
+ESTRUCTURA EXPLICATIVA VERITASIUM (OBLIGATORIA):
+1. PARADOJA O MISTERIO VISUAL (0-10s): Abre planteando una paradoja desconcertante, una anomalía o un hecho contra-intuitivo que despierte curiosidad voraz. Haz que el espectador sienta que lo que está ocurriendo desafía el sentido común.
+2. EL PELIGRO REAL Y QUÉ ESTÁ EN JUEGO (10-25s): Conecta de inmediato con las consecuencias críticas del mundo real (daños multimillonarios, vidas, seguridad nacional, colapso de infraestructura o hitos históricos). Cita los datos reales, cifras concretas, nombres de instituciones, empresas o regiones de la noticia.
+3. DECONSTRUCCIÓN POR PRIMEROS PRINCIPIOS CON ANALOGÍA SIMPLE (25-45s): Desarma el problema capa por capa desde lo elemental. Usa una analogía física cotidiana o visual para que cualquiera entienda el fenómeno sin perderse en tecnicismos vacíos.
+4. LA SOLUCIÓN MAESTRA O GIRO INGENIOSO (45-55s): Explica la solución técnica, la decisión humana o el descubrimiento que resolvió el dilema.
+5. CIERRE FILOSÓFICO O PREGUNTA PROFUNDA (55-62s): Termina con una reflexión impactante sobre el ingenio humano, el futuro de la sociedad o el rumbo de la tecnología.
+   ESTRICTAMENTE PROHIBIDO decir "deja tus comentarios", "déjamelo en los comentarios", "comenta abajo" ni frases clichés similares. Cierra con altura, sobriedad y contundencia.
 
 REGLAS DE ESTILO:
-- En español neutro, apasionado, con signos de admiración en momentos de tensión y ritmo dinámico.
+- En español neutro, apasionado, con convicción, ritmo dinámico y pausas dramáticas.
 - Longitud estricta: entre 145 y 160 palabras.
 - Cero muletillas de "deja tus comentarios" o "comenta abajo".
 - Devuelve ÚNICAMENTE el texto que leerá el locutor en voz alta, sin encabezados, sin corchetes, sin etiquetas de tiempo."""
 
-        for model in ["gemini-3.5-flash-lite", "gemini-3.8-flash", "gemini-flash-latest"]:
+        for model in ["gemini-flash-lite-latest", "gemini-3.5-flash-lite", "gemini-flash-latest"]:
             try:
                 url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={key}"
                 body = {"contents": [{"parts": [{"text": prompt}]}]}
@@ -353,21 +355,20 @@ REGLAS DE ESTILO:
                     text = data["candidates"][0]["content"]["parts"][0]["text"].strip()
                     words = text.split()
                     if len(words) >= 142:
-                        print(f"[PIPELINE-AI] ✅ Guión dinámico con contexto generado por {model} ({len(words)} palabras)", flush=True)
+                        print(f"[PIPELINE-AI] ✅ Guión Veritasium generado por {model} ({len(words)} palabras)", flush=True)
                         return text
             except Exception as e:
                 print(f"[PIPELINE-AI] ⚠️ Error generando guión con {model}: {e}", flush=True)
 
-    # Fallback dinámico inteligente si no hay conexión externa (153 palabras calibradas a 62.5s)
+    # Fallback explicativo estilo Veritasium (152 palabras calibradas a 62.0s)
     title_clean = re.sub(r"^[¿\s]+|[?!\s]+$", "", title)
     return (
-        f"Para entender la magnitud de lo que acaba de ocurrir, debemos mirar lo que estaba en juego detrás de escena. "
-        f"Durante meses, la tensión fue en aumento en el sector hasta que hoy se confirmó una primicia que cambia el panorama por completo: {title_clean}. "
-        f"De acuerdo con los reportes oficiales contrastados directamente por la redacción de {source}, los datos confirman un impacto inmediato que toma por sorpresa a especialistas y analistas internacionales. "
-        f"Las cifras concretas puestas sobre la mesa revelan una brecha crítica entre las proyecciones iniciales y la realidad operativa que se vive en el terreno minuto a minuto. "
-        f"Organismos de control advierten que las consecuencias no tardarán en sentirse con fuerza, alterando el equilibrio de fuerzas e impulsando medidas de contingencia inmediatas en las próximas horas. "
-        f"Lo que en un primer momento parecía un incidente aislado ahora se perfila con claridad como un punto de inflexión irreversible. "
-        f"La gran incógnita que queda en el aire es si la respuesta coordinada llegará a tiempo para estabilizar la situación antes de que sea tarde."
+        f"A simple vista esto parece un error imposible o un fenómeno sacado de la ciencia ficción, pero detrás se esconde un mecanismo fundamental que desafía lo que creíamos seguro. "
+        f"Lo que acaba de confirmarse pone en alerta máxima a la comunidad internacional: {title_clean}. "
+        f"De acuerdo con los reportes contrastados directamente por la redacción de {source}, el verdadero peligro no es solo lo que vemos en superficie, sino la reacción en cadena desatada en los sistemas críticos. "
+        f"Pensemos en esto como un efecto dominó a escala masiva, donde una pequeña anomalía física multiplica su fuerza hasta empujar a los protocolos de emergencia al límite operativo. "
+        f"Para resolverlo, los especialistas tuvieron que recurrir a una maniobra técnica de altísima precisión, aislando el punto de falla antes de que el colapso fuera inevitable. "
+        f"Este suceso nos recuerda una verdad inquietante sobre el mundo moderno: cuanto más compleja es la tecnología que nos rodea, más frágil resulta la línea que nos separa del caos."
     )
 
 
@@ -505,11 +506,34 @@ def run_pipeline(genre_key: Optional[str] = None, rank_index: int = 0) -> Path:
         "G2_CIBERATAQUES_HACKERS": "G2_CIBERATAQUES_HACKERS",
         "G3_IA_ROBOTICA": "G3_IA_ROBOTICA",
         "G4_ESPACIO_CIENCIA": "G4_ESPACIO_CIENCIA",
+        "SLOT_1": "SLOT_1",
+        "SLOT_2": "SLOT_2",
+        "TECH": "SLOT_2",
+        "CIENCIA": "SLOT_2",
     }
 
-    full_key = genre_map.get(genre_key, genre_key) if genre_key else None
+    raw_key = (genre_key or "").upper()
+    full_key = genre_map.get(raw_key, genre_key) if genre_key else None
 
-    if full_key:
+    if full_key == "SLOT_1":
+        # Slot 1: Especializado en Emergencias Perú / Aviación Internacional
+        ranked_items = get_top_news_by_genre("G1_AVIACION_CATASTROFES", limit=max(5, rank_index + 1))
+        top_news = ranked_items[rank_index] if ranked_items and rank_index < len(ranked_items) else (ranked_items[0] if ranked_items else get_daily_4_genres()["G1_AVIACION_CATASTROFES"])
+    elif full_key == "SLOT_2":
+        # Slot 2: Especializado en Frontera Tecnológica y Científica Veritasium (G3, G2, G4)
+        tech_genres = ["G3_IA_ROBOTICA", "G2_CIBERATAQUES_HACKERS", "G4_ESPACIO_CIENCIA"]
+        tech_candidates = []
+        for tg in tech_genres:
+            t_items = get_top_news_by_genre(tg, limit=1)
+            if t_items:
+                tech_candidates.extend(t_items)
+        if tech_candidates:
+            tech_candidates.sort(key=lambda x: (x.get("score", 0), x.get("timestamp", 0)), reverse=True)
+            top_news = tech_candidates[0]
+        else:
+            daily_genres = get_daily_4_genres()
+            top_news = daily_genres.get("G3_IA_ROBOTICA", list(daily_genres.values())[0])
+    elif full_key:
         ranked_items = get_top_news_by_genre(full_key, limit=max(5, rank_index + 1))
         if ranked_items and rank_index < len(ranked_items):
             top_news = ranked_items[rank_index]

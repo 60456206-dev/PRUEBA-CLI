@@ -1,6 +1,41 @@
 # Dónde nos quedamos
 
-Actualizado: 2026-11-05.
+Actualizado: 2026-11-11.
+
+## Nueva Dirección Estratégica: Exactamente 2 Vídeos / Día · Estándar Veritasium (Opción B: Slots Especializados) · 2026-11-11
+
+- **Pacto y Decisión del Usuario**:
+  1. **Cadencia fija de 2 vídeos diarios especializados**: Se descarta definitivamente la producción masiva para enfocar el 100% de recursos y créditos en **2 obras maestras diarias** de divulgación científica y noticias de impacto global con estructura y estética Veritasium.
+  2. **Estructura de Slots Especializados (Opción B Aceptada)**:
+     - ☀️ **Slot 1 · Almuerzo (Subida TikTok: 01:00 PM Perú / Servidor 12:10 PM / 17:10 UTC)**:
+       - *Especialización:* **G1 Nacional & Global** (Desastres Naturales Perú con prioridad nacional INDECI / Incidentes Mayday de Aviación Internacional).
+       - *Enfoque Veritasium:* Reconstrucción técnica de la falla o fenómeno climático, deconstrucción por primeros principios y lecciones de seguridad/resiliencia.
+     - 🌙 **Slot 2 · Prime Time Noche (Subida TikTok: 08:30 PM Perú / Servidor 07:40 PM / 00:40 UTC)**:
+       - *Especialización:* **Frontera Tecnológica y Científica Veritasium** (El mejor tema entre **G3:** Chips 2nm, Litografía EUV & Modelos Frontera de IA; **G2:** Ciberataques de Día Cero y Guerra Digital; o **G4:** Espacio Profundo y Fenómenos Anómalos).
+       - *Enfoque Veritasium:* Paradoja de ingeniería imposible, stakes multimillonarios o civilizatorios, analogía física cotidiana y resolución magistral.
+  3. **Referencias de Dirección Oficializadas**:
+     - **Narrativa y Estructura Explicativa:** [Veritasium - *«El Gráfico Más Aterrador de la Ingeniería Eléctrica»*](https://www.youtube.com/watch?v=Ga5rvLLeLHw) *(Carta de Smith)*.
+       - *Fórmula por Primeros Principios:* Gancho paradójico inicial (0-10s) -> Peligro real y apuestas críticas con cifras (10-25s) -> Deconstrucción capa por capa con analogía física cotidiana (25-45s) -> Solución técnica maestra (45-55s) -> Cierre filosófico monumental sobre el ingenio humano y la sociedad (55-62s). Cero muletillas cliché ("deja tus comentarios").
+     - **Estilo Visual y Dirección de Arte:** [Veritasium - *«The Man Who Accidentally Killed The Most People In History»*](https://www.youtube.com/watch?v=IV3dnLzthDA) *(Thomas Midgley Jr. / animado por Jakub Misiek y Fabio Albertelli)*.
+       - *Párpado Chiaroscuro y Texturas Táctiles:* Iluminación de estudio en claroscuro, fondos en sombras carbón (`0x12161a`) con viñeteado profundo, luces directas de recorte (*rim light*), texturas de pátina industrial y grano analógico sutil (eliminación total del efecto plástico/artificial de IA), acentos de alerta en amarillo azufre (`0xe2e062`), ámbar y rojo editorial, empuje lento y continuo de cámara (*slow cinematic push-in*) y diagramas técnicos vectoriales limpios que se animan con precisión quirúrgica.
+  4. **Módulos Actualizados y Verificados**:
+     - [`config_produccion.json`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/config_produccion.json): Declarados `videos_por_dia: 2`, estrategia Opción B y anclas Chiaroscuro táctiles.
+     - [`crontab_2videos_peru.tab`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/crontab_2videos_peru.tab): Creado cronograma optimizado con disparadores `SLOT_1` (17:10 UTC) y `SLOT_2` (00:40 UTC).
+     - [`pipeline_autonomo.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/pipeline_autonomo.py): Selector autónomo `SLOT_1` y `SLOT_2` integrado, guion Veritasium y prompts cinematográficos.
+     - [`ejecutar_todo.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/ejecutar_todo.py): Añadido soporte para `SLOT_1`, `SLOT_2`, `TECH`, `CIENCIA` y `AUTO`.
+     - [`generador_portada.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/generador_portada.py): Portadas 9:16 adaptadas al estilo de póster documental Veritasium / Jakub Misiek.
+
+- **Instrucción Directa del Usuario**:
+  1. **Fin de las 6 publicaciones diarias**: Cambiar la producción masiva de 6 vídeos al día por **1 solo vídeo diario (o bajo demanda), pero espectacularmente producido** con estándar de obra maestra (10/10).
+  2. **Conservación de las 4 Categorías Clave**:
+     - 🚨 **G1**: Desastres Perú (prioridad nacional) / Aviación Internacional.
+     - 💻 **G2**: Ciberataques, Guerra Digital y Amenazas Críticas.
+     - 🤖 **G3**: Inteligencia Artificial, Hardware y Chips 2nm.
+     - 🚀 **G4**: Espacio, Ciencia Extrema y Fenómenos Anómalos.
+  3. **Paso Previo Obligatorio por WhatsApp**: Antes de iniciar cualquier generación o renderizado pesado, el radar redacta una **Ficha de Propuesta** (titular gancho, hechos clave, estructura de 62s y ángulo visual) y la envía a WhatsApp (+51902893413) para revisión y aprobación previa del usuario.
+  4. **Explotación Total del Motor Gráfico de FFmpeg**:
+     - Retirar definitivamente las placas planas con cuadrículas toscas y cajas estáticas (`drawbox` básico).
+     - Implementar diseño en movimiento de nivel broadcast: fondos dinámicos procedurales (partículas/bokeh, gradientes cinemáticos), *True Frosted Glass* con desenfoque gaussiano de fondo (`gblur`), animaciones de entrada con aceleración elástica (`cubic easing`), espectrograma de audio vivo reactivo a las frecuencias de Epidemic Sound (`showfreqs`/`showwaves`), código de tiempo SMPTE, y aberración cromática óptica (`rgbashift`).
 
 ## Estado Actual: Fábrica Autónoma Pausada por Instrucción del Usuario · 2026-11-05
 
