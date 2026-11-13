@@ -1,0 +1,18 @@
+{
+  "character_id": "CANDIDATO_A_(Sin_Lentes)",
+  "source_image": "/workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/01_semilla_sintetica/CANDIDATO_A_85MM_REALISM.jpg",
+  "embedding_file": "/workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/02_adn_biometrico/CANDIDATO_A_(Sin_Lentes)_embedding_512d.npy",
+  "skin_tone_rgb_mean": [
+    114.61,
+    89.84,
+    71.07
+  ],
+  "skin_tone_rgb_std": [
+    77.6,
+    62.94,
+    58.81
+  ],
+  "pore_texture_energy": 16.63,
+  "realism_verdict": "PASS_HYPERREALISTIC",
+  "sha256": "82761bb2a8d5743a"
+}

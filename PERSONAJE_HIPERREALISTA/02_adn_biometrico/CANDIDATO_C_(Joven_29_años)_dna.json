@@ -1,0 +1,18 @@
+{
+  "character_id": "CANDIDATO_C_(Joven_29_años)",
+  "source_image": "/workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/01_semilla_sintetica/CANDIDATO_C_85MM_REALISM.jpg",
+  "embedding_file": "/workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/02_adn_biometrico/CANDIDATO_C_(Joven_29_años)_embedding_512d.npy",
+  "skin_tone_rgb_mean": [
+    111.74,
+    87.29,
+    69.48
+  ],
+  "skin_tone_rgb_std": [
+    84.09,
+    57.46,
+    45.05
+  ],
+  "pore_texture_energy": 16.164,
+  "realism_verdict": "PASS_HYPERREALISTIC",
+  "sha256": "af6bd63de8e30c2b"
+}

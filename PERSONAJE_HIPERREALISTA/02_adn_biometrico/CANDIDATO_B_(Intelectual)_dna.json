@@ -1,0 +1,18 @@
+{
+  "character_id": "CANDIDATO_B_(Intelectual)",
+  "source_image": "/workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/01_semilla_sintetica/CANDIDATO_B_85MM_REALISM.jpg",
+  "embedding_file": "/workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/02_adn_biometrico/CANDIDATO_B_(Intelectual)_embedding_512d.npy",
+  "skin_tone_rgb_mean": [
+    124.2,
+    98.25,
+    81.43
+  ],
+  "skin_tone_rgb_std": [
+    77.55,
+    59.03,
+    51.05
+  ],
+  "pore_texture_energy": 22.662,
+  "realism_verdict": "PASS_HYPERREALISTIC",
+  "sha256": "32ad56e5ce615b55"
+}

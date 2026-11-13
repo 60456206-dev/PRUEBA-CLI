@@ -2,3 +2,6 @@ STANDALONE_TIKTOK_RADAR/
 __pycache__/
 *.pyc
 TIKTOK_RADAR/audio_assets/
+**/node_modules/
+**/_build_nle/
+.remotion/
