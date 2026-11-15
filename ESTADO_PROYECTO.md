@@ -9,8 +9,8 @@ Actualizado: 2026-11-15.
 - **Archivos Generados y Revisados Visualmente**:
   1. **Ilustración de Portada Generada y Revisada Visualmente ([`agro_festivo_cover_1794711247557.jpg`](file:///home/vscode/.gemini/antigravity-cli/brain/ded55869-6c3b-4953-b647-b5e4f1888349/agro_festivo_cover_1794711247557.jpg))**:
      - Revisada visualmente e integrada en el encabezado del `.docx` (`word/media/image1.png`): niños de inicial en el puesto festivo «Agro Festivo» con banderines, semillas clasificadas (quinua, tarwi, habas), sacos de semilla, papas, chuño y balanza de dos platillos sobre fondo blanco limpio, manteniendo la continuidad de estilo con la imagen de referencia.
-  2. **Documento Word Completo ([`PROYECTO DE APRENDIZAJE - AGRO FESTIVO.docx`](file:///workspaces/PRUEBA-CLI/DUDAS/PROYECTO%20DE%20APRENDIZAJE%20-%20AGRO%20FESTIVO.docx))**:
-     - Conserva los colores originales del documento modelo (`#7030A0` en títulos/encabezados, `#851320` en los títulos de cada sesión diaria y `#AD77DB` en las cabeceras de tablas) y desarrolla las **7 sesiones diarias completas** del Lunes 16 al Martes 24 de noviembre.
+  2. **Hoja de Cálculo Google Sheets / Excel y Documento Word Rediseñados ([`PROYECTO_DE_APRENDIZAJE_AGRO_FESTIVO.xlsx`](file:///workspaces/PRUEBA-CLI/DUDAS/PROYECTO_DE_APRENDIZAJE_AGRO_FESTIVO.xlsx), [`PROYECTO DE APRENDIZAJE - AGRO FESTIVO.xlsx`](file:///workspaces/PRUEBA-CLI/DUDAS/PROYECTO%20DE%20APRENDIZAJE%20-%20AGRO%20FESTIVO.xlsx), [`PROYECTO DE APRENDIZAJE - AGRO FESTIVO.docx`](file:///workspaces/PRUEBA-CLI/DUDAS/PROYECTO%20DE%20APRENDIZAJE%20-%20AGRO%20FESTIVO.docx))**:
+     - Rediseñados con encuadre simétrico (10 columnas en `.xlsx` y tablas fijas de `9740 dxa` en `.docx` sin celdas vacías ni guiones), justificación completa en todas las celdas de contenido, situación significativa concisa y consistente, títulos diarios con estilo pedagógico de Educación Inicial y fichas diarias independientes para las **7 sesiones completas** del Lunes 16 al Martes 24 de noviembre.
 
 ## `TIKTOK_RADAR`: Correcciones de Auditoría y Mejoras Integrales en Motores de Generación, Animación, Vídeo y Renderizado · 2026-11-13
 
