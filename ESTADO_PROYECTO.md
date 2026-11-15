@@ -1,6 +1,16 @@
 # Dónde nos quedamos
 
-Actualizado: 2026-11-13.
+Actualizado: 2026-11-15.
+
+## `DUDAS`: Nuevo Proyecto de Aprendizaje Matemático «AGRO FESTIVO» (PRONOEI Huerta Parqui) · 2026-11-15
+
+- **Pacto y Alcance**:
+  - Tomando como plantilla estructural y visual [`PROYECTO DE APRENDIZAJE N° setiembree 24 (3).docx`](file:///workspaces/PRUEBA-CLI/DUDAS/PROYECTO%20DE%20APRENDIZAJE%20N%C2%B0%20setiembree%2024%20(3).docx), se elaboró el nuevo Proyecto de Aprendizaje titulado **«AGRO FESTIVO»** para el **PRONOEI Huerta Parqui** (3, 4 y 5 años, turno mañana, del lunes 16 al martes 24 de noviembre), orientado al área de **Matemática** (*Resuelve problemas de cantidad*: conteo, clasificación y sustracción/resta en base a cantidad concreta).
+- **Archivos Generados y Revisados Visualmente**:
+  1. **Ilustración de Portada Generada y Revisada Visualmente ([`agro_festivo_cover_1794711247557.jpg`](file:///home/vscode/.gemini/antigravity-cli/brain/ded55869-6c3b-4953-b647-b5e4f1888349/agro_festivo_cover_1794711247557.jpg))**:
+     - Revisada visualmente e integrada en el encabezado del `.docx` (`word/media/image1.png`): niños de inicial en el puesto festivo «Agro Festivo» con banderines, semillas clasificadas (quinua, tarwi, habas), sacos de semilla, papas, chuño y balanza de dos platillos sobre fondo blanco limpio, manteniendo la continuidad de estilo con la imagen de referencia.
+  2. **Documento Word Completo ([`PROYECTO DE APRENDIZAJE - AGRO FESTIVO.docx`](file:///workspaces/PRUEBA-CLI/DUDAS/PROYECTO%20DE%20APRENDIZAJE%20-%20AGRO%20FESTIVO.docx))**:
+     - Conserva los colores originales del documento modelo (`#7030A0` en títulos/encabezados, `#851320` en los títulos de cada sesión diaria y `#AD77DB` en las cabeceras de tablas) y desarrolla las **7 sesiones diarias completas** del Lunes 16 al Martes 24 de noviembre.
 
 ## `TIKTOK_RADAR`: Correcciones de Auditoría y Mejoras Integrales en Motores de Generación, Animación, Vídeo y Renderizado · 2026-11-13
 
