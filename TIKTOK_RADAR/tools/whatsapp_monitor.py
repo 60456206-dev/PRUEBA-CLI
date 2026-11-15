@@ -171,64 +171,112 @@ def shutil_which(cmd: str) -> Optional[str]:
     return shutil.which(cmd)
 
 
+def _get_planned_shots_count(delivery_dir: Path) -> int:
+    for fname, key in (
+        ("metadata.json", "shots"),
+        ("metadata.json", "storyboard"),
+        ("PROMPTS_PRODUCCION.json", "planos"),
+    ):
+        fpath = delivery_dir / fname
+        if fpath.exists():
+            try:
+                data = json.loads(fpath.read_text(encoding="utf-8"))
+                items = data.get(key)
+                if isinstance(items, list) and len(items) > 0:
+                    return len(items)
+            except Exception:
+                pass
+    return 13
+
+
+def scan_delivery_state(cur_dir: Path, state: Dict[str, Any], notify: bool = True) -> None:
+    """Actualiza el estado por entrega activa, reiniciando al cambiar de carpeta."""
+    if state.get("active_dir") != cur_dir.name:
+        state["active_dir"] = cur_dir.name
+        state["reported_shots"] = set()
+        state["reported_final"] = False
+
+    reported_shots = state["reported_shots"]
+    total_shots = _get_planned_shots_count(cur_dir)
+
+    shots_dir = cur_dir / "shots"
+    if shots_dir.exists():
+        for shot_file in sorted(shots_dir.glob("SH*.mp4")):
+            shot_id = shot_file.stem
+            if shot_id not in reported_shots and shot_file.stat().st_size > 50_000:
+                reported_shots.add(shot_id)
+                if notify:
+                    size_mb = shot_file.stat().st_size / (1024 * 1024)
+                    msg = (
+                        f"🎬 *Plano {shot_id} Listo*\n"
+                        f"Descargado y verificado ({size_mb:.1f} MB)\n"
+                        f"Avance: {len(reported_shots)}/{total_shots} planos."
+                    )
+                    print(f"[MONITOR] Notificando {shot_id} a WhatsApp...")
+                    send_whatsapp(msg)
+
+    final_mp4 = cur_dir / "NOTICIERO_FINAL_62S.mp4"
+    if final_mp4.exists() and not state["reported_final"] and final_mp4.stat().st_size > 1_000_000:
+        state["reported_final"] = True
+        if notify:
+            print(f"[MONITOR] Notificando y enviando MÁSTER FINAL + PORTADA 9:16 + HASHTAGS para {cur_dir.name}...")
+            send_whatsapp_delivery(cur_dir)
+
+
 def monitor_loop(poll_interval: int = 10) -> None:
     """Escanea el log y la carpeta de entregas para enviar avisos progresivos a WhatsApp."""
     print("Iniciando Monitor de WhatsApp para TikTok Radar...", flush=True)
     send_whatsapp("🤖 *TikTok Radar Monitor Iniciado*\nSupervisando producción autónoma en el servidor AWS...")
 
-    reported_shots = set()
-    reported_final = False
-    last_log_size = 0
+    state: Dict[str, Any] = {
+        "active_dir": None,
+        "reported_shots": set(),
+        "reported_final": False,
+    }
+    first_pass = True
 
     while True:
         try:
-            # 1. Comprobar planos completados en la última carpeta de entrega
-            latest_dirs = sorted(
-                [d for d in ENTREGAS_DIR.iterdir() if d.is_dir() and (d / "metadata.json").exists()],
-                key=lambda x: x.stat().st_mtime,
-                reverse=True,
-            )
-            if latest_dirs:
-                cur_dir = latest_dirs[0]
-                shots_dir = cur_dir / "shots"
-                if shots_dir.exists():
-                    for shot_file in sorted(shots_dir.glob("SH*.mp4")):
-                        shot_id = shot_file.stem
-                        if shot_id not in reported_shots and shot_file.stat().st_size > 50_000:
-                            reported_shots.add(shot_id)
-                            size_mb = shot_file.stat().st_size / (1024 * 1024)
-                            msg = f"🎬 *Plano {shot_id} Listo*\nDescargado y verificado en Flow ({size_mb:.1f} MB)\nAvance: {len(reported_shots)}/13 planos."
-                            print(f"[MONITOR] Notificando {shot_id} a WhatsApp...")
-                            send_whatsapp(msg)
-
-                # 2. Comprobar vídeo final ensamblado
-                final_mp4 = cur_dir / "NOTICIERO_FINAL_62S.mp4"
-                if final_mp4.exists() and not reported_final and final_mp4.stat().st_size > 1_000_000:
-                    reported_final = True
-                    print(f"[MONITOR] Notificando y enviando MÁSTER FINAL + PORTADA 9:16 + HASHTAGS para {cur_dir.name}...")
-                    send_whatsapp_delivery(cur_dir)
-
+            if ENTREGAS_DIR.exists():
+                latest_dirs = sorted(
+                    [d for d in ENTREGAS_DIR.iterdir() if d.is_dir() and (d / "metadata.json").exists()],
+                    key=lambda x: x.stat().st_mtime,
+                    reverse=True,
+                )
+                if latest_dirs:
+                    # En arranque inicial sembramos lo ya existente para no reenviar alertas viejas
+                    scan_delivery_state(latest_dirs[0], state, notify=not first_pass)
+            first_pass = False
         except Exception as e:
             print(f"[MONITOR AVISO] {e}", flush=True)
 
         time.sleep(poll_interval)
 
 
+def parse_webhook_payload(raw_body: str) -> tuple[str, str]:
+    """Extrae (mensaje, remitente) soportando form-urlencoded Twilio (Body/From) y genérico (text/phone)."""
+    parsed = urllib.parse.parse_qs(raw_body or "")
+    incoming_vals = parsed.get("Body") or parsed.get("text") or [""]
+    from_vals = parsed.get("From") or parsed.get("phone") or [""]
+    incoming_msg = str(incoming_vals[0]).strip() if incoming_vals else ""
+    from_number = str(from_vals[0]).strip() if from_vals else ""
+    return incoming_msg, from_number
+
+
 class WhatsAppWebhookHandler(BaseHTTPRequestHandler):
     """Maneja mensajes entrantes de WhatsApp para responder usando agy."""
 
     def do_POST(self):
-        length = int(self.headers.get("Content-Length", 0))
-        body = self.rfile.read(length).decode("utf-8")
-        parsed = urllib.parse.parse_qs(body)
-
-        incoming_msg = parsed.get("Body", [parsed.get("text", [""])])[0].strip()
-        from_number = parsed.get("From", [parsed.get("phone", [""])])[0].strip()
+        try:
+            length = max(0, int(self.headers.get("Content-Length", 0)))
+        except (TypeError, ValueError):
+            length = 0
+        body = self.rfile.read(length).decode("utf-8", errors="replace") if length else ""
+        incoming_msg, from_number = parse_webhook_payload(body)
 
         print(f"[INCOMING WHATSAPP] De {from_number}: '{incoming_msg}'", flush=True)
 
         if incoming_msg:
-            # Consultar a agy con la orden o pregunta recibida
             answer = ask_agy(incoming_msg)
             reply = f"🤖 *Respuesta de Antigravity (AWS):*\n{answer}"
             send_whatsapp(reply)

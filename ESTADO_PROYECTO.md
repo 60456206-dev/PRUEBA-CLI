@@ -2,24 +2,46 @@
 
 Actualizado: 2026-11-13.
 
-## Nuevo Proyecto Activo: `PERSONAJE_HIPERREALISTA` (Identidad Sintética Única + Fotos + Vídeo) · 2026-11-13
+## `TIKTOK_RADAR`: Correcciones de Auditoría y Mejoras Integrales en Motores de Generación, Animación, Vídeo y Renderizado · 2026-11-13
+
+- **Pacto y Alcance**:
+  - Aplicadas y verificadas todas las correcciones de auditoría pendientes y la batería completa de mejoras en Remotion React, inyección de contexto real de noticia, subtítulos palabra/oración, masterización EBU R128 de 2 pasadas, caché modular NLE y resiliencia de Flow/Portada.
+  - **Pendiente diferido por el usuario**: la sincronización y despliegue hacia `STANDALONE_TIKTOK_RADAR` / AWS (`tiktok_remote`) queda aplazada hasta nueva orden. La ejecución en vivo contra Google Flow y WhatsApp Web real se mantiene pendiente de prueba en el entorno AWS/browser con sesión iniciada.
+
+- **Archivos Modificados, Generados y Estado de Verificación**:
+  1. **Motor Remotion y Renderizado por Lotes ([`TIKTOK_RADAR/motion_engine/render_batch.mjs`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/motion_engine/render_batch.mjs), [`remotion_renderer.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/remotion_renderer.py), [`Root.tsx`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/motion_engine/src/Root.tsx), [`ChiaroscuroBackground.tsx`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/motion_engine/src/components/ChiaroscuroBackground.tsx), [`VeritasiumStatComparison.tsx`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/motion_engine/src/VeritasiumStatComparison.tsx), [`VeritasiumAltimeter.tsx`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/motion_engine/src/VeritasiumAltimeter.tsx), [`VeritasiumTechChip.tsx`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/motion_engine/src/VeritasiumTechChip.tsx), [`VeritasiumCyberRadar.tsx`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/motion_engine/src/VeritasiumCyberRadar.tsx), [`VeritasiumBlueprint.tsx`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/motion_engine/src/VeritasiumBlueprint.tsx), [`VeritasiumDocumentaryOutro.tsx`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/motion_engine/src/VeritasiumDocumentaryOutro.tsx))**:
+     - Tipografía `Montserrat` empaquetada localmente en [`TIKTOK_RADAR/motion_engine/public/fonts/`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/motion_engine/public/fonts/) (`@font-face` via `staticFile()`), márgenes seguros unificados (`padding: "110px 40px 150px"`) sin solape con el rótulo superior ni con subtítulos CapCut, soporte multi-tema + trayectoria SVG animada en `VeritasiumStatComparison`, mapeo de géneros sin falsos positivos (`_resolve_genre_theme`), desambiguación `SH03` -> `VeritasiumBlueprint` y defaults honestos sin cifras inventadas.
+     - Worker `render_batch.mjs` (`@remotion/bundler` + `@remotion/renderer`) con caché Webpack en `TIKTOK_RADAR/motion_engine/.remotion_bundle` y un único navegador Chromium para renderizar las 5 escenas en lote a `crf=14`. **Verificado en E2E** y con `./node_modules/.bin/remotion compositions src/index.ts`.
+  2. **Inyección de Métricas Reales, Audio Monetizable y Subtítulos Sincronizados ([`pipeline_autonomo.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/pipeline_autonomo.py), [`audio_generator.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/audio_generator.py), [`flow_generator.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/flow_generator.py))**:
+     - `extract_story_metrics` extrae titular/fuente, códigos de vuelo reales (filtrando falsos positivos como `"EN 1971"`), altitudes (`ft`), nodos (`nm`), `CVE-*` y anclas cuantitativas; `narrative_excerpt` truncado por límites de palabra completos; `synthesize_voiceover` garantiza `>= 61.1s` (`max(0.89, dur / 61.6)` + `apad`); `edge_tts` captura `WordBoundary` (`WORD_BOUNDARIES.json`) + hook opcional `faster_whisper` y reescalado conjunto en `_rescale_sentence_boundaries`; `select_prompt_for_attempt` e import protegido de Playwright en `flow_generator.py`.
+  3. **Ensamblador NLE, Portada Limpia, QC Guard y Monitoreo ([`ensamblador_final.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/ensamblador_final.py), [`generador_portada.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/generador_portada.py), [`ejecutar_todo.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/ejecutar_todo.py), [`whatsapp_monitor.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/whatsapp_monitor.py), [`bot.js`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/whatsapp_bot/bot.js))**:
+     - `generate_kinetic_ass` prioriza `WORD_BOUNDARIES.json` -> `SENTENCE_BOUNDARIES.json` (ponderado por puntuación) -> `silencedetect`, usa `pysubs2.Alignment` y sustituye glifos sin soporte en Montserrat (`🔴`/`📡` -> `•`).
+     - `_render_two_pass_loudnorm` ejecuta EBU R128 de 2 pasadas (`linear=true`, `-14.0 LUFS` / `-1.0 dBTP`); intermedios HUD optimizados (`crf 15`, grano sutil `alls=2`), acreditación con `fade` (`0.30s` in / `0.35s` out), y caché modular completo en `_build_nle/` (sin mutar `meta["shots"]` en disco).
+     - `generador_portada.py` omite `pollinations.ai` anónimo con marca de agua salvo `POLLINATIONS_API_KEY`; `ejecutar_todo.py` bloquea envíos a WhatsApp cuando el QC marca `FAIL` (`_read_qc_summary`, `_dispatch_whatsapp_outcome`).
+  4. **Suite de Tests y Verificación E2E Aislada ([`TIKTOK_RADAR/tests/test_pipeline_tools.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tests/test_pipeline_tools.py))**:
+     - **Tests unitarios y JS**: `26/26` tests Python (`unittest`), `7/7` tests en `test_bot_helpers.test.js`, `6/6` tests en `npm --prefix pulso test`, `py_compile` y `node --check` superados sin errores.
+     - **Prueba E2E aislada (`G4_ESPACIO_CIENCIA`, `--skip-flow` en `/tmp/test_e2e_entregas/2026-11-13_ESPACIO`)**:
+       - Generado máster `1080x1920 @ 24fps`, `61.33s`, `32.64 MB` (`4463.9 kbps`), `-14.0 LUFS` / `-1.0 dBTP`, `0` congelados / `0` negros / `0` silencios, veredicto `WARN` (`Score: 100/100`, `errors: []`, advertencia esperada por 8 planos Flow ausentes en modo `--skip-flow`).
+       - Segunda ejecución idéntica reutilizó todo el caché (`norm_SH*`, `xfade`, `audio_master`, máster final, portada y QC) en `8.97s` frente a `462.62s` de la primera pasada.
+       - **Revisados visualmente** [`PORTADA_TIKTOK_916.jpg`](file:///tmp/test_e2e_entregas/2026-11-13_ESPACIO/PORTADA_TIKTOK_916.jpg), [`CONTACT_SHEET_QC.jpg`](file:///tmp/test_e2e_entregas/2026-11-13_ESPACIO/CONTACT_SHEET_QC.jpg) y frame SH01: portada limpia sin marcas de agua, Montserrat nítida, bullets `•` sin cajas vacías y subtítulos fuera del área de tarjetas.
+
+## Nuevo Proyecto Activo: `PERSONAJE_HIPERREALISTA` (Candidato C Oficializado + Motor Genjutsu Live-Action) · 2026-11-13
 
 - **Pacto e Instrucción Directa del Usuario**:
-  - Iniciar un nuevo proyecto para crear **un único personaje sintético hiperrealista** inspirado en *This Person Does Not Exist* (0% persona real), con la **Opción C** (identidad base + fotografías multi-escena + motor de vídeo hablado).
-  - Perfil definido por el usuario: **Hombre de 28 a 35 años, rasgos latinos, divulgador científico con toque humorístico/carismático**, aspecto 100% humano real (sin piel plástica de IA).
+  - **Candidato C Aceptado y Oficializado**: El usuario eligió oficialmente al **Candidato C** (29 años, rasgos latinos, divulgador científico carismático/humorístico, cero canas) como identidad única del proyecto.
+  - **Objetivo Técnico Actual**: Resolver la preservación del hiperrealismo (poros, barba de 2 días, identidad facial) al pasar a vídeo con habla, movimiento de manos y efectos visuales estilo **Genjutsu Live-Action**.
 
-- **Archivos Generados y Revisados Visualmente**:
-  1. **Motor Óptico y Biométrico ([`motor_personaje.py`](file:///workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/tools/motor_personaje.py))**:
-     - Integra realce de micro-contraste de poros en tonos medios, dispersión cromática periférica sub-píxel de lente 85mm f/1.8, grano fotónico CMOS correlacionado en luminancia (inspirado en Sony AI & UTokyo DisCO) y extractor de firma biométrica de 512 dimensiones (`02_adn_biometrico/*.npy`).
-  2. **Candidatos "Semilla 0" Generados y Auditados con Lupa Macro 250%**:
-     - **Generados y Revisados** (pendientes de aceptación del usuario):
-       - [`CANDIDATO_A_85MM_REALISM.jpg`](file:///workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/01_semilla_sintetica/CANDIDATO_A_85MM_REALISM.jpg): Mirada frontal carismática, media sonrisa irónica, dos lunares naturales en el pómulo derecho, barba de 3 días (nota de revisión visual: presenta leves canas en el mentón que lo acercan a los ~35 años; energía textural de poros: `16.63 PASS`).
-       - [`CANDIDATO_B_85MM_REALISM.jpg`](file:///workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/01_semilla_sintetica/CANDIDATO_B_85MM_REALISM.jpg): Con lentes mate modernos, ceja arqueada con gesto de humor inteligente, fondo de biblioteca/estudio (nota de revisión visual: ~35 años por leves canas en barba; energía textural de poros: `22.662 PASS`).
-       - [`CANDIDATO_C_85MM_REALISM.jpg`](file:///workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/01_semilla_sintetica/CANDIDATO_C_85MM_REALISM.jpg): **29 años exactos**, cero canas, barba corta oscura de 2 días, expresión pícara/humorística con cejas arqueadas y mirada lateral en estudio con bokeh cálido (energía textural de poros: `16.164 PASS`).
-       - Tablero comparativo con lupa macro 250%: [`CASTING_BOARD_SEMILLA_0.jpg`](file:///workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/01_semilla_sintetica/CASTING_BOARD_SEMILLA_0.jpg).
-
-- **Decisión Pendiente**:
-  - Que el usuario elija cuál de los 3 candidatos (`A`, `B` o `C`, o una variante) oficializamos como **"Semilla 0"** para bloquear su ADN biométrico y generar su Hoja de Personaje Multi-Ángulo (`03_character_sheet`).
+- **Archivos Oficializados, Generados y Revisados Visualmente**:
+  1. **Identidad Oficial Aceptada ([`PERSONAJE_OFICIAL_SEMILLA_0.jpg`](file:///workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/01_semilla_sintetica/PERSONAJE_OFICIAL_SEMILLA_0.jpg))**:
+     - Firmada biométricamente en [`PERSONAJE_OFICIAL_MASTER_dna.json`](file:///workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/02_adn_biometrico/PERSONAJE_OFICIAL_MASTER_dna.json) (`Poros: 16.16 PASS`).
+     - Eliminados los candidatos descartados (`CANDIDATO_A*` y `CANDIDATO_B*`).
+  2. **Keyframes Anclados 9:16 y Hoja de Continuidad (Generados y Revisados Visualmente)**:
+     - [`KF1_FRONTAL_HABLANDO_85MM.jpg`](file:///workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/03_character_sheet/KF1_FRONTAL_HABLANDO_85MM.jpg): Candidato C mirando de frente a cámara, hablando y gesticulando con la mano en el pecho en el mismo estudio (`Poros: 17.55 PASS`).
+     - [`KF2_GENJUTSU_LIVEACTION_85MM.jpg`](file:///workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/03_character_sheet/KF2_GENJUTSU_LIVEACTION_85MM.jpg): El mismo plano exacto con transición a Genjutsu Live-Action (luz eclipse carmesí, plumas negras de cuervo en el bokeh de lente 85mm y reflejo anular carmesí en el iris, manteniendo el 100% de poros reales en piel y mano; `Poros: 13.21 PASS`).
+     - [`HOJA_CONTINUIDAD_GENJUTSU.jpg`](file:///workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/03_character_sheet/HOJA_CONTINUIDAD_GENJUTSU.jpg): Comparativa triple de continuidad biométrica y textural.
+  3. **Motor y Vídeo Demostrativo Genjutsu ([`genjutsu_video_engine.py`](file:///workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/tools/genjutsu_video_engine.py) y [`DEMO_GENJUTSU_HIPERREALISTA_CRF16.mp4`](file:///workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/04_motor_video_voz/DEMO_GENJUTSU_HIPERREALISTA_CRF16.mp4))**:
+     - Renderizado en **1080×1920 (9:16) @ 24 fps exactos, 6.0s, H.264 High Profile CRF 16** con empuje óptico lento, fractura cromática radial y grano temporal CMOS.
+     - **Recomendación de evaluación sobre el vídeo**: **Conservar como base de estilo VFX** para las transiciones Genjutsu y conectarlo con un motor Image-to-Video + Lip-Sync (`LivePortrait` / `Hallo2` / `Veo 3.1 First-Last-Frame`) cuando se le inyecte locución completa.
 
 ## Suite Remotion Broadcast 100/100 QC: 6 Composiciones Veritasium, Push-In Anti-Freeze y Pipeline NLE Completo · 2026-11-12
 

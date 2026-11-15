@@ -1,0 +1,18 @@
+{
+  "character_id": "OFICIAL_C_STAGE_2",
+  "source_image": "/workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/03_character_sheet/KF1_FRONTAL_HABLANDO_85MM.jpg",
+  "embedding_file": "/workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/02_adn_biometrico/OFICIAL_C_STAGE_2_embedding_512d.npy",
+  "skin_tone_rgb_mean": [
+    97.73,
+    77.18,
+    64.02
+  ],
+  "skin_tone_rgb_std": [
+    84.57,
+    56.41,
+    43.31
+  ],
+  "pore_texture_energy": 17.545,
+  "realism_verdict": "PASS_HYPERREALISTIC",
+  "sha256": "bd8a1f9f980ef52e"
+}

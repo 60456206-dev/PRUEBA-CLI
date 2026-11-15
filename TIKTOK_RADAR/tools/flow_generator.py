@@ -24,15 +24,32 @@ import sys
 import time
 import urllib.request
 from pathlib import Path
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List, Optional, Tuple
 
-from playwright.async_api import async_playwright, Page, BrowserContext
+try:
+    from playwright.async_api import async_playwright, Page, BrowserContext
+except ImportError:
+    async_playwright = None  # type: ignore
+    Page = Any  # type: ignore
+    BrowserContext = Any  # type: ignore
+
+def _resolve_flow_profile_dir() -> Path:
+    env_dir = os.getenv("FLOW_PROFILE_DIR")
+    if env_dir:
+        return Path(os.path.expanduser(env_dir))
+    primary = Path(os.path.expanduser("~/flow-profile"))
+    legacy = Path(os.path.expanduser("~/flow-chrome-profile"))
+    if not primary.exists() and legacy.exists():
+        return legacy
+    return primary
+
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 ENTREGAS_DIR = ROOT_DIR / "entregas"
-PROFILE_DIR = Path(os.path.expanduser("~/flow-profile"))
+PROFILE_DIR = _resolve_flow_profile_dir()
 FLOW_URL = "https://labs.google/fx/es/tools/flow"
 ACTIVE_VIDEO_MODEL = "Omni 1.1 Flash"
+QUOTA_EXHAUSTED_ALL_MODELS = False
 
 
 def log(msg: str) -> None:
@@ -375,14 +392,18 @@ async def download_completed_tile(
         await dl_item.click(timeout=4000)
         await asyncio.sleep(1.0)
 
+        res_target = None
+        for res_label in ("720p", "1080p"):
+            cand = page.locator('[role="menuitem"]').filter(has_text=res_label).first
+            if await cand.count() > 0 and await cand.is_visible():
+                res_target = cand
+                break
+
+        if res_target is None:
+            raise RuntimeError("No apareció opción de resolución 720p/1080p en el menú de descarga.")
+
         async with page.expect_download(timeout=45000) as dl_info:
-            res_item = page.locator('[role="menuitem"]').filter(has_text="720p").first
-            if await res_item.count() > 0 and await res_item.is_visible():
-                await res_item.click()
-            else:
-                res_1080 = page.locator('[role="menuitem"]').filter(has_text="1080p").first
-                if await res_1080.count() > 0 and await res_1080.is_visible():
-                    await res_1080.click()
+            await res_target.click()
 
         download = await dl_info.value
         await download.save_as(str(output_path))
@@ -417,6 +438,23 @@ async def download_completed_tile(
     return False
 
 
+def select_prompt_for_attempt(shot: Dict[str, Any], attempt: int, use_fallback: bool) -> Tuple[str, bool]:
+    """
+    Elige el prompt de generación para este intento y normaliza la conmutación automática a
+    `fallback_prompt` tras un fallo previo o a partir del intento >= 2.
+    """
+    primary = (shot.get("prompt") or "").strip()
+    fallback = (shot.get("fallback_prompt") or "").strip()
+    action = (shot.get("action") or "").strip()
+
+    should_fallback = bool(use_fallback or attempt >= 3)
+    if should_fallback and fallback and fallback != primary:
+        return fallback, True
+    if should_fallback and action:
+        return f"Vertical 9:16, cinematic scientific documentary visual, dramatic studio chiaroscuro lighting, {action}", True
+    return primary or fallback, False
+
+
 async def generate_single_shot(
     page: Page,
     shot: Dict[str, Any],
@@ -425,21 +463,25 @@ async def generate_single_shot(
     max_attempts: int = 3,
 ) -> bool:
     """
-    Gestiona el ciclo completo de un plano con reintentos, cambio automático a
-    fallback_prompt si hay bloqueo de políticas y recarga limpia ante cuelgues.
+    Gestiona el ciclo completo de un plano con reintentos, conservación del prompt
+    principal al cambiar por límite de cuota y cambio a fallback_prompt ante bloqueo o reintento.
     """
+    global ACTIVE_VIDEO_MODEL, QUOTA_EXHAUSTED_ALL_MODELS
+    if QUOTA_EXHAUSTED_ALL_MODELS:
+        return False
+
     shot_id = shot["id"]
-    primary_prompt = shot["prompt"]
-    fallback_prompt = shot.get("fallback_prompt", primary_prompt)
+    use_fallback_prompt = False
 
     for attempt in range(1, max_attempts + 1):
-        use_prompt = primary_prompt if attempt == 1 else fallback_prompt
-        mode_label = "PRINCIPAL" if attempt == 1 else f"FALLBACK ANTI-BLOQUEO (Intento {attempt}/{max_attempts})"
+        use_prompt, is_fallback_mode = select_prompt_for_attempt(shot, attempt, use_fallback_prompt)
+        mode_label = f"FALLBACK ANTI-BLOQUEO (Intento {attempt}/{max_attempts})" if is_fallback_mode else f"PRINCIPAL [{ACTIVE_VIDEO_MODEL}] (Intento {attempt}/{max_attempts})"
         log(f"=== Generando {shot_id} [{mode_label}] ===")
 
-        # Contar tiles listos antes de enviar
+        # Capturar firmas previas de tiles antes de enviar para identificar el tile NUEVO exacto
         before_states = await get_tile_states(page)
         before_count = len(before_states)
+        before_signatures = {(s.get("videoSrc", ""), s.get("preview", "")) for s in before_states}
         captured_urls.clear()
 
         ok_submit = await submit_prompt_to_flow(page, use_prompt)
@@ -457,6 +499,7 @@ async def generate_single_shot(
         start_t = time.time()
         target_ready_idx: Optional[int] = None
         policy_failed = False
+        switched_by_quota = False
         has_started_generating = False
 
         while time.time() - start_t < 240:
@@ -464,14 +507,17 @@ async def generate_single_shot(
             await auto_approve_if_prompted(page)
             states = await get_tile_states(page)
 
+            new_or_changed = [
+                t for t in states
+                if (t.get("videoSrc", ""), t.get("preview", "")) not in before_signatures
+            ]
             generating_tiles = [t for t in states if t["isGenerating"]]
-            error_tiles = [t for t in states[:2] if t["isError"]]
+            error_tiles = [t for t in new_or_changed if t["isError"]]
 
-            # Detección proactiva de cuota agotada o mensajes de actividad inusual en el chat
-            global ACTIVE_VIDEO_MODEL
+            # Detección proactiva de cuota agotada o actividad inusual
             chat_status = await page.evaluate("""() => {
                 const bodyText = (document.body ? document.body.innerText : '').toLowerCase();
-                if (bodyText.includes('quota limit') || bodyText.includes('daily quota') || 
+                if (bodyText.includes('quota limit') || bodyText.includes('daily quota') ||
                     bodyText.includes('reached your daily') || bodyText.includes('alternative like veo') ||
                     bodyText.includes('switch to another model, such as veo')) {
                     return 'quota_limit';
@@ -482,12 +528,18 @@ async def generate_single_shot(
                 return null;
             }""")
 
-            if chat_status == 'quota_limit' and ACTIVE_VIDEO_MODEL != "Veo 3.1 - Lite":
-                log(f"⚠️ Detectado límite de cuota diaria en Omni 1.1 Flash. Conmutando modelo activo a Veo 3.1 - Lite...")
-                ACTIVE_VIDEO_MODEL = "Veo 3.1 - Lite"
-                break
+            if chat_status == 'quota_limit':
+                if ACTIVE_VIDEO_MODEL != "Veo 3.1 - Lite":
+                    log("⚠️ Límite de cuota diaria en Omni 1.1 Flash. Cambiando a Veo 3.1 - Lite (conservando prompt principal)...")
+                    ACTIVE_VIDEO_MODEL = "Veo 3.1 - Lite"
+                    switched_by_quota = True
+                    break
+                else:
+                    log("❌ Cuota diaria agotada también en Veo 3.1 - Lite. Abortando generación Flow restante.")
+                    QUOTA_EXHAUSTED_ALL_MODELS = True
+                    return False
             elif chat_status == 'unusual_activity':
-                log("⚠️ Advertencia de actividad inusual detectada en Flow. Pulsando Reintentar y aplicando espera preventiva...")
+                log("⚠️ Advertencia de actividad inusual detectada en Flow. Pulsando Reintentar...")
                 await page.evaluate("""() => {
                     for (const b of document.querySelectorAll('button')) {
                         if ((b.innerText||'').toLowerCase().includes('reintentar')) b.click();
@@ -496,32 +548,43 @@ async def generate_single_shot(
                 await asyncio.sleep(5)
 
             if error_tiles and not generating_tiles:
-                log(f"⚠️ Detectado error/bloqueo en tile de Flow para {shot_id}: {error_tiles[0]['preview']}")
+                log(f"⚠️ Detectado error/bloqueo en tile nuevo de Flow para {shot_id}: {error_tiles[0]['preview']}")
                 policy_failed = True
                 break
 
-            if generating_tiles or len(states) > before_count:
+            if generating_tiles or len(states) > before_count or new_or_changed:
                 has_started_generating = True
 
-            # Un tile generado solo se considera listo si es estrictamente NUEVO
-            # (el conteo aumentó a > before_count) y ya no está en progreso
-            if len(states) > before_count:
-                if states[0]["isReady"] and not states[0]["isGenerating"]:
-                    target_ready_idx = 0
-                    break
+            # Identificar el tile NUEVO/ACTUALIZADO que ya terminó de renderizar
+            ready_candidates = [
+                t for t in new_or_changed
+                if t["isReady"] and not t["isGenerating"] and not t["isError"]
+            ]
+            if ready_candidates:
+                target_ready_idx = ready_candidates[0]["idx"]
+                break
 
             elapsed = int(time.time() - start_t)
             if generating_tiles:
                 if elapsed % 12 == 0:
                     log(f"   {shot_id} renderizando en Google Flow ({elapsed}s)... {generating_tiles[0]['preview'][:60]}")
             elif not has_started_generating and elapsed > 45:
-                # Si pasaron >45s y jamás se detectó un nuevo tile ni estado de generación,
-                # el envío falló o fue ignorado. NUNCA tomar tile 0 viejo.
-                log(f"⚠️ {shot_id}: No se detectó inicio de renderizado en Flow tras {elapsed}s (posible bloqueo o prompt no enviado).")
+                log(f"⚠️ {shot_id}: No se detectó inicio de renderizado en Flow tras {elapsed}s.")
+                policy_failed = True
                 break
 
+        if switched_by_quota:
+            try:
+                await page.reload(wait_until="domcontentloaded", timeout=35000)
+                await asyncio.sleep(4)
+                await ensure_inside_flow_project(page)
+            except Exception:
+                pass
+            continue
+
         if policy_failed or target_ready_idx is None:
-            log(f"No se obtuvo clip válido en intento {attempt} para {shot_id}. Aplicando auto-curación...")
+            use_fallback_prompt = True
+            log(f"No se obtuvo clip válido en intento {attempt} para {shot_id}. Cambiando a fallback_prompt...")
             try:
                 await page.reload(wait_until="domcontentloaded", timeout=35000)
                 await asyncio.sleep(5)
@@ -530,9 +593,10 @@ async def generate_single_shot(
                 pass
             continue
 
-        # Descargar el tile completado
+        # Descargar el tile completado exacto
         if await download_completed_tile(page, target_ready_idx, output_path, captured_urls):
             return True
+        use_fallback_prompt = True
 
     return False
 
@@ -552,12 +616,12 @@ async def run_flow_generator(delivery_dir: Path, max_shots: int = 13) -> bool:
 
     # Comprobar qué planos faltan por generar (Checkpointing)
     pending_shots = []
-    flow_shots = [s for s in shots if s.get("render_mode") != "infographic"]
+    flow_shots = [s for s in shots if s.get("render_mode") not in ("infographic", "remotion")]
     infographic_count = len(shots) - len(flow_shots)
 
     for s in shots:
-        if s.get("render_mode") == "infographic":
-            log(f"⚡ [MODO HÍBRIDO] Omitiendo {s['id']} en Google Flow (se sintetiza en FFmpeg Vector HUD sin costo de créditos).")
+        if s.get("render_mode") in ("infographic", "remotion"):
+            log(f"⚡ [MODO HÍBRIDO] Omitiendo {s['id']} en Google Flow (se sintetiza en Remotion / Vector HUD sin costo de créditos).")
             continue
         out_mp4 = shots_dir / f"{s['id']}.mp4"
         if verify_mp4(out_mp4):
@@ -566,32 +630,74 @@ async def run_flow_generator(delivery_dir: Path, max_shots: int = 13) -> bool:
             pending_shots.append(s)
 
     if not pending_shots:
-        log(f"🎉 Todos los planos cinematográficos ({len(flow_shots)}/{len(flow_shots)}) ya están listos (+ {infographic_count} infográficos FFmpeg).")
+        log(f"🎉 Todos los planos cinematográficos ({len(flow_shots)}/{len(flow_shots)}) ya están listos (+ {infographic_count} infográficos).")
         return True
 
-    if not PROFILE_DIR.exists():
-        log(f"[ERROR] No existe el perfil {PROFILE_DIR}. Inicia sesión primero.")
+    cdp_url = os.getenv("FLOW_CDP_URL", "http://127.0.0.1:9222")
+    cdp_available = False
+    try:
+        def _probe_cdp() -> bool:
+            with urllib.request.urlopen(f"{cdp_url}/json/version", timeout=1.5) as resp:
+                return resp.status == 200
+        cdp_available = await asyncio.to_thread(_probe_cdp)
+    except Exception:
+        cdp_available = False
+
+    if not cdp_available and not PROFILE_DIR.exists():
+        log(f"[ERROR] No existe el perfil {PROFILE_DIR} ni Chrome CDP en {cdp_url}. Inicia sesión primero con ~/iniciar_flow_chrome.sh.")
         return False
 
-    clean_stale_chrome_locks(PROFILE_DIR)
-
-    log(f"Iniciando navegador autónomo con perfil {PROFILE_DIR} ({len(pending_shots)} planos pendientes)...")
+    if not cdp_available:
+        clean_stale_chrome_locks(PROFILE_DIR)
+        log(f"Iniciando navegador autónomo con perfil {PROFILE_DIR} ({len(pending_shots)} planos pendientes)...")
+    else:
+        log(f"CDP detectado en {cdp_url}; conectando a sesión abierta ({len(pending_shots)} planos pendientes)...")
     captured_urls: List[str] = []
 
+    chrome_exec = None
+    for cand in ("/usr/bin/google-chrome", "/usr/bin/chromium", "/usr/bin/chromium-browser"):
+        if os.path.exists(cand):
+            chrome_exec = cand
+            break
+
+    if async_playwright is None:
+        log("[ERROR CRÍTICO] Falta instalar 'playwright' (pip install playwright) para automatizar Google Flow.")
+        return False
+
     async with async_playwright() as p:
-        context: BrowserContext = await p.chromium.launch_persistent_context(
-            user_data_dir=str(PROFILE_DIR),
-            channel="chrome",
-            headless=True,
-            accept_downloads=True,
-            viewport={"width": 1440, "height": 900},
-            args=[
-                "--disable-gpu",
-                "--no-sandbox",
-                "--disable-dev-shm-usage",
-                "--disable-blink-features=AutomationControlled",
-            ],
-        )
+        cdp_browser = None
+        if cdp_available:
+            try:
+                cdp_browser = await p.chromium.connect_over_cdp(cdp_url)
+                log(f"Conectado a sesión Chrome CDP existente en {cdp_url}.")
+            except Exception:
+                cdp_browser = None
+
+        created_cdp_page = False
+        if cdp_browser is not None:
+            context = cdp_browser.contexts[0] if cdp_browser.contexts else await cdp_browser.new_context(accept_downloads=True)
+        else:
+            if not PROFILE_DIR.exists():
+                log(f"[ERROR] No existe el perfil {PROFILE_DIR}. Inicia sesión primero con ~/iniciar_flow_chrome.sh.")
+                return False
+            clean_stale_chrome_locks(PROFILE_DIR)
+            launch_kwargs: Dict[str, Any] = {
+                "user_data_dir": str(PROFILE_DIR),
+                "headless": True,
+                "accept_downloads": True,
+                "viewport": {"width": 1440, "height": 900},
+                "args": [
+                    "--disable-gpu",
+                    "--no-sandbox",
+                    "--disable-dev-shm-usage",
+                    "--disable-blink-features=AutomationControlled",
+                ],
+            }
+            if chrome_exec == "/usr/bin/google-chrome":
+                launch_kwargs["channel"] = "chrome"
+            elif chrome_exec:
+                launch_kwargs["executable_path"] = chrome_exec
+            context = await p.chromium.launch_persistent_context(**launch_kwargs)
 
         await context.add_init_script("""
             Object.defineProperty(navigator, 'webdriver', {
@@ -605,7 +711,11 @@ async def run_flow_generator(delivery_dir: Path, max_shots: int = 13) -> bool:
             };
         """)
 
-        page = context.pages[0] if context.pages else await context.new_page()
+        if cdp_browser is not None:
+            page = await context.new_page()
+            created_cdp_page = True
+        else:
+            page = context.pages[0] if context.pages else await context.new_page()
 
         # Interceptar URLs de vídeo de Google Flow como respaldo automático
         def on_response(response):
@@ -624,13 +734,11 @@ async def run_flow_generator(delivery_dir: Path, max_shots: int = 13) -> bool:
 
             if "accounts.google.com" in page.url or "sign in" in (await page.title()).lower():
                 log("[ERROR CRÍTICO] La sesión de Google expiró. Vuelve a iniciar sesión en ~/flow-profile.")
-                await context.close()
                 return False
 
             if not await ensure_inside_flow_project(page):
                 log("[ERROR] No se pudo acceder al editor de proyectos de Flow.")
                 await page.screenshot(path=str(delivery_dir / "flow_error_debug.png"))
-                await context.close()
                 return False
 
             await configure_vertical_9_16(page)
@@ -655,10 +763,20 @@ async def run_flow_generator(delivery_dir: Path, max_shots: int = 13) -> bool:
                     log(f"✅ {s['id']} completado y verificado.")
 
         finally:
-            await context.close()
+            if cdp_browser is not None:
+                if created_cdp_page:
+                    try:
+                        await page.close()
+                    except Exception:
+                        pass
+            else:
+                try:
+                    await context.close()
+                except Exception:
+                    pass
 
     completed_flow = sum(1 for s in flow_shots if verify_mp4(shots_dir / f"{s['id']}.mp4"))
-    log(f"Resumen de lote Flow Híbrido: {completed_flow}/{len(flow_shots)} planos cinematográficos listos (+ {infographic_count} infográficos FFmpeg).")
+    log(f"Resumen de lote Flow Híbrido: {completed_flow}/{len(flow_shots)} planos cinematográficos listos (+ {infographic_count} infográficos Remotion/HUD).")
     return completed_flow == len(flow_shots)
 
 

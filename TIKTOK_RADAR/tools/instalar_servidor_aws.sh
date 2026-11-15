@@ -20,8 +20,14 @@ else
     echo "Google Chrome ya estaba instalado."
 fi
 
-echo "=== [3/6] Instalando dependencias de Python (Edge-TTS, Playwright) ==="
-pip install --break-system-packages edge-tts playwright aiohttp
+echo "=== [3/6] Instalando dependencias de Python (requirements.txt + Playwright) ==="
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REQ_FILE="$SCRIPT_DIR/../requirements.txt"
+if [ -f "$REQ_FILE" ]; then
+    pip install --break-system-packages -r "$REQ_FILE"
+else
+    pip install --break-system-packages edge-tts playwright aiohttp pysubs2 Pillow auto-editor
+fi
 playwright install --with-deps || true
 
 echo "=== [4/6] Configurando entorno de escritorio ligero y RDP para acceso remoto ==="
@@ -31,16 +37,16 @@ sudo systemctl enable xrdp
 sudo systemctl restart xrdp
 
 echo "=== [5/6] Creando lanzador de Google Chrome persistente para Flow ==="
-mkdir -p ~/flow-chrome-profile
+mkdir -p ~/flow-profile
 cat << 'EOF' > ~/iniciar_flow_chrome.sh
 #!/usr/bin/env bash
-# Abre Chrome con tu perfil persistente y el puerto CDP 9222 activo para Playwright
+# Abre Chrome con tu perfil persistente (~/flow-profile) y el puerto CDP 9222 activo
 google-chrome \
-  --user-data-dir=$HOME/flow-chrome-profile \
+  --user-data-dir="$HOME/flow-profile" \
   --remote-debugging-port=9222 \
   --no-first-run \
   --no-default-browser-check \
-  "https://labs.google/flow" &
+  "https://labs.google/fx/es/tools/flow" &
 EOF
 chmod +x ~/iniciar_flow_chrome.sh
 

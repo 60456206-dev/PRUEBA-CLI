@@ -22,17 +22,31 @@ const path = require('path');
 const os = require('os');
 const { exec, spawn, execSync } = require('child_process');
 
+const {
+  BoundedIdSet,
+  resolveWorkspaceDir,
+  resolveChromePath,
+  authorizeMessage,
+  parseGenerateCommand,
+} = require('./bot_helpers');
+
 const PORT = process.env.PORT || 5050;
 const AUTH_DIR = path.join(os.homedir(), '.wwebjs_auth');
 const OWNER_FILE = path.join(os.homedir(), '.whatsapp_owner.json');
 const QR_FILE = path.join(__dirname, 'qr_ascii.txt');
-const WORKSPACE_DIR = path.join(os.homedir(), 'TIKTOK-NEWS');
+const WORKSPACE_DIR = resolveWorkspaceDir(__dirname);
 const AGY_BIN = path.join(os.homedir(), '.local/bin/agy');
 
 let isReady = false;
 let currentQR = null;
 let ownerWid = null;
 let botWid = null;
+let botLid = null;
+let activeProductionChild = null;
+const sentMessageIds = new BoundedIdSet(500);
+const processedMsgIds = new BoundedIdSet(500);
+const agyQueue = [];
+let agyRunning = false;
 
 // Cargar número de dueño si ya estaba guardado
 function loadOwner() {
@@ -45,6 +59,17 @@ function loadOwner() {
 }
 loadOwner();
 
+function isProductionProcessRunning() {
+  if (activeProductionChild && activeProductionChild.exitCode === null && !activeProductionChild.killed) {
+    return Promise.resolve(true);
+  }
+  return new Promise((resolve) => {
+    exec('ps aux | grep -E "ejecutar_todo\\.py|pipeline_autonomo\\.py|flow_generator\\.py|ensamblador_final\\.py" | grep -v grep', (err, stdout) => {
+      resolve(Boolean(stdout && stdout.trim()));
+    });
+  });
+}
+
 // -----------------------------------------------------------------------------
 // Funciones de Inspección del Proyecto y Servidor
 // -----------------------------------------------------------------------------
@@ -54,14 +79,15 @@ function findLatestVideo() {
   if (!fs.existsSync(entregasDir)) return null;
 
   let candidates = [];
-  function walk(dir) {
+  function walk(dir, depth = 0) {
     try {
       const items = fs.readdirSync(dir);
       for (const item of items) {
+        if (item === '_build_nle' || item === 'shots' || item.startsWith('.')) continue;
         const full = path.join(dir, item);
         const stat = fs.statSync(full);
-        if (stat.isDirectory()) {
-          walk(full);
+        if (stat.isDirectory() && depth < 2) {
+          walk(full, depth + 1);
         } else if (item.endsWith('.mp4')) {
           candidates.push({ path: full, size: stat.size, mtime: stat.mtimeMs, name: item });
         }
@@ -72,15 +98,23 @@ function findLatestVideo() {
 
   if (candidates.length === 0) return null;
 
-  // Priorizar NOTICIERO_FINAL_62S si existe, o el más reciente
+  // Priorizar NOTICIERO_FINAL_62S.mp4 si existe, luego *FINAL*.mp4, luego más reciente
   candidates.sort((a, b) => {
-    const aIsFinal = a.name.includes('FINAL') ? 1 : 0;
-    const bIsFinal = b.name.includes('FINAL') ? 1 : 0;
-    if (aIsFinal !== bIsFinal) return bIsFinal - aIsFinal;
+    const aExact = a.name === 'NOTICIERO_FINAL_62S.mp4' ? 2 : (a.name.includes('FINAL') ? 1 : 0);
+    const bExact = b.name === 'NOTICIERO_FINAL_62S.mp4' ? 2 : (b.name.includes('FINAL') ? 1 : 0);
+    if (aExact !== bExact) return bExact - aExact;
     return b.mtime - a.mtime;
   });
 
   return candidates[0];
+}
+
+async function trackAndSend(targetWid, content, options = undefined) {
+  const sent = await client.sendMessage(targetWid, content, options);
+  if (sent && sent.id && sent.id._serialized) {
+    sentMessageIds.add(sent.id._serialized);
+  }
+  return sent;
 }
 
 async function sendDeliveryPackage(targetWid, deliveryDir) {
@@ -103,13 +137,16 @@ async function sendDeliveryPackage(targetWid, deliveryDir) {
   let newsTitle = path.basename(deliveryDir);
   let tiktokCaption = '';
   let hashtags = '#tiktoknoticias #parati #fyp #ultimahora #noticiashoy';
+  let durationSec = null;
   const metaPath = path.join(deliveryDir, 'metadata.json');
   if (fs.existsSync(metaPath)) {
     try {
       const meta = JSON.parse(fs.readFileSync(metaPath, 'utf8'));
-      newsTitle = meta.title || newsTitle;
+      newsTitle = meta.title || meta.noticia?.titulo || newsTitle;
       tiktokCaption = meta.tiktok_caption || '';
       hashtags = meta.hashtags_str || hashtags;
+      if (typeof meta.duration_seconds === 'number') durationSec = meta.duration_seconds;
+      else if (typeof meta.audio_duration === 'number') durationSec = meta.audio_duration;
     } catch (e) {}
   }
   const hashtagsPath = path.join(deliveryDir, 'HASHTAGS_TIKTOK.txt');
@@ -123,35 +160,58 @@ async function sendDeliveryPackage(targetWid, deliveryDir) {
   // 3. Enviar portada 9:16 primero como imagen
   if (fs.existsSync(coverPath)) {
     const coverMedia = MessageMedia.fromFilePath(coverPath);
-    await client.sendMessage(targetWid, coverMedia, {
+    await trackAndSend(targetWid, coverMedia, {
       caption: `🖼️ *PORTADA OFICIAL 9:16 (MINIATURA TIKTOK)*\n📌 *Titular:* ${newsTitle}\n📐 *Formato:* 1080x1920 (Safe Zone 3:4 centrado)\n💡 _Usa esta portada al subir tu vídeo a TikTok para maximizar clics._`
     });
     console.log(`[WA-BOT] 🖼️ Portada 9:16 enviada con éxito a ${targetWid}`);
   }
 
   // 4. Enviar vídeo final MP4 con descripción y hashtags listos para copiar
+  let qcStatusLine = '';
+  const qcPath = path.join(deliveryDir, 'QC_AUDIT_REPORT.json');
+  if (fs.existsSync(qcPath)) {
+    try {
+      const qc = JSON.parse(fs.readFileSync(qcPath, 'utf8'));
+      const verdictEmoji = qc.verdict === 'PASS' ? '✅' : (qc.verdict === 'WARN' ? '⚠️' : '❌');
+      const lufsVal = qc.audio_qc && qc.audio_qc.integrated_lufs !== undefined && qc.audio_qc.integrated_lufs !== null
+        ? `${qc.audio_qc.integrated_lufs} LUFS`
+        : 'LUFS N/D';
+      if (qc.stream_info && typeof qc.stream_info.duration === 'number') {
+        durationSec = qc.stream_info.duration;
+      } else if (qc.video_qc && typeof qc.video_qc.duration_s === 'number') {
+        durationSec = qc.video_qc.duration_s;
+      }
+      qcStatusLine = `🎯 *Auditoría Broadcast QC:* ${qc.verdict} ${verdictEmoji} (Score: ${qc.score}/100 | ${lufsVal})\n`;
+    } catch (e) {}
+  }
+
+  const durationLabel = durationSec ? `${durationSec.toFixed(1)}s` : '>=60s';
   const videoCaption =
     `🎬 *${newsTitle}*\n` +
-    `📦 Tamaño: ${sizeMb} MB | ⏱️ 62s (>60s Monetizable)\n\n` +
+    `📦 Tamaño: ${sizeMb} MB | ⏱️ ${durationLabel} (>60s Monetizable)\n` +
+    qcStatusLine + `\n` +
     `📝 *TEXTO Y HASHTAGS LISTOS PARA COPIAR:*\n` +
     `━━━━━━━━━━━━━━━━━━━━\n` +
     `${tiktokCaption || hashtags}\n` +
     `━━━━━━━━━━━━━━━━━━━━\n\n` +
-    `_Generado 100% de forma autónoma en tu servidor AWS._`;
+    `_Generado de forma autónoma por TikTok Radar._`;
 
   const videoMedia = MessageMedia.fromFilePath(vidPath);
-  await client.sendMessage(targetWid, videoMedia, {
+  await trackAndSend(targetWid, videoMedia, {
     caption: videoCaption,
     sendMediaAsDocument: false,
   });
   console.log(`[WA-BOT] 🎬 Vídeo enviado con éxito a ${targetWid}`);
 }
 
-function getProjectCondition() {
+async function getProjectCondition() {
   const entregasDir = path.join(WORKSPACE_DIR, 'entregas');
-  let newsTitle = 'Revés judicial a Google/Gemini por uso de noticias';
-  let dateFolder = '2026-11-03_AUTONOMO';
-  let totalShots = 0;
+  let newsTitle = 'Sin producciones recientes registradas';
+  let dateFolder = 'Ninguna';
+  let totalShotsReady = 0;
+  let plannedTotal = 13;
+  let flowPlanned = 0;
+  let motionPlanned = 0;
   let hasFinalVideo = false;
   let finalVideoSize = '0 MB';
 
@@ -168,7 +228,7 @@ function getProjectCondition() {
       dateFolder = latest.name;
       const shotsDir = path.join(latest.full, 'shots');
       if (fs.existsSync(shotsDir)) {
-        totalShots = fs.readdirSync(shotsDir).filter(f => f.endsWith('.mp4')).length;
+        totalShotsReady = fs.readdirSync(shotsDir).filter(f => f.endsWith('.mp4')).length;
       }
       const finalVid = path.join(latest.full, 'NOTICIERO_FINAL_62S.mp4');
       if (fs.existsSync(finalVid)) {
@@ -181,31 +241,44 @@ function getProjectCondition() {
         try {
           const data = JSON.parse(fs.readFileSync(metaFile, 'utf8'));
           newsTitle = data.title || data.noticia?.titulo || newsTitle;
+          const plannedShots = Array.isArray(data.shots) && data.shots.length > 0
+            ? data.shots
+            : (Array.isArray(data.storyboard) && data.storyboard.length > 0 ? data.storyboard : null);
+          if (plannedShots) {
+            plannedTotal = plannedShots.length;
+            flowPlanned = plannedShots.filter(s => s.render_mode === 'flow' || s.source === 'flow_primario').length;
+            motionPlanned = plannedTotal - flowPlanned;
+          }
         } catch (e) {}
       } else if (fs.existsSync(promptFile)) {
         try {
           const data = JSON.parse(fs.readFileSync(promptFile, 'utf8'));
           newsTitle = data.noticia?.titulo || data.tema || newsTitle;
+          if (Array.isArray(data.planos) && data.planos.length > 0) {
+            plannedTotal = data.planos.length;
+            flowPlanned = data.planos.filter(s => s.render_mode === 'flow').length;
+            motionPlanned = plannedTotal - flowPlanned;
+          }
         } catch (e) {}
       }
     }
   }
 
-  return new Promise((resolve) => {
-    exec('ps aux | grep -E "ejecutar_todo|pipeline_autonomo|flow_generator|ensamblador_final" | grep -v grep', (err, stdout) => {
-      const isRunning = Boolean(stdout && stdout.trim());
-      const statusText =
-        `📊 *CONDICIÓN DEL PROYECTO (TIKTOK RADAR 3D)*\n\n` +
-        `• *Última Entrega:* \`${dateFolder}\`\n` +
-        `• *Noticia del Día:* _${newsTitle}_\n` +
-        `• *Arquitectura Híbrida:* ${totalShots}/8 planos Flow cinemáticos + 5 infográficos FFmpeg Vector HUD.\n` +
-        `• *Vídeo Final (62s):* ${hasFinalVideo ? `✅ ENSAMBLADO Y LISTO (${finalVideoSize})` : '⏳ Pendiente de ensamblaje'}\n` +
-        `• *Pipeline en Ejecución:* ${isRunning ? '🚀 ACTIVO EN ESTE MOMENTO' : '💤 En reposo (Listo para generar)'}\n` +
-        `• *Estándar:* >60 s vertical 9:16 (Monetizable en TikTok Creator Rewards).\n\n` +
-        `_Escribe *!video* para recibir el vídeo en este chat o *!generar* para producir uno nuevo._`;
-      resolve(statusText);
-    });
-  });
+  const isRunning = await isProductionProcessRunning();
+  const archLine = flowPlanned > 0 || motionPlanned > 0
+    ? `${totalShotsReady}/${plannedTotal} planos (${flowPlanned} Flow + ${motionPlanned} Remotion/HUD)`
+    : `${totalShotsReady}/${plannedTotal} planos`;
+
+  return (
+    `📊 *CONDICIÓN DEL PROYECTO (TIKTOK RADAR 3D)*\n\n` +
+    `• *Última Entrega:* \`${dateFolder}\`\n` +
+    `• *Noticia Activa:* _${newsTitle}_\n` +
+    `• *Arquitectura Híbrida:* ${archLine}.\n` +
+    `• *Vídeo Final:* ${hasFinalVideo ? `✅ ENSAMBLADO Y LISTO (${finalVideoSize})` : '⏳ Pendiente de ensamblaje'}\n` +
+    `• *Pipeline en Ejecución:* ${isRunning ? '🚀 ACTIVO EN ESTE MOMENTO' : '💤 En reposo (Listo para generar)'}\n` +
+    `• *Estándar:* >60 s vertical 9:16 (Monetizable en TikTok Creator Rewards).\n\n` +
+    `_Escribe *!video* para recibir el vídeo en este chat o *!generar* para producir uno nuevo._`
+  );
 }
 
 function getFailureReport() {
@@ -268,14 +341,18 @@ function cleanStaleChromeLocks(dir) {
 
 cleanStaleChromeLocks(AUTH_DIR);
 
-// Helper para envío seguro a prueba de marcos desprendidos y IDs @lid
+// Helper para envío seguro a prueba de marcos desprendidos y IDs @lid (registra IDs enviados)
 async function safeReply(msg, text, targetChat) {
   try {
-    return await msg.reply(text);
+    const sent = await msg.reply(text);
+    if (sent && sent.id && sent.id._serialized) {
+      sentMessageIds.add(sent.id._serialized);
+    }
+    return sent;
   } catch (err1) {
     try {
       if (targetChat) {
-        return await client.sendMessage(targetChat, text);
+        return await trackAndSend(targetChat, text);
       }
     } catch (err2) {
       console.error('[WA-BOT] ⚠️ Error en envío seguro:', err2.message);
@@ -284,11 +361,9 @@ async function safeReply(msg, text, targetChat) {
 }
 
 // -----------------------------------------------------------------------------
-// Cliente WhatsApp Web (Con Google Chrome headless nativo)
+// Cliente WhatsApp Web (Con Google Chrome/Chromium headless nativo)
 // -----------------------------------------------------------------------------
-const chromePath = fs.existsSync('/usr/bin/google-chrome')
-  ? '/usr/bin/google-chrome'
-  : (process.env.CHROME_BIN || undefined);
+const chromePath = resolveChromePath();
 
 const client = new Client({
   authStrategy: new LocalAuth({
@@ -345,6 +420,7 @@ client.on('ready', async () => {
   isReady = true;
   currentQR = null;
   botWid = client.info.wid._serialized;
+  botLid = (client.info && client.info.lid && client.info.lid._serialized) || null;
   const botNumber = client.info.wid.user;
 
   console.log(`[WA-BOT] 🚀 ¡AGENTE ANTIGRAVITY EN WHATSAPP CONECTADO Y ACTIVO!`);
@@ -352,19 +428,30 @@ client.on('ready', async () => {
   if (ownerWid) {
     console.log(`[WA-BOT] Dueño registrado para alertas: ${ownerWid}`);
   } else {
-    console.log(`[WA-BOT] Esperando primer mensaje de tu número personal para registrarte como dueño...`);
+    console.log(`[WA-BOT] Esperando primer mensaje autorizado para registrar dueño...`);
   }
 
-  // Recuperar mensajes no leídos del dueño si los hubo durante el reinicio
+  // Recuperar mensajes no leídos solo del dueño autorizado (sin loops)
   setTimeout(async () => {
     try {
       const chats = await client.getChats();
       for (const chat of chats) {
-        if (chat.unreadCount > 0 && (chat.id._serialized === ownerWid || chat.isUser)) {
+        if (chat.unreadCount > 0 && !chat.isGroup && chat.isUser) {
+          const chatWid = chat.id._serialized;
+          if (ownerWid && chatWid !== ownerWid) {
+            continue;
+          }
           console.log(`[WA-BOT] 📬 Recuperando ${chat.unreadCount} mensaje(s) pendiente(s) en ${chat.name || chat.id.user}...`);
           const unreadMsgs = await chat.fetchMessages({ limit: Math.min(5, chat.unreadCount) });
           for (const umsg of unreadMsgs) {
-            if (!umsg.fromMe && umsg.body && !umsg.body.startsWith('🤖')) {
+            const uid = umsg.id && umsg.id._serialized;
+            if (
+              !umsg.fromMe &&
+              umsg.body &&
+              !umsg.body.startsWith('🤖') &&
+              !processedMsgIds.has(uid) &&
+              !sentMessageIds.has(uid)
+            ) {
               console.log(`[WA-BOT] ⚡ Procesando mensaje recuperado post-reinicio: "${umsg.body}"`);
               client.emit('message_create', umsg);
             }
@@ -418,43 +505,107 @@ setInterval(async () => {
   }
 }, 60000);
 
+// Cola serializada para consultas a `agy` (evita picos de RAM por concurrencia)
+function runNextAgyTask() {
+  if (agyRunning || agyQueue.length === 0) return;
+  const task = agyQueue.shift();
+  agyRunning = true;
+
+  const { msg, targetChat, cleanBody } = task;
+  const agyCmd = fs.existsSync(AGY_BIN) ? AGY_BIN : 'agy';
+  const prompt = `Eres el Agente Antigravity en el servidor AWS de TikTok Radar. El usuario te escribe desde WhatsApp: "${cleanBody.slice(0, 1000)}". Responde en español de forma muy concisa, profesional y directa para WhatsApp:`;
+
+  const child = spawn(agyCmd, ['--dangerously-skip-permissions', '-p', prompt], {
+    cwd: WORKSPACE_DIR,
+    stdio: ['ignore', 'pipe', 'pipe']
+  });
+
+  let stdout = '';
+  let stderr = '';
+  child.stdout.on('data', (d) => { stdout += d.toString(); });
+  child.stderr.on('data', (d) => { stderr += d.toString(); });
+
+  const timeoutId = setTimeout(() => {
+    try { child.kill('SIGTERM'); } catch (e) {}
+    setTimeout(() => {
+      try { child.kill('SIGKILL'); } catch (e) {}
+    }, 2000);
+  }, 90000);
+
+  child.on('error', async (spawnErr) => {
+    clearTimeout(timeoutId);
+    agyRunning = false;
+    await safeReply(msg, `🤖 ⚠️ No se pudo iniciar agente en AWS: ${spawnErr.message}`, targetChat);
+    runNextAgyTask();
+  });
+
+  child.on('close', async (code) => {
+    clearTimeout(timeoutId);
+    try {
+      if (code !== 0 && !stdout.trim()) {
+        const errOut = (stderr || `Error código ${code}`).slice(-250);
+        await safeReply(msg, `🤖 ⚠️ Error ejecutando agente en AWS:\n${errOut}`, targetChat);
+      } else {
+        const cleanOutput = stdout.trim() || 'El agente completó la consulta sin texto de salida.';
+        await safeReply(msg, `🤖 *Antigravity AWS:*\n\n${cleanOutput}`, targetChat);
+      }
+    } catch (sendErr) {
+      console.error('[WA-BOT] Error enviando respuesta de agy por WhatsApp:', sendErr.message);
+    } finally {
+      agyRunning = false;
+      runNextAgyTask();
+    }
+  });
+}
+
 // -----------------------------------------------------------------------------
 // Interacción Bidireccional: Mensajes del Dueño hacia el Bot
 // -----------------------------------------------------------------------------
 client.on('message_create', async (msg) => {
   try {
+    const msgId = msg.id && msg.id._serialized;
+    if (sentMessageIds.has(msgId) || processedMsgIds.has(msgId)) return;
+
     // Ignorar mensajes que el propio bot envía para evitar loops infinitos
-    if (msg.body && msg.body.startsWith('🤖')) return;
+    if (msg.body && msg.body.startsWith('🤖')) {
+      processedMsgIds.add(msgId);
+      return;
+    }
 
     const senderWid = msg.from;
-    const isIncoming = !msg.fromMe;
-    const isSelfChat = msg.fromMe && (msg.to === botWid || msg.from === botWid);
-
-    // Solo procesar si viene de un chat externo o es self-chat
-    if (!isIncoming && !isSelfChat) return;
-
-    const targetChat = isIncoming ? senderWid : msg.to;
-    const senderNumber = targetChat.replace(/@.*$/, '');
     const body = (msg.body || '').trim();
     if (!body) return;
 
-    console.log(`[WA-BOT] 💬 Mensaje recibido de +${senderNumber}: "${body}"`);
+    const auth = authorizeMessage({ msg, senderWid, ownerWid, botWid, botLid, body });
+    if (!auth.allowed) {
+      if (auth.reason !== 'outbound_to_other' && auth.reason !== 'non_direct_chat') {
+        console.warn(`[WA-BOT SECURITY] 🚫 Mensaje ignorado de ${senderWid} (${auth.reason})`);
+      }
+      return;
+    }
 
-    // Registro dinámico del Dueño:
-    // Si no hay dueño registrado, o el dueño registrado era el propio bot,
-    // el primer usuario humano que escriba se registra automáticamente como dueño.
-    const isOwnerCurrentBot = ownerWid && botWid && ownerWid.startsWith(client.info.wid.user);
-    if (isIncoming && (!ownerWid || isOwnerCurrentBot || body.toLowerCase().startsWith('!vincular') || body.toLowerCase().startsWith('!admin'))) {
+    processedMsgIds.add(msgId);
+
+    const targetChat = auth.isSelfChat ? msg.to : senderWid;
+    const senderNumber = (targetChat || '').replace(/@.*$/, '');
+    console.log(`[WA-BOT] 💬 Mensaje autorizado de +${senderNumber}: "${body}"`);
+
+    if (auth.bindOwner) {
       ownerWid = senderWid;
       try {
         fs.writeFileSync(OWNER_FILE, JSON.stringify({
           ownerWid: senderWid,
           phone: senderNumber,
-          botNumber: client.info.wid.user,
+          botNumber: client.info?.wid?.user || '',
           registeredAt: new Date().toISOString()
         }, null, 2));
         console.log(`[WA-BOT] 👑 ¡Registrado +${senderNumber} como Dueño/Administrador de AWS!`);
       } catch (e) {}
+
+      if (auth.reason === 'pin_bind' || auth.reason === 'initial_bind') {
+        await safeReply(msg, `🤖 ✅ Vinculación confirmada. Dispositivo autorizado: +${senderNumber}`, targetChat);
+        return;
+      }
     }
 
     const lower = body.toLowerCase();
@@ -530,48 +681,32 @@ client.on('message_create', async (msg) => {
       return;
     }
 
-    // COMANDO 5: INICIAR PRODUCCIÓN (!generar / !generar todos / !generar 1..4 / !generar 5 g3)
+    // COMANDO 5: INICIAR PRODUCCIÓN (!generar / !generar todos / !generar slot 1 / !generar 5 g3)
     if (
       lower.startsWith('!generar') ||
       lower.includes('generar noticiero') ||
       lower.includes('iniciar produccion')
     ) {
-      let args = ['tools/ejecutar_todo.py'];
-      let modeText = 'los 4 géneros diarios (Aviación, Ciberataques, IA, Espacio)';
-
-      const countMatch = lower.match(/(\d+)\s*(?:videos?|noticias?)/) || lower.match(/!generar\s+(\d+)/);
-      let count = 1;
-      if (countMatch) {
-        const parsed = parseInt(countMatch[1]);
-        if (parsed >= 1 && parsed <= 10) count = parsed;
+      const alreadyRunning = await isProductionProcessRunning();
+      if (alreadyRunning) {
+        await safeReply(msg, '🤖 ⏳ Ya hay una producción ejecutándose en este momento. Espera a que termine o envía *!parar*.', targetChat);
+        return;
       }
 
-      if (/\b(g1|aviacion|aviación|catastrofe|catástrofe|peru|perú)\b/.test(lower)) {
-        args.push('--genre', 'G1');
-        modeText = `Género 1 (🚨 Aviación & Desastres Perú/Mundo)`;
-      } else if (/\b(g2|ciber|ciberataque|hacker)\b/.test(lower)) {
-        args.push('--genre', 'G2');
-        modeText = `Género 2 (💻 Ciberataques & Amenazas)`;
-      } else if (/\b(g3|ia|ai|tech|robot|chip|chips|hardware)\b/.test(lower)) {
-        args.push('--genre', 'G3');
-        modeText = `Género 3 (🤖 IA, Chips & Hardware TechCrunch/Tom's)`;
-      } else if (/\b(g4|espacio|nasa|ciencia)\b/.test(lower)) {
-        args.push('--genre', 'G4');
-        modeText = `Género 4 (🚀 Espacio & Ciencia Extrema)`;
-      } else {
-        args.push('--all');
-      }
+      const { args, modeText } = parseGenerateCommand(lower);
 
-      if (count > 1 && args.includes('--genre')) {
-        args.push('--count', count.toString());
-        modeText += ` [Lote de ${count} vídeos ordenados por cronología y polémica]`;
-      }
-
-      await safeReply(msg, `🤖 🚀 *Iniciando producción autónoma en AWS...*\n🎯 *Objetivo:* ${modeText}.\n_No te preocupes por nada, el servidor trabaja solo mientras estás en clases y te entregará los vídeos aquí._`, targetChat);
+      await safeReply(msg, `🤖 🚀 *Iniciando producción autónoma en AWS...*\n🎯 *Objetivo:* ${modeText}.\n_El servidor trabaja de forma autónoma y te enviará el paquete final aquí._`, targetChat);
       const child = spawn('python3', args, {
         cwd: WORKSPACE_DIR,
         detached: true,
         stdio: 'ignore',
+      });
+      activeProductionChild = child;
+      child.on('exit', () => {
+        if (activeProductionChild === child) activeProductionChild = null;
+      });
+      child.on('error', () => {
+        if (activeProductionChild === child) activeProductionChild = null;
       });
       child.unref();
       return;
@@ -579,7 +714,15 @@ client.on('message_create', async (msg) => {
 
     // COMANDO 6: DETENER PRODUCCIÓN (!parar)
     if (lower === '!parar' || lower === 'detener' || lower === 'cancelar') {
-      exec('pkill -f ejecutar_todo.py || true', async () => {
+      if (activeProductionChild) {
+        try {
+          process.kill(-activeProductionChild.pid, 'SIGTERM');
+        } catch (e) {
+          try { activeProductionChild.kill('SIGTERM'); } catch (e2) {}
+        }
+        activeProductionChild = null;
+      }
+      exec('pkill -f "ejecutar_todo\\.py|pipeline_autonomo\\.py|flow_generator\\.py|ensamblador_final\\.py" || true', async () => {
         await safeReply(msg, '🤖 🛑 Se ha enviado la orden de detener cualquier producción en curso.', targetChat);
       });
       return;
@@ -590,56 +733,30 @@ client.on('message_create', async (msg) => {
       const helpText =
         `🤖 *COMANDOS DISPONIBLES EN TU AGENTE ANTIGRAVITY AWS:*\n\n` +
         `• *!video* o *video*: Te envío el último vídeo MP4 generado al chat.\n` +
-        `• *!condicion* o *proyecto*: Revisa el avance del noticiero, planos 3D y estado.\n` +
+        `• *!condicion* o *proyecto*: Revisa el avance del noticiero y estado.\n` +
         `• *!fallas* o *errores*: Auditoría de fallas o confirmación de estabilidad.\n` +
         `• *!estado* o *servidor*: Métricas en vivo (CPU, RAM, Disco) de AWS.\n` +
-        `• *!generar*: Arranca la producción completa del día en AWS.\n` +
+        `• *!generar* (*slot 1*, *slot 2*, *g1..g4*, *todos*): Arranca producción en AWS.\n` +
         `• *!parar*: Detiene los procesos de render en curso.\n\n` +
         `_O pregúntame lo que quieras con lenguaje natural y Antigravity te responderá._`;
       await safeReply(msg, helpText, targetChat);
       return;
     }
 
-    // CUALQUIER OTRA CONSULTA -> Enviar a Antigravity (`agy`)
+    // CUALQUIER OTRA CONSULTA -> Encolar consulta a Antigravity (`agy`)
+    if (agyQueue.length >= 3) {
+      await safeReply(msg, '🤖 ⏳ Cola de consultas llena (máx. 3). Espera unos segundos a que responda las anteriores.', targetChat);
+      return;
+    }
     await safeReply(msg, '🤖 *Antigravity pensando en AWS...* ⏳', targetChat);
-
-    const agyCmd = fs.existsSync(AGY_BIN) ? AGY_BIN : 'agy';
-    const prompt = `Eres el Agente Antigravity en el servidor AWS de TikTok Radar. El usuario te escribe desde WhatsApp: "${body}". Responde en español de forma muy concisa, profesional y directa para WhatsApp:`;
-
-    const child = spawn(agyCmd, ['--dangerously-skip-permissions', '-p', prompt], {
-      cwd: WORKSPACE_DIR,
-      stdio: ['ignore', 'pipe', 'pipe']
-    });
-
-    let stdout = '';
-    let stderr = '';
-    child.stdout.on('data', (d) => { stdout += d.toString(); });
-    child.stderr.on('data', (d) => { stderr += d.toString(); });
-
-    const timeoutId = setTimeout(() => {
-      try { child.kill('SIGKILL'); } catch (e) {}
-    }, 90000);
-
-    child.on('close', async (code) => {
-      clearTimeout(timeoutId);
-      try {
-        if (code !== 0 && !stdout.trim()) {
-          const errOut = (stderr || `Error código ${code}`).slice(-250);
-          await safeReply(msg, `🤖 ⚠️ Error ejecutando agente en AWS:\n${errOut}`, targetChat);
-          return;
-        }
-        const cleanOutput = stdout.trim() || 'El agente completó la consulta sin texto de salida.';
-        await safeReply(msg, `🤖 *Antigravity AWS:*\n\n${cleanOutput}`, targetChat);
-      } catch (sendErr) {
-        console.error('[WA-BOT] Error enviando respuesta de agy por WhatsApp:', sendErr.message);
-      }
-    });
+    agyQueue.push({ msg, targetChat, cleanBody: body });
+    runNextAgyTask();
   } catch (globalErr) {
     console.error('[WA-BOT CRITICAL HANDLER ERROR]:', globalErr);
     try {
       const fallbackTarget = (!msg.fromMe ? msg.from : msg.to) || ownerWid;
       if (fallbackTarget) {
-        await client.sendMessage(fallbackTarget, `🤖 ⚠️ Hubo una incidencia interna al procesar el mensaje: ${globalErr.message}`);
+        await trackAndSend(fallbackTarget, `🤖 ⚠️ Hubo una incidencia interna al procesar el mensaje: ${globalErr.message}`);
       }
     } catch (e) {}
   }
@@ -666,10 +783,9 @@ app.post('/send', async (req, res) => {
   }
 
   loadOwner();
-  const { message, mediaPath, phone, caption } = req.body;
-  const targetWid = phone
-    ? `${phone.replace(/[^\d]/g, '')}@c.us`
-    : ownerWid;
+  const { message, mediaPath, phone, caption } = req.body || {};
+  const cleanedPhone = phone ? String(phone).replace(/[^\d]/g, '') : '';
+  const targetWid = cleanedPhone ? `${cleanedPhone}@c.us` : ownerWid;
 
   if (!targetWid) {
     return res.status(400).json({ error: 'No se especificó número y no hay dueño registrado.' });
@@ -679,10 +795,10 @@ app.post('/send', async (req, res) => {
     if (mediaPath && fs.existsSync(mediaPath)) {
       const media = MessageMedia.fromFilePath(mediaPath);
       const cap = caption || message || '';
-      await client.sendMessage(targetWid, media, { caption: cap, sendMediaAsDocument: false });
+      await trackAndSend(targetWid, media, { caption: cap, sendMediaAsDocument: false });
       console.log(`[WA-BOT] 📤 Archivo multimedia enviado a ${targetWid}: ${mediaPath}`);
     } else if (message) {
-      await client.sendMessage(targetWid, message);
+      await trackAndSend(targetWid, message);
       console.log(`[WA-BOT] 📤 Mensaje de texto enviado a ${targetWid}`);
     } else {
       return res.status(400).json({ error: 'Debes proporcionar message o mediaPath.' });
@@ -701,10 +817,9 @@ app.post('/send-delivery', async (req, res) => {
   }
 
   loadOwner();
-  const { deliveryDir, phone } = req.body;
-  const targetWid = phone
-    ? `${phone.replace(/[^\d]/g, '')}@c.us`
-    : ownerWid;
+  const { deliveryDir, phone } = req.body || {};
+  const cleanedPhone = phone ? String(phone).replace(/[^\d]/g, '') : '';
+  const targetWid = cleanedPhone ? `${cleanedPhone}@c.us` : ownerWid;
 
   if (!targetWid) {
     return res.status(400).json({ error: 'No se especificó número y no hay dueño registrado.' });

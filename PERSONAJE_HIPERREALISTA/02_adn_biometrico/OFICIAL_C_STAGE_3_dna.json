@@ -1,0 +1,18 @@
+{
+  "character_id": "OFICIAL_C_STAGE_3",
+  "source_image": "/workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/03_character_sheet/KF2_GENJUTSU_LIVEACTION_85MM.jpg",
+  "embedding_file": "/workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/02_adn_biometrico/OFICIAL_C_STAGE_3_embedding_512d.npy",
+  "skin_tone_rgb_mean": [
+    73.53,
+    44.93,
+    38.22
+  ],
+  "skin_tone_rgb_std": [
+    68.68,
+    38.95,
+    30.08
+  ],
+  "pore_texture_energy": 13.206,
+  "realism_verdict": "PASS_HYPERREALISTIC",
+  "sha256": "bb2c142d81af0ba3"
+}

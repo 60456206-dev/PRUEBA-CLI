@@ -9,6 +9,8 @@ import asyncio
 import base64
 import json
 import os
+import re
+import shutil
 import subprocess
 import sys
 import time
@@ -67,15 +69,6 @@ GENRE_SOUNDTRACK_CATALOG = {
         "bass_file": "G1_AVIATION_TRACE_BASS.mp3",
         "inst_file": "G1_AVIATION_TRACE_INSTRUMENTS.mp3"
     },
-    "G1_PERU_DESASTRES": {
-        "title": "Shifting Ground",
-        "artist": "Luba Hilman",
-        "bpm": 110,
-        "style": "Dramatic Emergency Pulse / Heavy Orchestral Tension",
-        "id": "87893ebf-9476-46ff-9cc1-f1227748c791",
-        "bass_file": "G1_PERU_SHIFTING_BASS.mp3",
-        "inst_file": "G1_PERU_SHIFTING_INSTRUMENTS.mp3"
-    },
     "G4_ESPACIO": {
         "title": "Mindscape",
         "artist": "Lennon Hutton",
@@ -111,11 +104,9 @@ def get_genre_soundtrack(genre: str, target_dir: Optional[Path] = None) -> Tuple
     assets_dir = target_dir or DEFAULT_ASSETS_DIR
     genre_upper = (genre or "G1").upper()
 
-    # Selección inteligente de categoría musical (comprobando aviación y desastres antes de tokens cortos)
-    if any(k in genre_upper for k in ["AVIACION", "AVIACIÓN", "MAYDAY", "VUELO", "AEREO", "AÉREO", "AVION", "AVIÓN", "ACCIDENTE"]):
+    # Selección de categoría musical
+    if any(k in genre_upper for k in ["G1", "AVIACION", "AVIACIÓN", "MAYDAY", "VUELO", "AEREO", "AÉREO", "AVION", "AVIÓN", "ACCIDENTE"]):
         key = "G1_AVIACION"
-    elif any(k in genre_upper for k in ["PERU", "PERÚ", "DESASTRES", "INDECI", "LLUVIA", "SISMO", "HUAICO"]):
-        key = "G1_PERU_DESASTRES"
     elif any(k in genre_upper for k in ["G2", "CIBER", "HACKER", "CYBER", "RANSOMWARE"]):
         key = "G2_CIBERATAQUES"
     elif any(k in genre_upper for k in ["G4", "ESPACIO", "NASA", "ORBITA", "ÓRBITA", "CIENCIA", "STARSHIP"]):
@@ -204,6 +195,15 @@ def generate_speech_gemini(
     if not key:
         return False
 
+    # Limpiar marcas previas para evitar desincronización si cambia el motor de voz
+    for stale_name in ("SENTENCE_BOUNDARIES.json", "WORD_BOUNDARIES.json"):
+        stale_bounds = output_path.parent / stale_name
+        if stale_bounds.exists():
+            try:
+                stale_bounds.unlink()
+            except Exception:
+                pass
+
     if not style:
         style = (
             "Locución apasionada, vibrante y con profunda emoción dramática para noticiero de última hora en TikTok. "
@@ -272,18 +272,183 @@ def generate_speech_gemini(
     return False
 
 
+def _reconstruct_sentences_from_words(word_entries: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """Agrupa marcas de palabra (WordBoundary) en oraciones completas con [start, end]."""
+    sentences: List[Dict[str, Any]] = []
+    cur_words: List[str] = []
+    cur_start: Optional[float] = None
+    cur_end: float = 0.0
+
+    for entry in word_entries:
+        txt = str(entry.get("text", "")).strip()
+        if not txt:
+            continue
+        w_start = float(entry.get("start", 0.0))
+        w_end = float(entry.get("end", w_start))
+        if cur_start is None:
+            cur_start = w_start
+        cur_words.append(txt)
+        cur_end = max(cur_end, w_end)
+        if txt.endswith((".", "?", "!", ":", ";")):
+            sentences.append({
+                "text": " ".join(cur_words),
+                "start": round(cur_start, 3),
+                "end": round(max(cur_end, cur_start + 0.15), 3),
+            })
+            cur_words = []
+            cur_start = None
+            cur_end = 0.0
+
+    if cur_words and cur_start is not None:
+        sentences.append({
+            "text": " ".join(cur_words),
+            "start": round(cur_start, 3),
+            "end": round(max(cur_end, cur_start + 0.15), 3),
+        })
+    return sentences
+
+
+def extract_word_boundaries_whisper(audio_path: Path, language: str = "es") -> Optional[Path]:
+    """
+    Si faster-whisper está instalado en el servidor, extrae timestamps por palabra reales
+    (WORD_BOUNDARIES.json) también para locuciones de Gemini TTS. Es totalmente opcional.
+    """
+    if not audio_path.exists():
+        return None
+    try:
+        from faster_whisper import WhisperModel  # type: ignore
+    except ImportError:
+        return None
+
+    try:
+        model = WhisperModel(os.getenv("WHISPER_MODEL_SIZE", "base"), device="cpu", compute_type="int8")
+        segments, _ = model.transcribe(str(audio_path), language=language, word_timestamps=True)
+        words: List[Dict[str, Any]] = []
+        sentences: List[Dict[str, Any]] = []
+        for seg in segments:
+            s_text = (seg.text or "").strip()
+            if s_text:
+                sentences.append({"text": s_text, "start": round(float(seg.start), 3), "end": round(float(seg.end), 3)})
+            for w in getattr(seg, "words", None) or []:
+                w_txt = (getattr(w, "word", "") or "").strip()
+                if w_txt:
+                    words.append({
+                        "text": w_txt,
+                        "start": round(float(w.start), 3),
+                        "end": round(float(w.end), 3),
+                    })
+        if words:
+            wb_path = audio_path.parent / "WORD_BOUNDARIES.json"
+            wb_path.write_text(json.dumps(words, indent=2, ensure_ascii=False), encoding="utf-8")
+            if sentences and not (audio_path.parent / "SENTENCE_BOUNDARIES.json").exists():
+                (audio_path.parent / "SENTENCE_BOUNDARIES.json").write_text(
+                    json.dumps(sentences, indent=2, ensure_ascii=False), encoding="utf-8"
+                )
+            print(f"[AUDIO-TTS] ✅ Marcas por palabra extraídas con Whisper: {len(words)} palabras.", flush=True)
+            return wb_path
+    except Exception as e:
+        print(f"[AUDIO-TTS] Aviso Whisper word_timestamps omitido: {e}", flush=True)
+    return None
+
+
 async def _generate_speech_edge_async(text: str, output_path: Path, voice: str = "es-MX-JorgeNeural") -> bool:
     try:
         import edge_tts
-        # Aceleración a +12% y tono para transmitir emoción y energía periodística en lugar de lectura calmada
-        communicate = edge_tts.Communicate(text, voice, rate="+12%", pitch="+1Hz")
-        await communicate.save(str(output_path))
+        # Capturar WordBoundary reales además de reconstruir SentenceBoundary
+        communicate = edge_tts.Communicate(text, voice, rate="+12%", pitch="+1Hz", boundary="WordBoundary")
+        word_entries: List[Dict[str, Any]] = []
+        sentences: List[Dict[str, Any]] = []
+        audio_data = bytearray()
+        async for chunk in communicate.stream():
+            ctype = chunk.get("type")
+            if ctype == "audio":
+                audio_data.extend(chunk["data"])
+            elif ctype == "WordBoundary":
+                w_start = round(chunk.get("offset", 0) / 10_000_000, 3)
+                w_end = round((chunk.get("offset", 0) + chunk.get("duration", 0)) / 10_000_000, 3)
+                word_entries.append({
+                    "text": chunk.get("text", ""),
+                    "start": w_start,
+                    "end": max(w_start + 0.05, w_end),
+                })
+            elif ctype == "SentenceBoundary":
+                sentences.append({
+                    "text": chunk.get("text", ""),
+                    "start": round(chunk.get("offset", 0) / 10_000_000, 3),
+                    "end": round((chunk.get("offset", 0) + chunk.get("duration", 0)) / 10_000_000, 3)
+                })
+
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        output_path.write_bytes(audio_data)
+
+        if word_entries:
+            (output_path.parent / "WORD_BOUNDARIES.json").write_text(
+                json.dumps(word_entries, indent=2, ensure_ascii=False), encoding="utf-8"
+            )
+            if not sentences:
+                sentences = _reconstruct_sentences_from_words(word_entries)
+
+        if sentences:
+            bounds_file = output_path.parent / "SENTENCE_BOUNDARIES.json"
+            bounds_file.write_text(json.dumps(sentences, indent=2, ensure_ascii=False), encoding="utf-8")
+
         dur = probe_duration(output_path)
-        print(f"[AUDIO-TTS] ✅ Locución Edge-TTS fallback completada: {output_path.name} ({dur:.2f} s)", flush=True)
+        print(f"[AUDIO-TTS] ✅ Locución Edge-TTS completada con marcas ({len(word_entries)} palabras): {output_path.name} ({dur:.2f} s)", flush=True)
         return True
     except Exception as e:
-        print(f"[AUDIO-TTS] ❌ Falló también Edge-TTS: {e}", flush=True)
+        print(f"[AUDIO-TTS] ❌ Falló Edge-TTS: {e}", flush=True)
         return False
+
+
+def tighten_audio_dead_air(
+    input_path: Path,
+    margin_sec: float = 0.15,
+    silent_speed: float = 2.0,
+    min_monetizable_duration: float = 60.5
+) -> float:
+    """
+    Aplica auto-editor de forma no destructiva para acelerar micropausas
+    de la locución sin distorsionar el tono ni romper la duración monetizable (>60s).
+    """
+    auto_editor_bin = shutil.which("auto-editor") or str(Path.home() / ".local" / "bin" / "auto-editor")
+    if not auto_editor_bin or not os.path.exists(auto_editor_bin):
+        return probe_duration(input_path)
+
+    curr_dur = probe_duration(input_path)
+    if curr_dur <= min_monetizable_duration:
+        return curr_dur
+
+    out_file = input_path.parent / f"_tight_{input_path.name}"
+    cmd = [
+        auto_editor_bin, str(input_path),
+        "-m", f"{margin_sec}s",
+        "--when-silent", f"speed:{silent_speed}",
+        "-o", str(out_file),
+        "-q"
+    ]
+    try:
+        res = subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True)
+        if res.returncode == 0 and out_file.exists():
+            new_dur = probe_duration(out_file)
+            if new_dur >= min_monetizable_duration:
+                shutil.move(str(out_file), str(input_path))
+                # Las marcas previas ya no coinciden tras recortar silencios
+                if abs(new_dur - curr_dur) > 0.05:
+                    for stale_name in ("SENTENCE_BOUNDARIES.json", "WORD_BOUNDARIES.json"):
+                        stale_bounds = input_path.parent / stale_name
+                        if stale_bounds.exists():
+                            try:
+                                stale_bounds.unlink()
+                            except Exception:
+                                pass
+                print(f"[AUDIO-TTS] ⚡ auto-editor: pausas ajustadas ({curr_dur:.2f}s -> {new_dur:.2f}s)", flush=True)
+                return new_dur
+            else:
+                if out_file.exists():
+                    out_file.unlink()
+    except Exception as e:
+        print(f"[AUDIO-TTS] ⚠️ auto-editor omitido: {e}", flush=True)
+    return curr_dur
 
 
 def generate_speech(
@@ -291,7 +456,8 @@ def generate_speech(
     output_path: Path,
     voice_gemini: str = "Fenrir",
     voice_edge: str = "es-MX-JorgeNeural",
-    style: Optional[str] = None
+    style: Optional[str] = None,
+    tighten: bool = True
 ) -> float:
     """Genera locución intentando primero Gemini TTS y con fallback automático a Edge-TTS."""
     # 1. Intentar Gemini Flash TTS
@@ -300,7 +466,12 @@ def generate_speech(
         print("[AUDIO-TTS] Activando fallback gratuito Edge-TTS...", flush=True)
         asyncio.run(_generate_speech_edge_async(text, output_path, voice=voice_edge))
 
-    return probe_duration(output_path)
+    dur = probe_duration(output_path)
+    if tighten:
+        dur = tighten_audio_dead_air(output_path)
+    if not (output_path.parent / "WORD_BOUNDARIES.json").exists():
+        extract_word_boundaries_whisper(output_path)
+    return dur
 
 
 # -----------------------------------------------------------------------------

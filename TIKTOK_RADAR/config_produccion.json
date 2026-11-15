@@ -8,8 +8,8 @@
       {
         "slot": 1,
         "horario_subida_tiktok": "13:00",
-        "descripcion": "☀️ Almuerzo / Impacto Nacional y Global (G1: Desastres Perú INDECI o Aviación Internacional)",
-        "especializacion": "G1_IMPACTO_PERU_AVIACION",
+        "descripcion": "☀️ Almuerzo / Aviación Internacional (G1: Incidentes Mayday, Emergencias de Vuelo y Seguridad Aérea)",
+        "especializacion": "G1_AVIACION",
         "inicio_servidor_peru": "12:10",
         "inicio_servidor_utc": "17:10"
       },
@@ -51,11 +51,6 @@
         "personaje": "Stylized 3D male pilot in textured navy flight uniform under dramatic chiaroscuro cockpit lighting, focused determined eyes, sharp expressive facial geometry, subtle skin texture, no loose coverings, directional amber instrument glow",
         "aeronave": "Matte finish twin-engine executive jet banking through dark moody storm clouds, fine tactile metal wing rivets, wingtip strobe lights cutting through mist",
         "cabina": "Glass cockpit in deep shadow, surgical amber and warm indicators, tactile throttle levers, slow camera push-in"
-      },
-      "G1_PERU_DESASTRES": {
-        "personaje": "Stylized 3D Peruvian emergency first responder in high-visibility textured tactical jacket, realistic rain streaks on skin, serious focused gaze, clear facial anatomy, no face masks, directional rim lighting against dark Andean mountain backdrop",
-        "entorno": "Peruvian andean and coastal terrain under dramatic chiaroscuro storm clouds, wet asphalt with tactile reflections, emergency convoy beacon lights cutting through fog",
-        "sala_crisis": "INDECI/COEN crisis operations command in deep shadows with high-contrast topographic maps and satellite radar feeds"
       },
       "G2_CIBERATAQUES": {
         "personaje": "Stylized 3D cybersecurity intelligence analyst in dark tech bunker illuminated by dramatic amber and crimson monitor glow, focused intense gaze, tactical dark-framed glasses, clear expressive facial features, no face coverings",
@@ -101,12 +96,6 @@
         "bpm": 156,
         "estilo": "Cinematic Action Thriller / High Altitude Tension Pulse",
         "stems": ["G1_AVIATION_TRACE_BASS.mp3", "G1_AVIATION_TRACE_INSTRUMENTS.mp3"]
-      },
-      "G1_PERU_DESASTRES": {
-        "titulo": "Shifting Ground - Luba Hilman",
-        "bpm": 110,
-        "estilo": "Dramatic Emergency Pulse / Heavy Orchestral Tension",
-        "stems": ["G1_PERU_SHIFTING_BASS.mp3", "G1_PERU_SHIFTING_INSTRUMENTS.mp3"]
       },
       "G4_ESPACIO": {
         "titulo": "Mindscape - Lennon Hutton",

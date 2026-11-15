@@ -1,0 +1,48 @@
+{
+  "file": "NOTICIERO_FINAL_62S.mp4",
+  "video_path": "/workspaces/PRUEBA-CLI/TIKTOK_RADAR/entregas/2026-11-04_AVIACION_CATASTROFES/NOTICIERO_FINAL_62S.mp4",
+  "output_dir": "/workspaces/PRUEBA-CLI/TIKTOK_RADAR/entregas/2026-11-04_AVIACION_CATASTROFES",
+  "verdict": "PASS",
+  "score": 100,
+  "stream_info": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 24.0,
+    "fps_str": "24/1",
+    "video_codec": "h264",
+    "audio_codec": "aac",
+    "audio_sample_rate": 48000,
+    "audio_channels": 2,
+    "duration": 62.0,
+    "size_mb": 46.63,
+    "bitrate_kbps": 6309.0
+  },
+  "audio_qc": {
+    "integrated_lufs": -14.4,
+    "target_lufs_range": [
+      -15.5,
+      -13.5
+    ],
+    "lufs_pass": true,
+    "loudness_range_lra": 2.0,
+    "true_peak_dbfs": -0.9,
+    "true_peak_pass": true,
+    "silence_events": [],
+    "silence_count": 0
+  },
+  "visual_qc": {
+    "freeze_events": [],
+    "freeze_count": 0,
+    "black_events": [],
+    "black_count": 0,
+    "clean_playback": true
+  },
+  "safezone_qc": {},
+  "warnings": [],
+  "errors": [],
+  "artifacts": {
+    "contact_sheet": "/workspaces/PRUEBA-CLI/TIKTOK_RADAR/entregas/2026-11-04_AVIACION_CATASTROFES/CONTACT_SHEET_QC.jpg",
+    "safezone_video": "/workspaces/PRUEBA-CLI/TIKTOK_RADAR/entregas/2026-11-04_AVIACION_CATASTROFES/VIDEO_QC_SAFEZONE.mp4",
+    "html_report": "/workspaces/PRUEBA-CLI/TIKTOK_RADAR/entregas/2026-11-04_AVIACION_CATASTROFES/REPORTE_INSPECCION.html"
+  }
+}
