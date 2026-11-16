@@ -1,0 +1,123 @@
+{
+  "preflight": {
+    "ready": true,
+    "errors": [],
+    "warnings": [],
+    "disk_free_mb": 14614.2,
+    "tts_primary": "gemini",
+    "sfx_assets": {
+      "genjutsu_fracture": "/workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/04_motor_video_voz/assets/SFX_GENJUTSU_FRACTURE.wav",
+      "riser": "/workspaces/PRUEBA-CLI/MASTER_SERIES_PACKAGE/AUDIO/EPIDEMIC_SOUND/SFX/SFX_RISER_LOW.wav",
+      "boom": "/workspaces/PRUEBA-CLI/MASTER_SERIES_PACKAGE/AUDIO/EPIDEMIC_SOUND/SFX/SFX_DARK_BOOM.wav",
+      "wing_flap": "/workspaces/PRUEBA-CLI/MASTER_SERIES_PACKAGE/AUDIO/EPIDEMIC_SOUND/SFX/FOLEY_COAT_FLAP.wav",
+      "music_bed": "/workspaces/PRUEBA-CLI/MASTER_SERIES_PACKAGE/AUDIO/EPIDEMIC_SOUND/MUSIC/CREEPING_ANXIETY_INSTRUMENTS.wav"
+    }
+  },
+  "out_dir": "/workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/04_motor_video_voz/PRUEBA_01_GENJUTSU",
+  "speech": {
+    "voice_wav": "/workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/04_motor_video_voz/PRUEBA_01_GENJUTSU/VOZ_LIMPIA.wav",
+    "engine": "gemini:Puck",
+    "act1_text": "¿Crees que ves el mundo tal como es? Tu cerebro inventa el noventa por ciento de lo que estás mirando ahora mismo.",
+    "act2_text": "Así que dime... ¿cómo sabes que no sigues dentro de mi ilusión?",
+    "act1_duration_sec": 5.429,
+    "act2_duration_sec": 4.76,
+    "genjutsu_cue_sec": 5.879,
+    "total_duration_sec": 11.49,
+    "word_boundaries_path": "/workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/04_motor_video_voz/PRUEBA_01_GENJUTSU/WORD_BOUNDARIES.json"
+  },
+  "mix": {
+    "master_wav": "/workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/04_motor_video_voz/PRUEBA_01_GENJUTSU/AUDIO_MASTER.wav",
+    "duration_sec": 11.49,
+    "integrated_lufs": -14.4,
+    "true_peak_dbtp": -1.0,
+    "lra_lu": 3.8,
+    "cue_sec": 5.879,
+    "assets_used": {
+      "genjutsu_fracture": "/workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/04_motor_video_voz/assets/SFX_GENJUTSU_FRACTURE.wav",
+      "riser": "/workspaces/PRUEBA-CLI/MASTER_SERIES_PACKAGE/AUDIO/EPIDEMIC_SOUND/SFX/SFX_RISER_LOW.wav",
+      "boom": "/workspaces/PRUEBA-CLI/MASTER_SERIES_PACKAGE/AUDIO/EPIDEMIC_SOUND/SFX/SFX_DARK_BOOM.wav",
+      "wing_flap": "/workspaces/PRUEBA-CLI/MASTER_SERIES_PACKAGE/AUDIO/EPIDEMIC_SOUND/SFX/FOLEY_COAT_FLAP.wav",
+      "music_bed": "/workspaces/PRUEBA-CLI/MASTER_SERIES_PACKAGE/AUDIO/EPIDEMIC_SOUND/MUSIC/CREEPING_ANXIETY_INSTRUMENTS.wav"
+    }
+  },
+  "subtitles_ass": "/workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/04_motor_video_voz/PRUEBA_01_GENJUTSU/SUBTITULOS_PERSONAJE.ass",
+  "i2v_pack_dir": "/workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/04_motor_video_voz/PRUEBA_01_GENJUTSU/I2V_PACK",
+  "mode": "local_preview",
+  "final_mp4": "/workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/04_motor_video_voz/PRUEBA_01_GENJUTSU/PRUEBA_01_LOCAL_PREVIEW_CRF16.mp4",
+  "qc": {
+    "verdict": "PASS",
+    "errors": [],
+    "warnings": [],
+    "stream_info": {
+      "video": {
+        "codec_name": "h264",
+        "codec_type": "video",
+        "width": 1080,
+        "height": 1920,
+        "r_frame_rate": "24/1"
+      },
+      "audio": {
+        "codec_name": "aac",
+        "codec_type": "audio",
+        "r_frame_rate": "0/0"
+      },
+      "fps": 24.0,
+      "duration_sec": 11.49,
+      "size_mb": 56.39,
+      "bitrate_kbps": 41165.8
+    },
+    "loudness": {
+      "input_i": -14.44,
+      "input_tp": -1.01,
+      "input_lra": 3.8,
+      "input_thresh": -24.79,
+      "target_offset": 0.66
+    },
+    "cue_sec": 5.879,
+    "frame_metrics": [
+      {
+        "t_sec": 0.96,
+        "act": "ACTO 1 (NORMAL)",
+        "pore_texture_energy": 17.491,
+        "identity_similarity": 87.2,
+        "realism_verdict": "PASS_HYPERREALISTIC"
+      },
+      {
+        "t_sec": 2.87,
+        "act": "ACTO 1 (NORMAL)",
+        "pore_texture_energy": 17.449,
+        "identity_similarity": 87.23,
+        "realism_verdict": "PASS_HYPERREALISTIC"
+      },
+      {
+        "t_sec": 4.79,
+        "act": "ACTO 1 (NORMAL)",
+        "pore_texture_energy": 17.42,
+        "identity_similarity": 87.31,
+        "realism_verdict": "PASS_HYPERREALISTIC"
+      },
+      {
+        "t_sec": 6.7,
+        "act": "ACTO 2 (GENJUTSU)",
+        "pore_texture_energy": 13.145,
+        "identity_similarity": 77.65,
+        "realism_verdict": "PASS_HYPERREALISTIC"
+      },
+      {
+        "t_sec": 8.62,
+        "act": "ACTO 2 (GENJUTSU)",
+        "pore_texture_energy": 13.237,
+        "identity_similarity": 77.78,
+        "realism_verdict": "PASS_HYPERREALISTIC"
+      },
+      {
+        "t_sec": 10.53,
+        "act": "ACTO 2 (GENJUTSU)",
+        "pore_texture_energy": 13.217,
+        "identity_similarity": 77.86,
+        "realism_verdict": "PASS_HYPERREALISTIC"
+      }
+    ],
+    "contact_sheet": "/workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/04_motor_video_voz/PRUEBA_01_GENJUTSU/CONTACT_SHEET_PERSONAJE.jpg"
+  }
+}

@@ -28,9 +28,24 @@ SEED_DIR = PROJECT_ROOT / "01_semilla_sintetica"
 DNA_DIR = PROJECT_ROOT / "02_adn_biometrico"
 SHEET_DIR = PROJECT_ROOT / "03_character_sheet"
 VIDEO_DIR = PROJECT_ROOT / "04_motor_video_voz"
+CONFIG_PATH = PROJECT_ROOT / "config_personaje.json"
 
 for _d in (SEED_DIR, DNA_DIR, SHEET_DIR, VIDEO_DIR):
     _d.mkdir(parents=True, exist_ok=True)
+
+
+def load_character_config(config_path: Optional[Path] = None) -> Dict[str, Any]:
+    """Carga la configuración central de Candidato C con rutas resueltas desde PROJECT_ROOT."""
+    cfg_file = Path(config_path) if config_path else CONFIG_PATH
+    if not cfg_file.exists():
+        raise FileNotFoundError(f"No se encontró config_personaje.json en: {cfg_file}")
+    return json.loads(cfg_file.read_text(encoding="utf-8"))
+
+
+def resolve_project_path(rel_or_abs: str) -> Path:
+    """Resuelve rutas relativas a PROJECT_ROOT manteniendo rutas absolutas intactas."""
+    p = Path(rel_or_abs)
+    return p if p.is_absolute() else (PROJECT_ROOT / p).resolve()
 
 
 def fetch_raw_tpdne_reference(out_path: Path) -> bool:
@@ -131,30 +146,45 @@ def apply_optical_sensor_realism(
     return out_path
 
 
+def _compute_biometric_arrays(img_path: Path) -> Tuple[np.ndarray, List[float], List[float], float]:
+    """Calcula embedding normalizado, medias/desviaciones faciales y energía textural de poros."""
+    img = Image.open(img_path).convert("RGB").resize((512, 512), Image.Resampling.LANCZOS)
+    arr = np.asarray(img, dtype=np.float32)
+
+    face_crop = arr[110:400, 128:384, :]
+    mean_skin_rgb = face_crop.mean(axis=(0, 1)).tolist()
+    std_skin_rgb = face_crop.std(axis=(0, 1)).tolist()
+
+    gray = 0.299 * face_crop[:, :, 0] + 0.587 * face_crop[:, :, 1] + 0.114 * face_crop[:, :, 2]
+    gx = np.diff(gray, axis=1)
+    gy = np.diff(gray, axis=0)
+    pore_texture_energy = float(np.sqrt(np.mean(gx ** 2) + np.mean(gy ** 2)))
+
+    small = np.asarray(img.resize((16, 16), Image.Resampling.LANCZOS), dtype=np.float32) / 255.0
+    embedding_vec = small.flatten()[:512]
+    embedding_vec = embedding_vec / (np.linalg.norm(embedding_vec) + 1e-8)
+    return embedding_vec, mean_skin_rgb, std_skin_rgb, pore_texture_energy
+
+
+def measure_frame_biometrics(img_path: Path, master_npy: Path) -> Dict[str, Any]:
+    """Evalúa energía de poros y similitud coseno en memoria sin escribir archivos en DNA_DIR."""
+    embedding_vec, _, _, pore_energy = _compute_biometric_arrays(img_path)
+    master_vec = np.load(master_npy)
+    sim = float(np.dot(master_vec, embedding_vec) / ((np.linalg.norm(master_vec) * np.linalg.norm(embedding_vec)) + 1e-8))
+    return {
+        "pore_texture_energy": round(pore_energy, 3),
+        "identity_similarity": round(sim * 100.0, 2),
+        "realism_verdict": "PASS_HYPERREALISTIC" if pore_energy >= 6.5 else "WARN_LOW_TEXTURE",
+    }
+
+
 def extract_biometric_dna_signature(img_path: Path, character_id: str) -> Dict[str, Any]:
     """
     Extrae una firma biométrica multi-región (colorimetría de piel, proporción central,
     histograma textural de alta frecuencia y hash perceptual) para garantizar la continuidad
     del personaje en futuros planos.
     """
-    img = Image.open(img_path).convert("RGB").resize((512, 512), Image.Resampling.LANCZOS)
-    arr = np.asarray(img, dtype=np.float32)
-
-    # Región central del rostro (ojos, nariz, pómulos, boca)
-    face_crop = arr[110:400, 128:384, :]
-    mean_skin_rgb = face_crop.mean(axis=(0, 1)).tolist()
-    std_skin_rgb = face_crop.std(axis=(0, 1)).tolist()
-
-    # Energía de alta frecuencia (medidor anti-plástico: mide riqueza de poros y vello facial)
-    gray = 0.299 * face_crop[:, :, 0] + 0.587 * face_crop[:, :, 1] + 0.114 * face_crop[:, :, 2]
-    gx = np.diff(gray, axis=1)
-    gy = np.diff(gray, axis=0)
-    pore_texture_energy = float(np.sqrt(np.mean(gx ** 2) + np.mean(gy ** 2)))
-
-    # Vector descriptor compacto de 128 dimensiones (bloques espaciales 8x8 x 2 estadísticos)
-    small = np.asarray(img.resize((16, 16), Image.Resampling.LANCZOS), dtype=np.float32) / 255.0
-    embedding_vec = small.flatten()[:512]
-    embedding_vec = embedding_vec / (np.linalg.norm(embedding_vec) + 1e-8)
+    embedding_vec, mean_skin_rgb, std_skin_rgb, pore_texture_energy = _compute_biometric_arrays(img_path)
 
     dna_npy_path = DNA_DIR / f"{character_id}_embedding_512d.npy"
     np.save(dna_npy_path, embedding_vec)

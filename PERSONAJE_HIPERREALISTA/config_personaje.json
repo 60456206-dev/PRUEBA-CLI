@@ -1,0 +1,81 @@
+{
+  "_descripcion": "Configuración Maestra de Candidato C · Personaje Hiperrealista + Motor Genjutsu Live-Action",
+  "personaje": {
+    "id": "CANDIDATO_C_OFICIAL",
+    "nombre": "Candidato C (Divulgador Científico Genjutsu)",
+    "edad": 29,
+    "semilla_oficial": "01_semilla_sintetica/PERSONAJE_OFICIAL_SEMILLA_0.jpg",
+    "adn_json": "02_adn_biometrico/PERSONAJE_OFICIAL_MASTER_dna.json",
+    "adn_embedding": "02_adn_biometrico/PERSONAJE_OFICIAL_MASTER_embedding_512d.npy",
+    "kf1_normal": "03_character_sheet/KF1_FRONTAL_HABLANDO_85MM.jpg",
+    "kf2_genjutsu": "03_character_sheet/KF2_GENJUTSU_LIVEACTION_85MM.jpg"
+  },
+  "video": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 24,
+    "crf": 16,
+    "preset": "slow",
+    "profile": "high",
+    "pix_fmt": "yuv420p",
+    "temporal_grain_sigma": 2.2,
+    "pore_restoration_strength": 0.48,
+    "transition_window_sec": 0.9,
+    "slow_push_in_zoom": 0.06
+  },
+  "audio": {
+    "tts_primary": "gemini",
+    "gemini_models": [
+      "gemini-3.8-flash-tts",
+      "gemini-3.8-flash-lite-tts",
+      "gemini-2.5-flash-preview-tts"
+    ],
+    "gemini_voice": "Puck",
+    "style_act1": "Divulgador científico latino joven (29 años), carismático, cercano, ritmo ágil y con ligero toque de humor inteligente. Dicción natural, expresiva y enérgica, cero monotonía robótica.",
+    "style_act2": "Mismo locutor bajando un registro la voz con calma hipnótica, grave y misteriosa tras activar una ilusión cinematográfica. Pausas controladas, tono intrigante y seguro.",
+    "edge_voice": "es-MX-JorgeNeural",
+    "edge_rate_act1": "+8%",
+    "edge_pitch_act1": "+1Hz",
+    "edge_rate_act2": "-4%",
+    "edge_pitch_act2": "-6Hz",
+    "silence_gap_sec": 0.50,
+    "lead_in_sec": 0.20,
+    "tail_pad_sec": 0.60,
+    "sample_rate": 48000,
+    "channels": 2,
+    "target_lufs": -14.0,
+    "target_tp": -1.0,
+    "target_lra": 7.0,
+    "sfx_search_dirs": [
+      "04_motor_video_voz/assets",
+      "../MASTER_SERIES_PACKAGE/AUDIO/EPIDEMIC_SOUND/SFX",
+      "../TIKTOK_RADAR/audio_assets"
+    ],
+    "music_search_dirs": [
+      "../MASTER_SERIES_PACKAGE/AUDIO/EPIDEMIC_SOUND/MUSIC",
+      "../TIKTOK_RADAR/audio_assets"
+    ],
+    "music_bed_candidates": [
+      "CREEPING_ANXIETY_INSTRUMENTS.wav",
+      "DARK_PUZZLE_INSTRUMENTS.wav",
+      "G2_CYBER_DEADLOCK_INSTRUMENTS.mp3"
+    ]
+  },
+  "subtitles": {
+    "font_name": "Montserrat Black",
+    "font_size": 66,
+    "margin_v": 340,
+    "outline": 6.0,
+    "max_words_per_burst": 3
+  },
+  "qc": {
+    "min_pore_energy": 6.5,
+    "min_identity_similarity_act1": 80.0,
+    "min_identity_similarity_act2": 72.0,
+    "lufs_min": -15.5,
+    "lufs_max": -12.5,
+    "max_true_peak_db": -0.5,
+    "sample_frames": 6
+  },
+  "default_test_script": "¿Crees que ves el mundo tal como es? Tu cerebro inventa el noventa por ciento de lo que estás mirando ahora mismo. [GENJUTSU] Así que dime... ¿cómo sabes que no sigues dentro de mi ilusión?"
+}

@@ -1,0 +1,206 @@
+[
+  {
+    "act": 1,
+    "text": "¿Crees",
+    "start": 0.2,
+    "end": 0.452
+  },
+  {
+    "act": 1,
+    "text": "que",
+    "start": 0.452,
+    "end": 0.603
+  },
+  {
+    "act": 1,
+    "text": "ves",
+    "start": 0.603,
+    "end": 0.754
+  },
+  {
+    "act": 1,
+    "text": "el",
+    "start": 0.754,
+    "end": 0.855
+  },
+  {
+    "act": 1,
+    "text": "mundo",
+    "start": 0.855,
+    "end": 1.107
+  },
+  {
+    "act": 1,
+    "text": "tal",
+    "start": 1.107,
+    "end": 1.444
+  },
+  {
+    "act": 1,
+    "text": "como",
+    "start": 1.444,
+    "end": 1.645
+  },
+  {
+    "act": 1,
+    "text": "es?",
+    "start": 1.645,
+    "end": 1.836
+  },
+  {
+    "act": 1,
+    "text": "Tu",
+    "start": 1.836,
+    "end": 1.937
+  },
+  {
+    "act": 1,
+    "text": "cerebro",
+    "start": 1.937,
+    "end": 2.819
+  },
+  {
+    "act": 1,
+    "text": "inventa",
+    "start": 2.819,
+    "end": 3.171
+  },
+  {
+    "act": 1,
+    "text": "el",
+    "start": 3.171,
+    "end": 3.272
+  },
+  {
+    "act": 1,
+    "text": "noventa",
+    "start": 3.272,
+    "end": 3.625
+  },
+  {
+    "act": 1,
+    "text": "por",
+    "start": 3.625,
+    "end": 3.776
+  },
+  {
+    "act": 1,
+    "text": "ciento",
+    "start": 3.776,
+    "end": 4.078
+  },
+  {
+    "act": 1,
+    "text": "de",
+    "start": 4.078,
+    "end": 4.179
+  },
+  {
+    "act": 1,
+    "text": "lo",
+    "start": 4.179,
+    "end": 4.279
+  },
+  {
+    "act": 1,
+    "text": "que",
+    "start": 4.279,
+    "end": 4.43
+  },
+  {
+    "act": 1,
+    "text": "estás",
+    "start": 4.43,
+    "end": 4.682
+  },
+  {
+    "act": 1,
+    "text": "mirando",
+    "start": 4.682,
+    "end": 5.035
+  },
+  {
+    "act": 1,
+    "text": "ahora",
+    "start": 5.035,
+    "end": 5.287
+  },
+  {
+    "act": 1,
+    "text": "mismo.",
+    "start": 5.287,
+    "end": 5.629
+  },
+  {
+    "act": 2,
+    "text": "Así",
+    "start": 6.129,
+    "end": 6.363
+  },
+  {
+    "act": 2,
+    "text": "que",
+    "start": 6.363,
+    "end": 6.596
+  },
+  {
+    "act": 2,
+    "text": "dime...",
+    "start": 6.596,
+    "end": 7.873
+  },
+  {
+    "act": 2,
+    "text": "¿cómo",
+    "start": 7.873,
+    "end": 8.184
+  },
+  {
+    "act": 2,
+    "text": "sabes",
+    "start": 8.184,
+    "end": 8.573
+  },
+  {
+    "act": 2,
+    "text": "que",
+    "start": 8.573,
+    "end": 8.806
+  },
+  {
+    "act": 2,
+    "text": "no",
+    "start": 8.806,
+    "end": 8.961
+  },
+  {
+    "act": 2,
+    "text": "sigues",
+    "start": 8.961,
+    "end": 9.428
+  },
+  {
+    "act": 2,
+    "text": "dentro",
+    "start": 9.428,
+    "end": 9.894
+  },
+  {
+    "act": 2,
+    "text": "de",
+    "start": 9.894,
+    "end": 10.05
+  },
+  {
+    "act": 2,
+    "text": "mi",
+    "start": 10.05,
+    "end": 10.205
+  },
+  {
+    "act": 2,
+    "text": "ilusión?",
+    "start": 10.205,
+    "end": 10.889
+  }
+]

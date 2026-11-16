@@ -1,0 +1,23 @@
+{
+  "personaje": "Candidato C Oficial (29 años, 85mm f/1.8 RAW)",
+  "duracion_objetivo_seg": 11.49,
+  "genjutsu_cue_seg": 5.88,
+  "guion": "¿Crees que ves el mundo tal como es? Tu cerebro inventa el noventa por ciento de lo que estás mirando ahora mismo. [GENJUTSU] Así que dime... ¿cómo sabes que no sigues dentro de mi ilusión?",
+  "archivos": {
+    "first_frame": "/workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/04_motor_video_voz/PRUEBA_01_GENJUTSU/I2V_PACK/01_KF1_FIRST_FRAME.jpg",
+    "last_frame": "/workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/04_motor_video_voz/PRUEBA_01_GENJUTSU/I2V_PACK/02_KF2_LAST_FRAME.jpg",
+    "clean_voice_wav": "/workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/04_motor_video_voz/PRUEBA_01_GENJUTSU/I2V_PACK/03_VOZ_LIMPIA_PARA_LIPSYNC.wav",
+    "master_audio_wav": "/workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/04_motor_video_voz/PRUEBA_01_GENJUTSU/I2V_PACK/04_AUDIO_MASTER_FINAL.wav"
+  },
+  "google_flow_veo3_first_last_frame": {
+    "aspect_ratio": "9:16",
+    "first_frame": "/workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/04_motor_video_voz/PRUEBA_01_GENJUTSU/I2V_PACK/01_KF1_FIRST_FRAME.jpg",
+    "last_frame": "/workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/04_motor_video_voz/PRUEBA_01_GENJUTSU/I2V_PACK/02_KF2_LAST_FRAME.jpg",
+    "prompt": "Vertical 9:16 photorealistic 85mm f/1.8 live-action studio shot of the exact same 29-year-old Latino man talking naturally to camera with subtle hand gestures and authentic blinking. Preserve 100% of his natural human skin pores, 2-day dark stubble, and facial bone structure. At 5.9s, a subtle live-action Genjutsu lighting shift bends the studio background from warm tungsten bokeh to deep crimson eclipse chiaroscuro as black raven feathers drift through shallow foreground bokeh and crimson ring reflections appear in his irises. Strictly NO anime filter on skin, NO plastic skin smoothing, 24fps cinema motion."
+  },
+  "gpu_lipsync_hallo2_o_liveportrait": {
+    "nota": "Ejecutar en máquina con GPU NVIDIA y luego pasar el MP4 resultante a --input-video",
+    "ejemplo_echomimic_o_hallo2": "python inference.py --source_image /workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/04_motor_video_voz/PRUEBA_01_GENJUTSU/I2V_PACK/01_KF1_FIRST_FRAME.jpg --driving_audio /workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/04_motor_video_voz/PRUEBA_01_GENJUTSU/I2V_PACK/03_VOZ_LIMPIA_PARA_LIPSYNC.wav --output raw_lipsync.mp4"
+  },
+  "postproceso_restauracion_poros_local": "python3 PERSONAJE_HIPERREALISTA/tools/pipeline_personaje.py --input-video /ruta/a/CLIP_I2V_O_LIPSYNC.mp4 --audio-file /workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/04_motor_video_voz/PRUEBA_01_GENJUTSU/I2V_PACK/03_VOZ_LIMPIA_PARA_LIPSYNC.wav --cue-sec 5.88 --out-dir /workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/04_motor_video_voz/PRUEBA_01_GENJUTSU"
+}

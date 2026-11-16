@@ -1,6 +1,23 @@
 # Dónde nos quedamos
 
-Actualizado: 2026-11-15.
+Actualizado: 2026-11-16.
+
+## `PERSONAJE_HIPERREALISTA`: Pipeline Completo Listo para Pruebas (Voz + SFX Genjutsu + Restauración I2V + QC) · 2026-11-16
+
+- **Pacto e Instrucción Directa del Usuario**:
+  - Preparar todo el frente de `PERSONAJE_HIPERREALISTA` (Candidato C) para generar la primera prueba audiovisual (`KF1 -> KF2` con voz, SFX Genjutsu, subtítulos y paquete I2V) sin errores.
+- **Módulos Creados / Actualizados y Verificados**:
+  1. [`config_personaje.json`](file:///workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/config_personaje.json) y [`motor_personaje.py`](file:///workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/tools/motor_personaje.py): configuración central de Candidato C y medición biométrica en memoria (`measure_frame_biometrics`).
+  2. [`audio_personaje.py`](file:///workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/tools/audio_personaje.py): locución bi-fase (`[GENJUTSU]`) con `Gemini 3.8 Flash TTS` (`Puck`, fallback automático a `Edge-TTS`), recorte limpio de silencios en bordes, SFX sintetizado [`SFX_GENJUTSU_FRACTURE.wav`](file:///workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/04_motor_video_voz/assets/SFX_GENJUTSU_FRACTURE.wav) + riser/boom/foley/cama duckeada, y masterización EBU R128 en 2 pasadas (`-14.0 LUFS` / `-1.0 dBTP`).
+  3. [`genjutsu_video_engine.py`](file:///workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/tools/genjutsu_video_engine.py): corregida ejecución directa, optimizada separación de frecuencias (`compute_high_frequency_band` / `apply_high_frequency_band`), fractura óptica sincronizada al `cue_sec` real, muxing de audio/ASS y modo `--input-video` (`process_i2v_video_with_pore_restoration`) para clips de Flow/Kling/Hallo2/LivePortrait.
+  4. [`pipeline_personaje.py`](file:///workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/tools/pipeline_personaje.py) y [`README.md`](file:///workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/README.md): chequeo `--preflight-only`, subtítulos Kinetic ASS en `Montserrat Black` aislados por acto/pausa (sin cruzar el corte Genjutsu), exportación automática de `I2V_PACK/` y auditoría QC técnica + biométrica (`QC_REPORT.json` + `CONTACT_SHEET_PERSONAJE.jpg`).
+  5. **Tests ([`test_personaje_pipeline.py`](file:///workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/tests/test_personaje_pipeline.py))**: `7/7 OK` (`unittest`) cubriendo preflight, guion 2 actos, SFX, mezcla `-14 LUFS`, ASS + escape FFmpeg, recuperación de poros y flujo `--input-video` E2E + QC.
+- **Primera Prueba Generada y Revisada Visualmente ([`PRUEBA_01_GENJUTSU/`](file:///workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/04_motor_video_voz/PRUEBA_01_GENJUTSU/))**:
+  - Vídeo preview: [`PRUEBA_01_LOCAL_PREVIEW_CRF16.mp4`](file:///workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/04_motor_video_voz/PRUEBA_01_GENJUTSU/PRUEBA_01_LOCAL_PREVIEW_CRF16.mp4) (`1080×1920 @ 24.0 fps`, `11.49s`, `56.39 MB`, `H.264 High CRF 16`, voz `gemini:Puck`, `-14.44 LUFS`, True Peak `-1.01 dBTP`).
+  - **Inspección visual y QC (`PASS`, 0 errores, 0 avisos)**: revisados [`CONTACT_SHEET_PERSONAJE.jpg`](file:///workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/04_motor_video_voz/PRUEBA_01_GENJUTSU/CONTACT_SHEET_PERSONAJE.jpg) y el fotograma de fractura en `t=5.88s`; poros preservados (`17.42–17.49` Acto 1; `13.15–13.24` Acto 2), similitud ADN (`87.2%` / `77.8%`), fractura cromática limpia sin subtítulos tapando el corte, y subtítulos de Acto 2 legibles en coral-carmesí luminoso.
+  - **Paquete I2V / Lip-Sync listo**: [`I2V_PACK/`](file:///workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/04_motor_video_voz/PRUEBA_01_GENJUTSU/I2V_PACK/) con `01_KF1_FIRST_FRAME.jpg`, `02_KF2_LAST_FRAME.jpg`, `03_VOZ_LIMPIA_PARA_LIPSYNC.wav`, `04_AUDIO_MASTER_FINAL.wav` y `05_PROMPTS_FLOW_Y_LIPSYNC.json`.
+  - **Limitación de entorno verificada**: este Codespace es solo CPU (`2 vCPU`, `7.8 GB RAM`, sin GPU NVIDIA), por lo que el preview local valida voz, mezcla, timing, subtítulos y VFX óptico sin lip-sync neuronal local; para animación labial/corporal real se pasa el clip de Google Flow (`Veo 3.1 First-Last-Frame`) o GPU (`Hallo2`/`LivePortrait`) por `--input-video`.
+  - **Recomendación sobre el vídeo**: **Conservar [`PRUEBA_01_LOCAL_PREVIEW_CRF16.mp4`](file:///workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/04_motor_video_voz/PRUEBA_01_GENJUTSU/PRUEBA_01_LOCAL_PREVIEW_CRF16.mp4) y [`I2V_PACK/`](file:///workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/04_motor_video_voz/PRUEBA_01_GENJUTSU/I2V_PACK/) como base oficial de preproducción** (audio, timing y VFX validados sin errores) y, si quieres movimiento labial real, generar el clip en Google Flow (`Veo 3.1 FLF`) o GPU con `03_VOZ_LIMPIA_PARA_LIPSYNC.wav` y procesarlo con `--input-video`.
 
 ## `DUDAS`: Nuevo Proyecto de Aprendizaje Matemático «AGRO FESTIVO» (PRONOEI Huerta Parqui) · 2026-11-15
 
