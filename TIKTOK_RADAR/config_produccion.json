@@ -32,6 +32,13 @@
       "demo": "Renderizado NLE instantáneo de prueba sin invocar Google Flow (0 créditos)"
     }
   },
+  "google_flow": {
+    "rotacion_secuencial": true,
+    "cooldown_cuota_horas": 12,
+    "perfil_principal": "~/flow-profile",
+    "carpeta_perfiles": "~/flow-profiles",
+    "perfiles_extra": []
+  },
   "consistencia_visual": {
     "estilo_maestro": "Vertical 9:16, prestigious scientific and technical documentary aesthetic, dramatic chiaroscuro studio lighting, deep carbon background shadows with directional rim light, tactile textured surface patina inspired by Veritasium and Jakub Misiek illustrations, subtle analog film grain, volumetric atmosphere, clean surgical vector schematics, shallow depth of field, slow continuous camera push-in, masterpiece quality, no plastic CGI surfaces, no uncanny valley",
     "motor_render": "Veritasium Tactile Documentary & Chiaroscuro Cinematic",

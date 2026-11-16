@@ -34,6 +34,23 @@ for _d in (SEED_DIR, DNA_DIR, SHEET_DIR, VIDEO_DIR):
     _d.mkdir(parents=True, exist_ok=True)
 
 
+def load_env_keys() -> None:
+    """Carga variables de entorno desde ~/.api_keys.env o .env sin sobrescribir las ya activas."""
+    for env_path in (Path.home() / ".api_keys.env", PROJECT_ROOT / ".env", PROJECT_ROOT.parent / ".env"):
+        if not env_path.exists():
+            continue
+        for raw_line in env_path.read_text(encoding="utf-8").splitlines():
+            line = raw_line.strip()
+            if line.startswith("export "):
+                line = line[7:].strip()
+            if "=" in line and not line.startswith("#"):
+                k, v = line.split("=", 1)
+                os.environ.setdefault(k.strip(), v.strip().strip('"').strip("'"))
+
+
+load_env_keys()
+
+
 def load_character_config(config_path: Optional[Path] = None) -> Dict[str, Any]:
     """Carga la configuración central de Candidato C con rutas resueltas desde PROJECT_ROOT."""
     cfg_file = Path(config_path) if config_path else CONFIG_PATH

@@ -2,6 +2,33 @@
 
 Actualizado: 2026-11-16.
 
+## Sincronización Completa con Servidor AWS (`ubuntu@77.113.75.243`) y Rotación Secuencial Flow · 2026-11-16
+
+- **4 Cuentas de Google Flow Vinculadas y Verificadas en AWS (`4/4` activas)**:
+  - Perfiles vinculados y verificados en vivo con `python3 tools/test_flow_session.py --all` y `bash ~/iniciar_flow_perfil.sh --listar`:
+    1. `/home/ubuntu/flow-profile` (`DISPONIBLE`, perfil principal `F`).
+    2. `/home/ubuntu/flow-profiles/cuenta_2` (`DISPONIBLE`, perfil `M`).
+    3. `/home/ubuntu/flow-profiles/cuenta_3` (`DISPONIBLE`, perfil `R`).
+    4. `/home/ubuntu/flow-profiles/cuenta_4` (`DISPONIBLE`, perfil `J`; nota visual: muestra una insignia amarilla `!` en el avatar de Google aunque Flow carga con normalidad).
+  - Revisión visual de las capturas detectó que `cuenta_2` y `cuenta_3` muestran el botón `+ Proyecto nuevo` (es-419) en lugar de `+ Nuevo proyecto`. Se actualizó [`flow_generator.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/flow_generator.py#L299-L312) (`ensure_inside_flow_project`) para aceptar también `'proyecto nuevo'` y `'create with flow'`, verificado con `28/28 OK` locales y desplegado en `TIKTOK-NEWS.git` (`85ececb`) -> `~/TIKTOK-NEWS` en AWS.
+  - Sesión temporal de escritorio VNC en AWS (`Xtigervnc :42`) y túnel SSH/noVNC (`6080`/`5942`) cerrados limpiamente tras terminar la vinculación.
+
+- **Rotación Secuencial Automática Multi-Cuenta en Google Flow**:
+  - Implementada en [`flow_generator.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/flow_generator.py) (`resolve_flow_profiles`, `select_available_profiles`, `mark_profile_state`, `_run_single_profile_session`), [`config_produccion.json`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/config_produccion.json) (`google_flow.rotacion_secuencial`, `cooldown_cuota_horas: 12`), [`iniciar_flow_perfil.sh`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/iniciar_flow_perfil.sh) y [`test_flow_session.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/test_flow_session.py) (`--all` / `--profile`).
+  - Detecta automáticamente `~/flow-profile` + `~/flow-profiles/*` (o `FLOW_PROFILE_DIRS`). Si una cuenta agota ambos modelos (`Omni 1.1 Flash` y `Veo 3.1 - Lite`) o expira su sesión, registra su cooldown en `~/.flow_profiles_state.json`, cierra el navegador y continúa en la siguiente cuenta desde el plano pendiente exacto.
+  - Verificada con tests nuevos en [`test_pipeline_tools.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tests/test_pipeline_tools.py) (`28/28 OK` y `7/7 pass`).
+
+- **Despliegue y Sincronización Verificados en Vivo en AWS (`ubuntu@77.113.75.243`)**:
+  - **`TIKTOK_RADAR` -> [`STANDALONE_TIKTOK_RADAR`](file:///workspaces/PRUEBA-CLI/STANDALONE_TIKTOK_RADAR) -> `TIKTOK-NEWS.git` (`48a2ba7`) -> `~/TIKTOK-NEWS` en AWS**:
+    - Sincronizados todos los módulos pendientes del 2026-11-11 al 2026-11-13 (`motion_engine/`, `remotion_renderer.py`, `video_qc_inspector.py`, `ensamblador_final.py`, `pipeline_autonomo.py`, `audio_generator.py`, `flow_generator.py`, `generador_portada.py`, `news_radar.py`, `ejecutar_todo.py`, `whatsapp_monitor.py`, `bot.js`, `bot_helpers.js`, `tests/`, `crontab_2videos_peru.tab`).
+    - Instalados en AWS `fonts-montserrat`, paquetes Python (`pysubs2`, `numpy`, `auto-editor`, `aiohttp`, `edge-tts`, `Pillow`, `playwright`), dependencias npm de Remotion (`244` paquetes) y `Chrome Headless Shell` (6 composiciones verificadas).
+    - Reiniciado `tiktok-whatsapp-bot.service` (`active`) y verificado bot conectado (`{"ready":true,"owner":"26014734409817@lid","bot":"51902893413@c.us","hasQR":false}`).
+    - Tests ejecutados en AWS: **`7/7` pass** (`test_bot_helpers.test.js`) y **`26/26` OK** (`unittest`).
+    - `crontab` mantenido pausado (`no crontab for ubuntu`) hasta nueva orden para proteger créditos de Flow; entregas previas y `.env` preservados intactos.
+  - **`PERSONAJE_HIPERREALISTA` -> `~/PERSONAJE_HIPERREALISTA` en AWS**:
+    - Añadido autocargador `load_env_keys()` en [`motor_personaje.py`](file:///workspaces/PRUEBA-CLI/PERSONAJE_HIPERREALISTA/tools/motor_personaje.py) para leer `~/.api_keys.env` en AWS, y copiado el proyecto junto con los 5 assets WAV en `04_motor_video_voz/assets/`.
+    - Verificados en AWS `--preflight-only` (`ready: true`, `tts_primary: "gemini"`) y **`7/7` OK** en `test_personaje_pipeline.py`.
+
 ## `PERSONAJE_HIPERREALISTA`: Pipeline Completo Listo para Pruebas (Voz + SFX Genjutsu + Restauración I2V + QC) · 2026-11-16
 
 - **Pacto e Instrucción Directa del Usuario**:

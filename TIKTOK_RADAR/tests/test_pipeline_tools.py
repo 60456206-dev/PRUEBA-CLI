@@ -494,6 +494,77 @@ class TestRenderAndSyncUpgrades(unittest.TestCase):
             self.assertIn("linear=true", cmd2_str)
             self.assertIn("measured_I=-18.50", cmd2_str)
 
+    def test_flow_sequential_profile_discovery_and_cooldown_filtering(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            td = Path(tmp)
+            p1 = td / "flow-profile"
+            p2 = td / "flow-profiles" / "cuenta_2"
+            p3 = td / "flow-profiles" / "cuenta_3"
+            for p in (p1, p2, p3):
+                p.mkdir(parents=True, exist_ok=True)
+            state_file = td / "state.json"
+
+            env_val = f"{p1}:{p2}:{p3}:{p2}"
+            with mock.patch.dict("os.environ", {"FLOW_PROFILE_DIRS": env_val, "FLOW_STATE_FILE": str(state_file)}):
+                resolved = flow_generator.resolve_flow_profiles()
+                self.assertEqual([p.resolve() for p in resolved], [p1.resolve(), p2.resolve(), p3.resolve()])
+
+                flow_generator.mark_profile_state(p1, "quota_exhausted", cooldown_hours=12.0, state_file=state_file, now=1000.0)
+                flow_generator.mark_profile_state(p2, "session_expired", cooldown_hours=24.0, state_file=state_file, now=1000.0)
+
+                avail = flow_generator.select_available_profiles(resolved, state=flow_generator.load_flow_profile_state(state_file), now=1500.0)
+                self.assertEqual([p.resolve() for p in avail], [p3.resolve()])
+
+                # Tras vencer el cooldown de p1 (1000 + 12*3600 < 50000), p1 vuelve a estar disponible pero p2 sigue expirada
+                avail_after = flow_generator.select_available_profiles(resolved, state=flow_generator.load_flow_profile_state(state_file), now=50000.0)
+                self.assertEqual([p.resolve() for p in avail_after], [p1.resolve(), p3.resolve()])
+
+    def test_flow_sequential_rotation_continues_pending_shots_on_second_profile(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            td = Path(tmp)
+            p1 = td / "p1"
+            p2 = td / "p2"
+            p1.mkdir()
+            p2.mkdir()
+            state_file = td / "state.json"
+
+            delivery = td / "delivery"
+            shots_dir = delivery / "shots"
+            shots_dir.mkdir(parents=True)
+            (delivery / "metadata.json").write_text(json.dumps({
+                "shots": [
+                    {"id": "SH01", "render_mode": "remotion"},
+                    {"id": "SH02", "render_mode": "flow", "prompt": "P2"},
+                    {"id": "SH04", "render_mode": "flow", "prompt": "P4"},
+                ]
+            }), encoding="utf-8")
+
+            calls = []
+
+            async def fake_session(profile_dir, cdp_url, pending_shots, shots_dir, delivery_dir, chrome_exec):
+                calls.append((profile_dir.name, [s["id"] for s in pending_shots]))
+                if profile_dir.name == "p1":
+                    (shots_dir / "SH02.mp4").write_bytes(b"ok" * 20000)
+                    return "quota_exhausted", 1
+                (shots_dir / "SH04.mp4").write_bytes(b"ok" * 20000)
+                return "completed", 1
+
+            def fake_verify(path: Path) -> bool:
+                return path.exists() and path.stat().st_size > 25000
+
+            with mock.patch.dict("os.environ", {"FLOW_PROFILE_DIRS": f"{p1}:{p2}", "FLOW_STATE_FILE": str(state_file)}), \
+                 mock.patch.object(flow_generator, "async_playwright", new=object()), \
+                 mock.patch.object(flow_generator, "verify_mp4", side_effect=fake_verify), \
+                 mock.patch.object(flow_generator, "_run_single_profile_session", side_effect=fake_session), \
+                 mock.patch("asyncio.sleep", new=mock.AsyncMock()):
+                ok = flow_generator.asyncio.run(flow_generator.run_flow_generator(delivery))
+
+            self.assertTrue(ok)
+            self.assertEqual(calls, [("p1", ["SH02", "SH04"]), ("p2", ["SH04"])])
+            st = flow_generator.load_flow_profile_state(state_file)
+            self.assertEqual(st[str(p1.resolve())]["reason"], "quota_exhausted")
+            self.assertEqual(st[str(p2.resolve())]["reason"], "ok")
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

@@ -33,6 +33,17 @@ except ImportError:
     Page = Any  # type: ignore
     BrowserContext = Any  # type: ignore
 
+def _load_flow_config() -> Dict[str, Any]:
+    """Carga el bloque google_flow de config_produccion.json de forma segura."""
+    cfg_path = ROOT_DIR / "config_produccion.json"
+    if not cfg_path.exists():
+        return {}
+    try:
+        return json.loads(cfg_path.read_text(encoding="utf-8")).get("google_flow", {}) or {}
+    except Exception:
+        return {}
+
+
 def _resolve_flow_profile_dir() -> Path:
     env_dir = os.getenv("FLOW_PROFILE_DIR")
     if env_dir:
@@ -42,6 +53,133 @@ def _resolve_flow_profile_dir() -> Path:
     if not primary.exists() and legacy.exists():
         return legacy
     return primary
+
+
+def resolve_flow_profiles() -> List[Path]:
+    """
+    Devuelve la lista ordenada y deduplicada de perfiles Chrome de Google Flow.
+    Prioridad: FLOW_PROFILE_DIRS > FLOW_PROFILE_DIR > ~/flow-profile + ~/flow-profiles/* + config.
+    """
+    raw_candidates: List[str] = []
+    env_dirs = os.getenv("FLOW_PROFILE_DIRS", "").strip()
+    if env_dirs:
+        sep = "," if ("," in env_dirs and ":" not in env_dirs) else ":"
+        raw_candidates.extend(x.strip() for x in env_dirs.split(sep) if x.strip())
+    elif os.getenv("FLOW_PROFILE_DIR", "").strip():
+        raw_candidates.append(os.getenv("FLOW_PROFILE_DIR", "").strip())
+    else:
+        gcfg = _load_flow_config()
+        primary = Path(os.path.expanduser(str(gcfg.get("perfil_principal", "~/flow-profile"))))
+        if primary.exists():
+            raw_candidates.append(str(primary))
+        profiles_dir = Path(os.path.expanduser(str(gcfg.get("carpeta_perfiles", "~/flow-profiles"))))
+        if profiles_dir.exists() and profiles_dir.is_dir():
+            for child in sorted(profiles_dir.iterdir()):
+                if child.is_dir() and not child.name.startswith("."):
+                    raw_candidates.append(str(child))
+        for extra in gcfg.get("perfiles_extra", []) or []:
+            p_extra = Path(os.path.expanduser(str(extra)))
+            if p_extra.exists():
+                raw_candidates.append(str(p_extra))
+        if not raw_candidates:
+            raw_candidates.append(str(_resolve_flow_profile_dir()))
+
+    deduped: List[Path] = []
+    seen = set()
+    for item in raw_candidates:
+        p = Path(os.path.expanduser(item))
+        key = str(p.resolve())
+        if key not in seen:
+            seen.add(key)
+            deduped.append(p)
+    return deduped
+
+
+def get_flow_state_file() -> Path:
+    return Path(os.path.expanduser(os.getenv("FLOW_STATE_FILE", "~/.flow_profiles_state.json")))
+
+
+def load_flow_profile_state(state_file: Optional[Path] = None) -> Dict[str, Any]:
+    sf = state_file or get_flow_state_file()
+    if not sf.exists():
+        return {}
+    try:
+        data = json.loads(sf.read_text(encoding="utf-8"))
+        return data if isinstance(data, dict) else {}
+    except Exception:
+        return {}
+
+
+def save_flow_profile_state(state: Dict[str, Any], state_file: Optional[Path] = None) -> None:
+    sf = state_file or get_flow_state_file()
+    sf.parent.mkdir(parents=True, exist_ok=True)
+    sf.write_text(json.dumps(state, indent=2, ensure_ascii=False), encoding="utf-8")
+
+
+def mark_profile_state(
+    profile_dir: Path,
+    reason: str,
+    cooldown_hours: float = 0.0,
+    state_file: Optional[Path] = None,
+    now: Optional[float] = None,
+) -> Dict[str, Any]:
+    """Registra éxito, cuota agotada o sesión expirada para un perfil de Flow."""
+    ts = time.time() if now is None else float(now)
+    state = load_flow_profile_state(state_file)
+    key = str(profile_dir.resolve())
+    entry = dict(state.get(key, {}))
+    entry["profile_name"] = profile_dir.name
+    entry["reason"] = reason
+    entry["updated_at"] = ts
+    if reason == "ok":
+        entry["cooldown_until"] = 0.0
+        entry["last_ok_at"] = ts
+    elif reason == "session_expired":
+        entry["cooldown_until"] = ts + max(float(cooldown_hours), 24.0) * 3600.0
+        entry["last_error_at"] = ts
+    else:
+        entry["cooldown_until"] = ts + max(0.0, float(cooldown_hours)) * 3600.0
+        entry["last_error_at"] = ts
+    state[key] = entry
+    save_flow_profile_state(state, state_file)
+    return entry
+
+
+def select_available_profiles(
+    profiles: List[Path],
+    state: Optional[Dict[str, Any]] = None,
+    now: Optional[float] = None,
+    ignore_cooldown: bool = False,
+) -> List[Path]:
+    """Filtra perfiles en cooldown activo o expirados manteniendo el orden secuencial."""
+    ts = time.time() if now is None else float(now)
+    st = state if state is not None else load_flow_profile_state()
+    if ignore_cooldown:
+        return [p for p in profiles if p.exists()]
+
+    available: List[Path] = []
+    for p in profiles:
+        if not p.exists():
+            continue
+        info = st.get(str(p.resolve()), {})
+        cd = float(info.get("cooldown_until", 0.0) or 0.0)
+        reason = str(info.get("reason", "ok"))
+        if cd > ts:
+            mins = max(1, int((cd - ts) // 60))
+            log(f"⏭️ Omitiendo perfil '{p.name}' (en cooldown por '{reason}', restan ~{mins} min).")
+            continue
+        if reason == "session_expired":
+            log(f"⏭️ Omitiendo perfil '{p.name}' (sesión expirada; re-autenticar con ~/iniciar_flow_perfil.sh {p.name}).")
+            continue
+        available.append(p)
+    return available
+
+
+def reset_active_session_state() -> None:
+    """Reinicia el estado global del modelo activo antes de abrir otra cuenta Flow."""
+    global ACTIVE_VIDEO_MODEL, QUOTA_EXHAUSTED_ALL_MODELS
+    ACTIVE_VIDEO_MODEL = "Omni 1.1 Flash"
+    QUOTA_EXHAUSTED_ALL_MODELS = False
 
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
@@ -161,7 +299,13 @@ async def ensure_inside_flow_project(page: Page) -> bool:
                 const buttons = Array.from(document.querySelectorAll('button, a'));
                 for (const b of buttons) {
                     const t = (b.innerText || b.getAttribute('aria-label') || '').toLowerCase();
-                    if (t.includes('nuevo proyecto') || t.includes('new project') || t.includes('crear con flow')) {
+                    if (
+                        t.includes('nuevo proyecto') ||
+                        t.includes('proyecto nuevo') ||
+                        t.includes('new project') ||
+                        t.includes('crear con flow') ||
+                        t.includes('create with flow')
+                    ) {
                         b.click();
                         return 'new_project:' + t;
                     }
@@ -519,7 +663,12 @@ async def generate_single_shot(
                 const bodyText = (document.body ? document.body.innerText : '').toLowerCase();
                 if (bodyText.includes('quota limit') || bodyText.includes('daily quota') ||
                     bodyText.includes('reached your daily') || bodyText.includes('alternative like veo') ||
-                    bodyText.includes('switch to another model, such as veo')) {
+                    bodyText.includes('switch to another model, such as veo') ||
+                    bodyText.includes('límite de cuota') || bodyText.includes('limite de cuota') ||
+                    bodyText.includes('cuota diaria') || bodyText.includes('límite diario') ||
+                    bodyText.includes('limite diario') || bodyText.includes('daily limit') ||
+                    bodyText.includes('out of credits') || bodyText.includes('sin créditos') ||
+                    bodyText.includes('insufficient credits')) {
                     return 'quota_limit';
                 }
                 if (bodyText.includes('actividad inusual')) {
@@ -601,88 +750,45 @@ async def generate_single_shot(
     return False
 
 
-async def run_flow_generator(delivery_dir: Path, max_shots: int = 13) -> bool:
-    meta_file = delivery_dir / "metadata.json"
-    if not meta_file.exists():
-        raise FileNotFoundError(f"No se encontró {meta_file}")
-
-    meta = json.loads(meta_file.read_text(encoding="utf-8"))
-    shots: List[Dict[str, Any]] = meta.get("shots", [])[:max_shots]
-    if not shots:
-        raise RuntimeError("metadata.json no contiene la lista de planos ('shots'). Ejecuta primero pipeline_autonomo.py.")
-
-    shots_dir = delivery_dir / "shots"
-    shots_dir.mkdir(parents=True, exist_ok=True)
-
-    # Comprobar qué planos faltan por generar (Checkpointing)
-    pending_shots = []
-    flow_shots = [s for s in shots if s.get("render_mode") not in ("infographic", "remotion")]
-    infographic_count = len(shots) - len(flow_shots)
-
-    for s in shots:
-        if s.get("render_mode") in ("infographic", "remotion"):
-            log(f"⚡ [MODO HÍBRIDO] Omitiendo {s['id']} en Google Flow (se sintetiza en Remotion / Vector HUD sin costo de créditos).")
-            continue
-        out_mp4 = shots_dir / f"{s['id']}.mp4"
-        if verify_mp4(out_mp4):
-            log(f"✓ {s['id']}.mp4 ya existe y es válido (DECODE_OK). Saltando...")
-        else:
-            pending_shots.append(s)
-
-    if not pending_shots:
-        log(f"🎉 Todos los planos cinematográficos ({len(flow_shots)}/{len(flow_shots)}) ya están listos (+ {infographic_count} infográficos).")
-        return True
-
-    cdp_url = os.getenv("FLOW_CDP_URL", "http://127.0.0.1:9222")
-    cdp_available = False
-    try:
-        def _probe_cdp() -> bool:
-            with urllib.request.urlopen(f"{cdp_url}/json/version", timeout=1.5) as resp:
-                return resp.status == 200
-        cdp_available = await asyncio.to_thread(_probe_cdp)
-    except Exception:
-        cdp_available = False
-
-    if not cdp_available and not PROFILE_DIR.exists():
-        log(f"[ERROR] No existe el perfil {PROFILE_DIR} ni Chrome CDP en {cdp_url}. Inicia sesión primero con ~/iniciar_flow_chrome.sh.")
-        return False
-
-    if not cdp_available:
-        clean_stale_chrome_locks(PROFILE_DIR)
-        log(f"Iniciando navegador autónomo con perfil {PROFILE_DIR} ({len(pending_shots)} planos pendientes)...")
-    else:
-        log(f"CDP detectado en {cdp_url}; conectando a sesión abierta ({len(pending_shots)} planos pendientes)...")
+async def _run_single_profile_session(
+    profile_dir: Optional[Path],
+    cdp_url: Optional[str],
+    pending_shots: List[Dict[str, Any]],
+    shots_dir: Path,
+    delivery_dir: Path,
+    chrome_exec: Optional[str],
+) -> Tuple[str, int]:
+    """
+    Ejecuta generación secuencial de `pending_shots` usando un perfil Chrome o sesión CDP.
+    Devuelve (status, generated_count) donde status es:
+    'completed' | 'partial' | 'quota_exhausted' | 'session_expired' | 'error'.
+    """
+    reset_active_session_state()
     captured_urls: List[str] = []
+    generated_count = 0
+    label = f"CDP {cdp_url}" if cdp_url else f"perfil '{profile_dir.name if profile_dir else ''}'"
 
-    chrome_exec = None
-    for cand in ("/usr/bin/google-chrome", "/usr/bin/chromium", "/usr/bin/chromium-browser"):
-        if os.path.exists(cand):
-            chrome_exec = cand
-            break
-
-    if async_playwright is None:
-        log("[ERROR CRÍTICO] Falta instalar 'playwright' (pip install playwright) para automatizar Google Flow.")
-        return False
+    if profile_dir is not None and not cdp_url:
+        clean_stale_chrome_locks(profile_dir)
+    log(f"Iniciando sesión Flow con {label} ({len(pending_shots)} planos pendientes)...")
 
     async with async_playwright() as p:
         cdp_browser = None
-        if cdp_available:
+        if cdp_url:
             try:
                 cdp_browser = await p.chromium.connect_over_cdp(cdp_url)
                 log(f"Conectado a sesión Chrome CDP existente en {cdp_url}.")
             except Exception:
-                cdp_browser = None
+                return "error", 0
 
         created_cdp_page = False
         if cdp_browser is not None:
             context = cdp_browser.contexts[0] if cdp_browser.contexts else await cdp_browser.new_context(accept_downloads=True)
         else:
-            if not PROFILE_DIR.exists():
-                log(f"[ERROR] No existe el perfil {PROFILE_DIR}. Inicia sesión primero con ~/iniciar_flow_chrome.sh.")
-                return False
-            clean_stale_chrome_locks(PROFILE_DIR)
+            if profile_dir is None or not profile_dir.exists():
+                return "error", 0
             launch_kwargs: Dict[str, Any] = {
-                "user_data_dir": str(PROFILE_DIR),
+                "user_data_dir": str(profile_dir),
                 "headless": True,
                 "accept_downloads": True,
                 "viewport": {"width": 1440, "height": 900},
@@ -717,7 +823,6 @@ async def run_flow_generator(delivery_dir: Path, max_shots: int = 13) -> bool:
         else:
             page = context.pages[0] if context.pages else await context.new_page()
 
-        # Interceptar URLs de vídeo de Google Flow como respaldo automático
         def on_response(response):
             url = response.url
             if ("flow-content" in url or "video" in url or ".mp4" in url) and response.status == 200:
@@ -728,22 +833,21 @@ async def run_flow_generator(delivery_dir: Path, max_shots: int = 13) -> bool:
         page.on("response", on_response)
 
         try:
-            log(f"Abriendo Google Flow ({FLOW_URL})...")
+            log(f"Abriendo Google Flow ({FLOW_URL}) con {label}...")
             await page.goto(FLOW_URL, wait_until="domcontentloaded", timeout=40000)
             await asyncio.sleep(5)
 
             if "accounts.google.com" in page.url or "sign in" in (await page.title()).lower():
-                log("[ERROR CRÍTICO] La sesión de Google expiró. Vuelve a iniciar sesión en ~/flow-profile.")
-                return False
+                log(f"[ERROR CRÍTICO] La sesión de Google expiró en {label}.")
+                return "session_expired", generated_count
 
             if not await ensure_inside_flow_project(page):
-                log("[ERROR] No se pudo acceder al editor de proyectos de Flow.")
+                log(f"[ERROR] No se pudo acceder al editor de proyectos de Flow en {label}.")
                 await page.screenshot(path=str(delivery_dir / "flow_error_debug.png"))
-                return False
+                return "error", generated_count
 
             await configure_vertical_9_16(page)
 
-            # Iniciar una sesión limpia en el proyecto para evitar arrastrar tiles antiguos de vídeos previos
             try:
                 new_sess_btn = page.locator('button[aria-label*="Iniciar sesión nueva"], button[aria-label*="New session"]').first
                 if await new_sess_btn.count() > 0 and await new_sess_btn.is_visible():
@@ -755,13 +859,21 @@ async def run_flow_generator(delivery_dir: Path, max_shots: int = 13) -> bool:
 
             for s in pending_shots:
                 out_mp4 = shots_dir / f"{s['id']}.mp4"
+                if verify_mp4(out_mp4):
+                    continue
                 success = await generate_single_shot(page, s, out_mp4, captured_urls)
-                if not success:
-                    log(f"⚠️ No se pudo obtener {s['id']} tras múltiples intentos. Guardando captura de diagnóstico...")
-                    await page.screenshot(path=str(delivery_dir / f"debug_{s['id']}.png"))
-                else:
-                    log(f"✅ {s['id']} completado y verificado.")
+                if success and verify_mp4(out_mp4):
+                    generated_count += 1
+                    log(f"✅ {s['id']} completado y verificado con {label}.")
+                    continue
+                if QUOTA_EXHAUSTED_ALL_MODELS:
+                    log(f"⚠️ Cuota agotada en {label}; preparando rotación automática a siguiente cuenta...")
+                    return "quota_exhausted", generated_count
+                log(f"⚠️ No se pudo obtener {s['id']} en {label}. Guardando captura de diagnóstico...")
+                await page.screenshot(path=str(delivery_dir / f"debug_{s['id']}.png"))
 
+            remaining = sum(1 for s in pending_shots if not verify_mp4(shots_dir / f"{s['id']}.mp4"))
+            return ("completed" if remaining == 0 else "partial"), generated_count
         finally:
             if cdp_browser is not None:
                 if created_cdp_page:
@@ -775,6 +887,125 @@ async def run_flow_generator(delivery_dir: Path, max_shots: int = 13) -> bool:
                 except Exception:
                     pass
 
+
+async def run_flow_generator(
+    delivery_dir: Path,
+    max_shots: int = 13,
+    ignore_cooldown: Optional[bool] = None,
+) -> bool:
+    meta_file = delivery_dir / "metadata.json"
+    if not meta_file.exists():
+        raise FileNotFoundError(f"No se encontró {meta_file}")
+
+    meta = json.loads(meta_file.read_text(encoding="utf-8"))
+    shots: List[Dict[str, Any]] = meta.get("shots", [])[:max_shots]
+    if not shots:
+        raise RuntimeError("metadata.json no contiene la lista de planos ('shots'). Ejecuta primero pipeline_autonomo.py.")
+
+    shots_dir = delivery_dir / "shots"
+    shots_dir.mkdir(parents=True, exist_ok=True)
+
+    # Comprobar qué planos faltan por generar (Checkpointing)
+    flow_shots = [s for s in shots if s.get("render_mode") not in ("infographic", "remotion")]
+    infographic_count = len(shots) - len(flow_shots)
+    pending_shots = []
+
+    for s in shots:
+        if s.get("render_mode") in ("infographic", "remotion"):
+            log(f"⚡ [MODO HÍBRIDO] Omitiendo {s['id']} en Google Flow (se sintetiza en Remotion / Vector HUD sin costo de créditos).")
+            continue
+        out_mp4 = shots_dir / f"{s['id']}.mp4"
+        if verify_mp4(out_mp4):
+            log(f"✓ {s['id']}.mp4 ya existe y es válido (DECODE_OK). Saltando...")
+        else:
+            pending_shots.append(s)
+
+    if not pending_shots:
+        log(f"🎉 Todos los planos cinematográficos ({len(flow_shots)}/{len(flow_shots)}) ya están listos (+ {infographic_count} infográficos).")
+        return True
+
+    if async_playwright is None:
+        log("[ERROR CRÍTICO] Falta instalar 'playwright' (pip install playwright) para automatizar Google Flow.")
+        return False
+
+    chrome_exec = None
+    for cand in ("/usr/bin/google-chrome", "/usr/bin/chromium", "/usr/bin/chromium-browser"):
+        if os.path.exists(cand):
+            chrome_exec = cand
+            break
+
+    cdp_url = os.getenv("FLOW_CDP_URL", "http://127.0.0.1:9222")
+    cdp_available = False
+    try:
+        def _probe_cdp() -> bool:
+            with urllib.request.urlopen(f"{cdp_url}/json/version", timeout=1.5) as resp:
+                return resp.status == 200
+        cdp_available = await asyncio.to_thread(_probe_cdp)
+    except Exception:
+        cdp_available = False
+
+    if cdp_available:
+        status, _ = await _run_single_profile_session(
+            profile_dir=None,
+            cdp_url=cdp_url,
+            pending_shots=pending_shots,
+            shots_dir=shots_dir,
+            delivery_dir=delivery_dir,
+            chrome_exec=chrome_exec,
+        )
+        pending_shots = [s for s in flow_shots if not verify_mp4(shots_dir / f"{s['id']}.mp4")]
+        if not pending_shots or status == "completed":
+            log(f"Resumen de lote Flow Híbrido (CDP): {len(flow_shots)}/{len(flow_shots)} planos listos.")
+            return True
+
+    gcfg = _load_flow_config()
+    rotacion_activa = bool(gcfg.get("rotacion_secuencial", True))
+    cooldown_horas = float(gcfg.get("cooldown_cuota_horas", 12))
+    skip_cd = ignore_cooldown if ignore_cooldown is not None else (os.getenv("FLOW_IGNORE_COOLDOWN") == "1")
+
+    all_profiles = resolve_flow_profiles()
+    available_profiles = select_available_profiles(all_profiles, ignore_cooldown=skip_cd)
+    if not rotacion_activa and available_profiles:
+        available_profiles = available_profiles[:1]
+
+    if not available_profiles:
+        log(
+            "[ERROR] No hay perfiles Flow disponibles (todos faltan, expiraron o siguen en cooldown). "
+            "Usa `bash ~/iniciar_flow_perfil.sh --listar` o `--reset-cooldown`."
+        )
+        return False
+
+    log(f"🔄 Rotación secuencial Flow lista: {len(available_profiles)} perfil(es) disponible(s) -> {[p.name for p in available_profiles]}")
+
+    for idx, profile_dir in enumerate(available_profiles):
+        pending_shots = [s for s in flow_shots if not verify_mp4(shots_dir / f"{s['id']}.mp4")]
+        if not pending_shots:
+            break
+
+        status, generated_here = await _run_single_profile_session(
+            profile_dir=profile_dir,
+            cdp_url=None,
+            pending_shots=pending_shots,
+            shots_dir=shots_dir,
+            delivery_dir=delivery_dir,
+            chrome_exec=chrome_exec,
+        )
+
+        if status == "quota_exhausted":
+            mark_profile_state(profile_dir, "quota_exhausted", cooldown_hours=cooldown_horas)
+        elif status == "session_expired":
+            mark_profile_state(profile_dir, "session_expired", cooldown_hours=24.0)
+        elif status in ("completed", "partial") and generated_here > 0:
+            mark_profile_state(profile_dir, "ok", cooldown_hours=0.0)
+
+        pending_shots = [s for s in flow_shots if not verify_mp4(shots_dir / f"{s['id']}.mp4")]
+        if not pending_shots:
+            break
+
+        if idx + 1 < len(available_profiles):
+            log(f"⏳ Pausa breve de 3s antes de rotar al siguiente perfil ({available_profiles[idx + 1].name})...")
+            await asyncio.sleep(3)
+
     completed_flow = sum(1 for s in flow_shots if verify_mp4(shots_dir / f"{s['id']}.mp4"))
     log(f"Resumen de lote Flow Híbrido: {completed_flow}/{len(flow_shots)} planos cinematográficos listos (+ {infographic_count} infográficos Remotion/HUD).")
     return completed_flow == len(flow_shots)
@@ -784,10 +1015,11 @@ def main():
     parser = argparse.ArgumentParser(description="Inyector autónomo de Google Flow para TikTok Radar")
     parser.add_argument("--dir", type=str, default=None, help="Ruta a la carpeta de entrega (por defecto la más reciente)")
     parser.add_argument("--max-shots", type=int, default=13, help="Número máximo de planos a procesar")
+    parser.add_argument("--ignore-cooldown", action="store_true", help="Intentar incluso perfiles en cooldown de cuota")
     args = parser.parse_args()
 
     delivery_dir = get_latest_delivery_dir(args.dir)
-    ok = asyncio.run(run_flow_generator(delivery_dir, max_shots=args.max_shots))
+    ok = asyncio.run(run_flow_generator(delivery_dir, max_shots=args.max_shots, ignore_cooldown=args.ignore_cooldown))
     sys.exit(0 if ok else 1)
 
 

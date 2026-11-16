@@ -36,11 +36,11 @@ echo "xfce4-session" > ~/.xsession
 sudo systemctl enable xrdp
 sudo systemctl restart xrdp
 
-echo "=== [5/6] Creando lanzador de Google Chrome persistente para Flow ==="
-mkdir -p ~/flow-profile
+echo "=== [5/6] Creando lanzadores de Google Chrome persistentes para Flow (multi-cuenta) ==="
+mkdir -p ~/flow-profile ~/flow-profiles
 cat << 'EOF' > ~/iniciar_flow_chrome.sh
 #!/usr/bin/env bash
-# Abre Chrome con tu perfil persistente (~/flow-profile) y el puerto CDP 9222 activo
+# Abre Chrome con tu perfil principal (~/flow-profile) y el puerto CDP 9222 activo
 google-chrome \
   --user-data-dir="$HOME/flow-profile" \
   --remote-debugging-port=9222 \
@@ -49,6 +49,8 @@ google-chrome \
   "https://labs.google/fx/es/tools/flow" &
 EOF
 chmod +x ~/iniciar_flow_chrome.sh
+cp "$SCRIPT_DIR/iniciar_flow_perfil.sh" ~/iniciar_flow_perfil.sh
+chmod +x ~/iniciar_flow_perfil.sh
 
 echo "=============================================================================="
 echo "¡INSTALACIÓN COMPLETADA CON ÉXITO EN TU SERVIDOR AWS!"

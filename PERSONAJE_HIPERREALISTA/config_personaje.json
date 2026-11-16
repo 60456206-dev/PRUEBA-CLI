@@ -52,6 +52,7 @@
       "../TIKTOK_RADAR/audio_assets"
     ],
     "music_search_dirs": [
+      "04_motor_video_voz/assets",
       "../MASTER_SERIES_PACKAGE/AUDIO/EPIDEMIC_SOUND/MUSIC",
       "../TIKTOK_RADAR/audio_assets"
     ],
