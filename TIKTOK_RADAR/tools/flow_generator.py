@@ -18,11 +18,13 @@ import argparse
 import asyncio
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
 import time
 import urllib.request
+from collections import Counter
 from pathlib import Path
 from typing import Dict, Any, List, Optional, Tuple
 
@@ -361,30 +363,114 @@ async def configure_vertical_9_16(page: Page) -> None:
 
 
 async def get_tile_states(page: Page) -> List[Dict[str, Any]]:
-    """Inspecciona todos los tiles [role='group'] en el DOM de Flow."""
+    """Inspecciona todos los tiles [role='group'] en el DOM de Flow con firma única."""
     try:
         return await page.evaluate("""() => {
             return Array.from(document.querySelectorAll('[role="group"]')).map((el, idx) => {
                 const txt = (el.innerText || '').trim();
                 const lower = txt.toLowerCase();
-                const isGenerating = txt.includes('%') || lower.includes('generando') || lower.includes('generating') || lower.includes('cola');
+                const tag = (el.tagName || '').toLowerCase();
+                const ariaLabel = (el.getAttribute('aria-label') || '').trim();
+                const isGridTile = tag === 'flow-grid-tile-container' || !ariaLabel.toLowerCase().includes('galería de opciones');
+                const isGenerating = /\\b\\d{1,3}\\s*%/.test(txt) || lower.includes('generando') || lower.includes('generating') || lower.includes('cola');
                 const isReady = !isGenerating && txt.includes('play_circle');
                 const isError = lower.includes('error') || lower.includes('infringir') || lower.includes('policy') ||
                                 lower.includes('bloqueado') || lower.includes('no se pudo') || lower.includes('failed');
                 const videoEl = el.querySelector('video');
                 const videoSrc = videoEl ? (videoEl.src || videoEl.currentSrc || '') : '';
+                const imgs = Array.from(el.querySelectorAll('img'));
+                const imgSrc = imgs.map(i => (i.currentSrc || i.src || '').trim()).filter(Boolean).join('|');
+                const imgAlt = imgs.map(i => (i.alt || '').trim()).filter(Boolean).join('|').substring(0, 180);
                 return {
                     idx,
+                    isGridTile,
                     isGenerating,
                     isReady,
                     isError,
                     videoSrc,
+                    imgSrc,
+                    ariaLabel,
+                    imgAlt,
                     preview: txt.replace(/\\n+/g, ' ').substring(0, 120)
                 };
             });
         }""")
     except Exception:
         return []
+
+
+def _tile_signature(tile: Dict[str, Any]) -> Tuple[str, str, str, str, str]:
+    """Construye una firma estable para distinguir tiles completados aunque `innerText` sea idéntico."""
+    return (
+        str(tile.get("videoSrc") or ""),
+        str(tile.get("imgSrc") or ""),
+        str(tile.get("ariaLabel") or ""),
+        str(tile.get("imgAlt") or ""),
+        str(tile.get("preview") or ""),
+    )
+
+
+def _select_new_or_changed_tiles(
+    before_states: List[Dict[str, Any]],
+    current_states: List[Dict[str, Any]],
+) -> List[Dict[str, Any]]:
+    """
+    Devuelve los tiles nuevos o modificados comparando multiplicidad de firmas
+    desde el final (tiles más antiguos) hacia el inicio (tiles recién agregados en Flow).
+    """
+    remaining_before = Counter(_tile_signature(s) for s in before_states)
+    out: List[Dict[str, Any]] = []
+    for tile in reversed(current_states):
+        sig = _tile_signature(tile)
+        if remaining_before[sig] > 0:
+            remaining_before[sig] -= 1
+        else:
+            out.append(tile)
+    out.reverse()
+    return out
+
+
+def classify_flow_body_status(body_text: str) -> Optional[str]:
+    """Detecta en el texto visible de Flow límites de cuota, falta de créditos o actividad inusual."""
+    lower = (body_text or "").lower()
+    if any(
+        phrase in lower
+        for phrase in (
+            "quota limit",
+            "daily quota",
+            "reached your daily",
+            "alternative like veo",
+            "switch to another model, such as veo",
+            "límite de cuota",
+            "limite de cuota",
+            "cuota diaria",
+            "límite diario",
+            "limite diario",
+            "daily limit",
+            "out of credits",
+            "sin créditos",
+            "sin creditos",
+            "insufficient credits",
+            "créditos insuficientes",
+            "creditos insuficientes",
+            "puntos insuficientes",
+            "sin puntos",
+            "credits remaining",
+            "top up credits",
+            "wait for credits to refresh",
+            "recargar tus créditos",
+            "recargar tus puntos",
+            "espera a que se restablezcan",
+        )
+    ):
+        return "quota_limit"
+    if re.search(r"(requires|necesita|requiere)\s+\d+\s+(credits|créditos|puntos)", lower) and (
+        "remaining" in lower or "tienes" in lower or "currently have" in lower
+    ):
+        return "quota_limit"
+    if "actividad inusual" in lower:
+        return "unusual_activity"
+    return None
 
 
 async def auto_approve_if_prompted(page: Page) -> bool:
@@ -599,6 +685,25 @@ def select_prompt_for_attempt(shot: Dict[str, Any], attempt: int, use_fallback: 
     return primary or fallback, False
 
 
+def _pick_ready_tile_idx(
+    new_or_changed: List[Dict[str, Any]],
+    all_states: List[Dict[str, Any]],
+) -> Optional[int]:
+    """Selecciona el índice del tile nuevo listo para descarga, priorizando grid tiles nativos."""
+    ready = [
+        t for t in new_or_changed
+        if t.get("isReady") and not t.get("isGenerating") and not t.get("isError")
+    ]
+    if not ready:
+        return None
+    grid_ready = [t for t in ready if t.get("isGridTile", True)]
+    if grid_ready:
+        return int(grid_ready[0]["idx"])
+    if not any(s.get("isGridTile", True) for s in all_states):
+        return int(ready[0]["idx"])
+    return None
+
+
 async def generate_single_shot(
     page: Page,
     shot: Dict[str, Any],
@@ -625,7 +730,6 @@ async def generate_single_shot(
         # Capturar firmas previas de tiles antes de enviar para identificar el tile NUEVO exacto
         before_states = await get_tile_states(page)
         before_count = len(before_states)
-        before_signatures = {(s.get("videoSrc", ""), s.get("preview", "")) for s in before_states}
         captured_urls.clear()
 
         ok_submit = await submit_prompt_to_flow(page, use_prompt)
@@ -645,46 +749,31 @@ async def generate_single_shot(
         policy_failed = False
         switched_by_quota = False
         has_started_generating = False
+        last_progress_log = -12
+        last_progress_preview = ""
+        last_progress_change_t = start_t
 
         while time.time() - start_t < 240:
             await asyncio.sleep(4)
             await auto_approve_if_prompted(page)
             states = await get_tile_states(page)
 
-            new_or_changed = [
-                t for t in states
-                if (t.get("videoSrc", ""), t.get("preview", "")) not in before_signatures
-            ]
+            new_or_changed = _select_new_or_changed_tiles(before_states, states)
             generating_tiles = [t for t in states if t["isGenerating"]]
             error_tiles = [t for t in new_or_changed if t["isError"]]
 
-            # Detección proactiva de cuota agotada o actividad inusual
-            chat_status = await page.evaluate("""() => {
-                const bodyText = (document.body ? document.body.innerText : '').toLowerCase();
-                if (bodyText.includes('quota limit') || bodyText.includes('daily quota') ||
-                    bodyText.includes('reached your daily') || bodyText.includes('alternative like veo') ||
-                    bodyText.includes('switch to another model, such as veo') ||
-                    bodyText.includes('límite de cuota') || bodyText.includes('limite de cuota') ||
-                    bodyText.includes('cuota diaria') || bodyText.includes('límite diario') ||
-                    bodyText.includes('limite diario') || bodyText.includes('daily limit') ||
-                    bodyText.includes('out of credits') || bodyText.includes('sin créditos') ||
-                    bodyText.includes('insufficient credits')) {
-                    return 'quota_limit';
-                }
-                if (bodyText.includes('actividad inusual')) {
-                    return 'unusual_activity';
-                }
-                return null;
-            }""")
+            # Detección proactiva de cuota agotada, falta de créditos o actividad inusual
+            body_text = await page.evaluate("() => (document.body ? document.body.innerText : '')")
+            chat_status = classify_flow_body_status(body_text)
 
             if chat_status == 'quota_limit':
                 if ACTIVE_VIDEO_MODEL != "Veo 3.1 - Lite":
-                    log("⚠️ Límite de cuota diaria en Omni 1.1 Flash. Cambiando a Veo 3.1 - Lite (conservando prompt principal)...")
+                    log("⚠️ Límite de cuota o créditos en Omni 1.1 Flash. Cambiando a Veo 3.1 - Lite (conservando prompt principal)...")
                     ACTIVE_VIDEO_MODEL = "Veo 3.1 - Lite"
                     switched_by_quota = True
                     break
                 else:
-                    log("❌ Cuota diaria agotada también en Veo 3.1 - Lite. Abortando generación Flow restante.")
+                    log("❌ Cuota o créditos agotados también en Veo 3.1 - Lite. Abortando generación Flow restante.")
                     QUOTA_EXHAUSTED_ALL_MODELS = True
                     return False
             elif chat_status == 'unusual_activity':
@@ -705,18 +794,25 @@ async def generate_single_shot(
                 has_started_generating = True
 
             # Identificar el tile NUEVO/ACTUALIZADO que ya terminó de renderizar
-            ready_candidates = [
-                t for t in new_or_changed
-                if t["isReady"] and not t["isGenerating"] and not t["isError"]
-            ]
-            if ready_candidates:
-                target_ready_idx = ready_candidates[0]["idx"]
+            ready_idx = _pick_ready_tile_idx(new_or_changed, states)
+            if ready_idx is not None:
+                target_ready_idx = ready_idx
                 break
 
-            elapsed = int(time.time() - start_t)
+            now_t = time.time()
+            elapsed = int(now_t - start_t)
             if generating_tiles:
-                if elapsed % 12 == 0:
-                    log(f"   {shot_id} renderizando en Google Flow ({elapsed}s)... {generating_tiles[0]['preview'][:60]}")
+                cur_preview = generating_tiles[0]["preview"][:60]
+                if cur_preview != last_progress_preview:
+                    last_progress_preview = cur_preview
+                    last_progress_change_t = now_t
+                if elapsed - last_progress_log >= 12:
+                    last_progress_log = elapsed
+                    log(f"   {shot_id} renderizando en Google Flow ({elapsed}s)... {cur_preview}")
+                if now_t - last_progress_change_t >= 120:
+                    log(f"⚠️ {shot_id}: Progreso estancado >120s en Flow ({cur_preview}). Reintentando...")
+                    policy_failed = True
+                    break
             elif not has_started_generating and elapsed > 45:
                 log(f"⚠️ {shot_id}: No se detectó inicio de renderizado en Flow tras {elapsed}s.")
                 policy_failed = True

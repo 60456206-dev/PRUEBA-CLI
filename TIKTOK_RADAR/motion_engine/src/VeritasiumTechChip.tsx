@@ -63,7 +63,7 @@ export const VeritasiumTechChip: React.FC<TechChipProps> = ({
         justifyContent: "center",
         fontFamily: "'Montserrat', sans-serif",
         color: "#FFFFFF",
-        padding: "110px 40px 150px",
+        padding: "250px 165px 650px 45px",
         boxSizing: "border-box",
         position: "relative",
         overflow: "hidden",
@@ -74,12 +74,12 @@ export const VeritasiumTechChip: React.FC<TechChipProps> = ({
       {/* Tarjeta HUD Broadcast */}
       <div
         style={{
-          width: "940px",
+          width: "830px",
           backgroundColor: "rgba(10, 15, 26, 0.92)",
           borderRadius: "28px",
           border: "2px solid #0A84FF",
           boxShadow: "0 24px 70px rgba(0, 0, 0, 0.8), 0 0 45px rgba(10, 132, 255, 0.25)",
-          padding: "44px 40px",
+          padding: "36px 32px",
           display: "flex",
           flexDirection: "column",
           gap: "24px",

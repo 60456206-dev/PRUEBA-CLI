@@ -96,7 +96,7 @@ export const VeritasiumAltimeter: React.FC<AltimeterProps> = ({
         justifyContent: "center",
         fontFamily: "'Montserrat', sans-serif",
         color: "#FFFFFF",
-        padding: "110px 40px 150px",
+        padding: "360px 165px 640px 45px",
         boxSizing: "border-box",
         position: "relative",
         overflow: "hidden",
@@ -108,14 +108,14 @@ export const VeritasiumAltimeter: React.FC<AltimeterProps> = ({
       {/* Tarjeta HUD Broadcast */}
       <div
         style={{
-          width: "940px",
+          width: "830px",
           backgroundColor: "rgba(12, 17, 28, 0.90)",
           borderRadius: "28px",
           border: `2px solid ${hudColor}`,
           boxShadow: `0 24px 70px rgba(0, 0, 0, 0.8), 0 0 45px ${
             isAlarm ? "rgba(255, 69, 58, 0.35)" : "rgba(0, 229, 255, 0.18)"
           }`,
-          padding: "44px 40px",
+          padding: "34px 32px",
           display: "flex",
           flexDirection: "column",
           gap: "24px",

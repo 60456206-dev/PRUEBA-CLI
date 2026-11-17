@@ -71,7 +71,7 @@ export const VeritasiumDocumentaryOutro: React.FC<DocumentaryOutroProps> = ({
         justifyContent: "center",
         fontFamily: "'Montserrat', sans-serif",
         color: "#FFFFFF",
-        padding: "110px 40px 150px",
+        padding: "250px 165px 650px 45px",
         boxSizing: "border-box",
         position: "relative",
         overflow: "hidden",
@@ -82,12 +82,12 @@ export const VeritasiumDocumentaryOutro: React.FC<DocumentaryOutroProps> = ({
       {/* Tarjeta Monolítica de Cierre Chiaroscuro */}
       <div
         style={{
-          width: "940px",
+          width: "830px",
           backgroundColor: "rgba(11, 15, 23, 0.94)",
           borderRadius: "32px",
           border: `2px solid ${palette.border}`,
           boxShadow: `0 30px 80px rgba(0, 0, 0, 0.85), 0 0 55px ${palette.glow}`,
-          padding: "48px 44px",
+          padding: "40px 36px",
           display: "flex",
           flexDirection: "column",
           gap: "28px",

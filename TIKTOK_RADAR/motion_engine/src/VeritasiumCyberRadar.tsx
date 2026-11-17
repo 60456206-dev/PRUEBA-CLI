@@ -65,7 +65,7 @@ export const VeritasiumCyberRadar: React.FC<CyberRadarProps> = ({
         justifyContent: "center",
         fontFamily: "'Montserrat', sans-serif",
         color: "#FFFFFF",
-        padding: "110px 40px 150px",
+        padding: "250px 165px 650px 45px",
         boxSizing: "border-box",
         position: "relative",
         overflow: "hidden",
@@ -76,12 +76,12 @@ export const VeritasiumCyberRadar: React.FC<CyberRadarProps> = ({
       {/* Tarjeta HUD Broadcast */}
       <div
         style={{
-          width: "940px",
+          width: "830px",
           backgroundColor: "rgba(16, 10, 14, 0.92)",
           borderRadius: "28px",
           border: "2px solid #FF453A",
           boxShadow: `0 24px 70px rgba(0, 0, 0, 0.8), 0 0 45px rgba(255, 69, 58, ${0.2 + pulse * 0.2})`,
-          padding: "44px 40px",
+          padding: "36px 32px",
           display: "flex",
           flexDirection: "column",
           gap: "24px",

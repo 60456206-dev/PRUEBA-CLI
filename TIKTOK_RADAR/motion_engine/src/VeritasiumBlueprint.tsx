@@ -91,7 +91,7 @@ export const VeritasiumBlueprint: React.FC<BlueprintProps> = ({
         justifyContent: "center",
         fontFamily: "'Montserrat', sans-serif",
         color: "#FFFFFF",
-        padding: "110px 40px 150px",
+        padding: "250px 165px 650px 45px",
         boxSizing: "border-box",
         position: "relative",
         overflow: "hidden",
@@ -102,12 +102,12 @@ export const VeritasiumBlueprint: React.FC<BlueprintProps> = ({
       {/* Tarjeta HUD Blueprint */}
       <div
         style={{
-          width: "940px",
+          width: "830px",
           backgroundColor: "rgba(10, 14, 22, 0.94)",
           borderRadius: "32px",
           border: `2px solid ${palette.border}`,
           boxShadow: `0 30px 80px rgba(0, 0, 0, 0.85), 0 0 55px ${palette.glow}`,
-          padding: "44px 40px",
+          padding: "36px 32px",
           display: "flex",
           flexDirection: "column",
           gap: "24px",

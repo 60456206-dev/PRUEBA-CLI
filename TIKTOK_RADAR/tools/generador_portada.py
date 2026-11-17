@@ -190,6 +190,7 @@ REGLAS ESTRICTAS:
 - 100% EN ESPAÑOL (prohibido inglés salvo marcas como Nvidia, Google, Apple o siglas de dominio público).
 - Exactamente 3 líneas de texto (máximo 2 a 3 palabras por línea).
 - En MAYÚSCULAS y con lenguaje directo y dramático.
+- Rigor factual: NO inventes fuego, llamas, explosiones ni víctimas si el titular original no los menciona.
 - Formato de respuesta JSON estricto: ["LINEA 1", "LINEA 2", "LINEA 3"]"""
 
         for model in ["gemini-3.5-flash-lite", "gemini-3.8-flash"]:

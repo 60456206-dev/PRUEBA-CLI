@@ -372,35 +372,54 @@ Dialogue: 2,0:00:00.00,0:00:04.50,HookPill,,0,0,0,,{{\\fad(120,300)}}• ÚLTIMA
         if voice_audio and voice_audio.exists():
             log("Extrayendo pausas acústicas del audio con FFmpeg silencedetect para sincronización de subtítulos...")
             blocks = extract_acoustic_speech_blocks(voice_audio, total_duration)
-        if not blocks:
-            blocks = [(0.10, max(10.0, total_duration - 0.25))]
+        merged_blocks: List[Tuple[float, float]] = []
+        for bs, be in blocks:
+            if be <= bs + 0.08:
+                continue
+            if merged_blocks and (bs - merged_blocks[-1][1] < 0.28 or (merged_blocks[-1][1] - merged_blocks[-1][0]) < 0.45):
+                merged_blocks[-1] = (merged_blocks[-1][0], max(merged_blocks[-1][1], be))
+            else:
+                merged_blocks.append((bs, be))
+        blocks = merged_blocks if merged_blocks else [(0.10, max(10.0, total_duration - 0.25))]
 
         total_speech_time = sum(max(0.1, e - s) for s, e in blocks)
         weights = [_chunk_speech_weight(c) for c in chunks]
-        total_weight = sum(weights)
+        total_weight = max(1.0, sum(weights))
 
-        def speech_time_to_real(st: float) -> Tuple[float, int]:
+        def speech_time_to_block_idx(st: float) -> int:
             acc = 0.0
             for idx, (bs, be) in enumerate(blocks):
                 bdur = max(0.01, be - bs)
                 if acc + bdur >= st or idx == len(blocks) - 1:
-                    frac = min(1.0, max(0.0, (st - acc) / bdur))
-                    return bs + frac * bdur, idx
+                    return idx
                 acc += bdur
-            return blocks[-1][1], len(blocks) - 1
+            return len(blocks) - 1
 
-        cum = 0
+        # Asignar cada ráfaga al bloque que contiene su centro ponderado para evitar recortes de 1 frame en bordes
+        chunks_by_block: Dict[int, List[Tuple[List[str], float]]] = {i: [] for i in range(len(blocks))}
+        cum = 0.0
         for c, w in zip(chunks, weights):
-            st_start = (cum / total_weight) * total_speech_time
-            st_end = ((cum + w) / total_weight) * total_speech_time
-            real_start, b_start = speech_time_to_real(st_start)
-            real_end, b_end = speech_time_to_real(st_end)
-            if b_end > b_start:
-                real_end = blocks[b_start][1]
-            if real_end <= real_start:
-                real_end = min(total_duration, real_start + 0.35)
-            timed_chunks.append((real_start, real_end, c))
+            st_mid = ((cum + 0.5 * w) / total_weight) * total_speech_time
+            b_idx = speech_time_to_block_idx(st_mid)
+            chunks_by_block[b_idx].append((c, w))
             cum += w
+
+        for b_idx, (bs, be) in enumerate(blocks):
+            b_items = chunks_by_block.get(b_idx) or []
+            if not b_items:
+                continue
+            b_total_w = max(1.0, sum(w for _, w in b_items))
+            b_win = max(0.38 * len(b_items), be - bs)
+            cur_t = bs
+            for item_idx, (c, w) in enumerate(b_items):
+                c_dur = (w / b_total_w) * (be - bs)
+                if item_idx == len(b_items) - 1:
+                    c_end = max(cur_t + 0.38, be)
+                else:
+                    c_end = cur_t + max(0.32, c_dur)
+                c_end = min(total_duration, c_end)
+                timed_chunks.append((cur_t, max(cur_t + 0.25, c_end), c))
+                cur_t = c_end
 
     for real_start, real_end, c in timed_chunks:
         styled_text = colorize_words_ass(c)
@@ -443,16 +462,16 @@ def generate_verified_source_card(source_name: str, genre: str, out_png: Path) -
     """
     from PIL import Image, ImageDraw, ImageFont
 
-    W, H = 880, 175
+    W, H = 830, 155
     img = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     draw = ImageDraw.Draw(img)
 
     font_bold_p = FONT_BOLD if Path(FONT_BOLD).exists() else "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf"
     font_reg_p = FONT_REG if Path(FONT_REG).exists() else "/usr/share/fonts/truetype/liberation/LiberationSans.ttf"
 
-    f_badge = ImageFont.truetype(font_bold_p, 19)
-    f_title = ImageFont.truetype(font_bold_p, 36)
-    f_sub = ImageFont.truetype(font_reg_p, 19)
+    f_badge = ImageFont.truetype(font_bold_p, 18)
+    f_title = ImageFont.truetype(font_bold_p, 33)
+    f_sub = ImageFont.truetype(font_reg_p, 18)
 
     # Color temático sutil para el borde y el icono (sin falsos positivos por subcadena)
     genre_up = (genre or "").upper()
@@ -475,18 +494,18 @@ def generate_verified_source_card(source_name: str, genre: str, out_png: Path) -
     draw.rounded_rectangle([(0, 0), (W - 1, H - 1)], radius=18, fill=(14, 18, 26, 235), outline=border_col, width=2)
 
     # Nivel 1 (Superior): Píldora de verificación + Rótulo institucional
-    draw.rounded_rectangle([(25, 20), (275, 58)], radius=10, fill=tag_bg)
-    draw.text((40, 28), "✓ FUENTE VERIFICADA", font=f_badge, fill=(255, 255, 255))
-    draw.text((298, 28), "AUDITORÍA INFORMATIVA · RADAR 24/7", font=f_badge, fill=(205, 218, 235))
+    draw.rounded_rectangle([(24, 16), (264, 52)], radius=10, fill=tag_bg)
+    draw.text((38, 24), "• FUENTE VERIFICADA", font=f_badge, fill=(255, 255, 255))
+    draw.text((284, 24), "AUDITORÍA INFORMATIVA · RADAR 24/7", font=f_badge, fill=(205, 218, 235))
 
     # Nivel 2 (Medio): Nombre grande de la fuente / foro oficial
     src_text = source_name.upper().strip()
-    if len(src_text) > 34:
-        src_text = src_text[:32] + "..."
-    draw.text((25, 72), src_text, font=f_title, fill=(255, 255, 255))
+    if len(src_text) > 32:
+        src_text = src_text[:30] + "..."
+    draw.text((24, 62), src_text, font=f_title, fill=(255, 255, 255))
 
     # Nivel 3 (Inferior): Leyenda de certificación directa
-    draw.text((25, 128), "ORIGEN DIRECTO CERTIFICADO · COBERTURA EN TIEMPO REAL", font=f_sub, fill=(170, 188, 212))
+    draw.text((24, 114), "ORIGEN DIRECTO CERTIFICADO · COBERTURA EN TIEMPO REAL", font=f_sub, fill=(170, 188, 212))
 
     img.save(out_png, "PNG")
     return out_png
@@ -1540,8 +1559,9 @@ def assemble_final_video(
     final_mp4 = delivery_dir / "NOTICIERO_FINAL_62S.mp4"
     master_manifest_path = work_dir / "master_cache_manifest.json"
     ass_bytes = ass_path.read_bytes() if ass_path.exists() else b""
+    badge_bytes = badge_png.read_bytes() if has_badge and badge_png.exists() else b""
     master_hash = hashlib.sha256(
-        f"{curr_hash}|{audio_hash}|{source_name}|{genre}".encode("utf-8") + ass_bytes
+        f"{curr_hash}|{audio_hash}|{source_name}|{genre}|safezone_v4".encode("utf-8") + ass_bytes + badge_bytes
     ).hexdigest()[:16]
 
     master_cached = False
@@ -1566,20 +1586,21 @@ def assemble_final_video(
         if has_badge:
             vf_complex = (
                 f"[2:v]format=rgba,fade=t=in:st=0.50:d=0.30:alpha=1,fade=t=out:st=5.20:d=0.35:alpha=1[badge_fade];"
-                f"[0:v][badge_fade]overlay=x=(W-w)/2:y=175:enable='between(t,0.45,5.60)'[v_badged];"
+                f"[0:v][badge_fade]overlay=x=65:y=220:enable='between(t,0.45,5.60)'[v_badged];"
                 f"[v_badged]ass={ass_path}[vout]"
             )
             cmd_final = [
                 "ffmpeg", "-y",
                 "-i", str(silent_xfade_mp4),
                 "-i", str(master_audio_m4a),
-                "-i", str(badge_png),
+                "-loop", "1", "-t", "6.0", "-i", str(badge_png),
                 "-filter_complex", vf_complex,
                 "-map", "[vout]",
                 "-map", "1:a:0",
                 "-t", f"{total_dur:.3f}",
                 "-r", "24",
-                "-c:v", "libx264", "-profile:v", "high", "-pix_fmt", "yuv420p", "-preset", "medium", "-crf", "18",
+                "-c:v", "libx264", "-profile:v", "high", "-pix_fmt", "yuv420p", "-preset", "medium",
+                "-crf", "20", "-maxrate", "5500k", "-bufsize", "11000k",
                 "-c:a", "copy",
                 "-movflags", "+faststart",
                 str(final_mp4),
@@ -1594,7 +1615,8 @@ def assemble_final_video(
                 "-map", "1:a:0",
                 "-t", f"{total_dur:.3f}",
                 "-r", "24",
-                "-c:v", "libx264", "-profile:v", "high", "-pix_fmt", "yuv420p", "-preset", "medium", "-crf", "18",
+                "-c:v", "libx264", "-profile:v", "high", "-pix_fmt", "yuv420p", "-preset", "medium",
+                "-crf", "20", "-maxrate", "5500k", "-bufsize", "11000k",
                 "-c:a", "copy",
                 "-movflags", "+faststart",
                 str(final_mp4),

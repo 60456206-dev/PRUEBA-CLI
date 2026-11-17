@@ -197,11 +197,12 @@ async function sendDeliveryPackage(targetWid, deliveryDir) {
     `_Generado de forma autónoma por TikTok Radar._`;
 
   const videoMedia = MessageMedia.fromFilePath(vidPath);
+  const sendAsDoc = stat.size > 48 * 1024 * 1024;
   await trackAndSend(targetWid, videoMedia, {
     caption: videoCaption,
-    sendMediaAsDocument: false,
+    sendMediaAsDocument: sendAsDoc,
   });
-  console.log(`[WA-BOT] 🎬 Vídeo enviado con éxito a ${targetWid}`);
+  console.log(`[WA-BOT] 🎬 Vídeo enviado con éxito (${sizeMb} MB, doc=${sendAsDoc}) a ${targetWid}`);
 }
 
 async function getProjectCondition() {
@@ -380,7 +381,7 @@ const client = new Client({
       '--no-first-run',
       '--no-zygote',
       '--disable-gpu',
-      '--js-flags="--max-old-space-size=512"',
+      '--js-flags="--max-old-space-size=1024"',
       '--renderer-process-limit=2',
       '--disable-extensions',
       '--disable-component-update',

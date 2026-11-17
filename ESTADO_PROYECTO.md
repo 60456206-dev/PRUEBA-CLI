@@ -1,6 +1,21 @@
 # Dónde nos quedamos
 
-Actualizado: 2026-11-16.
+Actualizado: 2026-11-17.
+
+## Producción `SLOT_1` (Aviación) Completada y Enviada + Correcciones en Flow/Remotion/NLE/WhatsApp · 2026-11-17
+
+- **Entrega Generada, Revisada Visualmente, Auditada (`PASS 100/100`) y Enviada por WhatsApp (`/home/ubuntu/TIKTOK-NEWS/entregas/2026-11-17_AVIACION` en AWS)**:
+  - **Noticia y duración:** *Airbus A350 de Thai Airways (vuelo TG925 Múnich–Bangkok) se desvía de emergencia a Nueva Delhi* (`Aviation24 Global`), locución calibrada a **`63.43s`** (`>60s` monetizable).
+  - **Planos completos (`13/13`):** **`8/8` Google Flow** (`SH02`, `SH04`, `SH05`, `SH06`, `SH07`, `SH08`, `SH09`, `SH12`, con rotación multi-cuenta `flow-profile` → `cuenta_2` → `cuenta_3`) + **`5/5` Remotion React** (`SH01`, `SH03`, `SH10`, `SH11`, `SH13`) con props contextualizados en español.
+  - **Máster y QC (`PASS`, `Score: 100/100`):** `NOTICIERO_FINAL_62S.mp4` (`1080×1920 @ 24.0 fps`, `63.46s`, `34.0 MB`, `4494.4 kbps`, `-14.0 LUFS`, True Peak `-1.0 dBTP`, `0` frames congelados, `0` negros, `0` silencios, `0` advertencias).
+  - **Inspección visual y envío:** revisados [CONTACT_SHEET_QC.jpg](file:///home/vscode/.gemini/antigravity-cli/brain/ae6d4cba-f6b6-49e8-8da2-c6d6fb88cd98/scratch/entrega_2026_11_17_final/CONTACT_SHEET_QC.jpg), [PORTADA_TIKTOK_916.jpg](file:///home/vscode/.gemini/antigravity-cli/brain/ae6d4cba-f6b6-49e8-8da2-c6d6fb88cd98/scratch/entrega_2026_11_17_final/PORTADA_TIKTOK_916.jpg) (*«AVIÓN / GIRA EN / SECO»*) y fotogramas Safe Zone (`v3_01.5`–`v3_59.0`); paquete completo (portada + vídeo `34.0 MB` + hashtags) enviado por WhatsApp (`HTTP 200`, `doc=false`); queda **pendiente de aceptación final del usuario** tras revisarlo en su teléfono.
+  - **Estado de cuentas Flow en AWS (`~/.flow_profiles_state.json`):** `flow-profile` y `cuenta_2` en cooldown `12h` por créditos agotados; **`cuenta_3` y `cuenta_4` disponibles** (`cooldown_until: 0.0`). `crontab` mantenido pausado según acuerdo previo.
+
+- **Correcciones Permanentes Aplicadas y Verificadas (`30/30 OK` en `unittest`, `7/7 pass` en `bot_helpers`, desplegadas en `TIKTOK-NEWS.git` `e9bd829` -> AWS):**
+  1. [`flow_generator.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/flow_generator.py): firma de tiles (`_tile_signature`, `_select_new_or_changed_tiles`, `_pick_ready_tile_idx`) para distinguir clips completados aunque compartan `play_circle` sin `<video src>`, y `classify_flow_body_status()` para detectar `"requires X credits ... credits remaining"` / `"Wait for credits to refresh"` y rotar sin demoras.
+  2. **Safe Zone 100% en las 6 composiciones Remotion ([`motion_engine/src/`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/motion_engine/src/))**: tarjetas reducidas a `830px` (`x=45..915`, `y=250..1180`) para no invadir los botones derechos de TikTok ni solapar subtítulos abajo.
+  3. [`ensamblador_final.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/ensamblador_final.py): `-loop 1 -t 6.0` + bullet `• FUENTE VERIFICADA` en `source_badge.png` (antes invisible/con glifo faltante), asignación de subtítulos `silencedetect` sin flashes de 1 fotograma (`min >= 0.41s`), y codificación final `-crf 20 -maxrate 5500k` (~`34 MB`).
+  4. [`generador_portada.py`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/tools/generador_portada.py) y [`bot.js`](file:///workspaces/PRUEBA-CLI/TIKTOK_RADAR/whatsapp_bot/bot.js): regla anti-alucinación en titulares de portada, heap Chrome `1024 MB` y envío automático como documento si un vídeo supera `48 MB`.
 
 ## Sincronización Completa con Servidor AWS (`ubuntu@77.113.75.243`) y Rotación Secuencial Flow · 2026-11-16
 
