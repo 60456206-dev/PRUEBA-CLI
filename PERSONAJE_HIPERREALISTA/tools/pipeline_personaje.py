@@ -49,6 +49,11 @@ from PERSONAJE_HIPERREALISTA.tools.motor_personaje import (  # noqa: E402
     measure_frame_biometrics,
     resolve_project_path,
 )
+from PERSONAJE_HIPERREALISTA.tools.studio_api_client import (  # noqa: E402
+    FalStudioAvatarClient,
+    HeyGenAvatarIVClient,
+    get_studio_api_status,
+)
 
 
 def run_preflight_checks(
@@ -83,6 +88,11 @@ def run_preflight_checks(
         if not fpath.exists():
             errors.append(f"Falta archivo clave '{label}': {fpath}")
 
+    if pcfg.get("kf3_plano_medio"):
+        kf3_path = resolve_project_path(pcfg["kf3_plano_medio"])
+        if not kf3_path.exists():
+            warnings.append(f"Tercer encuadre plano medio no encontrado aún: {kf3_path}")
+
     font_candidates = [
         Path("/usr/share/fonts/truetype/montserrat/Montserrat-Black.ttf"),
         Path("/usr/share/fonts/truetype/montserrat/Montserrat-Bold.ttf"),
@@ -93,6 +103,7 @@ def run_preflight_checks(
     if not os.getenv("GEMINI_API_KEY", "").strip():
         warnings.append("GEMINI_API_KEY no definida; la locución usará Edge-TTS fallback.")
 
+    studio_apis = get_studio_api_status(cfg)
     sfx_assets = resolve_sfx_assets(cfg)
     if sfx_assets.get("genjutsu_fracture") is None:
         errors.append("No se pudo generar o localizar SFX_GENJUTSU_FRACTURE.wav")
@@ -108,7 +119,8 @@ def run_preflight_checks(
         "errors": errors,
         "warnings": warnings,
         "disk_free_mb": round(disk_free_mb, 1),
-        "tts_primary": "gemini" if os.getenv("GEMINI_API_KEY", "").strip() else "edge_tts",
+        "tts_primary": "elevenlabs" if (studio_apis["elevenlabs"]["configured"] and studio_apis["elevenlabs"]["preferred_in_config"]) else ("gemini" if os.getenv("GEMINI_API_KEY", "").strip() else "edge_tts"),
+        "studio_apis": studio_apis,
         "sfx_assets": {k: str(v) if v else None for k, v in sfx_assets.items()},
     }
     if errors:
@@ -247,6 +259,7 @@ def export_i2v_lipsync_pack(
         },
         "google_flow_veo3_first_last_frame": {
             "aspect_ratio": "9:16",
+            "nota_duracion": "Veo 3.1 en Google Flow genera clips cortos (~5-8s) y NO sincroniza labios a un WAV externo; úsalo para segmentos cortos (Acto 1 o Acto 2 por separado) o usa --studio-lipsync para sincronización exacta al WAV.",
             "first_frame": str(kf1_out),
             "last_frame": str(kf2_out),
             "prompt": (
@@ -258,6 +271,11 @@ def export_i2v_lipsync_pack(
                 f"through shallow foreground bokeh and crimson ring reflections appear in his irises. "
                 f"Strictly NO anime filter on skin, NO plastic skin smoothing, 24fps cinema motion."
             ),
+        },
+        "studio_apis_commands": {
+            "fal_omnihuman": f"python3 PERSONAJE_HIPERREALISTA/tools/pipeline_personaje.py --studio-lipsync fal_omnihuman --framing close --out-dir {out_dir}",
+            "fal_kling_avatar": f"python3 PERSONAJE_HIPERREALISTA/tools/pipeline_personaje.py --studio-lipsync fal_kling_avatar --framing medium --out-dir {out_dir}",
+            "heygen_avatar_iv": f"python3 PERSONAJE_HIPERREALISTA/tools/pipeline_personaje.py --studio-lipsync heygen_avatar_iv --public-audio-url https://TU_SERVIDOR/voz.wav --out-dir {out_dir}",
         },
         "gpu_lipsync_hallo2_o_liveportrait": {
             "nota": "Ejecutar en máquina con GPU NVIDIA y luego pasar el MP4 resultante a --input-video",
@@ -333,6 +351,7 @@ def audit_personaje_video(
     out_dir: Path,
     config: Optional[Dict[str, Any]] = None,
     has_audio: bool = True,
+    master_image_path: Optional[Path] = None,
 ) -> Dict[str, Any]:
     """
     Ejecuta auditoría técnica + biométrica sobre el vídeo generado y construye
@@ -399,7 +418,7 @@ def audit_personaje_video(
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
         )
-        bio = measure_frame_biometrics(f_jpg, dna_npy_path)
+        bio = measure_frame_biometrics(f_jpg, dna_npy_path, master_image_path=master_image_path)
         act_label = "ACTO 2 (GENJUTSU)" if ts >= cue_sec else "ACTO 1 (NORMAL)"
         min_sim = (
             float(qcfg["min_identity_similarity_act2"])
@@ -441,9 +460,10 @@ def audit_personaje_video(
         border = (230, 57, 70) if "ACTO 2" in fm["act"] else (70, 85, 110)
         draw.rectangle([x0 - 1, y0 - 1, x0 + cw + 1, y0 + ch + 1], outline=border, width=2)
         draw.text((x0 + 4, y0 + ch + 8), f"t={fm['t_sec']:.2f}s · {fm['act']}", fill=(255, 255, 255), font=f_meta)
+        eng_short = "ArcFace" if "insightface" in str(fm.get("identity_engine", "")) else "ProxyEst"
         draw.text(
             (x0 + 4, y0 + ch + 28),
-            f"Poros: {fm['pore_texture_energy']} | ADN: {fm['identity_similarity']}%",
+            f"Poros: {fm['pore_texture_energy']} | {eng_short}: {fm['identity_similarity']}%",
             fill=(170, 220, 170),
             font=f_meta,
         )
@@ -478,6 +498,10 @@ def run_personaje_pipeline(
     input_video: Optional[Path] = None,
     cue_sec_override: Optional[float] = None,
     prefer_edge: bool = False,
+    prefer_elevenlabs: bool = False,
+    studio_lipsync: str = "none",
+    framing: str = "close",
+    public_audio_url: Optional[str] = None,
     include_music: bool = True,
     include_subtitles: bool = True,
     export_i2v_only: bool = False,
@@ -492,8 +516,10 @@ def run_personaje_pipeline(
 
     pcfg = cfg["personaje"]
     vcfg = cfg["video"]
+    s_cfg = cfg.get("studio_apis", {})
     kf1_path = resolve_project_path(pcfg["kf1_normal"])
     kf2_path = resolve_project_path(pcfg["kf2_genjutsu"])
+    kf3_path = resolve_project_path(pcfg["kf3_plano_medio"]) if pcfg.get("kf3_plano_medio") else None
     dna_npy_path = resolve_project_path(pcfg["adn_embedding"])
 
     script = script_text or cfg["default_test_script"]
@@ -505,6 +531,7 @@ def run_personaje_pipeline(
         config=cfg,
         external_audio_file=external_audio_file,
         prefer_edge=prefer_edge,
+        prefer_elevenlabs=prefer_elevenlabs,
     )
     cue_sec = float(cue_sec_override) if cue_sec_override is not None else float(speech["genjutsu_cue_sec"])
 
@@ -523,10 +550,11 @@ def run_personaje_pipeline(
         wb = json.loads(Path(speech["word_boundaries_path"]).read_text(encoding="utf-8"))
         ass_path = generate_personaje_ass(wb, target_dir / "SUBTITULOS_PERSONAJE.ass", cue_sec, cfg)
 
-    # 4. Paquete I2V / Lip-Sync listo para Flow o GPU
+    # 4. Paquete I2V / Lip-Sync listo para Flow, fal.ai, HeyGen o GPU
+    source_keyframe = kf3_path if (framing == "medium" and kf3_path and kf3_path.exists()) else kf1_path
     i2v_pack_dir = export_i2v_lipsync_pack(
         out_dir=target_dir,
-        kf1_path=kf1_path,
+        kf1_path=source_keyframe,
         kf2_path=kf2_path,
         clean_voice_wav=Path(speech["voice_wav"]),
         master_audio_wav=Path(mix["master_wav"]),
@@ -542,17 +570,45 @@ def run_personaje_pipeline(
         "mix": mix,
         "subtitles_ass": str(ass_path) if ass_path else None,
         "i2v_pack_dir": str(i2v_pack_dir),
+        "framing": framing,
+        "source_keyframe": str(source_keyframe),
     }
 
     if export_i2v_only:
         return result
 
-    # 5. Renderizado de vídeo (I2V restaurado o Preview local sincronizado)
-    if input_video is not None:
-        final_mp4 = target_dir / "CANDIDATO_C_GENJUTSU_I2V_FINAL_CRF16.mp4"
+    # 5A. Generación opcional de Lip-Sync vía API de estudio
+    effective_input_video = Path(input_video).resolve() if input_video is not None else None
+    if effective_input_video is None and studio_lipsync and studio_lipsync != "none":
+        raw_studio_mp4 = target_dir / f"_studio_{studio_lipsync}.mp4"
+        if studio_lipsync in ("fal_omnihuman", "fal_kling_avatar"):
+            fal_client = FalStudioAvatarClient()
+            fal_client.generate_talking_avatar(
+                image_source=source_keyframe,
+                audio_source=Path(speech["voice_wav"]),
+                out_mp4=raw_studio_mp4,
+                model=studio_lipsync,
+                resolution=str(s_cfg.get("fal_omnihuman_resolution", "")) or None,
+            )
+            effective_input_video = raw_studio_mp4
+        elif studio_lipsync == "heygen_avatar_iv":
+            hg_client = HeyGenAvatarIVClient(default_avatar_id=str(s_cfg.get("heygen_avatar_id", "")))
+            hg_client.generate_avatar_iv_video(
+                audio_url=str(public_audio_url or ""),
+                out_mp4=raw_studio_mp4,
+            )
+            effective_input_video = raw_studio_mp4
+        else:
+            raise ValueError(f"Proveedor --studio-lipsync desconocido: {studio_lipsync}")
+
+    # 5B. Renderizado de vídeo (I2V restaurado sin texture sticking o Preview local sincronizado)
+    maxrate = str(vcfg.get("maxrate", "12M"))
+    bufsize = str(vcfg.get("bufsize", "24M"))
+    if effective_input_video is not None:
+        final_mp4 = target_dir / "CANDIDATO_C_GENJUTSU_I2V_FINAL.mp4"
         process_i2v_video_with_pore_restoration(
-            input_video=Path(input_video).resolve(),
-            kf1_path=kf1_path,
+            input_video=effective_input_video,
+            kf1_path=source_keyframe,
             kf2_path=kf2_path,
             out_mp4=final_mp4,
             cue_sec=cue_sec,
@@ -564,12 +620,14 @@ def run_personaje_pipeline(
             grain_sigma=float(vcfg["temporal_grain_sigma"]),
             pore_strength=float(vcfg["pore_restoration_strength"]),
             transition_window_sec=float(vcfg["transition_window_sec"]),
+            maxrate=maxrate,
+            bufsize=bufsize,
         )
-        mode = "i2v_restore"
+        mode = f"studio_{studio_lipsync}" if studio_lipsync != "none" else "i2v_restore"
     else:
-        final_mp4 = target_dir / "PRUEBA_01_LOCAL_PREVIEW_CRF16.mp4"
+        final_mp4 = target_dir / "PRUEBA_01_LOCAL_PREVIEW.mp4"
         render_genjutsu_master_video(
-            kf1_path=kf1_path,
+            kf1_path=source_keyframe,
             kf2_path=kf2_path,
             out_mp4=final_mp4,
             duration_sec=float(mix["duration_sec"]),
@@ -582,6 +640,8 @@ def run_personaje_pipeline(
             preset=str(vcfg["preset"]),
             grain_sigma=float(vcfg["temporal_grain_sigma"]),
             pore_strength=0.0,
+            maxrate=maxrate,
+            bufsize=bufsize,
         )
         mode = "local_preview"
 
@@ -593,6 +653,7 @@ def run_personaje_pipeline(
         out_dir=target_dir,
         config=cfg,
         has_audio=True,
+        master_image_path=source_keyframe,
     )
 
     result.update(
@@ -615,7 +676,23 @@ def main() -> None:
     parser.add_argument("--input-video", type=str, default=None, help="Vídeo crudo de Flow/Hallo2/LivePortrait para restaurar poros y muxeado")
     parser.add_argument("--cue-sec", type=float, default=None, help="Forzar segundo exacto de fractura Genjutsu")
     parser.add_argument("--out-dir", type=str, default=str(VIDEO_DIR / "PRUEBA_01_GENJUTSU"))
-    parser.add_argument("--prefer-edge", action="store_true", help="Usar Edge-TTS en lugar de Gemini TTS")
+    parser.add_argument("--prefer-edge", action="store_true", help="Usar Edge-TTS en lugar de Gemini/ElevenLabs")
+    parser.add_argument("--prefer-elevenlabs", action="store_true", help="Priorizar ElevenLabs TTS con timestamps")
+    parser.add_argument(
+        "--studio-lipsync",
+        type=str,
+        default="none",
+        choices=["none", "fal_omnihuman", "fal_kling_avatar", "heygen_avatar_iv"],
+        help="Motor API de estudio para Lip-Sync/actuación real",
+    )
+    parser.add_argument(
+        "--framing",
+        type=str,
+        default="close",
+        choices=["close", "medium"],
+        help="Encuadre base: close (KF1 85mm) o medium (KF3 50mm explicando)",
+    )
+    parser.add_argument("--public-audio-url", type=str, default=None, help="URL HTTPS pública del audio (requerida para HeyGen)")
     parser.add_argument("--no-music", action="store_true", help="Omitir cama musical")
     parser.add_argument("--no-subtitles", action="store_true", help="No quemar subtítulos ASS en el vídeo")
     parser.add_argument("--export-i2v-only", action="store_true", help="Generar audio + I2V_PACK sin renderizar preview")
@@ -629,6 +706,10 @@ def main() -> None:
         input_video=Path(args.input_video) if args.input_video else None,
         cue_sec_override=args.cue_sec,
         prefer_edge=args.prefer_edge,
+        prefer_elevenlabs=args.prefer_elevenlabs,
+        studio_lipsync=args.studio_lipsync,
+        framing=args.framing,
+        public_audio_url=args.public_audio_url,
         include_music=not args.no_music,
         include_subtitles=not args.no_subtitles,
         export_i2v_only=args.export_i2v_only,

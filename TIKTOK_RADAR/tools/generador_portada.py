@@ -184,16 +184,15 @@ def extract_cover_headline(title: str, genre: str = "G1") -> List[Tuple[str, str
     """
     key = os.getenv("GEMINI_API_KEY")
     if key:
-        prompt = f"""Genera el titular gancho para una miniatura/portada de TikTok en ESPAÑOL de ultra alto impacto (CTR masivo).
+        prompt = f"""Genera un titular minimalista de CURIOSIDAD (estilo Veritasium / documental investigativo) para portada vertical 9:16 en ESPAÑOL.
 Noticia original: {title}
 REGLAS ESTRICTAS:
-- 100% EN ESPAÑOL (prohibido inglés salvo marcas como Nvidia, Google, Apple o siglas de dominio público).
-- Exactamente 3 líneas de texto (máximo 2 a 3 palabras por línea).
-- En MAYÚSCULAS y con lenguaje directo y dramático.
-- Rigor factual: NO inventes fuego, llamas, explosiones ni víctimas si el titular original no los menciona.
+- 100% EN ESPAÑOL (prohibido inglés salvo marcas como Nvidia, Google, Apple o siglas conocidas).
+- Exactamente 3 líneas muy cortas (máximo 2 a 3 palabras por línea) que creen brecha de curiosidad sobre el misterio o giro real.
+- En MAYÚSCULAS, sobrio, directo y 100% factual: PROHIBIDO inventar fuego, explosiones, muertes o pánico si la noticia no los menciona.
 - Formato de respuesta JSON estricto: ["LINEA 1", "LINEA 2", "LINEA 3"]"""
 
-        for model in ["gemini-3.5-flash-lite", "gemini-3.8-flash"]:
+        for model in ["gemini-3.5-flash-lite", "gemini-3.5-flash", "gemini-flash-lite-latest", "gemini-2.5-flash"]:
             try:
                 url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={key}"
                 body = {"contents": [{"parts": [{"text": prompt}]}]}
@@ -292,7 +291,7 @@ def _try_gemini_image_cover(prompt: str, timeout_sec: int = 25) -> Optional[byte
     api_key = os.environ.get("GEMINI_API_KEY", "").strip()
     if not api_key:
         return None
-    for model in ("gemini-2.5-flash-image", "gemini-3.1-flash-image"):
+    for model in ("gemini-2.5-flash-image", "gemini-3.1-flash-image", "gemini-3.1-flash-lite-image"):
         url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
         payload = {
             "contents": [{"parts": [{"text": prompt}]}],
@@ -364,9 +363,9 @@ def generate_ai_cover_background(genre: str, title: str, delivery_dir: Path, for
             pass
 
     base_style = (
-        "Vertical 9:16, prestigious scientific documentary poster aesthetic, dramatic chiaroscuro studio lighting, "
-        "deep carbon vignetted shadows with directional rim light, tactile textured surface patina inspired by Veritasium "
-        "and Jakub Misiek illustrations, subtle analog film grain, high subject contrast, masterpiece quality, no text, no captions, no watermark"
+        "Vertical 9:16, tactile 2.5D editorial documentary illustration poster, dramatic chiaroscuro studio lighting, "
+        "deep carbon vignetted shadows with warm directional rim light, subtle archival paper fiber and analog 35mm film grain, "
+        "high subject contrast, no text, no captions, no watermarks"
     )
 
     clean_title_ctx = re.sub(r"[^\w\s\-:]", " ", title or "").strip()[:100]
@@ -378,7 +377,7 @@ def generate_ai_cover_background(genre: str, title: str, delivery_dir: Path, for
         accent_rgb = (230, 57, 70)
     elif is_ai:
         prompt = (
-            f"{base_style}, scene inspired by '{clean_title_ctx}', glowing nanometer microchip silicon wafer floating in dark cleanroom space, "
+            f"{base_style}, scene inspired by '{clean_title_ctx}', nanometer microchip silicon wafer floating in dark cleanroom space, "
             f"amber golden chiaroscuro lighting, intricate sub-micron traces"
         )
         accent_rgb = (244, 162, 97)
@@ -396,8 +395,8 @@ def generate_ai_cover_background(genre: str, title: str, delivery_dir: Path, for
         accent_rgb = (251, 133, 0)
     else:
         prompt = (
-            f"{base_style}, scene inspired by '{clean_title_ctx}', twin-engine jet banking through dark storm clouds, "
-            f"dramatic amber cockpit rim light, wing beacon cutting volumetric mist"
+            f"{base_style}, scene depicting '{clean_title_ctx}', commercial aircraft matching the story cruising through atmospheric dusk clouds, "
+            f"dramatic warm amber rim light, shallow depth of field"
         )
         accent_rgb = (251, 133, 0)
 
@@ -505,113 +504,63 @@ def generate_tiktok_cover(delivery_dir: Path, output_filename: str = "PORTADA_TI
         alpha = int(215 * factor)
         draw_ov.line([(0, y), (1080, y)], fill=(6, 12, 24, alpha))
 
-    # Determinación de colores adaptativos por temática
+    # Determinación de colores adaptativos y kicker sobrio por temática
     is_cyber, is_ai, is_space = _detect_category_flags(genre, title)
     is_disaster = _is_non_aviation_disaster(genre, title)
     if is_cyber:
         accent_hex = "#E63946"
-        border_rgba = (230, 57, 70, 220)
-        inner_rgba = (241, 250, 238, 90)
-        badge_bg = (180, 20, 30)
-        badge_label = "CIBERATAQUE CRÍTICO EN VIVO"
-        sub_text = "INFORME EN 60s · CENTRO SOC ALERTA ZERO-DAY"
+        badge_label = "CIBERSEGURIDAD · ANÁLISIS"
     elif is_ai:
         accent_hex = "#F4A261"
-        border_rgba = (244, 162, 97, 220)
-        inner_rgba = (231, 111, 81, 100)
-        badge_bg = (200, 75, 40)
-        badge_label = "GUERRA DE CHIPS Y HARDWARE"
-        sub_text = "INFORME EN 60s · LITOGRAFÍA 2NM HIGH-NA"
+        badge_label = "HARDWARE E IA · ANÁLISIS"
     elif is_space:
         accent_hex = "#FFB703"
-        border_rgba = (255, 183, 3, 220)
-        inner_rgba = (157, 78, 221, 110)
-        badge_bg = (120, 35, 180)
-        badge_label = "MISIÓN ESPACIAL EN VIVO"
-        sub_text = "INFORME EN 60s · TELEMETRÍA DEEP SPACE"
+        badge_label = "ESPACIO · ANÁLISIS"
     elif is_disaster:
         accent_hex = "#FB8500"
-        border_rgba = (251, 133, 0, 220)
-        inner_rgba = (255, 255, 255, 90)
-        badge_bg = (190, 35, 30)
-        badge_label = "ALERTA DE EMERGENCIA EN VIVO"
-        sub_text = "INFORME EN 60s · COBERTURA DE CATÁSTROFE"
+        badge_label = "EMERGENCIA · ANÁLISIS"
     else:
-        # Default: Aviación
-        accent_hex = "#FB8500"
-        border_rgba = (251, 133, 0, 220)
-        inner_rgba = (255, 255, 255, 90)
-        badge_bg = (210, 30, 30)
-        badge_label = "EMERGENCIA AÉREA EN VIVO"
-        sub_text = "INFORME EN 60s · RADAR TÁCTICO DE VUELO"
+        accent_hex = "#E5A93C"
+        badge_label = "AVIACIÓN · ANÁLISIS"
 
-    # Caja central táctica en Safe Zone TikTok 3:4 (Y: 560 a 1210, bien encima de 1400)
-    center_box = [(40, 560), (1040, 1210)]
-    draw_ov.rounded_rectangle(center_box, radius=28, fill=(14, 18, 26, 240), outline=border_rgba, width=3)
-    draw_ov.rounded_rectangle([(46, 566), (1034, 1204)], radius=22, fill=(0, 0, 0, 0), outline=inner_rgba, width=1)
+    # Scrim editorial suave en Safe Zone 3:4 (Y: 480..1280) sin marco rígido cortando la ilustración
+    for y in range(480, 1280):
+        dist = abs(y - 880) / 400.0
+        alpha = int(185 * max(0.0, 1.0 - dist ** 1.75))
+        draw_ov.line([(0, y), (1080, y)], fill=(8, 11, 18, alpha))
 
     img = Image.alpha_composite(bg_img, overlay)
     draw = ImageDraw.Draw(img)
 
     # 3. Tipografías cargadas (prioriza Montserrat oficial)
     font_bold_path = FONT_BOLD if Path(FONT_BOLD).exists() else "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf"
-    f_badge = ImageFont.truetype(font_bold_path, 32)
-    f_sub = ImageFont.truetype(font_bold_path, 26)
-    f_foot = ImageFont.truetype(font_bold_path, 25)
+    f_kicker = ImageFont.truetype(font_bold_path, 22)
 
-    # 4. Badge Superior (Píldora de Impacto)
-    badge_bbox = f_badge.getbbox(badge_label)
-    bw = min(940, badge_bbox[2] - badge_bbox[0] + 70)
-    bh = 60
-    bx = (1080 - bw) // 2
-    by = 600
+    # 4. Kicker editorial único y discreto en Safe Zone 3:4 (cero píldoras de noticiero ni rótulos redundantes)
+    kbbox = f_kicker.getbbox(badge_label)
+    kw = kbbox[2] - kbbox[0]
+    kx = (1080 - kw) // 2
+    draw.text((kx, 616), badge_label, font=f_kicker, fill=accent_hex, stroke_width=4, stroke_fill="#080B12")
 
-    draw.rounded_rectangle([(bx, by), (bx + bw, by + bh)], radius=30, fill=badge_bg, outline=(255, 255, 255), width=2)
-    draw.ellipse([(bx + 18, by + 18), (bx + 42, by + 42)], fill=(255, 255, 255))
-    draw.ellipse([(bx + 23, by + 23), (bx + 37, by + 37)], fill=(255, 220, 0))
-    draw.text((bx + 52, by + 12), badge_label, font=f_badge, fill="white")
-
-    # 5. Titular Gancho con ajuste dinámico de tamaño para no desbordar caja (x=40..1040)
+    # 5. Titular Monumental de Curiosidad en Safe Zone (2-3 palabras por línea, máximo impacto limpio)
     headline_lines = extract_cover_headline(title, genre)
-    title_size = 66
-    while title_size > 44:
+    title_size = 92
+    while title_size > 52:
         f_test = ImageFont.truetype(font_bold_path, title_size)
-        if all((f_test.getbbox(ln)[2] - f_test.getbbox(ln)[0]) <= 910 for ln, _ in headline_lines):
+        if all((f_test.getbbox(ln)[2] - f_test.getbbox(ln)[0]) <= 820 for ln, _ in headline_lines):
             break
         title_size -= 4
     f_title = ImageFont.truetype(font_bold_path, title_size)
 
-    start_y = 705 if len(headline_lines) == 3 else 750
+    start_y = 678 if len(headline_lines) == 3 else 730
 
     for text_line, color in headline_lines:
         t_bbox = f_title.getbbox(text_line)
         tw = t_bbox[2] - t_bbox[0]
         tx = (1080 - tw) // 2
-        draw.text((tx + 5, start_y + 5), text_line, font=f_title, fill="black")
-        draw.text((tx, start_y), text_line, font=f_title, fill=color, stroke_width=7, stroke_fill="black")
-        start_y += int(title_size * 1.28)
-
-    # 6. Píldora inferior contextual dentro de la caja táctica
-    sub_bbox = f_sub.getbbox(sub_text)
-    sw = min(940, sub_bbox[2] - sub_bbox[0] + 40)
-    sh = 52
-    sx = (1080 - sw) // 2
-    sy = 1110
-    draw.rounded_rectangle([(sx, sy), (sx + sw, sy + sh)], radius=16, fill=(18, 24, 34), outline=border_rgba, width=2)
-    draw.text((sx + 20, sy + 12), sub_text, font=f_sub, fill=accent_hex)
-
-    # 7. Rótulos informativos dentro de la Safe Zone TikTok (Y: 140..1400)
-    foot_text = "RADAR 24/7 · REPORTE OFICIAL VERIFICADO"
-    fb_box = f_foot.getbbox(foot_text)
-    fw = fb_box[2] - fb_box[0]
-    fx = (1080 - fw) // 2
-    draw.text((fx, 1265), foot_text, font=f_foot, fill="#E0E0E0")
-
-    top_text = f"INFORME ESPECIAL · {source.upper()}"
-    tb_box = f_foot.getbbox(top_text)
-    tw = tb_box[2] - tb_box[0]
-    tx = (1080 - tw) // 2
-    draw.text((tx, 290), top_text, font=f_foot, fill="#F0F0F0")
+        draw.text((tx + 6, start_y + 7), text_line, font=f_title, fill=(0, 0, 0, 220))
+        draw.text((tx, start_y), text_line, font=f_title, fill=color, stroke_width=9, stroke_fill="#080B12")
+        start_y += int(title_size * 1.24)
 
     # 8. Exportar portada final
     out_cover_jpg = delivery_dir / output_filename

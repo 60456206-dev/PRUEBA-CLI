@@ -2,8 +2,8 @@
   "_descripcion": "Configuración Central de Producción, Consistencia Visual y Modo de Render (TikTok Radar)",
   "produccion_diaria": {
     "videos_por_dia": 2,
-    "estrategia": "Opción B: 2 Vídeos Especializados al Estilo Veritasium",
-    "estandar": "Obra Maestra 10/10 Estilo Veritasium (Explicación por Primeros Principios + Estética Chiaroscuro)",
+    "estrategia": "Opción B: 2 Vídeos Especializados en Estilo Documental Editorial 2.5D",
+    "estandar": "Animación Editorial 2.5D Táctil y Explicación por Primeros Principios",
     "horarios_publicacion_peru": [
       {
         "slot": 1,
@@ -39,40 +39,58 @@
     "carpeta_perfiles": "~/flow-profiles",
     "perfiles_extra": []
   },
+  "locucion": {
+    "motor_principal": "edge_tts",
+    "acento": "es-CR (Costa Rica)",
+    "voz_edge": "es-CR-JuanNeural",
+    "rate_edge": "-4%",
+    "pitch_edge": "+0Hz",
+    "voz_gemini_fallback": "Orus",
+    "tighten_silencios": false,
+    "palabras_objetivo": "134-145",
+    "elevenlabs_enabled": false,
+    "elevenlabs_voice_id": "pNInz6obpgDQGcFmaJgB",
+    "elevenlabs_model_id": "eleven_multilingual_v2",
+    "elevenlabs_stability": 0.45,
+    "elevenlabs_similarity_boost": 0.78,
+    "elevenlabs_style": 0.35,
+    "elevenlabs_speed": 0.96
+  },
   "consistencia_visual": {
-    "estilo_maestro": "Vertical 9:16, prestigious scientific and technical documentary aesthetic, dramatic chiaroscuro studio lighting, deep carbon background shadows with directional rim light, tactile textured surface patina inspired by Veritasium and Jakub Misiek illustrations, subtle analog film grain, volumetric atmosphere, clean surgical vector schematics, shallow depth of field, slow continuous camera push-in, masterpiece quality, no plastic CGI surfaces, no uncanny valley",
-    "motor_render": "Veritasium Tactile Documentary & Chiaroscuro Cinematic",
+    "estilo_maestro": "Vertical 9:16, tactile 2.5D editorial documentary illustration and chiaroscuro diorama aesthetic, directional warm study lamp rim light against deep carbon slate shadows, subtle archival paper fiber patina and analog 35mm film grain, layered paper-cutout depth parallax, shallow depth of field, slow continuous camera push-in, no plastic CGI gloss, no uncanny valley, no on-screen text overlays, no watermarks",
+    "motor_render": "Editorial 2.5D Tactile Documentary & Chiaroscuro Illustration",
     "resolucion": "1080x1920",
     "fps": 24,
     "paleta_colores": {
-      "fondo_carbon": "0x12161a",
-      "pizarra_mate": "0x1b222a",
+      "fondo_carbon": "0x0b0e14",
+      "pizarra_mate": "0x171d26",
+      "papel_crema": "0xefe5ce",
       "amarillo_azufre": "0xe2e062",
-      "ambar_alerta": "0xffaa00",
-      "rojo_editorial": "0xee3344",
+      "ambar_editorial": "0xe5a93c",
+      "rojo_editorial": "0xe63946",
       "dorado_tecnologico": "0xf4a261",
-      "blanco_titanio": "0xf5f7fa"
+      "blanco_marfil": "0xf8f3e8"
     },
     "anclas_por_categoria": {
       "G1_AVIACION": {
-        "personaje": "Stylized 3D male pilot in textured navy flight uniform under dramatic chiaroscuro cockpit lighting, focused determined eyes, sharp expressive facial geometry, subtle skin texture, no loose coverings, directional amber instrument glow",
-        "aeronave": "Matte finish twin-engine executive jet banking through dark moody storm clouds, fine tactile metal wing rivets, wingtip strobe lights cutting through mist",
-        "cabina": "Glass cockpit in deep shadow, surgical amber and warm indicators, tactile throttle levers, slow camera push-in"
+        "personaje": "Tactile editorial illustration of a commercial flight crew member in deep slate cockpit shadows, directional warm amber instrument rim light, calm focused eyes, matte painted surface grain, no face coverings",
+        "aeronave": "Commercial airliner matching the exact reported aircraft model, matte editorial illustration texture against moody atmospheric clouds, directional warm rim light",
+        "cabina": "Glass cockpit instrumentation in deep carbon shadow, subtle warm amber indicator glow, tactile paper-grain atmosphere, slow camera push-in"
       },
       "G2_CIBERATAQUES": {
-        "personaje": "Stylized 3D cybersecurity intelligence analyst in dark tech bunker illuminated by dramatic amber and crimson monitor glow, focused intense gaze, tactical dark-framed glasses, clear expressive facial features, no face coverings",
-        "entorno": "High-density server vault in deep carbon shadows, matte black racks with tactile brushed metal texture, pulsing LED activity lights and fiber optic bundles",
-        "elementos": "Clean surgical vector threat topology, illuminated node matrices, high-contrast terminal traces"
+        "personaje": "Tactile editorial illustration of a cybersecurity analyst in dark operations room lit by warm amber and crimson monitor glow, focused gaze, dark-framed glasses, matte textured grain, no face coverings",
+        "entorno": "High-density server vault in deep carbon shadows, brushed matte dark steel racks, subtle indicator pulses and fiber optic lines",
+        "elementos": "Layered archival schematic aesthetic, subtle illuminated network nodes, deep chiaroscuro contrast"
       },
       "G3_IA_HARDWARE": {
-        "personaje": "Stylized 3D semiconductor researcher in sleek textured white cleanroom gear with transparent high-tech safety glasses, sharp visible expressive human eyes, clean facial geometry, absolutely no loose cloth face masks or mouth coverings",
-        "entorno": "Extreme ultraviolet (High-NA EUV) lithography cleanroom with sterile monochromatic golden chiaroscuro lighting, tactile matte surfaces and vacuum chambers",
-        "elementos": "Glowing 300mm silicon wafer with iridescent 2nm micro-architecture circuit patterns, fine tactile sub-micron traces, directional spotlight"
+        "personaje": "Tactile editorial illustration of a semiconductor engineer in cleanroom jacket with clear protective goggles, focused eyes, textured matte lighting, no cloth face mask",
+        "entorno": "EUV lithography cleanroom in golden chiaroscuro lighting, tactile brushed steel chambers, layered optical depth",
+        "elementos": "300mm silicon wafer catching warm directional rim light, fine microscopic circuit sheen, archival documentary look"
       },
       "G4_ESPACIO": {
-        "personaje": "Stylized 3D mission flight director in command center console wearing lightweight headset, focused eyes tracking telemetry monitors, clear expressive facial features, no face coverings, dramatic rim light",
-        "entorno": "Deep space planetary orbit in deep black contrast, atmospheric entry plasma trails, and robotic probe solar arrays with tactile metallic foil textures",
-        "elementos": "Precision orbital vector schematics, rocket thruster plume, and high-contrast celestial horizon"
+        "personaje": "Tactile editorial illustration of a mission flight director wearing a lightweight headset in dim control room, warm console reflections, focused eyes, matte film texture",
+        "entorno": "Orbital spacecraft or launch vehicle against deep velvet space contrast, golden foil insulation textures, crisp rim lighting",
+        "elementos": "Clean trajectory arc, atmospheric horizon glow, shallow depth of field"
       }
     }
   },

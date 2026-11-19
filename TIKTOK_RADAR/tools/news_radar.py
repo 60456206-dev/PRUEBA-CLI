@@ -11,13 +11,14 @@ Reglas Fundamentales de Producción:
 
 import email.utils
 import html
+from html.parser import HTMLParser
 import json
 import re
 import sys
 import urllib.request
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
-from typing import Dict, List, Any, Optional, Set
+from typing import Dict, List, Any, Optional, Set, Tuple
 
 # Términos publicitarios y spam comercial a eliminar
 BLACKLIST_TERMS = [
@@ -602,6 +603,7 @@ def fetch_feed(feed_info: Dict[str, Any], max_items: int = 25) -> List[Dict[str,
                 "title": title,
                 "link": link,
                 "summary": desc[:300] + ("..." if len(desc) > 300 else ""),
+                "summary_full": desc[:1200],
                 "pub_date": pub_date_str,
                 "timestamp": pub_ts,
             }
@@ -619,6 +621,260 @@ def scan_all_sources() -> List[Dict[str, Any]]:
     for f in FEEDS:
         all_news.extend(fetch_feed(f))
     return all_news
+
+
+class _ArticleHTMLParser(HTMLParser):
+    """Extractor HTML sin dependencias externas centrado en párrafos editoriales reales."""
+
+    _SKIP_TAGS = {"script", "style", "nav", "header", "footer", "aside", "noscript", "svg", "form", "button"}
+
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=True)
+        self._skip_depth = 0
+        self._main_depth = 0
+        self._in_p = False
+        self._p_in_main = False
+        self._p_buf: List[str] = []
+        self.article_paragraphs: List[str] = []
+        self.body_paragraphs: List[str] = []
+
+    def handle_starttag(self, tag: str, attrs: List[Tuple[str, Optional[str]]]) -> None:
+        t = (tag or "").lower()
+        if t in self._SKIP_TAGS:
+            self._skip_depth += 1
+            return
+        if t in ("article", "main"):
+            self._main_depth += 1
+        elif t == "p" and self._skip_depth == 0:
+            self._in_p = True
+            self._p_in_main = self._main_depth > 0
+            self._p_buf = []
+
+    def handle_endtag(self, tag: str) -> None:
+        t = (tag or "").lower()
+        if t in self._SKIP_TAGS:
+            self._skip_depth = max(0, self._skip_depth - 1)
+            return
+        if t in ("article", "main"):
+            self._main_depth = max(0, self._main_depth - 1)
+        elif t == "p" and self._in_p:
+            text = re.sub(r"\s+", " ", html.unescape("".join(self._p_buf))).strip()
+            if len(text) >= 40 and not _looks_like_boilerplate(text):
+                if self._p_in_main:
+                    self.article_paragraphs.append(text)
+                self.body_paragraphs.append(text)
+            self._in_p = False
+            self._p_buf = []
+
+    def handle_data(self, data: str) -> None:
+        if self._skip_depth == 0 and self._in_p and data:
+            self._p_buf.append(data)
+
+
+def _looks_like_boilerplate(text: str) -> bool:
+    low = text.lower()
+    noise_markers = (
+        "accept all cookies", "cookie policy", "subscribe to our newsletter",
+        "sign up for our", "all rights reserved", "privacy policy",
+        "terms of service", "política de privacidad", "aceptar cookies",
+    )
+    return any(m in low for m in noise_markers)
+
+
+def extract_article_text_from_html(html_str: str, max_chars: int = 4000) -> str:
+    """Extrae texto limpio de párrafos de un documento HTML sin bs4 ni lxml."""
+    if not html_str:
+        return ""
+    parser = _ArticleHTMLParser()
+    try:
+        parser.feed(html_str)
+        parser.close()
+    except Exception:
+        pass
+    chosen = parser.article_paragraphs if sum(len(p) for p in parser.article_paragraphs) >= 160 else parser.body_paragraphs
+    joined = " ".join(chosen)
+    joined = re.sub(r"\s+", " ", joined).strip()
+    if len(joined) <= max_chars:
+        return joined
+    cut = joined[:max_chars].rsplit(" ", 1)[0].strip()
+    return cut or joined[:max_chars].strip()
+
+
+def _truncate_clean_sentence(text: str, limit: int = 168) -> str:
+    clean = re.sub(r"\s+", " ", (text or "")).strip()
+    if len(clean) <= limit:
+        return clean
+    cut = clean[:limit].rsplit(" ", 1)[0].rstrip(" ,;:-")
+    return (cut or clean[:limit]).strip() + "..."
+
+
+def extract_verified_receipt_facts(article_text: str, title: str = "", source: str = "") -> Dict[str, Any]:
+    """
+    Extrae cifras reales, una cita factual verificable ('receipt'), la frase exacta a resaltar
+    en amarillo y la causa técnica reportada en el texto completo.
+    """
+    full = re.sub(r"\s+", " ", f"{article_text or ''} {title or ''}").strip()
+    num_pat = re.compile(
+        r"\b(?:\d+(?:[.,]\d+)?\s*(?:%|km/h|mph|ft|pies|nm|GHz|TFLOPS|TOPS|GB|TB|GW|MW|Gbps|Mbps|millones|billones|pasajeros|personas|metros|horas|minutos|segundos|kV|Hz)"
+        r"|CVE-\d{4}-\d{4,7}"
+        r"|(?:Airbus\s+A3\d{2}[A-Za-z0-9-]*|Boeing\s+7\d{2}[A-Za-z0-9-]*|TG\d{2,4}|[A-Z]{2}\d{2,4}))\b",
+        re.IGNORECASE,
+    )
+    raw_nums = num_pat.findall(full)
+    numbers: List[str] = []
+    seen_num = set()
+    for n in raw_nums:
+        clean_n = re.sub(r"\s+", " ", n).strip()
+        key_n = clean_n.lower()
+        if clean_n and key_n not in seen_num:
+            seen_num.add(key_n)
+            numbers.append(clean_n)
+        if len(numbers) >= 6:
+            break
+
+    sentences = [
+        s.strip()
+        for s in re.split(r"(?<=[.!?])\s+", re.sub(r"\s+", " ", article_text or "").strip())
+        if len(s.strip()) >= 28
+    ]
+    official_kws = (
+        "faa", "ntsb", "nasa", "esa", "tsmc", "nvidia", "airbus", "boeing", "cve",
+        "alerta", "fallo", "emergencia", "investigación", "hydraulic", "engine", "divert",
+        "sensor", "sistema", "reactor", "seguridad", "confirmó", "reportó", "protocolo",
+        "litografía", "malware", "ransomware", "órbita", "desvió", "desvío", "combustible",
+    )
+    causal_kws = (
+        "debido a", "provocó", "causó", "triggered", "caused by", "due to",
+        "para evitar", "porque", "tras detectar", "after", "resultó en", "falla en",
+    )
+
+    best_quote = ""
+    best_score = -1.0
+    technical_cause = ""
+    for s in sentences:
+        s_low = s.lower()
+        sc = 0.0
+        if 50 <= len(s) <= 170:
+            sc += 3.0
+        elif 35 <= len(s) <= 220:
+            sc += 1.5
+        if num_pat.search(s):
+            sc += 4.5
+        if any(k in s_low for k in official_kws):
+            sc += 3.0
+        if any(k in s_low for k in causal_kws):
+            sc += 2.0
+            if not technical_cause:
+                technical_cause = _truncate_clean_sentence(s, 175)
+        if sc > best_score:
+            best_score = sc
+            best_quote = _truncate_clean_sentence(s, 168)
+
+    if not best_quote:
+        best_quote = _truncate_clean_sentence(title or article_text or f"Reporte verificado de {source or 'Prensa Oficial'}.", 168)
+
+    # Elegir frase corta (3-7 palabras) exactamente contenida dentro de best_quote
+    highlight_phrase = ""
+    q_words = best_quote.split()
+    if q_words:
+        anchor_idx = 0
+        for idx, w in enumerate(q_words):
+            if num_pat.search(w) or any(k in w.lower() for k in ("faa", "ntsb", "cve", "desv", "fall", "emerg", "hidr", "sensor", "2nm", "orbit", "malware")):
+                anchor_idx = idx
+                break
+        start_i = max(0, anchor_idx - 1)
+        end_i = min(len(q_words), start_i + 5)
+        if end_i - start_i < 3 and len(q_words) >= 3:
+            start_i = max(0, len(q_words) - 5)
+            end_i = min(len(q_words), start_i + 5)
+        highlight_phrase = " ".join(q_words[start_i:end_i]).strip(".,;:")
+        if highlight_phrase not in best_quote:
+            highlight_phrase = " ".join(q_words[:min(5, len(q_words))])
+
+    return {
+        "numbers": numbers,
+        "receipt_quote": best_quote,
+        "highlight_phrase": highlight_phrase,
+        "technical_cause": technical_cause,
+    }
+
+
+def fetch_full_article_context(
+    url: str,
+    fallback_summary: str = "",
+    title: str = "",
+    source: str = "",
+    timeout_sec: int = 8,
+) -> Dict[str, Any]:
+    """
+    Descarga y extrae el texto limpio del artículo original (`link`), con caída segura
+    al resumen RSS si falla la descarga, hay paywall o el cuerpo es insuficiente.
+    """
+    article_text = ""
+    fetched_ok = False
+    clean_url = (url or "").strip()
+    if clean_url.startswith(("http://", "https://")):
+        headers = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/124.0.0.0 Safari/537.36"}
+        try:
+            req = urllib.request.Request(clean_url, headers=headers)
+            with urllib.request.urlopen(req, timeout=timeout_sec) as resp:
+                raw_bytes = resp.read(350_000)
+                ctype = (resp.headers.get("Content-Type") or "").lower()
+                charset = "utf-8"
+                m_cs = re.search(r"charset=([a-zA-Z0-9_-]+)", ctype)
+                if m_cs:
+                    charset = m_cs.group(1)
+                html_str = raw_bytes.decode(charset, errors="replace")
+            extracted = extract_article_text_from_html(html_str, max_chars=4000)
+            if len(extracted) >= 80:
+                article_text = extracted
+                fetched_ok = True
+        except Exception as e:
+            print(f"[RADAR-FULLTEXT] Aviso leyendo artículo ({clean_url[:60]}): {e}", flush=True)
+
+    if not article_text:
+        article_text = re.sub(r"\s+", " ", (fallback_summary or title or "")).strip()
+
+    facts = extract_verified_receipt_facts(article_text, title=title, source=source)
+    return {
+        "article_text": article_text,
+        "receipt_quote": facts["receipt_quote"],
+        "highlight_phrase": facts["highlight_phrase"],
+        "numbers": facts["numbers"],
+        "technical_cause": facts["technical_cause"],
+        "fetched_ok": fetched_ok,
+    }
+
+
+def enrich_news_item(item: Dict[str, Any], fetch_remote: bool = True) -> Dict[str, Any]:
+    """Devuelve una copia del item enriquecida con texto completo y hechos verificables."""
+    enriched = dict(item or {})
+    fallback = str(enriched.get("summary_full") or enriched.get("summary") or "")
+    title = str(enriched.get("title") or "")
+    source = str(enriched.get("source_name") or enriched.get("source") or "")
+    link = str(enriched.get("link") or "")
+
+    if fetch_remote and link:
+        ctx = fetch_full_article_context(link, fallback_summary=fallback, title=title, source=source)
+    else:
+        existing_txt = str(enriched.get("article_text") or fallback or title).strip()
+        facts = extract_verified_receipt_facts(existing_txt, title=title, source=source)
+        ctx = {
+            "article_text": existing_txt,
+            "receipt_quote": facts["receipt_quote"],
+            "highlight_phrase": facts["highlight_phrase"],
+            "numbers": facts["numbers"],
+            "technical_cause": facts["technical_cause"],
+            "fetched_ok": bool(enriched.get("fetched_ok", False)),
+        }
+
+    enriched["article_text"] = ctx["article_text"]
+    enriched["receipt_quote"] = ctx["receipt_quote"]
+    enriched["highlight_phrase"] = ctx["highlight_phrase"]
+    enriched["extracted_numbers"] = ctx["numbers"]
+    enriched["technical_cause"] = ctx["technical_cause"]
+    enriched["fetched_ok"] = ctx["fetched_ok"]
+    return enriched
 
 
 def rerank_by_human_impact_gemini(candidates: List[Dict[str, Any]], genre_key: str = "") -> List[Dict[str, Any]]:

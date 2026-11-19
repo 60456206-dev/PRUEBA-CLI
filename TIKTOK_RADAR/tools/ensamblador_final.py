@@ -242,7 +242,6 @@ def generate_kinetic_ass(
             word_boundaries_file = cand_wb
 
     CAPCUT_MARGIN_V = 560
-    HOOK_MARGIN_V = 175
 
     # Inicializar documento SSA con pysubs2 si está disponible
     subs = None
@@ -265,35 +264,9 @@ def generate_kinetic_ass(
             outline=7.0,
             shadow=0.0,
             alignment=Alignment.BOTTOM_CENTER,
-            marginl=80,
-            marginr=80,
+            marginl=65,
+            marginr=170,
             marginv=CAPCUT_MARGIN_V,
-        )
-        subs.styles["HookPill"] = SSAStyle(
-            fontname="Montserrat",
-            fontsize=26,
-            primarycolor=Color(255, 255, 255, 0),
-            secondarycolor=Color(255, 255, 255, 0),
-            outlinecolor=Color(216, 24, 24, 0),
-            backcolor=Color(0, 0, 0, 0),
-            bold=True,
-            spacing=1.8,
-            borderstyle=3,
-            outline=6.0,
-            shadow=0.0,
-            alignment=Alignment.TOP_CENTER,
-            marginl=60,
-            marginr=60,
-            marginv=HOOK_MARGIN_V,
-        )
-        subs.events.append(
-            SSAEvent(
-                start=0,
-                end=4500,
-                style="HookPill",
-                text=r"{\fad(120,300)}• ÚLTIMA HORA",
-                layer=2,
-            )
         )
 
     header = f"""[Script Info]
@@ -305,12 +278,10 @@ ScaledBorderAndShadow: yes
 
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-Style: CapCutBouncing,Montserrat Black,78,&H00FFFFFF,&H0000EAFF,&H00000000,&H00000000,-1,0,0,0,100,100,1.2,0,1,7.0,0.0,2,80,80,{CAPCUT_MARGIN_V},1
-Style: HookPill,Montserrat,26,&H00FFFFFF,&H00FFFFFF,&H001818D8,&H00000000,-1,0,0,0,100,100,1.8,0,3,6.0,0.0,8,60,60,{HOOK_MARGIN_V},1
+Style: CapCutBouncing,Montserrat Black,78,&H00FFFFFF,&H0000EAFF,&H00000000,&H00000000,-1,0,0,0,100,100,1.2,0,1,7.0,0.0,2,65,170,{CAPCUT_MARGIN_V},1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
-Dialogue: 2,0:00:00.00,0:00:04.50,HookPill,,0,0,0,,{{\\fad(120,300)}}• ÚLTIMA HORA
 """
 
     events = []
@@ -456,56 +427,45 @@ FONT_MONO = "/usr/share/fonts/truetype/dejavu/DejaVuSansMono-Bold.ttf"
 
 def generate_verified_source_card(source_name: str, genre: str, out_png: Path) -> Path:
     """
-    Genera una tarjeta gráfica de alta credibilidad (overlay broadcast) que muestra la
-    fuente oficial o foro verificado (RPP, NASA, Tom's Hardware, Hacker News, etc.)
-    para certificar la fiabilidad del reporte y dar máxima confianza al espectador.
+    Genera una banda compacta de acreditación oficial (overlay editorial limpio)
+    para proyectarse sobre SH02 sin tapar el mapa ni chocar con encabezados.
     """
     from PIL import Image, ImageDraw, ImageFont
 
-    W, H = 830, 155
+    W, H = 760, 88
     img = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     draw = ImageDraw.Draw(img)
 
     font_bold_p = FONT_BOLD if Path(FONT_BOLD).exists() else "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf"
     font_reg_p = FONT_REG if Path(FONT_REG).exists() else "/usr/share/fonts/truetype/liberation/LiberationSans.ttf"
 
-    f_badge = ImageFont.truetype(font_bold_p, 18)
-    f_title = ImageFont.truetype(font_bold_p, 33)
-    f_sub = ImageFont.truetype(font_reg_p, 18)
+    f_badge = ImageFont.truetype(font_bold_p, 16)
+    f_title = ImageFont.truetype(font_bold_p, 27)
 
-    # Color temático sutil para el borde y el icono (sin falsos positivos por subcadena)
     genre_up = (genre or "").upper()
     genre_tokens = set("".join(ch if ch.isalnum() else " " for ch in genre_up).split())
     if "G2" in genre_tokens or "CIBER" in genre_up or "CYBER" in genre_up:
-        border_col = (230, 57, 70, 230)
+        border_col = (230, 57, 70, 225)
         tag_bg = (180, 20, 30)
     elif "G4" in genre_tokens or "ESPACIO" in genre_up or "SPACE" in genre_up:
-        border_col = (255, 183, 3, 230)
+        border_col = (255, 183, 3, 225)
         tag_bg = (120, 35, 180)
     elif "G3" in genre_tokens or "HARDWARE" in genre_up or "IA" in genre_tokens or "AI" in genre_tokens or "ROBOT" in genre_up:
-        border_col = (244, 162, 97, 230)
+        border_col = (244, 162, 97, 225)
         tag_bg = (200, 75, 40)
     else:
-        # Default: G1 Aviación y Universal
-        border_col = (251, 133, 0, 230)
-        tag_bg = (210, 40, 20)
+        border_col = (229, 169, 60, 225)
+        tag_bg = (195, 42, 32)
 
-    # Tarjeta oscura frosted glass
-    draw.rounded_rectangle([(0, 0), (W - 1, H - 1)], radius=18, fill=(14, 18, 26, 235), outline=border_col, width=2)
+    draw.rounded_rectangle([(0, 0), (W - 1, H - 1)], radius=12, fill=(14, 18, 26, 225), outline=border_col, width=2)
+    draw.rounded_rectangle([(16, 12), (230, 40)], radius=7, fill=tag_bg)
+    draw.text((26, 17), "• FUENTE VERIFICADA", font=f_badge, fill=(255, 255, 255))
+    draw.text((246, 17), "COBERTURA OFICIAL", font=f_badge, fill=(205, 218, 235))
 
-    # Nivel 1 (Superior): Píldora de verificación + Rótulo institucional
-    draw.rounded_rectangle([(24, 16), (264, 52)], radius=10, fill=tag_bg)
-    draw.text((38, 24), "• FUENTE VERIFICADA", font=f_badge, fill=(255, 255, 255))
-    draw.text((284, 24), "AUDITORÍA INFORMATIVA · RADAR 24/7", font=f_badge, fill=(205, 218, 235))
-
-    # Nivel 2 (Medio): Nombre grande de la fuente / foro oficial
     src_text = source_name.upper().strip()
-    if len(src_text) > 32:
-        src_text = src_text[:30] + "..."
-    draw.text((24, 62), src_text, font=f_title, fill=(255, 255, 255))
-
-    # Nivel 3 (Inferior): Leyenda de certificación directa
-    draw.text((24, 114), "ORIGEN DIRECTO CERTIFICADO · COBERTURA EN TIEMPO REAL", font=f_sub, fill=(170, 188, 212))
+    if len(src_text) > 34:
+        src_text = src_text[:32] + "..."
+    draw.text((16, 46), src_text, font=f_title, fill=(248, 243, 232))
 
     img.save(out_png, "PNG")
     return out_png
@@ -515,9 +475,7 @@ def escape_ffmpeg_drawtext(s: str) -> str:
     """Escapa de forma robusta caracteres conflictivos en cadenas de texto para FFmpeg drawtext."""
     if not s:
         return ""
-    # Reemplazar apóstrofes para evitar romper delimitadores text='...'
     clean = str(s).replace("'", "’")
-    # Escapar : a \:
     clean = clean.replace(r"\:", ":").replace(":", r"\:")
     return clean
 
@@ -528,49 +486,47 @@ def build_modern_broadcast_card(
     metric_val: str,
     metric_label: str,
     bullets: list,
-    accent_hex: str = "0xffaa00",
-    bg_hex: str = "0x0c121e",
-    footer_text: str = "📡 INFORME OFICIAL BROADCAST · RADAR 24/7"
+    accent_hex: str = "0xe5a93c",
+    bg_hex: str = "0x0b0e14",
+    footer_text: str = "• REPORTE DOCUMENTAL VERIFICADO"
 ) -> tuple:
-    badge_esc = escape_ffmpeg_drawtext(badge)
+    badge_esc = escape_ffmpeg_drawtext(badge.replace("●", "•"))
     title_esc = escape_ffmpeg_drawtext(title)
 
-    # Si metric_val contiene expresiones dinámicas de FFmpeg %{eif...}, no escapar su sintaxis interna
     if "%{eif" in metric_val:
         metric_val_esc = metric_val.replace("'", "’")
     else:
         metric_val_esc = escape_ffmpeg_drawtext(metric_val)
 
     metric_label_esc = escape_ffmpeg_drawtext(metric_label)
-    footer_esc = escape_ffmpeg_drawtext(footer_text)
+    footer_esc = escape_ffmpeg_drawtext(footer_text.replace("📡", "•"))
 
-    # Ajustar tamaño de fuente si la métrica es larga para evitar que se desborde horizontalmente
-    val_fontsize = 80 if len(metric_val) <= 12 else 52
-    ease_y = "(1-min(1,t/0.5))*(1-min(1,t/0.5))*50"
+    val_fontsize = 68 if len(metric_val) <= 12 else 46
+    ease_y = "(1-min(1,t/0.5))*(1-min(1,t/0.5))*40"
 
+    # Safe Zone 100%: x=56..886 (bien a la izquierda de botones TikTok en x=930)
     filters = [
-        f"drawbox=x=70:y='360+{ease_y}':w=940:h=880:color=0x121722@0.93:t=fill",
-        f"drawbox=x=70:y='360+{ease_y}':w=940:h=880:color={accent_hex}@0.65:t=2",
-        f"drawbox=x=110:y='395+{ease_y}':w=420:h=46:color={accent_hex}@0.20:t=fill",
-        f"drawbox=x=110:y='395+{ease_y}':w=420:h=46:color={accent_hex}:t=2",
-        f"drawtext=fontfile={FONT_BOLD}:text='{badge_esc}':fontcolor={accent_hex}:fontsize=22:x=130:y='408+{ease_y}'",
-        f"drawtext=fontfile={FONT_BOLD}:timecode='00\\:14\\:28\\:00':r=24:x=740:y='408+{ease_y}':fontcolor=white@0.65:fontsize=20",
-        f"drawtext=fontfile={FONT_BOLD}:text='{title_esc}':fontcolor=white:fontsize=36:x=110:y='470+{ease_y}'",
-        f"drawtext=fontfile={FONT_BOLD}:text='{metric_val_esc}':fontcolor=white:fontsize={val_fontsize}:x=110:y='530+{ease_y}'",
-        f"drawtext=fontfile={FONT_REG}:text='{metric_label_esc}':fontcolor=white@0.85:fontsize=26:x=110:y='625+{ease_y}'",
-        f"drawbox=x=110:y='675+{ease_y}':w=860:h=4:color=0x253045:t=fill",
-        f"drawbox=x=110:y='675+{ease_y}':w='mod(t*340\\,860)':h=4:color={accent_hex}:t=fill"
+        f"drawbox=x=56:y='330+{ease_y}':w=830:h=820:color=0x141a24@0.94:t=fill",
+        f"drawbox=x=56:y='330+{ease_y}':w=830:h=820:color={accent_hex}@0.65:t=2",
+        f"drawbox=x=86:y='365+{ease_y}':w=430:h=42:color={accent_hex}@0.18:t=fill",
+        f"drawbox=x=86:y='365+{ease_y}':w=430:h=42:color={accent_hex}:t=2",
+        f"drawtext=fontfile={FONT_BOLD}:text='{badge_esc}':fontcolor={accent_hex}:fontsize=20:x=102:y='376+{ease_y}'",
+        f"drawtext=fontfile={FONT_BOLD}:text='{title_esc}':fontcolor=0xf8f3e8:fontsize=29:x=86:y='436+{ease_y}'",
+        f"drawtext=fontfile={FONT_BOLD}:text='{metric_val_esc}':fontcolor=0xf8f3e8:fontsize={val_fontsize}:x=86:y='494+{ease_y}'",
+        f"drawtext=fontfile={FONT_REG}:text='{metric_label_esc}':fontcolor=0xf8f3e8@0.85:fontsize=24:x=86:y='580+{ease_y}'",
+        f"drawbox=x=86:y='626+{ease_y}':w=770:h=4:color=0x253045:t=fill",
+        f"drawbox=x=86:y='626+{ease_y}':w='mod(t*300\\,770)':h=4:color={accent_hex}:t=fill"
     ]
-    by = 715
+    by = 666
     for txt, col in bullets:
         clean_txt = escape_ffmpeg_drawtext(txt)
-        filters.append(f"drawtext=fontfile={FONT_REG}:text='{clean_txt}':fontcolor={col}:fontsize=25:x=110:y='{by}+{ease_y}'")
-        by += 48
+        filters.append(f"drawtext=fontfile={FONT_REG}:text='{clean_txt}':fontcolor={col}:fontsize=24:x=86:y='{by}+{ease_y}'")
+        by += 46
 
     filters.extend([
-        f"drawbox=x=110:y='1170+{ease_y}':w=860:h=46:color=0x151d2d@0.92:t=fill",
-        f"drawbox=x=110:y='1170+{ease_y}':w=860:h=46:color={accent_hex}@0.45:t=1",
-        f"drawtext=fontfile={FONT_BOLD}:text='{footer_esc}':fontcolor={accent_hex}:fontsize=20:x=140:y='1183+{ease_y}'",
+        f"drawbox=x=86:y='1082+{ease_y}':w=770:h=42:color=0x171d26@0.94:t=fill",
+        f"drawbox=x=86:y='1082+{ease_y}':w=770:h=42:color={accent_hex}@0.45:t=1",
+        f"drawtext=fontfile={FONT_BOLD}:text='{footer_esc}':fontcolor={accent_hex}:fontsize=19:x=106:y='1094+{ease_y}'",
         "vignette=PI/4"
     ])
     return bg_hex, ",".join(filters)
@@ -918,7 +874,7 @@ def generate_infographic_vector_shot(
         ]
         bullets_dyn.append((f"• SECUENCIA: {shot_info.get('sec', f'{shot_idx*4}-{(shot_idx+1)*4}s').upper()} · ESCENA VERIFICADA", st_accent))
 
-        short_headline = textwrap.shorten((title or shot_type), width=42, placeholder="...").upper()
+        short_headline = textwrap.shorten((title or shot_type), width=34, placeholder="...").upper()
         stage_metric = f"FASE {shot_idx + 1:02d} / {shot_info.get('sec', 'EN VIVO').upper()}"
         if len(stage_metric) > 16:
             stage_metric = f"PLANO {shot_id}"
@@ -962,6 +918,88 @@ def generate_infographic_vector_shot(
     subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 
+def _is_remotion_tech_shot(shot_info: Dict[str, Any], shot_idx: int) -> bool:
+    shot_id = shot_info.get("id", f"SH{shot_idx+1:02d}")
+    type_lower = (shot_info.get("type") or "").lower()
+    return (
+        shot_info.get("render_mode") in ("remotion", "infographic")
+        or shot_id in ("SH01", "SH03", "SH10", "SH11", "SH13")
+        or any(
+            k in type_lower
+            for k in (
+                "radar", "telemetria", "datos", "diagrama", "infografia",
+                "evidencia", "cierre", "contexto", "blueprint", "esquema", "mapa",
+            )
+        )
+    )
+
+
+def _build_remotion_job_for_shot(
+    shot_info: Dict[str, Any],
+    shot_idx: int,
+    genre: str,
+    title: str,
+    story_metrics: Dict[str, Any],
+    target_dur: float,
+    norm_mp4: Path,
+    fps: int = 24,
+) -> Dict[str, Any]:
+    """Construye la especificación única de composición y props Remotion 2.5D para un plano."""
+    shot_id = shot_info.get("id", f"SH{shot_idx+1:02d}")
+    shot_type = shot_info.get("type", "")
+    extra_props: Dict[str, Any] = {**story_metrics, **(shot_info.get("remotion_props") or {})}
+    if "has_geo" in extra_props:
+        has_geo_flag = bool(extra_props.get("has_geo") and extra_props.get("origin"))
+    else:
+        has_geo_flag = True
+
+    comp_name = get_composition_for_shot(
+        genre,
+        shot_id=shot_id,
+        shot_type=shot_type,
+        has_geo=has_geo_flag,
+        has_receipt=bool(extra_props.get("has_receipt")),
+    )
+    narrative_sub = (
+        shot_info.get("narrative_excerpt")
+        or shot_info.get("subtitle")
+        or shot_info.get("action")
+        or "ANÁLISIS DOCUMENTAL"
+    )
+    extra_props.setdefault("sourceTag", story_metrics.get("sourceTag") or f"REPORTE VERIFICADO · {shot_id}")
+    if comp_name == "Editorial25DOutro" and not extra_props.get("quote") and shot_info.get("narrative_excerpt"):
+        extra_props["quote"] = shot_info["narrative_excerpt"]
+    elif comp_name == "VeritasiumDocumentaryOutro" and shot_info.get("narrative_excerpt"):
+        extra_props["quote"] = shot_info["narrative_excerpt"]
+    elif comp_name == "VeritasiumBlueprint":
+        extra_props["blueprintTag"] = f"ESQUEMA TÁCTICO · {shot_id}"
+
+    remotion_props = build_category_props(
+        genre=genre,
+        title=shot_info.get("title") or title,
+        subtitle=narrative_sub,
+        duration_frames=max(24, int(target_dur * fps)),
+        composition_id=comp_name,
+        extra_props=extra_props,
+    )
+    return {
+        "shot_id": shot_id,
+        "compositionId": comp_name,
+        "outputLocation": str(norm_mp4),
+        "inputProps": remotion_props,
+        "crf": 14,
+        "concurrency": 2,
+    }
+
+
+def _find_still_image_for_shot(raw_mp4: Path) -> Optional[Path]:
+    for ext in (".jpg", ".jpeg", ".png", ".webp"):
+        cand = raw_mp4.with_suffix(ext)
+        if cand.exists() and cand.stat().st_size > 15_000:
+            return cand
+    return None
+
+
 def prepare_normalized_shot(
     shot_info: Dict[str, Any],
     shot_idx: int,
@@ -970,50 +1008,68 @@ def prepare_normalized_shot(
     target_dur: float,
     genre: str = "G1",
     title: str = "",
+    start_trim: float = 0.0,
+    punch_in: bool = False,
 ) -> None:
     """
-    Prepara cada plano a 1080x1920 @ 24fps con la duración exacta + margen de solapamiento para xfade:
-    - Planos Infográficos (render_mode='infographic') o planos ausentes: genera placa táctica HUD broadcast con Ken Burns anti-freeze.
-    - Planos Cinemáticos Flow (render_mode='flow'): aplica Ken Burns y sacudida de cabina en escenas de tensión.
+    Prepara cada plano a 1080x1920 @ 24fps con la duración exacta del beat:
+    - Planos Infográficos (render_mode='infographic'): usa motor Editorial 2.5D Remotion (o fallback FFmpeg).
+    - Planos Cinemáticos Flow (render_mode='flow'): aplica Ken Burns suave (o punch-in) + LUT editorial unificada.
     """
     is_infographic = (shot_info.get("render_mode") in ("infographic", "remotion"))
     has_valid_raw = raw_mp4.exists() and raw_mp4.stat().st_size > 25_000
+    still_img = None if has_valid_raw else _find_still_image_for_shot(raw_mp4)
     fps = 24
 
-    # Solo usar vídeo crudo de Flow en planos cinematográficos; los planos infográficos usan Remotion / Vector HUD
-    if has_valid_raw and not is_infographic:
-        is_tense = 3 <= shot_idx <= 8  # SH04 a SH09: planos de tensión en cabina y descenso
-        # Dinamismo de cámara CapCut: alternar acercamiento (punch-in) y alejamiento (pull-back)
+    if (has_valid_raw or still_img is not None) and not is_infographic:
         zoom_in = (shot_idx % 2 == 0)
-        if is_tense:
+        editorial_grade = (
+            "colorbalance=rs=-0.03:gs=-0.01:bs=0.04:rh=0.05:gh=0.02:bh=-0.04,"
+            "eq=contrast=1.06:saturation=0.92:brightness=-0.02,"
+            "vignette=PI/5,noise=alls=3:allf=t,format=yuv420p"
+        )
+        if punch_in:
             crop_expr = (
-                "scale=1240:2204:force_original_aspect_ratio=increase,crop=1240:2204,"
+                "scale=1340:2382:force_original_aspect_ratio=increase,crop=1340:2382,"
                 "crop=1080:1920:"
-                "x='(iw-ow)/2 + 20*sin(2*PI*t/1.6) + 7*sin(2*PI*t*7.5)':"
-                "y='(ih-oh)/2 - 28*(t/{dur:.2f}) + 7*cos(2*PI*t*6.5)',"
-                "eq=contrast=1.09:saturation=1.16:brightness=-0.01,noise=alls=4:allf=t,format=yuv420p"
+                "x='(iw-ow)/2 + 10*sin(PI*t/{dur:.2f})':"
+                "y='(ih-oh)/2 - 36*(t/{dur:.2f})',"
+                + editorial_grade
             ).format(dur=max(1.0, target_dur))
         elif zoom_in:
             crop_expr = (
                 "scale=1220:2168:force_original_aspect_ratio=increase,crop=1220:2168,"
                 "crop=1080:1920:"
-                "x='(iw-ow)/2 + 12*sin(PI*t/{dur:.2f})':"
-                "y='(ih-oh)/2 - 40*(t/{dur:.2f})',"
-                "eq=contrast=1.07:saturation=1.14,noise=alls=4:allf=t,format=yuv420p"
+                "x='(iw-ow)/2 + 10*sin(PI*t/{dur:.2f})':"
+                "y='(ih-oh)/2 - 34*(t/{dur:.2f})',"
+                + editorial_grade
             ).format(dur=max(1.0, target_dur))
         else:
             crop_expr = (
                 "scale=1220:2168:force_original_aspect_ratio=increase,crop=1220:2168,"
                 "crop=1080:1920:"
-                "x='(iw-ow)/2 - 12*sin(PI*t/{dur:.2f})':"
-                "y='(ih-oh)/2 + 35*(t/{dur:.2f}) - 35',"
-                "eq=contrast=1.07:saturation=1.14,noise=alls=4:allf=t,format=yuv420p"
+                "x='(iw-ow)/2 - 10*sin(PI*t/{dur:.2f})':"
+                "y='(ih-oh)/2 + 30*(t/{dur:.2f}) - 30',"
+                + editorial_grade
             ).format(dur=max(1.0, target_dur))
+
+        if still_img is not None:
+            input_flags = ["-loop", "1", "-i", str(still_img)]
+        else:
+            trim_flags: List[str] = []
+            if start_trim > 0.05:
+                try:
+                    raw_dur = probe_duration(raw_mp4)
+                    safe_trim = min(start_trim, max(0.0, raw_dur - 1.5))
+                    if safe_trim > 0.05:
+                        trim_flags = ["-ss", f"{safe_trim:.2f}"]
+                except Exception:
+                    trim_flags = []
+            input_flags = ["-stream_loop", "-1", *trim_flags, "-i", str(raw_mp4)]
 
         cmd = [
             "ffmpeg", "-y",
-            "-stream_loop", "-1",
-            "-i", str(raw_mp4),
+            *input_flags,
             "-t", f"{target_dur:.3f}",
             "-vf", crop_expr,
             "-r", str(fps),
@@ -1023,52 +1079,210 @@ def prepare_normalized_shot(
         ]
         subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     else:
-        # Si es un plano de infografía/telemetría y Remotion está disponible, usar motor React
         rendered_with_remotion = False
         shot_id = shot_info.get("id", f"SH{shot_idx+1:02d}")
-        shot_type = shot_info.get("type", "")
-        type_lower = shot_type.lower()
-
-        # Detección de planos infográficos / técnicos de Remotion (SH01, SH03, SH10, SH11, SH13);
-        # los planos cinemáticos Flow ausentes en --skip-flow usan placas HUD narrativas propias.
-        is_tech_shot = (
-            shot_info.get("render_mode") in ("remotion", "infographic")
-            or shot_id in ("SH01", "SH03", "SH10", "SH11", "SH13")
-            or any(k in type_lower for k in ("radar", "telemetria", "datos", "diagrama", "infografia", "evidencia", "cierre", "contexto", "blueprint", "esquema"))
-        )
-        if HAS_REMOTION and is_tech_shot:
+        if HAS_REMOTION and _is_remotion_tech_shot(shot_info, shot_idx):
             try:
-                comp_name = get_composition_for_shot(genre, shot_id=shot_id, shot_type=shot_type)
-                narrative_sub = shot_info.get("narrative_excerpt") or shot_info.get("subtitle") or shot_info.get("action") or "ANÁLISIS TÉCNICO Y PRIMEROS PRINCIPIOS"
-                stage_sub = f"{shot_id} · {shot_type}: {narrative_sub}" if shot_type else narrative_sub
-                extra_props: Dict[str, Any] = dict(shot_info.get("remotion_props") or {})
-                extra_props.setdefault("sourceTag", f"REPORTE VERIFICADO · PLANO {shot_id}")
-                if comp_name == "VeritasiumDocumentaryOutro" and shot_info.get("narrative_excerpt"):
-                    extra_props["quote"] = shot_info["narrative_excerpt"]
-                elif comp_name == "VeritasiumBlueprint":
-                    extra_props["blueprintTag"] = f"ESQUEMA TÁCTICO · {shot_id}"
-
-                res = render_category_motion_graphic(
+                job = _build_remotion_job_for_shot(
+                    shot_info=shot_info,
+                    shot_idx=shot_idx,
                     genre=genre,
-                    output_path=norm_mp4,
-                    title=shot_info.get("title") or title,
-                    subtitle=stage_sub,
-                    target_duration_sec=target_dur,
+                    title=title,
+                    story_metrics=dict(shot_info.get("remotion_props") or {}),
+                    target_dur=target_dur,
+                    norm_mp4=norm_mp4,
                     fps=fps,
-                    shot_id=shot_id,
-                    shot_type=shot_type,
-                    composition_id=comp_name,
-                    extra_props=extra_props,
+                )
+                res = render_remotion_scene(
+                    composition_id=job["compositionId"],
+                    output_path=norm_mp4,
+                    props=job["inputProps"],
+                    concurrency=2,
                 )
                 if res and norm_mp4.exists() and norm_mp4.stat().st_size > 10_000:
                     rendered_with_remotion = True
-                    log(f"   [REMOTION-REACT] Plano {shot_id} ({comp_name}) renderizado con motor web ({target_dur:.2f}s).")
+                    log(f"   [REMOTION-REACT] Plano {shot_id} ({job['compositionId']}) renderizado con motor 2.5D ({target_dur:.2f}s).")
             except Exception as e:
                 log(f"   [REMOTION] Aviso: fallback a FFmpeg para plano {shot_id}: {e}")
 
         if not rendered_with_remotion:
-            # Modo Infográfico Vectorial HUD (FFmpeg)
             generate_infographic_vector_shot(shot_info, shot_idx, norm_mp4, target_dur, fps, genre=genre, title=title)
+
+
+def _build_synthetic_word_boundaries(
+    script: str,
+    sentence_boundaries: List[Dict[str, Any]],
+    total_dur: float,
+) -> List[Dict[str, Any]]:
+    """Construye marcas aproximadas por palabra desde SENTENCE_BOUNDARIES.json o duración total."""
+    words = (script or "").split()
+    out: List[Dict[str, Any]] = []
+
+    if sentence_boundaries:
+        for sb in sentence_boundaries:
+            s_words = str(sb.get("text") or "").split()
+            if not s_words:
+                continue
+            s0 = max(0.0, float(sb.get("start", 0.0)))
+            s1 = min(total_dur, max(s0 + 0.15, float(sb.get("end", s0 + 0.5))))
+            weights = [max(2.0, float(len(w)) + (2.0 if w.endswith((".", "?", "!", ",")) else 0.0)) for w in s_words]
+            tot_w = max(1.0, sum(weights))
+            cur = s0
+            for w, wt in zip(s_words, weights):
+                dur = (wt / tot_w) * (s1 - s0)
+                out.append({"text": w, "start": round(cur, 3), "end": round(cur + dur, 3)})
+                cur += dur
+        if out:
+            return out
+
+    if not words:
+        return []
+    weights = [max(2.0, float(len(w)) + (2.0 if w.endswith((".", "?", "!", ",")) else 0.0)) for w in words]
+    tot_w = max(1.0, sum(weights))
+    usable = max(1.0, total_dur - 0.20)
+    cur = 0.10
+    for w, wt in zip(words, weights):
+        dur = (wt / tot_w) * usable
+        out.append({"text": w, "start": round(cur, 3), "end": round(cur + dur, 3)})
+        cur += dur
+    return out
+
+
+def align_beats_to_audio(
+    beats: List[Dict[str, Any]],
+    word_boundaries: List[Dict[str, Any]],
+    sentence_boundaries: List[Dict[str, Any]],
+    total_dur: float,
+    script: str = "",
+) -> List[Dict[str, Any]]:
+    """
+    Alinea cada beat narrativo al timestamp real de su palabra inicial en WORD_BOUNDARIES.json
+    (o SENTENCE_BOUNDARIES.json / pesos de texto) para garantizar sincronía Beat<->Audio <= 0.15s.
+    """
+    if not beats or total_dur <= 0:
+        return []
+
+    wb_list = [
+        w for w in (word_boundaries or [])
+        if isinstance(w, dict) and str(w.get("text", "")).strip() and float(w.get("end", 0.0)) >= float(w.get("start", 0.0))
+    ]
+    if not wb_list:
+        fallback_script = script or " ".join(str(b.get("text") or "") for b in beats)
+        wb_list = _build_synthetic_word_boundaries(fallback_script, sentence_boundaries or [], total_dur)
+
+    n_script_words = max(
+        len((script or "").split()),
+        max((int(b.get("word_end_idx", 0)) + 1 for b in beats), default=1),
+        1,
+    )
+    n_wb = len(wb_list)
+    n_beats = len(beats)
+    min_beat_dur = min(0.55, total_dur / max(1, n_beats * 2))
+
+    aligned: List[Dict[str, Any]] = []
+    prev_start = 0.0
+    for idx, beat in enumerate(beats):
+        w_start_idx = max(0, int(beat.get("word_start_idx", 0)))
+        if n_wb > 0:
+            if n_wb == n_script_words:
+                wb_idx = min(n_wb - 1, w_start_idx)
+            else:
+                wb_idx = min(n_wb - 1, int(round(w_start_idx * n_wb / n_script_words)))
+            actual_word_start = max(0.0, min(total_dur, float(wb_list[wb_idx]["start"])))
+        else:
+            actual_word_start = (idx / max(1, n_beats)) * total_dur
+
+        if idx == 0:
+            start_sec = 0.0
+        else:
+            max_allowed = max(prev_start + min_beat_dur, total_dur - min_beat_dur * (n_beats - idx))
+            start_sec = max(prev_start + min_beat_dur, min(max_allowed, actual_word_start))
+        start_sec = round(start_sec, 3)
+        sync_delta = round(abs(start_sec - actual_word_start), 3)
+
+        item = dict(beat)
+        item["start_sec"] = start_sec
+        item["actual_word_start_sec"] = round(actual_word_start, 3)
+        item["sync_delta_sec"] = sync_delta
+        aligned.append(item)
+        prev_start = start_sec
+
+    for idx in range(len(aligned)):
+        end_sec = aligned[idx + 1]["start_sec"] if idx + 1 < len(aligned) else round(total_dur, 3)
+        aligned[idx]["end_sec"] = round(end_sec, 3)
+        aligned[idx]["duration_sec"] = round(max(0.25, end_sec - aligned[idx]["start_sec"]), 3)
+
+    return aligned
+
+
+def build_editorial_timeline_video(
+    norm_clips: List[Path],
+    clip_durations: List[float],
+    beat_timeline: List[Dict[str, Any]],
+    output_silent_mp4: Path,
+    dissolve_dur: float = 0.30,
+) -> List[float]:
+    """
+    Ensambla el timeline editorial priorizando hard cuts (concat dentro de cada acto) y
+    aplicando `xfade=transition=dissolve` exclusivamente en los cambios de Acto, manteniendo
+    0.00s de deriva temporal respecto a los timestamps Audio-First.
+    """
+    if not norm_clips:
+        raise ValueError("No hay clips normalizados para ensamblar el timeline.")
+
+    inputs: List[str] = []
+    for c in norm_clips:
+        inputs.extend(["-i", str(c)])
+
+    filter_parts: List[str] = []
+    for i in range(len(norm_clips)):
+        filter_parts.append(f"[{i}:v]settb=AVTB,fps=24,format=yuv420p,setsar=1[s{i}]")
+
+    # Agrupar por bloques continuos separados únicamente en transiciones 'dissolve'
+    blocks: List[List[int]] = [[0]]
+    for i in range(1, len(norm_clips)):
+        tr = str((beat_timeline[i] if i < len(beat_timeline) else {}).get("transition_in") or "cut").lower()
+        if tr == "dissolve":
+            blocks.append([i])
+        else:
+            blocks[-1].append(i)
+
+    block_labels: List[str] = []
+    block_durs: List[float] = []
+    for b_idx, indices in enumerate(blocks):
+        if len(indices) == 1:
+            block_labels.append(f"[s{indices[0]}]")
+        else:
+            in_lbls = "".join(f"[s{i}]" for i in indices)
+            out_lbl = f"[act{b_idx}]"
+            filter_parts.append(f"{in_lbls}concat=n={len(indices)}:v=1:a=0{out_lbl}")
+            block_labels.append(out_lbl)
+        block_durs.append(sum(clip_durations[i] for i in indices))
+
+    dissolve_timestamps: List[float] = []
+    prev_label = block_labels[0]
+    offset = 0.0
+    for b_idx in range(1, len(block_labels)):
+        offset += block_durs[b_idx - 1] - dissolve_dur
+        dissolve_timestamps.append(round(offset, 3))
+        out_label = f"[xv{b_idx}]"
+        filter_parts.append(
+            f"{prev_label}{block_labels[b_idx]}xfade=transition=dissolve:duration={dissolve_dur:.3f}:offset={offset:.3f}{out_label}"
+        )
+        prev_label = out_label
+
+    filter_complex = ";".join(filter_parts)
+    cmd = [
+        "ffmpeg", "-y",
+        *inputs,
+        "-filter_complex", filter_complex,
+        "-map", prev_label,
+        "-r", "24",
+        "-c:v", "libx264", "-preset", "veryfast", "-crf", "15",
+        str(output_silent_mp4),
+    ]
+    subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    return dissolve_timestamps
 
 
 def build_transition_video(
@@ -1180,38 +1394,65 @@ def _render_two_pass_loudnorm(
     subprocess.run(cmd_p2, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 
+def _build_music_drop_expression(music_drop_window: Optional[Tuple[float, float]], total_dur: float) -> Optional[str]:
+    """Construye la expresión FFmpeg `volume='...':eval=frame` para el silencio dramático (Music Drop)."""
+    if not music_drop_window or len(music_drop_window) != 2:
+        return None
+    t0 = max(0.4, float(music_drop_window[0]))
+    t1 = min(max(t0 + 0.45, float(music_drop_window[1])), max(0.9, total_dur - 0.35))
+    if t1 - t0 < 0.45:
+        return None
+    hs = min(t1 - 0.16, t0 + 0.12)
+    he = max(hs + 0.08, t1 - 0.16)
+    d_down = max(0.02, hs - t0)
+    d_up = max(0.02, t1 - he)
+    return (
+        f"if(lt(t,{t0:.3f}),1.0,"
+        f"if(lt(t,{hs:.3f}),1.0-0.98*(t-{t0:.3f})/{d_down:.3f},"
+        f"if(lt(t,{he:.3f}),0.02,"
+        f"if(lt(t,{t1:.3f}),0.02+0.98*(t-{he:.3f})/{d_up:.3f},1.0))))"
+    )
+
+
 def synthesize_broadcast_audio_master(
     voice_mp3: Path,
     total_dur: float,
     transition_times: List[float],
     master_m4a: Path,
     genre: str = "G1",
+    sfx_events: Optional[List[Dict[str, Any]]] = None,
+    music_drop_window: Optional[Tuple[float, float]] = None,
 ) -> None:
     """
     Crea el diseño sonoro multicapa profesional para TikTok:
     1. Voz periodística procesada con compresión y realce de presencia broadcast.
-    2. Stems oficiales de Epidemic Sound por categoría (BASS + INSTRUMENTS):
-       - G3 (IA/Hardware): STYLE - Ballpoint (118 BPM, estilo viral moderno, empowering beat).
-       - G2 (Ciberataques): Deadlock - Lennon Hutton (115 BPM, cyberpunk pulse).
-       - G1 (Aviación): Trace - Lennon Hutton (156 BPM, cinematic action trailer).
-       - G4 (Espacio): Mindscape - Lennon Hutton (108 BPM, futuristic space synthwave).
-    3. Sidechain Ducking Dinámico: La música está presente y con pegada (bailable/tensionante),
-       duckea automáticamente -6dB cuando habla la voz y salta en micropausas para dar ritmo TikTok.
-    4. Masterización EBU R128 a -14.0 LUFS en estéreo espacial 48kHz.
+    2. Stems oficiales de Epidemic Sound por categoría (BASS + INSTRUMENTS) con Sidechain Ducking
+       y caída musical dramática (`music_drop_window`) en el beat de revelación.
+    3. Paleta de SFX diegéticos contextuales (`sfx_events`: boom, riser, paper, highlighter, click)
+       o fallback legado si no se provee `sfx_events`.
+    4. Masterización EBU R128 de 2 pasadas a -14.0 LUFS en estéreo espacial 48kHz.
     """
+    assets_dir = ROOT_DIR / "audio_assets"
     try:
-        from audio_generator import get_genre_soundtrack
-        bass_file, inst_file = get_genre_soundtrack(genre, ROOT_DIR / "audio_assets")
+        from audio_generator import ensure_editorial_sfx_palette, get_genre_soundtrack
+        bass_file, inst_file = get_genre_soundtrack(genre, assets_dir)
+        sfx_palette = ensure_editorial_sfx_palette(assets_dir)
     except Exception:
-        assets_dir = ROOT_DIR / "audio_assets"
         bass_file = assets_dir / "NEWS_THRILLER_BASS.mp3"
         inst_file = assets_dir / "NEWS_THRILLER_INSTRUMENTS.mp3"
+        sfx_palette = {
+            "boom": assets_dir / "SFX_DARK_BOOM.wav",
+            "riser": assets_dir / "SFX_RISER_LOW.wav",
+            "paper": assets_dir / "SFX_PAPER_FLIP.wav",
+            "highlighter": assets_dir / "SFX_HIGHLIGHTER_SWIPE.wav",
+            "click": assets_dir / "SFX_TECH_CLICK.wav",
+        }
 
-    assets_dir = ROOT_DIR / "audio_assets"
-    boom_sfx = assets_dir / "SFX_DARK_BOOM.wav"
+    boom_sfx = sfx_palette.get("boom") or (assets_dir / "SFX_DARK_BOOM.wav")
     whoosh_sfx = assets_dir / "SFX_WHOOSH_CINEMATIC.wav"
+    drop_expr = _build_music_drop_expression(music_drop_window, total_dur)
 
-    # Si los stems de Epidemic Sound están presentes, usarlos con ducking suave y mezcla broadcast con pegada
+    # Si los stems de Epidemic Sound están presentes, usarlos con ducking suave y music drop narrativo
     if bass_file.exists() and inst_file.exists():
         inputs = [
             "-i", str(voice_mp3),
@@ -1219,37 +1460,85 @@ def synthesize_broadcast_audio_master(
             "-stream_loop", "-1", "-i", str(inst_file),
         ]
         fc_parts = [
-            f"[0:a]aformat=channel_layouts=stereo,highpass=f=80,equalizer=f=3200:width_type=q:w=1.2:g=2.0,"
+            f"[0:a]aformat=channel_layouts=stereo,highpass=f=90,equalizer=f=3000:width_type=q:w=1.2:g=2.5,"
             f"acompressor=threshold=-16dB:ratio=3:attack=10:release=100:makeup=2,"
             f"asplit=2[voice_main][voice_sidechain]",
-            f"[1:a]atrim=0:{total_dur:.3f},asetpts=PTS-STARTPTS,volume=0.85,"
+            f"[1:a]atrim=0:{total_dur:.3f},asetpts=PTS-STARTPTS,volume=0.72,"
             f"afade=t=in:st=0:d=0.5,afade=t=out:st={max(0.0, total_dur-2.0):.2f}:d=2.0[bass]",
-            f"[2:a]atrim=0:{total_dur:.3f},asetpts=PTS-STARTPTS,volume=0.75,"
+            f"[2:a]atrim=0:{total_dur:.3f},asetpts=PTS-STARTPTS,volume=0.62,"
             f"afade=t=in:st=0:d=0.5,afade=t=out:st={max(0.0, total_dur-2.0):.2f}:d=2.0[inst]",
             f"[bass][inst]amix=inputs=2:duration=first:normalize=0[bg_music]",
-            f"[bg_music][voice_sidechain]sidechaincompress=threshold=0.25:ratio=2.0:attack=15:release=220[bg_ducked]"
         ]
+        if drop_expr:
+            fc_parts.append(f"[bg_music]volume='{drop_expr}':eval=frame[bg_dropped]")
+            fc_parts.append(f"[bg_dropped][voice_sidechain]sidechaincompress=threshold=0.18:ratio=2.5:attack=15:release=240[bg_ducked]")
+        else:
+            fc_parts.append(f"[bg_music][voice_sidechain]sidechaincompress=threshold=0.18:ratio=2.5:attack=15:release=240[bg_ducked]")
 
         sfx_labels = []
         cur_idx = 3
-        # Impacto sub-bass Boom estilo CapCut al inicio (t=0.35s)
-        if boom_sfx.exists():
-            inputs.extend(["-i", str(boom_sfx)])
-            fc_parts.append(f"[{cur_idx}:a]atrim=0:4.5,adelay=350|350,volume=0.50[sfx_boom]")
-            sfx_labels.append("[sfx_boom]")
-            cur_idx += 1
 
-        # Whooshes cinemáticos en cada transición de plano
-        if whoosh_sfx.exists() and transition_times:
-            inputs.extend(["-i", str(whoosh_sfx)])
-            n_w = len(transition_times)
-            splits = "".join(f"[w{i}]" for i in range(n_w))
-            fc_parts.append(f"[{cur_idx}:a]asplit={n_w}{splits}")
-            for i, t in enumerate(transition_times):
-                delay_ms = max(0, int((t - 0.14) * 1000))
-                fc_parts.append(f"[w{i}]adelay={delay_ms}|{delay_ms},volume=0.38[wd{i}]")
-                sfx_labels.append(f"[wd{i}]")
-            cur_idx += 1
+        if sfx_events is not None:
+            cue_gains = {"boom": 0.42, "riser": 0.28, "paper": 0.25, "highlighter": 0.27, "click": 0.22}
+            events_by_cue: Dict[str, List[Dict[str, Any]]] = {}
+            for ev in sfx_events:
+                cue_name = str(ev.get("cue") or "").lower().strip()
+                wav_p = sfx_palette.get(cue_name)
+                if cue_name in cue_gains and wav_p and wav_p.exists():
+                    events_by_cue.setdefault(cue_name, []).append(ev)
+
+            for cue_name, ev_list in events_by_cue.items():
+                wav_p = sfx_palette[cue_name]
+                inputs.extend(["-i", str(wav_p)])
+                gain = cue_gains[cue_name]
+                if len(ev_list) > 1:
+                    splits = "".join(f"[s_{cue_name}_{j}]" for j in range(len(ev_list)))
+                    fc_parts.append(f"[{cur_idx}:a]aresample=48000,aformat=channel_layouts=stereo,asplit={len(ev_list)}{splits}")
+                    src_tags = [f"[s_{cue_name}_{j}]" for j in range(len(ev_list))]
+                else:
+                    fc_parts.append(f"[{cur_idx}:a]aresample=48000,aformat=channel_layouts=stereo[s_{cue_name}_0]")
+                    src_tags = [f"[s_{cue_name}_0]"]
+
+                for j, ev in enumerate(ev_list):
+                    if cue_name == "riser":
+                        target_end = float(ev.get("target_end_sec", ev.get("time_sec", 0.0)))
+                        start_t = max(0.0, target_end - 1.35)
+                        delay_ms = int(round(start_t * 1000))
+                        fc_parts.append(
+                            f"{src_tags[j]}atrim=0:1.35,asetpts=PTS-STARTPTS,"
+                            f"afade=t=in:st=0:d=0.45,afade=t=out:st=1.20:d=0.15,"
+                            f"volume={gain:.2f},adelay={delay_ms}|{delay_ms}[sd_{cue_name}_{j}]"
+                        )
+                    elif cue_name == "boom":
+                        delay_ms = max(0, int(round(float(ev.get("time_sec", 0.0)) * 1000)))
+                        fc_parts.append(
+                            f"{src_tags[j]}atrim=0:2.40,asetpts=PTS-STARTPTS,"
+                            f"afade=t=out:st=1.90:d=0.50,volume={gain:.2f},adelay={delay_ms}|{delay_ms}[sd_{cue_name}_{j}]"
+                        )
+                    else:
+                        delay_ms = max(0, int(round(float(ev.get("time_sec", 0.0)) * 1000)))
+                        fc_parts.append(
+                            f"{src_tags[j]}volume={gain:.2f},adelay={delay_ms}|{delay_ms}[sd_{cue_name}_{j}]"
+                        )
+                    sfx_labels.append(f"[sd_{cue_name}_{j}]")
+                cur_idx += 1
+        else:
+            if boom_sfx.exists():
+                inputs.extend(["-i", str(boom_sfx)])
+                fc_parts.append(f"[{cur_idx}:a]atrim=0:4.5,adelay=350|350,volume=0.50[sfx_boom]")
+                sfx_labels.append("[sfx_boom]")
+                cur_idx += 1
+
+            if whoosh_sfx.exists() and transition_times:
+                inputs.extend(["-i", str(whoosh_sfx)])
+                n_w = len(transition_times)
+                splits = "".join(f"[w{i}]" for i in range(n_w))
+                fc_parts.append(f"[{cur_idx}:a]asplit={n_w}{splits}")
+                for i, t in enumerate(transition_times):
+                    delay_ms = max(0, int((t - 0.14) * 1000))
+                    fc_parts.append(f"[w{i}]adelay={delay_ms}|{delay_ms},volume=0.38[wd{i}]")
+                    sfx_labels.append(f"[wd{i}]")
+                cur_idx += 1
 
         if sfx_labels:
             fc_parts.append(f"{''.join(sfx_labels)}amix=inputs={len(sfx_labels)}:normalize=0[sfx_layer]")
@@ -1257,7 +1546,7 @@ def synthesize_broadcast_audio_master(
         else:
             fc_parts.append(f"[voice_main][bg_ducked]amix=inputs=2:duration=first:normalize=0[mixed]")
 
-        log(f"Mezclando diseño sonoro CapCut Pro + Epidemic Sound ({bass_file.name} + {inst_file.name}) con loudnorm 2 pasadas (-14.0 LUFS)...")
+        log(f"Mezclando diseño sonoro editorial + Epidemic Sound ({bass_file.name} + {inst_file.name}) con loudnorm 2 pasadas (-14.0 LUFS)...")
         _render_two_pass_loudnorm(inputs, fc_parts, "[mixed]", total_dur, master_m4a)
         return
 
@@ -1275,11 +1564,18 @@ def synthesize_broadcast_audio_master(
         f"({trans_pulses})"
     )
 
-    fc_fallback = [
-        f"[0:a]aformat=channel_layouts=stereo,highpass=f=75,equalizer=f=3000:width_type=q:w=1.2:g=2.5,"
-        f"acompressor=threshold=-18dB:ratio=3:attack=10:release=120:makeup=2[voice]",
+    bg_chain = (
         f"aevalsrc='{aeval_expr}':s=48000:d={total_dur:.3f},"
-        f"lowpass=f=1800,afade=t=in:st=0:d=1.0,afade=t=out:st={max(0.0, total_dur-2.0):.2f}:d=2.0[bg]",
+        f"lowpass=f=1800,afade=t=in:st=0:d=1.0,afade=t=out:st={max(0.0, total_dur-2.0):.2f}:d=2.0"
+    )
+    if drop_expr:
+        bg_chain += f",volume='{drop_expr}':eval=frame"
+    bg_chain += "[bg]"
+
+    fc_fallback = [
+        f"[0:a]aformat=channel_layouts=stereo,highpass=f=90,equalizer=f=3000:width_type=q:w=1.2:g=2.5,"
+        f"acompressor=threshold=-18dB:ratio=3:attack=10:release=120:makeup=2[voice]",
+        bg_chain,
         f"[voice][bg]amix=inputs=2:duration=first:dropout_transition=2:weights='1.0 0.45'[mixed]",
     ]
     log("Mezclando con cama sintética de respaldo (loudnorm 2 pasadas)...")
@@ -1321,13 +1617,19 @@ def verify_final_master(mp4_path: Path) -> Dict[str, Any]:
     }
 
 
-def _compute_build_manifest(meta: Dict[str, Any], total_dur: float, shots_dir: Path) -> str:
+def _compute_build_manifest(
+    meta: Dict[str, Any],
+    total_dur: float,
+    shots_dir: Path,
+    aligned_beats: Optional[List[Dict[str, Any]]] = None,
+) -> str:
     """Genera un hash estable para validar si el caché modular en _build_nle sigue vigente."""
     raw_sizes = {
         p.name: p.stat().st_size
         for p in sorted(shots_dir.glob("*.mp4"))
     } if shots_dir.exists() else {}
     payload = {
+        "version": "veritasium_editorial_v6",
         "title": meta.get("title", ""),
         "genre": meta.get("genre", ""),
         "script": meta.get("script", ""),
@@ -1344,9 +1646,30 @@ def _compute_build_manifest(meta: Dict[str, Any], total_dur: float, shots_dir: P
             }
             for s in meta.get("shots", [])
         ],
+        "aligned_beats": [
+            {
+                "beat_id": b.get("beat_id"),
+                "shot_id": b.get("shot_id"),
+                "variant": b.get("variant"),
+                "start_sec": b.get("start_sec"),
+                "duration_sec": b.get("duration_sec"),
+                "transition_in": b.get("transition_in"),
+            }
+            for b in (aligned_beats or [])
+        ],
         "raw_sizes": raw_sizes,
     }
     return hashlib.sha256(json.dumps(payload, sort_keys=True).encode("utf-8")).hexdigest()[:16]
+
+
+def _load_json_list_safe(path: Path) -> List[Dict[str, Any]]:
+    if not path.exists() or path.stat().st_size <= 2:
+        return []
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+        return data if isinstance(data, list) else []
+    except Exception:
+        return []
 
 
 def assemble_final_video(
@@ -1375,9 +1698,58 @@ def assemble_final_video(
     shots_dir = delivery_dir / "shots"
     shots_dir.mkdir(parents=True, exist_ok=True)
 
+    # 1. Generar subtítulos Kinetic ASS con sincronización acústica real
+    ass_path = delivery_dir / "SUBTITULOS_KINETIC.ass"
+    sentence_bounds_file = delivery_dir / "SENTENCE_BOUNDARIES.json"
+    word_bounds_file = delivery_dir / "WORD_BOUNDARIES.json"
+    log("1/4 Generando subtítulos vectoriales Kinetic (.ass) con alineación acústica...")
+    generate_kinetic_ass(
+        script,
+        total_dur,
+        ass_path,
+        source_name,
+        voice_audio=voice_mp3,
+        sentence_boundaries_file=sentence_bounds_file if sentence_bounds_file.exists() else None,
+        word_boundaries_file=word_bounds_file if word_bounds_file.exists() else None,
+    )
+
+    wb_list = _load_json_list_safe(word_bounds_file)
+    sb_list = _load_json_list_safe(sentence_bounds_file)
+
+    raw_beats: List[Dict[str, Any]] = list(meta.get("beats") or [])
+    if not raw_beats:
+        try:
+            from editorial_director import build_narrative_beat_sheet
+            raw_beats = build_narrative_beat_sheet(script, shots, news=meta, genre_label=meta.get("genre", "G1"))
+        except Exception:
+            n_sh = max(1, len(shots))
+            words_tok = script.split()
+            raw_beats = []
+            for idx, s in enumerate(shots):
+                w0 = int(idx * len(words_tok) / n_sh) if words_tok else 0
+                w1 = max(w0, int((idx + 1) * len(words_tok) / n_sh) - 1) if words_tok else 0
+                raw_beats.append({
+                    "beat_id": f"B{idx + 1:02d}",
+                    "role": "DESARROLLO",
+                    "act": 1 if idx < 3 else (4 if idx >= n_sh - 2 else 2),
+                    "text": " ".join(words_tok[w0:w1 + 1]) if words_tok else s.get("narrative_excerpt", ""),
+                    "word_start_idx": w0,
+                    "word_end_idx": w1,
+                    "shot_id": s.get("id", f"SH{idx + 1:02d}"),
+                    "variant": "primary",
+                    "start_trim": 0.0,
+                    "transition_in": "dissolve" if idx in (3, n_sh - 2) else "cut",
+                    "music_drop": False,
+                    "sfx_cue": "none",
+                })
+
+    aligned_beats = align_beats_to_audio(raw_beats, wb_list, sb_list, total_dur, script=script)
+    max_sync_delta = max((b.get("sync_delta_sec", 0.0) for b in aligned_beats), default=0.0)
+    log(f"   [AUDIO-FIRST] {len(aligned_beats)} beats alineados al audio (desfase máx Beat<->Audio: {max_sync_delta:.3f}s).")
+
     # Validar vigencia del caché modular para no reutilizar clips de otra noticia/locución
     manifest_path = work_dir / "cache_manifest.json"
-    curr_hash = _compute_build_manifest(meta, total_dur, shots_dir)
+    curr_hash = _compute_build_manifest(meta, total_dur, shots_dir, aligned_beats=aligned_beats)
     cache_valid = False
     if not force_rebuild and manifest_path.exists():
         try:
@@ -1386,46 +1758,37 @@ def assemble_final_video(
         except Exception:
             cache_valid = False
 
-    # 1. Generar subtítulos Kinetic ASS con sincronización acústica real
-    ass_path = delivery_dir / "SUBTITULOS_KINETIC.ass"
-    sentence_bounds_file = delivery_dir / "SENTENCE_BOUNDARIES.json"
-    log("1/4 Generando subtítulos vectoriales Kinetic (.ass) con alineación acústica...")
-    generate_kinetic_ass(
-        script,
-        total_dur,
-        ass_path,
-        source_name,
-        voice_audio=voice_mp3,
-        sentence_boundaries_file=sentence_bounds_file if sentence_bounds_file.exists() else None
-    )
-
-    # 2. Normalizar los 13 planos con movimiento de cámara y margen de transición (xfade = 0.35s)
-    num_shots = len(shots) if shots else 13
-    trans_dur = 0.35
-    total_raw_needed = total_dur + 0.25 + (num_shots - 1) * trans_dur
-    base_weights = [float(str(s.get("dur", 4.8)).replace("s", "")) for s in shots]
-    sum_w = sum(base_weights) if base_weights else num_shots * 4.8
-    clip_durations = [(w / sum_w) * total_raw_needed for w in base_weights]
+    # 2. Normalizar los beats (duración exacta + dissolve tail de 0.30s SOLO en cortes entre actos)
+    dissolve_dur = 0.30
+    shots_by_id: Dict[str, Tuple[int, Dict[str, Any]]] = {
+        str(s.get("id")): (i, s) for i, s in enumerate(shots) if s.get("id")
+    }
+    clip_durations: List[float] = []
+    for i, b in enumerate(aligned_beats):
+        followed_by_dissolve = (i + 1 < len(aligned_beats) and aligned_beats[i + 1].get("transition_in") == "dissolve")
+        clip_durations.append(round(b["duration_sec"] + (dissolve_dur if followed_by_dissolve else 0.0), 3))
 
     norm_clips: List[Path] = []
     genre = meta.get("genre", "G1")
     title = meta.get("title", "")
     story_metrics = meta.get("story_metrics") or {}
-    log(f"2/4 Procesando los {num_shots} planos (Ken Burns anti-freeze 24fps, HUD vectorial para {genre})...")
+    log(f"2/4 Procesando {len(aligned_beats)} beats editoriales (hard cuts + Remotion 2.5D para {genre})...")
     reused_all_clips = cache_valid
-    clip_cache_hits: List[Optional[float]] = [None] * len(shots)
+    clip_cache_hits: List[Optional[float]] = [None] * len(aligned_beats)
     remotion_batch_jobs: List[Dict[str, Any]] = []
 
-    for idx, s in enumerate(shots):
-        raw_mp4 = shots_dir / f"{s['id']}.mp4"
-        norm_mp4 = work_dir / f"norm_{s['id']}.mp4"
+    for idx, b in enumerate(aligned_beats):
+        sid = str(b.get("shot_id") or f"SH{idx + 1:02d}")
+        s_idx, s_obj = shots_by_id.get(sid, (idx, {"id": sid, "render_mode": "flow", "type": b.get("role", "")}))
+        raw_mp4 = shots_dir / f"{sid}.mp4"
+        norm_mp4 = work_dir / f"norm_{b['beat_id']}.mp4"
         target_dur = clip_durations[idx]
 
         use_cache = False
         if cache_valid and norm_mp4.exists() and norm_mp4.stat().st_size > 25_000:
             try:
                 cached_dur = probe_duration(norm_mp4)
-                if abs(cached_dur - target_dur) <= 0.20:
+                if abs(cached_dur - target_dur) <= 0.18:
                     use_cache = True
                     clip_cache_hits[idx] = cached_dur
             except Exception:
@@ -1433,68 +1796,65 @@ def assemble_final_video(
 
         if not use_cache:
             reused_all_clips = False
-            shot_id = s.get("id", f"SH{idx+1:02d}")
-            shot_type = s.get("type", "")
-            type_lower = shot_type.lower()
-            is_infographic = (s.get("render_mode") in ("infographic", "remotion"))
+            is_infographic = (s_obj.get("render_mode") in ("infographic", "remotion"))
             has_valid_raw = raw_mp4.exists() and raw_mp4.stat().st_size > 25_000
-            is_tech_shot = (
-                is_infographic
-                or shot_id in ("SH01", "SH03", "SH10", "SH11", "SH13")
-                or any(k in type_lower for k in ("radar", "telemetria", "datos", "diagrama", "infografia", "evidencia", "cierre", "contexto", "blueprint", "esquema"))
-            )
-            if HAS_REMOTION and (is_infographic or not has_valid_raw) and is_tech_shot:
-                comp_name = get_composition_for_shot(genre, shot_id=shot_id, shot_type=shot_type)
-                narrative_sub = s.get("narrative_excerpt") or s.get("subtitle") or s.get("action") or "ANÁLISIS TÉCNICO Y PRIMEROS PRINCIPIOS"
-                stage_sub = f"{shot_id} · {shot_type}: {narrative_sub}" if shot_type else narrative_sub
-                extra_props: Dict[str, Any] = {**story_metrics, **(s.get("remotion_props") or {})}
-                extra_props.setdefault("sourceTag", f"REPORTE VERIFICADO · PLANO {shot_id}")
-                if comp_name == "VeritasiumDocumentaryOutro" and s.get("narrative_excerpt"):
-                    extra_props["quote"] = s["narrative_excerpt"]
-                elif comp_name == "VeritasiumBlueprint":
-                    extra_props["blueprintTag"] = f"ESQUEMA TÁCTICO · {shot_id}"
-                remotion_props = build_category_props(
-                    genre=genre,
-                    title=s.get("title") or title,
-                    subtitle=stage_sub,
-                    duration_frames=max(24, int(target_dur * 24)),
-                    composition_id=comp_name,
-                    extra_props=extra_props,
+            has_still = False if has_valid_raw else (_find_still_image_for_shot(raw_mp4) is not None)
+            if HAS_REMOTION and (is_infographic or (not has_valid_raw and not has_still)) and _is_remotion_tech_shot(s_obj, s_idx):
+                beat_shot = dict(s_obj)
+                if b.get("text"):
+                    beat_shot["narrative_excerpt"] = b["text"]
+                remotion_batch_jobs.append(
+                    _build_remotion_job_for_shot(
+                        shot_info=beat_shot,
+                        shot_idx=s_idx,
+                        genre=genre,
+                        title=title,
+                        story_metrics=story_metrics,
+                        target_dur=target_dur,
+                        norm_mp4=norm_mp4,
+                        fps=24,
+                    )
                 )
-                remotion_batch_jobs.append({
-                    "shot_id": shot_id,
-                    "compositionId": comp_name,
-                    "outputLocation": str(norm_mp4),
-                    "inputProps": remotion_props,
-                    "crf": 14,
-                    "concurrency": 2,
-                })
 
     if remotion_batch_jobs:
         log(f"   [REMOTION-BATCH] Renderizando {len(remotion_batch_jobs)} escenas en lote (bundle cacheado + 1 Chromium)...")
         render_remotion_batch(remotion_batch_jobs, concurrency=2, crf=14)
 
-    for idx, s in enumerate(shots):
-        raw_mp4 = shots_dir / f"{s['id']}.mp4"
-        norm_mp4 = work_dir / f"norm_{s['id']}.mp4"
+    for idx, b in enumerate(aligned_beats):
+        sid = str(b.get("shot_id") or f"SH{idx + 1:02d}")
+        s_idx, s_obj = shots_by_id.get(sid, (idx, {"id": sid, "render_mode": "flow", "type": b.get("role", "")}))
+        raw_mp4 = shots_dir / f"{sid}.mp4"
+        norm_mp4 = work_dir / f"norm_{b['beat_id']}.mp4"
         target_dur = clip_durations[idx]
         cached_dur = clip_cache_hits[idx]
 
         if cached_dur is not None:
-            log(f"   [CACHÉ] Plano {s['id']} reutilizado desde caché ({cached_dur:.2f}s).")
+            log(f"   [CACHÉ] Beat {b['beat_id']} ({sid}) reutilizado desde caché ({cached_dur:.2f}s).")
         elif norm_mp4.exists() and norm_mp4.stat().st_size > 10_000 and any(j["outputLocation"] == str(norm_mp4) for j in remotion_batch_jobs):
-            log(f"   [REMOTION-BATCH] Plano {s['id']} listo ({target_dur:.2f}s).")
+            log(f"   [REMOTION-BATCH] Beat {b['beat_id']} ({sid}) listo ({target_dur:.2f}s).")
         else:
             shot_payload = (
-                {**s, "remotion_props": dict(story_metrics)}
-                if (story_metrics and not s.get("remotion_props"))
-                else s
+                {**s_obj, "remotion_props": dict(story_metrics)}
+                if (story_metrics and not s_obj.get("remotion_props"))
+                else dict(s_obj)
             )
-            prepare_normalized_shot(shot_payload, idx, raw_mp4, norm_mp4, target_dur, genre=genre, title=title)
+            if b.get("text"):
+                shot_payload["narrative_excerpt"] = b["text"]
+            prepare_normalized_shot(
+                shot_payload,
+                s_idx,
+                raw_mp4,
+                norm_mp4,
+                target_dur,
+                genre=genre,
+                title=title,
+                start_trim=float(b.get("start_trim") or 0.0),
+                punch_in=(b.get("variant") == "punch_in"),
+            )
 
         norm_clips.append(norm_mp4)
 
-    # 3. Ensamblar transiciones xfade (Caché modular de vídeo base)
+    # 3. Ensamblar timeline editorial (hard cuts dentro de cada acto + dissolves únicamente entre actos)
     silent_xfade_mp4 = work_dir / "video_xfade_silent.mp4"
     use_xfade_cache = (
         cache_valid
@@ -1503,31 +1863,54 @@ def assemble_final_video(
         and silent_xfade_mp4.stat().st_size > 100_000
     )
     if use_xfade_cache:
-        log("3/4 [CACHÉ] Motor de transiciones xfade reutilizado desde caché modular.")
-        offset = 0.0
-        transition_times = []
-        for i in range(1, len(norm_clips)):
-            offset += clip_durations[i - 1] - trans_dur
-            transition_times.append(offset)
+        log("3/4 [CACHÉ] Timeline editorial Audio-First reutilizado desde caché modular.")
+        dissolve_times = [b["start_sec"] for b in aligned_beats if b.get("transition_in") == "dissolve"]
     else:
-        log("3/4 Renderizando motor de transiciones broadcast (`xfade` micro-dissolves & glides)...")
-        transition_times = build_transition_video(norm_clips, clip_durations, trans_dur, silent_xfade_mp4)
+        log("3/4 Ensamblando timeline Audio-First (hard cuts + dissolves entre actos)...")
+        dissolve_times = build_editorial_timeline_video(
+            norm_clips, clip_durations, aligned_beats, silent_xfade_mp4, dissolve_dur=dissolve_dur
+        )
 
     try:
         manifest_path.write_text(json.dumps({"hash": curr_hash}, indent=2), encoding="utf-8")
     except Exception:
         pass
 
-    # 4. Mezclar audio multicapa (con caché modular de audio masterizado)
+    # 4. Construir ventana Music Drop + paleta SFX diegética y mezclar audio (-14.0 LUFS)
+    drop_beat = next((b for b in aligned_beats if b.get("music_drop")), None)
+    music_drop_window: Optional[Tuple[float, float]] = None
+    if drop_beat:
+        t_drop_0 = float(drop_beat["start_sec"])
+        t_drop_1 = min(float(drop_beat["end_sec"]), t_drop_0 + 1.25)
+        if t_drop_1 - t_drop_0 < 0.85:
+            t_drop_1 = min(total_dur - 0.35, t_drop_0 + 1.00)
+        if t_drop_1 - t_drop_0 >= 0.45:
+            music_drop_window = (round(t_drop_0, 3), round(t_drop_1, 3))
+
+    sfx_events: List[Dict[str, Any]] = []
+    for idx_b, b in enumerate(aligned_beats):
+        cue = str(b.get("sfx_cue") or "none").lower().strip()
+        if cue == "none":
+            continue
+        if cue == "riser":
+            next_start = aligned_beats[idx_b + 1]["start_sec"] if idx_b + 1 < len(aligned_beats) else b["end_sec"]
+            sfx_events.append({"cue": "riser", "time_sec": b["end_sec"], "target_end_sec": next_start})
+        elif cue == "boom" and b.get("music_drop") and music_drop_window:
+            sfx_events.append({"cue": "boom", "time_sec": music_drop_window[1] - 0.05})
+        else:
+            sfx_events.append({"cue": cue, "time_sec": b["start_sec"]})
+
     master_audio_m4a = work_dir / "audio_master_140lufs.m4a"
     audio_manifest_path = work_dir / "audio_cache_manifest.json"
     v_stat = voice_mp3.stat()
     audio_hash = hashlib.sha256(json.dumps({
+        "version": "veritasium_audio_v6",
         "voice_size": v_stat.st_size,
         "voice_mtime_ns": v_stat.st_mtime_ns,
         "genre": genre,
         "total_dur": round(total_dur, 3),
-        "transitions": [round(t, 3) for t in transition_times],
+        "music_drop_window": music_drop_window,
+        "sfx_events": sfx_events,
     }, sort_keys=True).encode("utf-8")).hexdigest()[:16]
     audio_cached = False
     if not force_rebuild and master_audio_m4a.exists() and master_audio_m4a.stat().st_size > 20_000 and audio_manifest_path.exists():
@@ -1540,28 +1923,48 @@ def assemble_final_video(
     if audio_cached:
         log("4/4 [CACHÉ] Audio masterizado -14.0 LUFS reutilizado desde caché modular.")
     else:
-        log("4/4 Sintetizando banda sonora viral Epidemic Sound + Sidechain Ducking (-14.0 LUFS)...")
-        synthesize_broadcast_audio_master(voice_mp3, total_dur, transition_times, master_audio_m4a, genre=genre)
+        log("4/4 Sintetizando banda sonora Epidemic Sound + Music Drop + SFX diegéticos (-14.0 LUFS)...")
+        synthesize_broadcast_audio_master(
+            voice_mp3,
+            total_dur,
+            dissolve_times,
+            master_audio_m4a,
+            genre=genre,
+            sfx_events=sfx_events,
+            music_drop_window=music_drop_window,
+        )
         try:
             audio_manifest_path.write_text(json.dumps({"hash": audio_hash}, indent=2), encoding="utf-8")
         except Exception:
             pass
 
-    # Generar tarjeta oficial de fuente verificada para proyectar fiabilidad
+    # Calcular ventana sin colisión para source_badge.png sobre un beat Flow limpio
     badge_png = work_dir / "source_badge.png"
     has_badge = False
-    try:
-        generate_verified_source_card(source_name, genre, badge_png)
-        has_badge = badge_png.exists()
-    except Exception as e:
-        log(f"Aviso al generar tarjeta de fuente verificada: {e}")
+    badge_win: Optional[Tuple[float, float]] = None
+    for b in aligned_beats:
+        sid = str(b.get("shot_id") or "")
+        _, s_obj = shots_by_id.get(sid, (0, {}))
+        if s_obj.get("render_mode") == "flow" and b["start_sec"] >= 2.2 and b["duration_sec"] >= 2.6:
+            st_b = round(b["start_sec"] + 0.25, 2)
+            en_b = round(min(b["end_sec"] - 0.15, st_b + 3.6), 2)
+            if en_b - st_b >= 1.8:
+                badge_win = (st_b, en_b)
+                break
+
+    if badge_win:
+        try:
+            generate_verified_source_card(source_name, genre, badge_png)
+            has_badge = badge_png.exists()
+        except Exception as e:
+            log(f"Aviso al generar tarjeta de fuente verificada: {e}")
 
     final_mp4 = delivery_dir / "NOTICIERO_FINAL_62S.mp4"
     master_manifest_path = work_dir / "master_cache_manifest.json"
     ass_bytes = ass_path.read_bytes() if ass_path.exists() else b""
     badge_bytes = badge_png.read_bytes() if has_badge and badge_png.exists() else b""
     master_hash = hashlib.sha256(
-        f"{curr_hash}|{audio_hash}|{source_name}|{genre}|safezone_v4".encode("utf-8") + ass_bytes + badge_bytes
+        f"{curr_hash}|{audio_hash}|{source_name}|{genre}|{badge_win}|veritasium_editorial_v6".encode("utf-8") + ass_bytes + badge_bytes
     ).hexdigest()[:16]
 
     master_cached = False
@@ -1582,18 +1985,20 @@ def assemble_final_video(
     if master_cached:
         log(f"   [CACHÉ] Máster final sin cambios; reutilizando {final_mp4.name}.")
     else:
-        log(f"Quemando subtítulos Kinetic{' y acreditación oficial de fuente (fade broadcast)' if has_badge else ''} en máster final...")
-        if has_badge:
+        log(f"Quemando subtítulos Kinetic{' y acreditación oficial sin colisión' if has_badge else ''} en máster final...")
+        if has_badge and badge_win is not None:
+            b_st, b_en = badge_win
+            fade_out_st = max(b_st + 0.4, b_en - 0.30)
             vf_complex = (
-                f"[2:v]format=rgba,fade=t=in:st=0.50:d=0.30:alpha=1,fade=t=out:st=5.20:d=0.35:alpha=1[badge_fade];"
-                f"[0:v][badge_fade]overlay=x=65:y=220:enable='between(t,0.45,5.60)'[v_badged];"
+                f"[2:v]format=rgba,fade=t=in:st={b_st:.2f}:d=0.30:alpha=1,fade=t=out:st={fade_out_st:.2f}:d=0.30:alpha=1[badge_fade];"
+                f"[0:v][badge_fade]overlay=x=68:y=168:enable='between(t,{b_st:.2f},{b_en:.2f})'[v_badged];"
                 f"[v_badged]ass={ass_path}[vout]"
             )
             cmd_final = [
                 "ffmpeg", "-y",
                 "-i", str(silent_xfade_mp4),
                 "-i", str(master_audio_m4a),
-                "-loop", "1", "-t", "6.0", "-i", str(badge_png),
+                "-loop", "1", "-t", f"{b_en + 0.5:.2f}", "-i", str(badge_png),
                 "-filter_complex", vf_complex,
                 "-map", "[vout]",
                 "-map", "1:a:0",
@@ -1626,6 +2031,14 @@ def assemble_final_video(
             master_manifest_path.write_text(json.dumps({"hash": master_hash}, indent=2), encoding="utf-8")
         except Exception:
             pass
+
+    try:
+        meta["beat_timeline"] = aligned_beats
+        meta["max_sync_delta_sec"] = round(max_sync_delta, 3)
+        meta["music_drop_window"] = list(music_drop_window) if music_drop_window else None
+        meta_file.write_text(json.dumps(meta, indent=2, ensure_ascii=False), encoding="utf-8")
+    except Exception:
+        pass
 
     stats = verify_final_master(final_mp4)
     lufs_label = f"{stats['lufs']} LUFS" if stats["lufs"] is not None else "LUFS N/D"
@@ -1663,6 +2076,7 @@ def assemble_final_video(
         log(f"   ★ Veredicto QC: [{qc_res['verdict']}] (Score: {qc_res['score']}/100) | Visor: {delivery_dir / 'REPORTE_INSPECCION.html'}")
 
         try:
+            meta = json.loads(meta_file.read_text(encoding="utf-8"))
             meta["qc_verdict"] = qc_res["verdict"]
             meta["qc_score"] = qc_res["score"]
             meta["final_duration"] = stats["duration"]

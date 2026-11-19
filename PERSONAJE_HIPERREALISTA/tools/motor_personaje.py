@@ -163,8 +163,77 @@ def apply_optical_sensor_realism(
     return out_path
 
 
+def _compute_structural_face_descriptor(img: Image.Image) -> np.ndarray:
+    """
+    Calcula un descriptor estructural HOG-ligero (8x8 celdas x 8 orientaciones = 512d)
+    sobre la región facial central en luminancia, invariante a cambios globales de tinte/luz.
+    """
+    resized = img.convert("RGB").resize((512, 512), Image.Resampling.LANCZOS)
+    arr = np.asarray(resized, dtype=np.float32)
+    face = arr[110:400, 128:384, :]  # (290, 256, 3)
+    gray = 0.299 * face[:, :, 0] + 0.587 * face[:, :, 1] + 0.114 * face[:, :, 2]
+
+    gx = gray[:-1, 1:] - gray[:-1, :-1]  # (289, 255)
+    gy = gray[1:, :-1] - gray[:-1, :-1]  # (289, 255)
+    gx = gx[:288, :248]
+    gy = gy[:288, :248]
+
+    mag = np.sqrt(gx * gx + gy * gy)
+    ang = np.mod(np.arctan2(gy, gx), math.pi)
+    bins = np.clip((ang / math.pi * 8.0).astype(np.int32), 0, 7)
+
+    grid_r, grid_c = 8, 8
+    cell_h = 288 // grid_r
+    cell_w = 248 // grid_c
+    feats = np.zeros((grid_r, grid_c, 8), dtype=np.float32)
+
+    for r in range(grid_r):
+        r0, r1 = r * cell_h, (r + 1) * cell_h
+        for c in range(grid_c):
+            c0, c1 = c * cell_w, (c + 1) * cell_w
+            m_cell = mag[r0:r1, c0:c1].ravel()
+            b_cell = bins[r0:r1, c0:c1].ravel()
+            hist = np.bincount(b_cell, weights=m_cell, minlength=8).astype(np.float32)
+            hist_norm = float(np.linalg.norm(hist))
+            if hist_norm > 1e-6:
+                hist /= hist_norm
+            feats[r, c, :] = hist
+
+    vec = feats.ravel()
+    norm = float(np.linalg.norm(vec))
+    return vec / (norm + 1e-8)
+
+
+_INSIGHTFACE_APP: Any = None
+_INSIGHTFACE_TRIED: bool = False
+
+
+def _try_extract_insightface_embedding(img_path: Path) -> Optional[np.ndarray]:
+    """Intenta extraer un embedding ArcFace real (512d) si `insightface` está disponible."""
+    global _INSIGHTFACE_APP, _INSIGHTFACE_TRIED
+    if not img_path.exists():
+        return None
+    try:
+        if not _INSIGHTFACE_TRIED:
+            _INSIGHTFACE_TRIED = True
+            from insightface.app import FaceAnalysis  # type: ignore
+            app = FaceAnalysis(name="buffalo_l", providers=["CPUExecutionProvider"])
+            app.prepare(ctx_id=-1, det_size=(640, 640))
+            _INSIGHTFACE_APP = app
+        if _INSIGHTFACE_APP is None:
+            return None
+        bgr = np.asarray(Image.open(img_path).convert("RGB"))[:, :, ::-1].copy()
+        faces = _INSIGHTFACE_APP.get(bgr)
+        if not faces:
+            return None
+        emb = np.asarray(faces[0].normed_embedding, dtype=np.float32)
+        return emb / (np.linalg.norm(emb) + 1e-8)
+    except Exception:
+        return None
+
+
 def _compute_biometric_arrays(img_path: Path) -> Tuple[np.ndarray, List[float], List[float], float]:
-    """Calcula embedding normalizado, medias/desviaciones faciales y energía textural de poros."""
+    """Calcula vector colorimétrico/layout 16x16, medias faciales y energía textural de poros."""
     img = Image.open(img_path).convert("RGB").resize((512, 512), Image.Resampling.LANCZOS)
     arr = np.asarray(img, dtype=np.float32)
 
@@ -183,14 +252,58 @@ def _compute_biometric_arrays(img_path: Path) -> Tuple[np.ndarray, List[float], 
     return embedding_vec, mean_skin_rgb, std_skin_rgb, pore_texture_energy
 
 
-def measure_frame_biometrics(img_path: Path, master_npy: Path) -> Dict[str, Any]:
-    """Evalúa energía de poros y similitud coseno en memoria sin escribir archivos en DNA_DIR."""
+def measure_frame_biometrics(
+    img_path: Path,
+    master_npy: Path,
+    master_image_path: Optional[Path] = None,
+) -> Dict[str, Any]:
+    """
+    Evalúa energía de poros e identidad reportando explícitamente el motor usado:
+    - `insightface_arcface_512d` si InsightFace está instalado en el entorno.
+    - `structural_gradient_proxy` (descriptor facial de gradientes invariante a color/luz) en CPU sin GPU.
+    """
     embedding_vec, _, _, pore_energy = _compute_biometric_arrays(img_path)
     master_vec = np.load(master_npy)
-    sim = float(np.dot(master_vec, embedding_vec) / ((np.linalg.norm(master_vec) * np.linalg.norm(embedding_vec)) + 1e-8))
+    color_sim = float(
+        np.dot(master_vec, embedding_vec)
+        / ((np.linalg.norm(master_vec) * np.linalg.norm(embedding_vec)) + 1e-8)
+    )
+    color_sim_pct = round(color_sim * 100.0, 2)
+
+    ref_img = master_image_path
+    if ref_img is None:
+        seed_cand = SEED_DIR / "PERSONAJE_OFICIAL_SEMILLA_0.jpg"
+        kf1_cand = SHEET_DIR / "KF1_FRONTAL_HABLANDO_85MM.jpg"
+        ref_img = seed_cand if seed_cand.exists() else (kf1_cand if kf1_cand.exists() else None)
+
+    structural_sim_pct: Optional[float] = None
+    arcface_sim_pct: Optional[float] = None
+    identity_engine = "color_layout_proxy"
+    identity_similarity = color_sim_pct
+
+    if ref_img is not None and ref_img.exists():
+        emb_ref = _try_extract_insightface_embedding(ref_img)
+        emb_cur = _try_extract_insightface_embedding(img_path) if emb_ref is not None else None
+        if emb_ref is not None and emb_cur is not None:
+            arc_sim = float(np.dot(emb_ref, emb_cur))
+            arcface_sim_pct = round(max(0.0, min(1.0, arc_sim)) * 100.0, 2)
+            identity_engine = "insightface_arcface_512d"
+            identity_similarity = arcface_sim_pct
+        else:
+            d_ref = _compute_structural_face_descriptor(Image.open(ref_img))
+            d_cur = _compute_structural_face_descriptor(Image.open(img_path))
+            st_sim = float(np.dot(d_ref, d_cur) / ((np.linalg.norm(d_ref) * np.linalg.norm(d_cur)) + 1e-8))
+            structural_sim_pct = round(max(0.0, min(1.0, st_sim)) * 100.0, 2)
+            identity_engine = "structural_gradient_proxy"
+            identity_similarity = structural_sim_pct
+
     return {
         "pore_texture_energy": round(pore_energy, 3),
-        "identity_similarity": round(sim * 100.0, 2),
+        "identity_engine": identity_engine,
+        "identity_similarity": identity_similarity,
+        "structural_face_similarity": structural_sim_pct,
+        "color_layout_similarity": color_sim_pct,
+        "arcface_similarity": arcface_sim_pct,
         "realism_verdict": "PASS_HYPERREALISTIC" if pore_energy >= 6.5 else "WARN_LOW_TEXTURE",
     }
 

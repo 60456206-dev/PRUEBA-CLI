@@ -30,6 +30,7 @@ from PERSONAJE_HIPERREALISTA.tools.motor_personaje import (  # noqa: E402
     VIDEO_DIR,
     load_character_config,
 )
+from PERSONAJE_HIPERREALISTA.tools.studio_api_client import ElevenLabsStudioClient  # noqa: E402
 
 
 def probe_audio_duration(path: Path) -> float:
@@ -409,13 +410,16 @@ def synthesize_actor_speech(
     config: Optional[Dict[str, Any]] = None,
     external_audio_file: Optional[Path] = None,
     prefer_edge: bool = False,
+    prefer_elevenlabs: bool = False,
 ) -> Dict[str, Any]:
     """
     Genera la pista de voz limpia (VOZ_LIMPIA.wav) en 48kHz estéreo, calcula el punto
     exacto del cue Genjutsu y guarda WORD_BOUNDARIES.json en out_dir.
+    Soporta cascada ElevenLabs (/with-timestamps) -> Gemini 3.8 Flash TTS -> Edge-TTS.
     """
     cfg = config or load_character_config()
     acfg = cfg["audio"]
+    s_cfg = cfg.get("studio_apis", {})
     sample_rate = int(acfg.get("sample_rate", 48000))
     channels = int(acfg.get("channels", 2))
     lead_in = float(acfg.get("lead_in_sec", 0.20))
@@ -463,9 +467,36 @@ def synthesize_actor_speech(
     models = list(acfg.get("gemini_models", ["gemini-3.8-flash-tts"]))
     gem_voice = str(acfg.get("gemini_voice", "Puck"))
     edge_voice = str(acfg.get("edge_voice", "es-MX-JorgeNeural"))
+    el_voice = str(s_cfg.get("elevenlabs_voice_id", "pNInz6obpgDQGcFmaJgB"))
+    el_model = str(s_cfg.get("elevenlabs_model_id", "eleven_multilingual_v2"))
+    use_el_first = (
+        bool(prefer_elevenlabs or s_cfg.get("prefer_elevenlabs", False) or str(acfg.get("tts_primary", "")).lower() == "elevenlabs")
+        and not prefer_edge
+        and bool(os.getenv("ELEVENLABS_API_KEY", "").strip())
+    )
+    el_client = ElevenLabsStudioClient(default_voice_id=el_voice, default_model_id=el_model) if use_el_first else None
 
-    def _synth_one(text: str, tag: str, style: str, edge_rate: str, edge_pitch: str) -> Tuple[Path, str, List[Dict[str, Any]]]:
+    def _synth_one(
+        text: str,
+        tag: str,
+        style: str,
+        edge_rate: str,
+        edge_pitch: str,
+        el_settings: Optional[Dict[str, Any]] = None,
+    ) -> Tuple[Path, str, List[Dict[str, Any]]]:
         seg_wav = out_dir / f"_seg_{tag}.wav"
+        if el_client is not None and el_client.is_configured():
+            ok_el, el_words = el_client.synthesize_with_timestamps(
+                text,
+                seg_wav,
+                voice_id=el_voice,
+                model_id=el_model,
+                voice_settings=el_settings,
+                sample_rate=sample_rate,
+                channels=channels,
+            )
+            if ok_el:
+                return seg_wav, f"elevenlabs:{el_voice}", el_words
         if not prefer_edge and _synthesize_gemini_tts(text, seg_wav, gem_voice, style, models):
             return seg_wav, f"gemini:{gem_voice}", []
         ok_edge, w_bounds = _run_async(
@@ -473,7 +504,7 @@ def synthesize_actor_speech(
         )
         if not ok_edge:
             raise RuntimeError(
-                f"No se pudo sintetizar la locución ({tag}) ni con Gemini TTS ni con Edge-TTS."
+                f"No se pudo sintetizar la locución ({tag}) ni con ElevenLabs/Gemini TTS ni con Edge-TTS."
             )
         return seg_wav, f"edge:{edge_voice}", w_bounds
 
@@ -483,6 +514,7 @@ def synthesize_actor_speech(
         str(acfg.get("style_act1", "")),
         str(acfg.get("edge_rate_act1", "+8%")),
         str(acfg.get("edge_pitch_act1", "+1Hz")),
+        s_cfg.get("elevenlabs_act1_settings"),
     )
     dur1 = probe_audio_duration(seg1_wav)
     blocks1 = _detect_speech_blocks_ffmpeg(seg1_wav, dur1) if not w1 else None
@@ -501,6 +533,7 @@ def synthesize_actor_speech(
             str(acfg.get("style_act2", "")),
             str(acfg.get("edge_rate_act2", "-4%")),
             str(acfg.get("edge_pitch_act2", "-6Hz")),
+            s_cfg.get("elevenlabs_act2_settings"),
         )
         dur2 = probe_audio_duration(seg2_wav)
         blocks2 = _detect_speech_blocks_ffmpeg(seg2_wav, dur2) if not w2 else None
@@ -824,7 +857,8 @@ def main() -> None:
     parser.add_argument("--script", type=str, default=None, help="Guion (soporta marcador [GENJUTSU])")
     parser.add_argument("--audio-file", type=str, default=None, help="Audio externo opcional")
     parser.add_argument("--out-dir", type=str, default=str(VIDEO_DIR / "test_audio"))
-    parser.add_argument("--prefer-edge", action="store_true", help="Forzar Edge-TTS en lugar de Gemini TTS")
+    parser.add_argument("--prefer-edge", action="store_true", help="Forzar Edge-TTS en lugar de Gemini/ElevenLabs")
+    parser.add_argument("--prefer-elevenlabs", action="store_true", help="Priorizar ElevenLabs TTS con timestamps")
     parser.add_argument("--no-music", action="store_true", help="Mezclar sin cama musical de fondo")
     args = parser.parse_args()
 
@@ -838,6 +872,7 @@ def main() -> None:
         config=cfg,
         external_audio_file=Path(args.audio_file) if args.audio_file else None,
         prefer_edge=args.prefer_edge,
+        prefer_elevenlabs=args.prefer_elevenlabs,
     )
     mix = mix_genjutsu_soundscape(
         Path(speech["voice_wav"]),

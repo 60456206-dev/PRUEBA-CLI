@@ -502,9 +502,79 @@ async def auto_approve_if_prompted(page: Page) -> bool:
     return False
 
 
-async def submit_prompt_to_flow(page: Page, prompt_text: str) -> bool:
-    """Rellena el prompt forzando modo Vídeo (Omni 1.1 Flash), pulsa Iniciar generación y aprueba la tarjeta."""
+def generate_story_style_anchor(
+    delivery_dir: Path,
+    title: str,
+    genre: str,
+    style_prefix: str = "",
+) -> Optional[Path]:
+    """
+    Obtiene o genera una única imagen ancla editorial 9:16 por noticia (FLOW_STYLE_ANCHOR.jpg)
+    para mantener coherencia de paleta, textura e iluminación entre los planos de Google Flow.
+    """
+    anchor_path = delivery_dir / "FLOW_STYLE_ANCHOR.jpg"
+    if anchor_path.exists() and anchor_path.stat().st_size > 25_000:
+        return anchor_path
+
+    portada_ai = delivery_dir / "PORTADA_AI_BASE.jpg"
+    if portada_ai.exists() and portada_ai.stat().st_size > 25_000:
+        shutil.copy2(portada_ai, anchor_path)
+        return anchor_path
+
+    try:
+        from generador_portada import _try_gemini_image_cover
+        clean_t = re.sub(r"[^\w\s\-:]", " ", title or "").strip()[:110]
+        base_style = style_prefix or (
+            "Vertical 9:16, tactile 2.5D editorial documentary illustration and chiaroscuro diorama aesthetic, "
+            "warm directional tungsten rim light against deep carbon slate shadows, subtle archival paper fiber patina, "
+            "no text overlays, no watermarks"
+        )
+        prompt = f"{base_style}. Style and color anchor visual depicting: {clean_t} ({genre})."
+        img_bytes = _try_gemini_image_cover(prompt)
+        if img_bytes:
+            anchor_path.write_bytes(img_bytes)
+            meta_file = delivery_dir / "metadata.json"
+            if meta_file.exists():
+                try:
+                    m = json.loads(meta_file.read_text(encoding="utf-8"))
+                    m["style_anchor_image"] = anchor_path.name
+                    meta_file.write_text(json.dumps(m, indent=2, ensure_ascii=False), encoding="utf-8")
+                except Exception:
+                    pass
+            log(f"🎨 Ancla de estilo Flow generada y guardada: {anchor_path.name}")
+            return anchor_path
+    except Exception as e:
+        log(f"Nota generando ancla visual de Flow (se continúa con consistencia por prompt): {e}")
+
+    return None
+
+
+async def attach_reference_image_to_flow(page: Page, anchor_path: Optional[Path]) -> bool:
+    """Adjunta la imagen ancla al compositor de Google Flow si el DOM expone carga de archivos."""
+    if not anchor_path or not anchor_path.exists() or anchor_path.stat().st_size < 10_000:
+        return False
+    try:
+        file_input = page.locator('input[type="file"]').first
+        if await file_input.count() > 0:
+            await file_input.set_input_files(str(anchor_path))
+            await asyncio.sleep(1.2)
+            log(f"📎 Referencia de estilo adjuntada en Flow: {anchor_path.name}")
+            return True
+    except Exception as e:
+        log(f"Nota adjuntando imagen ancla en Flow (fallback seguro): {e}")
+    return False
+
+
+async def submit_prompt_to_flow(
+    page: Page,
+    prompt_text: str,
+    anchor_image: Optional[Path] = None,
+    visual_continuity_hint: str = "",
+) -> bool:
+    """Rellena el prompt forzando modo Vídeo (Omni 1.1 Flash), adjunta ancla opcional, pulsa Iniciar generación y aprueba."""
     await dismiss_stray_popups(page)
+    if anchor_image is not None:
+        await attach_reference_image_to_flow(page, anchor_image)
 
     selectors = [
         'div[role="textbox"][aria-label="¿Qué quieres crear?"]',
@@ -534,6 +604,8 @@ async def submit_prompt_to_flow(page: Page, prompt_text: str) -> bool:
         video_directive = "Generate a video directly using Omni 1.1 Flash (text-to-video, do NOT generate images with Nano Banana): "
 
     full_prompt = prompt_text if ("Omni 1.1 Flash" in prompt_text or "Veo 3.1" in prompt_text) else (video_directive + prompt_text)
+    if visual_continuity_hint and visual_continuity_hint.lower() not in full_prompt.lower():
+        full_prompt = f"{full_prompt}. Maintain strict visual continuity: {visual_continuity_hint}"
 
     try:
         await box.click(force=True, timeout=5000)
@@ -710,6 +782,8 @@ async def generate_single_shot(
     output_path: Path,
     captured_urls: List[str],
     max_attempts: int = 3,
+    anchor_image: Optional[Path] = None,
+    visual_continuity_hint: str = "",
 ) -> bool:
     """
     Gestiona el ciclo completo de un plano con reintentos, conservación del prompt
@@ -732,7 +806,12 @@ async def generate_single_shot(
         before_count = len(before_states)
         captured_urls.clear()
 
-        ok_submit = await submit_prompt_to_flow(page, use_prompt)
+        ok_submit = await submit_prompt_to_flow(
+            page,
+            use_prompt,
+            anchor_image=anchor_image,
+            visual_continuity_hint=visual_continuity_hint,
+        )
         if not ok_submit:
             log(f"Fallo al inyectar el prompt de {shot_id}. Recargando página para limpiar estado...")
             try:
@@ -953,11 +1032,29 @@ async def _run_single_profile_session(
             except Exception as e:
                 log(f"Nota al limpiar hilo de Flow: {e}")
 
+            anchor_cand = delivery_dir / "FLOW_STYLE_ANCHOR.jpg"
+            anchor_img = anchor_cand if (anchor_cand.exists() and anchor_cand.stat().st_size > 10_000) else None
+            continuity_hint = ""
+            meta_p = delivery_dir / "metadata.json"
+            if meta_p.exists():
+                try:
+                    m_data = json.loads(meta_p.read_text(encoding="utf-8"))
+                    continuity_hint = str(m_data.get("visual_bible") or "")
+                except Exception:
+                    continuity_hint = ""
+
             for s in pending_shots:
                 out_mp4 = shots_dir / f"{s['id']}.mp4"
                 if verify_mp4(out_mp4):
                     continue
-                success = await generate_single_shot(page, s, out_mp4, captured_urls)
+                success = await generate_single_shot(
+                    page,
+                    s,
+                    out_mp4,
+                    captured_urls,
+                    anchor_image=anchor_img,
+                    visual_continuity_hint=continuity_hint,
+                )
                 if success and verify_mp4(out_mp4):
                     generated_count += 1
                     log(f"✅ {s['id']} completado y verificado con {label}.")
@@ -1019,6 +1116,12 @@ async def run_flow_generator(
     if not pending_shots:
         log(f"🎉 Todos los planos cinematográficos ({len(flow_shots)}/{len(flow_shots)}) ya están listos (+ {infographic_count} infográficos).")
         return True
+
+    generate_story_style_anchor(
+        delivery_dir=delivery_dir,
+        title=str(meta.get("title") or ""),
+        genre=str(meta.get("genre") or "G1"),
+    )
 
     if async_playwright is None:
         log("[ERROR CRÍTICO] Falta instalar 'playwright' (pip install playwright) para automatizar Google Flow.")

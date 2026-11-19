@@ -5,7 +5,7 @@ TIKTOK RADAR · Pipeline 100% Autónomo de Producción (Calidad 10/10 · Monetiz
 2. Selecciona automáticamente la noticia de mayor impacto por categoría y orden cronológico.
 3. Genera el guion dinámico con contexto inicial, cifras duras y pregunta polarizante (estilo Vox/Johnny Harris, 61-65s).
 4. Genera el storyboard híbrido de 13 planos (8 Flow Cinemáticos Raytracing + 5 FFmpeg Glassmorphic HUD).
-5. Sintetiza la locución apasionada y dramática con Gemini 3.8 Flash TTS (voz Fenrir) + auto-ajuste >61.0s.
+5. Sintetiza la locución costarricense pausada y clara (`es-CR-JuanNeural`, fallback Gemini TTS) + auto-ajuste >61.0s.
 6. Exporta el paquete listo con género canónico exacto en entregas/<fecha>_<genero>/.
 """
 
@@ -24,8 +24,20 @@ from typing import Dict, Any, List, Optional
 
 # Importar el escáner de noticias y generador de audio
 sys.path.append(str(Path(__file__).parent))
-from news_radar import scan_all_sources, kw_match
-from audio_generator import generate_speech, probe_duration
+from news_radar import enrich_news_item, scan_all_sources, kw_match
+from audio_generator import (
+    DEFAULT_COSTA_RICA_STYLE,
+    generate_speech,
+    load_locucion_config,
+    probe_duration,
+)
+from editorial_director import (
+    build_dynamic_story_visuals,
+    build_narrative_beat_sheet,
+    build_story_aware_shots,
+    extract_story_metrics,
+    resolve_geo_context,
+)
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 ENTREGAS_DIR = ROOT_DIR / "entregas"
@@ -46,10 +58,10 @@ PROD_CONFIG = load_production_config()
 STYLE_PREFIX = (
     PROD_CONFIG.get("consistencia_visual", {}).get("estilo_maestro")
     or (
-        "Vertical 9:16, prestigious scientific and technical documentary aesthetic, dramatic chiaroscuro studio lighting, "
-        "deep carbon background shadows with directional rim light, tactile textured surface patina inspired by Veritasium and Jakub Misiek illustrations, "
-        "subtle analog film grain, volumetric atmosphere, clean surgical vector schematics, shallow depth of field, slow continuous camera push-in, "
-        "masterpiece quality, no plastic CGI surfaces, no uncanny valley. "
+        "Vertical 9:16, tactile 2.5D editorial documentary illustration and chiaroscuro diorama aesthetic, "
+        "directional warm study lamp rim light against deep carbon slate shadows, subtle archival paper fiber patina and analog 35mm film grain, "
+        "layered paper-cutout depth parallax, shallow depth of field, slow continuous camera push-in, "
+        "no plastic CGI gloss, no uncanny valley, no on-screen text overlays, no watermarks. "
     )
 )
 if not STYLE_PREFIX.endswith(". ") and not STYLE_PREFIX.endswith("."):
@@ -94,382 +106,142 @@ def build_shot_prompts(
     is_ai: bool = False,
     is_space: bool = False,
     title: str = "",
+    summary: str = "",
+    script: str = "",
+    genre_label: str = "",
+    dynamic_visuals: Optional[Dict[str, Any]] = None,
+    story_metrics: Optional[Dict[str, Any]] = None,
 ) -> List[Dict[str, Any]]:
     """
-    Construye los 13 planos con anclas de consistencia visual por categoría:
-    - Modo Híbrido (`flow_primario` / `hibrido`): 8 Planos Cinemáticos Flow + 5 Planos Infográficos Remotion/HUD.
+    Construye los 13 planos anclados a la noticia real:
+    - Modo Híbrido (`flow_primario`): 8 Planos Cinemáticos Flow (estética editorial 2.5D) + 5 Planos Remotion 2.5D.
     - Modo Flow Puro (`flow_puro`): 13 Planos 100% Cinemáticos en Flow.
     """
     active_mode = PROD_CONFIG.get("modo_produccion", {}).get("activo", "flow_primario")
-    is_full_flow = (active_mode == "flow_puro")
-
-    if is_aviation:
-        raw_shots = [
-            {
-                "id": "SH01", "sec": "0-4s", "dur": 4.0, "ia_dur": "5s",
-                "render_mode": "infographic",
-                "type": "Radar/Contexto 3D",
-                "action": "Radar 3D holográfico táctico con línea de vuelo amarilla que titila en ámbar y desciende.",
-                "visual_en": "Dark tactical control room with a glowing 3D holographic radar display over Florida coastline, a yellow flight trajectory line pulsing and curving sharply downward, floating telemetry numbers, dramatic camera push-in.",
-                "fallback_en": "Stylized 3D glowing holographic radar map of a coastline with a curved neon yellow trajectory line and floating digital coordinates in a dark room."
-            },
-            {
-                "id": "SH02", "sec": "4-9s", "dur": 5.0, "ia_dur": "5s",
-                "render_mode": "flow",
-                "type": "Entorno Inicial",
-                "action": "Bimotor ejecutivo en vuelo nivelado al atardecer antes de la tormenta.",
-                "visual_en": "Sleek white twin-engine private jet flying smoothly in level cruise above golden and deep purple dusk clouds, warm sunset rim light reflecting on the fuselage, cinematic tracking shot.",
-                "fallback_en": "Stylized 3D white twin-engine airplane flying smoothly above colorful sunset clouds, cinematic aerial camera."
-            },
-            {
-                "id": "SH03", "sec": "9-14s", "dur": 5.0, "ia_dur": "5s",
-                "render_mode": "infographic",
-                "type": "Datos / Pantalla",
-                "action": "Telemetría digital y altímetro cayendo de 18.000 a 2.000 pies.",
-                "visual_en": "Close-up of a futuristic 3D digital flight telemetry monitor showing altitude numbers rapidly counting down from 18000 to 2000 feet with a red descending graph curve.",
-                "fallback_en": "Stylized 3D digital dashboard screen showing animated altitude graphs and glowing cyan and amber telemetry indicators."
-            },
-            {
-                "id": "SH04", "sec": "14-18s", "dur": 4.0, "ia_dur": "5s",
-                "render_mode": "flow",
-                "type": "Recreación Personaje",
-                "action": "Primer plano al piloto en cabina con sudor en la frente y tensión gestual.",
-                "visual_en": "Tight close-up inside a dark airplane cockpit, a stylized 3D male pilot with sweat beads on his furrowed forehead and focused eyes, amber instrument reflections on his headset, mouth closed in concentration.",
-                "fallback_en": "Stylized 3D animated pilot wearing an aviation headset inside a glowing cockpit at night, focused expression, cinematic lighting."
-            },
-            {
-                "id": "SH05", "sec": "18-22s", "dur": 4.0, "ia_dur": "5s",
-                "render_mode": "flow",
-                "type": "Acción Física",
-                "action": "Manos sujetando el timón con fuerza bajo luces de cabina.",
-                "visual_en": "Close-up of two gloved pilot hands gripping an aircraft control yoke firmly, pulling back slightly while cockpit dashboard indicators glow in warm red and cyan light.",
-                "fallback_en": "Close-up of stylized 3D hands holding an airplane steering yoke inside a modern illuminated cockpit."
-            },
-            {
-                "id": "SH06", "sec": "22-26s", "dur": 4.0, "ia_dur": "5s",
-                "render_mode": "flow",
-                "type": "Macro Detalle",
-                "action": "Macro al panel de instrumentos con horizonte artificial inclinándose.",
-                "visual_en": "Extreme macro close-up of an aircraft glass cockpit artificial horizon indicator tilting steeply at a 45-degree angle with glowing amber warning chevrons.",
-                "fallback_en": "Macro close-up of a stylized 3D aviation attitude indicator gauge tilting smoothly on a digital instrument panel."
-            },
-            {
-                "id": "SH07", "sec": "26-30s", "dur": 4.0, "ia_dur": "5s",
-                "render_mode": "flow",
-                "type": "Escena Exterior Clímax",
-                "action": "Avión inclinado descendiendo entre nubes de tormenta y lluvia.",
-                "visual_en": "Dynamic 3D exterior tracking shot of a twin-engine jet banking and descending steeply through dense dark storm clouds and heavy rain streaks, bright wingtip strobe lights illuminating the mist.",
-                "fallback_en": "Stylized 3D airplane banking steeply through dramatic dark clouds and rain at night with glowing wingtip lights."
-            },
-            {
-                "id": "SH08", "sec": "30-34s", "dur": 4.0, "ia_dur": "5s",
-                "render_mode": "flow",
-                "type": "Dinámica de Movimiento",
-                "action": "Plano cercano a la cola y timón del avión vibrando por el viento.",
-                "visual_en": "Tight cinematic camera focused on the vertical tail fin and rudder of a jet vibrating under heavy wind turbulence amidst swirling dark clouds and rain.",
-                "fallback_en": "Close-up 3D animation of an airplane tail fin and rudder moving in strong wind amidst dark clouds."
-            },
-            {
-                "id": "SH09", "sec": "34-38s", "dur": 4.0, "ia_dur": "5s",
-                "render_mode": "flow",
-                "type": "Reacción Crítica",
-                "action": "Mano empujando las palancas de potencia al máximo.",
-                "visual_en": "Close-up inside a cockpit of a pilot hand pushing twin throttle levers forward to full power, metallic console illuminated by dramatic cyan and amber instrument lighting.",
-                "fallback_en": "Stylized 3D close-up of a hand pushing aircraft throttle levers forward on an illuminated control console."
-            },
-            {
-                "id": "SH10", "sec": "38-44s", "dur": 5.0, "ia_dur": "5s",
-                "render_mode": "infographic",
-                "type": "Infografía Técnica 3D",
-                "action": "Modelo 3D wireframe del avión con la cola resaltada en naranja neón.",
-                "visual_en": "Stylized 3D technical explainer animation, a translucent blue wireframe model of a twin-engine jet rotating slowly over a dark navy background, with the tail rudder glowing in bright neon orange.",
-                "fallback_en": "3D holographic blue wireframe blueprint of an airplane rotating slowly in a dark studio with glowing orange highlights."
-            },
-            {
-                "id": "SH11", "sec": "44-50s", "dur": 5.0, "ia_dur": "5s",
-                "render_mode": "infographic",
-                "type": "Evidencia Oficial",
-                "action": "Recreación 3D de la caja negra (FDR) con ondas de audio digitales.",
-                "visual_en": "Clean 3D broadcast graphic of an orange aviation flight data recorder box resting on a dark grid surface while glowing cyan digital soundwave bars pulse behind it.",
-                "fallback_en": "Stylized 3D orange flight data recorder box on a dark reflective table with glowing blue audio waveform graphics."
-            },
-            {
-                "id": "SH12", "sec": "50-56s", "dur": 5.5, "ia_dur": "5s",
-                "render_mode": "flow",
-                "type": "Panorama Tras el Suceso",
-                "action": "Costa al anochecer con haces de luz de barcos de búsqueda sobre el mar.",
-                "visual_en": "Wide atmospheric 3D shot of the dark ocean coastline at night with rescue boats casting long volumetric white searchlight beams across the gentle waves under a starry sky.",
-                "fallback_en": "Stylized 3D night ocean scene with boats shining bright volumetric searchlights across the water."
-            },
-            {
-                "id": "SH13", "sec": "56-62.5s", "dur": 6.2, "ia_dur": "5s",
-                "render_mode": "infographic",
-                "type": "Cierre Documental Veritasium",
-                "action": "Cámara lenta sobre el océano nocturno con ficha documental sobria de reflexión final.",
-                "visual_en": "Cinematic slow camera drift over a dark moody ocean at night with subtle volumetric moonlight, clean minimal documentary title card dissolving into view, no cartoon holograms.",
-                "fallback_en": "Stylized cinematic slow camera drift over a dark moody ocean at night with elegant documentary lighting."
-            },
-        ]
-    elif is_cyber:
-        raw_shots = [
-            {"id": "SH01", "sec": "0-4s", "dur": 4.0, "ia_dur": "5s", "render_mode": "infographic", "type": "Radar SOC de Amenazas", "action": "Matriz holográfica de ciberdefensa detectando anomalía de tráfico malicioso masivo.", "visual_en": "Dark cybersecurity SOC center with a giant 3D holographic globe showing crimson DDoS attack vectors striking data nodes.", "fallback_en": "Stylized 3D cyber threat map showing glowing red attack vectors across global network nodes."},
-            {"id": "SH02", "sec": "4-9s", "dur": 5.0, "ia_dur": "5s", "render_mode": "flow", "type": "Sala de Servidores", "action": "Bóveda de servidores en penumbra con bancos de fibra óptica titilando en cian y ámbar.", "visual_en": "Sleek high-density server room corridor with cold blue LED lighting, rows of dark server racks pulsing with data streams.", "fallback_en": "Stylized 3D dark server room with glowing blue and amber LED lights."},
-            {"id": "SH03", "sec": "9-14s", "dur": 5.0, "ia_dur": "5s", "render_mode": "infographic", "type": "Telemetría de Tráfico", "action": "Gráfica de paquetes bloqueados y ancho de banda superando 900 Gbps.", "visual_en": "Close-up of a futuristic 3D cyber dashboard showing bandwidth spikes counting up to 940 Gbps with red alert threshold.", "fallback_en": "Stylized 3D digital telemetry monitor showing network traffic graphs and glowing alert markers."},
-            {"id": "SH04", "sec": "14-18s", "dur": 4.0, "ia_dur": "5s", "render_mode": "flow", "type": "Analista en Tensión", "action": "Primer plano a especialista en seguridad digital con reflejo de líneas de código en anteojos.", "visual_en": "Tight close-up of a stylized 3D cyber analyst with dark glasses reflecting green terminal code, focused tense expression.", "fallback_en": "Stylized 3D computer specialist looking intensely at a computer screen in dark room."},
-            {"id": "SH05", "sec": "18-22s", "dur": 4.0, "ia_dur": "5s", "render_mode": "flow", "type": "Escritura de Comandos", "action": "Manos veloces ejecutando scripts de contención en un teclado mecánico.", "visual_en": "Close-up of fingers typing rapidly on an illuminated mechanical keyboard in a dark command room.", "fallback_en": "Close-up of stylized 3D hands typing on a glowing keyboard."},
-            {"id": "SH06", "sec": "22-26s", "dur": 4.0, "ia_dur": "5s", "render_mode": "flow", "type": "Macro a Switch de Fibra", "action": "Macro a cables de fibra óptica con conectores transparentes emitiendo pulsos de luz.", "visual_en": "Extreme macro of high-speed fiber-optic network cables with internal pulsing cyan light streams and glowing patch panels.", "fallback_en": "Macro close-up of glowing fiber-optic network cables connected to a server."},
-            {"id": "SH07", "sec": "26-30s", "dur": 4.0, "ia_dur": "5s", "render_mode": "flow", "type": "Alarma de Intrusión", "action": "Racks de servidores encendiendo luces de alerta roja ante intento de acceso no autorizado.", "visual_en": "Dynamic camera tracking down a server rack aisle as overhead red emergency warning lights flash sequentially.", "fallback_en": "Stylized 3D server racks with red flashing emergency alert lights."},
-            {"id": "SH08", "sec": "30-34s", "dur": 4.0, "ia_dur": "5s", "render_mode": "flow", "type": "Enfriamiento Máximo", "action": "Turbinas de refrigeración líquida acelerando con niebla térmica en el pasillo.", "visual_en": "Close-up of cryogenic cooling fans spinning rapidly amidst cold white vapor mist inside a supercomputing facility.", "fallback_en": "Stylized 3D cooling fans spinning with light vapor inside a tech facility."},
-            {"id": "SH09", "sec": "34-38s", "dur": 4.0, "ia_dur": "5s", "render_mode": "flow", "type": "Aislamiento de Red", "action": "Mano presionando botón de desconexión física de subred para frenar la propagación.", "visual_en": "Close-up of an operator pressing an illuminated emergency network isolation switch on a sleek control desk.", "fallback_en": "Close-up of a hand pressing an illuminated emergency switch on a console."},
-            {"id": "SH10", "sec": "38-44s", "dur": 5.0, "ia_dur": "5s", "render_mode": "infographic", "type": "Topología de Red", "action": "Esquema 3D wireframe de nodos de red con los servidores infectados aislados en rojo.", "visual_en": "Translucent 3D wireframe network topology diagram showing compromised nodes quarantined in neon red cages.", "fallback_en": "3D holographic network diagram showing isolated data nodes highlighted in orange."},
-            {"id": "SH11", "sec": "44-50s", "dur": 5.0, "ia_dur": "5s", "render_mode": "infographic", "type": "Análisis Forense CVE", "action": "Ficha técnica de la vulnerabilidad de día cero y firma criptográfica del exploit.", "visual_en": "Broadcast cybersecurity forensic dossier showing hexadecimal payload strings, CVE identifier, and threat level badge.", "fallback_en": "Stylized 3D digital security audit dossier with cryptographic hashes and warning badges."},
-            {"id": "SH12", "sec": "50-56s", "dur": 5.5, "ia_dur": "5s", "render_mode": "flow", "type": "Estabilidad Recuperada", "action": "Centro de monitoreo volviendo a estado seguro con pantallas en verde esmeralda.", "visual_en": "Wide atmospheric 3D shot of the cyber operations center calming down as wall monitors transition from red to calm emerald green.", "fallback_en": "Stylized 3D tech operations center with monitors glowing in green stability mode."},
-            {"id": "SH13", "sec": "56-62.5s", "dur": 6.2, "ia_dur": "5s", "render_mode": "infographic", "type": "Cierre Documental Veritasium", "action": "Reflexión final sobre la fragilidad digital y el equilibrio de la infraestructura crítica.", "visual_en": "Cinematic slow camera drift through a silent server corridor in deep carbon shadows with soft amber status indicators, minimal documentary card.", "fallback_en": "Stylized 3D dark server room with minimal documentary ambient light."},
-        ]
-    elif is_ai:
-        raw_shots = [
-            {"id": "SH01", "sec": "0-4s", "dur": 4.0, "ia_dur": "5s", "render_mode": "infographic", "type": "Radar de Silicio y Chips", "action": "Mapa 3D de la cadena global de semiconductores y nodos litográficos.", "visual_en": "Dark high-tech room with a glowing 3D holographic silicon wafer floating above a global semiconductor supply chain map.", "fallback_en": "Stylized 3D holographic semiconductor silicon wafer floating above a digital grid."},
-            {"id": "SH02", "sec": "4-9s", "dur": 5.0, "ia_dur": "5s", "render_mode": "flow", "type": "Sala Blanca EUV", "action": "Instalación de litografía ultravioleta con atmósfera presurizada e iluminación dorada.", "visual_en": "Ultra-modern cleanroom laboratory with golden monochromatic lighting, robotic tracks, and ultra-high-precision machinery.", "fallback_en": "Stylized 3D cleanroom semiconductor facility with golden lighting and robotic arms."},
-            {"id": "SH03", "sec": "9-14s", "dur": 5.0, "ia_dur": "5s", "render_mode": "infographic", "type": "Métricas de Cómputo", "action": "Telemetría de potencia de cálculo TFLOPs y salto a proceso de 2 nanómetros.", "visual_en": "Futuristic 3D dashboard showing transistor density metrics scaling to 2nm and performance curves climbing in bright cyan.", "fallback_en": "Stylized 3D digital telemetry screen showing chip performance graphs and glowing metrics."},
-            {"id": "SH04", "sec": "14-18s", "dur": 4.0, "ia_dur": "5s", "render_mode": "flow", "type": "Ingeniero de Litografía", "action": "Ingeniero en traje blanco antiestático inspeccionando oblea de silicio con visor.", "visual_en": "Tight close-up of a stylized 3D tech researcher in sleek white cleanroom jacket with open collar and clear protective safety goggles, looking through an electron microscope, sharp expressive facial features, clean jawline, no cloth mask, raytraced reflections.", "fallback_en": "Stylized 3D technician in white cleanroom jacket with clear safety glasses inspecting a wafer under a microscope, clean facial features, no face mask, raytraced lighting."},
-            {"id": "SH05", "sec": "18-22s", "dur": 4.0, "ia_dur": "5s", "render_mode": "flow", "type": "Manipulación Robótica", "action": "Brazo robótico de ultra precisión transfiriendo una oblea de 300 mm con vacío.", "visual_en": "Close-up of a sleek robotic gripper delicately lifting a glowing 300mm silicon wafer with millimeter precision.", "fallback_en": "Close-up of a stylized 3D robotic arm holding a circular silicon wafer."},
-            {"id": "SH06", "sec": "22-26s", "dur": 4.0, "ia_dur": "5s", "render_mode": "flow", "type": "Macro a Microarquitectura", "action": "Macro extremo a los circuitos integrados de silicio reflejando colores irisados.", "visual_en": "Extreme macro of microscopic silicon die surface showing intricate multi-layer nano-circuits with rainbow reflections.", "fallback_en": "Extreme macro of a stylized 3D microchip surface with glowing intricate golden pathways."},
-            {"id": "SH07", "sec": "26-30s", "dur": 4.0, "ia_dur": "5s", "render_mode": "flow", "type": "Láser High-NA EUV", "action": "Haz de luz láser ultravioleta extremo grabando patrones nanométricos a gran velocidad.", "visual_en": "Dynamic tracking shot of intense deep-ultraviolet laser pulses etching micro-patterns onto a photosensitive silicon layer.", "fallback_en": "Stylized 3D laser beam etching microscopic patterns on a metallic surface."},
-            {"id": "SH08", "sec": "30-34s", "dur": 4.0, "ia_dur": "5s", "render_mode": "flow", "type": "Ensamblaje Automatizado", "action": "Bandejas automatizadas transportando microprocesadores empaquetados hacia pruebas.", "visual_en": "Automated magnetic conveyor transporting rows of finished high-performance AI accelerator chips in clean air.", "fallback_en": "Stylized 3D automated conveyor carrying microchips in a factory."},
-            {"id": "SH09", "sec": "34-38s", "dur": 4.0, "ia_dur": "5s", "render_mode": "flow", "type": "Activación de Cómputo", "action": "Mano activando el encendido del nuevo rack de aceleración de inteligencia artificial.", "visual_en": "Close-up of an engineer hand flipping the master power toggle on an advanced AI cluster, rows of LEDs igniting instantly.", "fallback_en": "Close-up of a hand flipping a switch on an illuminated server panel."},
-            {"id": "SH10", "sec": "38-44s", "dur": 5.0, "ia_dur": "5s", "render_mode": "infographic", "type": "Diagrama de Silicio 2nm", "action": "Esquema 3D wireframe de la arquitectura de núcleos y memoria HBM3e apilada.", "visual_en": "3D wireframe schematic blueprint of stacked 3D silicon chiplet architecture with high-bandwidth memory glowing in neon amber.", "fallback_en": "3D holographic wireframe blueprint of an advanced computer processor architecture."},
-            {"id": "SH11", "sec": "44-50s", "dur": 5.0, "ia_dur": "5s", "render_mode": "infographic", "type": "Benchmark de Rendimiento", "action": "Ficha oficial de rendimiento de cálculo comparando con la generación previa.", "visual_en": "Broadcast official hardware benchmark card showing throughput gain bars and energy efficiency indices on dark glass.", "fallback_en": "Clean 3D broadcast hardware benchmark chart comparing processor speeds."},
-            {"id": "SH12", "sec": "50-56s", "dur": 5.5, "ia_dur": "5s", "render_mode": "flow", "type": "Granja de Supercómputo", "action": "Vista panorámica del centro de cómputo de frontera operando a pleno rendimiento.", "visual_en": "Wide atmospheric 3D cinematic shot of a vast AI supercomputing data center with thousands of glowing racks extending to the horizon.", "fallback_en": "Stylized 3D panoramic view of a massive modern data center at night."},
-            {"id": "SH13", "sec": "56-62.5s", "dur": 6.2, "ia_dur": "5s", "render_mode": "infographic", "type": "Cierre Documental Veritasium", "action": "Reflexión final profunda sobre el límite físico del silicio y el destino de la inteligencia.", "visual_en": "Cinematic slow camera drift over a floating dark silicon wafer illuminated by a single warm golden rim light, minimal documentary title card dissolving, no cartoon holograms.", "fallback_en": "Stylized cinematic slow camera drift over glowing silicon in dark space with golden light."},
-        ]
-    elif is_space:
-        raw_shots = [
-            {"id": "SH01", "sec": "0-4s", "dur": 4.0, "ia_dur": "5s", "render_mode": "infographic", "type": "Rastreo Orbital Deep Space", "action": "Mapa 3D holográfico de trayectoria orbital y coordenadas de descenso planetario.", "visual_en": "Dark mission control center with a 3D holographic globe showing an orbital transfer ellipse curving toward a distant moon.", "fallback_en": "Stylized 3D space mission trajectory map with curved orbital vectors across planets."},
-            {"id": "SH02", "sec": "4-9s", "dur": 5.0, "ia_dur": "5s", "render_mode": "flow", "type": "Nave en Órbita", "action": "Sonda espacial o módulo de exploración cruzando la curvatura de la Tierra.", "visual_en": "Sleek metallic spacecraft coasting smoothly above the vivid blue curvature of Earth at sunrise, golden sunlight reflecting on solar arrays.", "fallback_en": "Stylized 3D spacecraft orbiting Earth above sunrise clouds, cinematic lighting."},
-            {"id": "SH03", "sec": "9-14s", "dur": 5.0, "ia_dur": "5s", "render_mode": "infographic", "type": "Telemetría de Descenso", "action": "Datos de velocidad orbital en km/h y altitud de aproximación en tiempo real.", "visual_en": "Futuristic 3D flight telemetry display showing orbital velocity at 27800 km/h and descent altitude graphs in glowing cyan.", "fallback_en": "Stylized 3D digital telemetry dashboard showing orbital speed and altitude graphs."},
-            {"id": "SH04", "sec": "14-18s", "dur": 4.0, "ia_dur": "5s", "render_mode": "flow", "type": "Director de Misión", "action": "Primer plano al director de vuelo en centro de control con auriculares y mirada atenta.", "visual_en": "Tight close-up of a stylized 3D flight director wearing an aerospace headset, glowing blue console reflections in eyes, tense focus.", "fallback_en": "Stylized 3D mission controller wearing a headset looking focused at screens."},
-            {"id": "SH05", "sec": "18-22s", "dur": 4.0, "ia_dur": "5s", "render_mode": "flow", "type": "Comando de Propulsión", "action": "Manos operando los mandos de telemetría y activando el encendido de frenado.", "visual_en": "Close-up of operator hands gripping a dual-axis thruster joystick and arming propulsion sequence on glowing console.", "fallback_en": "Close-up of stylized 3D hands operating a space control console."},
-            {"id": "SH06", "sec": "22-26s", "dur": 4.0, "ia_dur": "5s", "render_mode": "flow", "type": "Macro a Toberas", "action": "Macro a toberas de maniobra orientándose en el vacío espacial.", "visual_en": "Extreme macro close-up of gimbaled spacecraft attitude control thruster nozzles articulating against the starry void.", "fallback_en": "Macro close-up of a stylized 3D rocket thruster nozzle in space."},
-            {"id": "SH07", "sec": "26-30s", "dur": 4.0, "ia_dur": "5s", "render_mode": "flow", "type": "Encendido de Plasma", "action": "Propulsores encendiéndose con una estela brillante de plasma azul en la noche cósmica.", "visual_en": "Dynamic tracking shot of spacecraft main engine firing with a luminous violet-blue plasma plume illuminating the metallic hull.", "fallback_en": "Stylized 3D rocket engine firing a bright blue flame in dark space."},
-            {"id": "SH08", "sec": "30-34s", "dur": 4.0, "ia_dur": "5s", "render_mode": "flow", "type": "Despliegue de Paneles", "action": "Satélite desplegando paneles solares dorados con micro-vibración en el vacío.", "visual_en": "Close-up cinematic shot of multi-junction golden solar array wings unfolding smoothly against distant stars.", "fallback_en": "Stylized 3D satellite unfolding golden solar panels in space."},
-            {"id": "SH09", "sec": "34-38s", "dur": 4.0, "ia_dur": "5s", "render_mode": "flow", "type": "Confirmación de Inserción", "action": "Mano en control de misión presionando confirmación de órbita capturada con éxito.", "visual_en": "Close-up inside control room of a mission scientist confirming orbital insertion on a digital telemetry tablet.", "fallback_en": "Close-up of a hand tapping a green confirmation button on a control tablet."},
-            {"id": "SH10", "sec": "38-44s", "dur": 5.0, "ia_dur": "5s", "render_mode": "infographic", "type": "Blueprint de la Sonda", "action": "Modelo 3D wireframe de la sonda espacial con escudo térmico resaltado en ámbar.", "visual_en": "Stylized 3D wireframe blueprint of an interplanetary spacecraft rotating in dark studio with ablative heat shield in neon amber.", "fallback_en": "3D holographic wireframe blueprint of a spacecraft rotating in a dark digital space."},
-            {"id": "SH11", "sec": "44-50s", "dur": 5.0, "ia_dur": "5s", "render_mode": "infographic", "type": "Telemetría Oficial NASA/ESA", "action": "Ficha oficial de datos transmitidos por la Red de Espacio Profundo.", "visual_en": "Broadcast official space telemetry graphic showing signal strength bars, mission elapsed time, and orbital parameters.", "fallback_en": "Clean 3D broadcast space mission data card with antenna signal meters."},
-            {"id": "SH12", "sec": "50-56s", "dur": 5.5, "ia_dur": "5s", "render_mode": "flow", "type": "Horizonte Cósmico", "action": "Vista panorámica de la nave alejándose hacia su destino cósmico.", "visual_en": "Wide atmospheric 3D shot of the spacecraft cruising gracefully toward a distant glowing planet under a field of brilliant stars.", "fallback_en": "Stylized 3D wide view of a spaceship flying toward a distant planet in starry space."},
-            {"id": "SH13", "sec": "56-62.5s", "dur": 6.2, "ia_dur": "5s", "render_mode": "infographic", "type": "Cierre Documental Veritasium", "action": "Reflexión final sobre el lugar de la humanidad frente a la inmensidad del cosmos.", "visual_en": "Cinematic slow camera drift pulling away into the deep cosmic void, Earth becoming a fragile pale blue dot in darkness, minimal documentary title card dissolving, no cartoon holograms.", "fallback_en": "Stylized cinematic slow camera drift over deep starry cosmos with subtle celestial rim light."},
-        ]
-    else:
-        generic_blueprint = [
-            ("SH01", "0-4s", 4.0, "infographic", "Radar de Contexto Global",
-             "Mapa holográfico 3D localizando el epicentro exacto del suceso reportado.",
-             "Dark atmospheric situation room with a glowing 3D holographic globe focusing on an amber pulsing pinpoint.",
-             "Stylized 3D dark strategic control table displaying a glowing topographic radar grid."),
-            ("SH02", "4-9s", 5.0, "flow", "Escena de Apertura",
-             "Plano general atmosférico estableciendo el entorno real de la noticia.",
-             "Atmospheric wide 3D chiaroscuro establishing shot of modern urban infrastructure at dusk with dramatic rim lighting.",
-             "Stylized 3D evening skyline with golden directional rim light and deep carbon shadows."),
-            ("SH03", "9-14s", 5.0, "infographic", "Datos / Telemetría Inicial",
-             "Panel digital mostrando las cifras críticas y magnitud de impacto del caso.",
-             "Close-up of a dark matte tactical HUD screen plotting live telemetry metrics and rising risk vectors in glowing amber.",
-             "Stylized 3D digital analytics dashboard glowing in cyan and warm amber."),
-            ("SH04", "14-18s", 4.0, "flow", "Protagonista / Testigo",
-             "Primer plano dramático en penumbra reflejando la urgencia del momento.",
-             "Tight close-up of a focused specialist observing urgent alert monitors, soft amber rim light on face.",
-             "Stylized 3D character close-up illuminated by glowing instrument panels in a dark studio."),
-            ("SH05", "18-22s", 4.0, "flow", "Acción Crítica",
-             "Manos ejecutando maniobras urgentes sobre consola o equipo técnico.",
-             "Close-up of hands adjusting precision metallic controls and switches in dramatic studio lighting.",
-             "Close-up of stylized 3D hands operating an illuminated modern control console."),
-            ("SH06", "22-26s", 4.0, "flow", "Macro Evidencia",
-             "Detalle macro a la pieza técnica o indicador clave donde inicia la anomalía.",
-             "Extreme macro shot of precision instrumentation needles and glowing indicators reacting to sudden stress.",
-             "Macro close-up of a stylized 3D scientific dial and warning chevron."),
-            ("SH07", "26-30s", 4.0, "flow", "Clímax Visual",
-             "Escena exterior dinámica en el instante de máxima tensión del reporte.",
-             "Dynamic cinematic tracking shot through mist and dramatic spotlights revealing industrial scale crisis response.",
-             "Stylized 3D atmospheric scene with dramatic directional searchlights and mist."),
-            ("SH08", "30-34s", 4.0, "flow", "Dinámica del Fenómeno",
-             "Visualización física del impacto y propagación de fuerzas en juego.",
-             "Slow-motion physical detail shot showing vibrational stress waves and particle turbulence under studio light.",
-             "Stylized 3D dynamic airflow and structural motion visualization in dark space."),
-            ("SH09", "34-38s", 4.0, "flow", "Decisión de Respuesta",
-             "Operador activando protocolo de contención y seguridad de emergencia.",
-             "Close-up inside command hub as emergency override switches lock into active state.",
-             "Close-up of hand engaging illuminated safety override control."),
-            ("SH10", "38-44s", 5.0, "infographic", "Blueprint Técnico 3D",
-             f"Esquema estructural explicando el mecanismo interno de: {title[:60] or 'la anomalía'}",
-             "Translucent blue wireframe technical schematic rotating over deep obsidian black with glowing amber fault node.",
-             "3D holographic wireframe blueprint diagram with highlighted amber core node."),
-            ("SH11", "44-50s", 5.0, "infographic", "Comparativa / Evidencia",
-             "Contraste cuantitativo de datos verificados e impacto real reportado.",
-             "Clean broadcast comparison graphic contrasting baseline parameters against anomaly readings on matte dark glass.",
-             "Stylized 3D vertical documentary data comparison chart on dark charcoal card."),
-            ("SH12", "50-56s", 5.5, "flow", "Panorama Posterior",
-             "Plano abierto de supervisión verificando estabilización tras el incidente.",
-             "Wide moody camera glide over calm illuminated operations complex after twilight storm.",
-             "Stylized 3D wide establishing view of city infrastructure at dawn after storm."),
-            ("SH13", "56-62.5s", 6.2, "infographic", "Cierre Documental Veritasium",
-             "Reflexión final documental sobre la lección tecnológica y humana del caso.",
-             "Cinematic slow drift through warm chiaroscuro dust motes above an architectural dark slate table, minimal documentary title card.",
-             "Stylized slow cinematic documentary fade over deep obsidian horizon with amber rim light."),
-        ]
-        raw_shots = [
-            {
-                "id": sid, "sec": sec, "dur": dur, "ia_dur": "5s",
-                "render_mode": rmode, "type": stype, "action": act,
-                "visual_en": ven, "fallback_en": fen,
-            }
-            for sid, sec, dur, rmode, stype, act, ven, fen in generic_blueprint
-        ]
-
-    shots = []
-    for s in raw_shots:
-        mode = "flow" if is_full_flow else s.get("render_mode", "flow")
-        shots.append({
-            "id": s["id"],
-            "sec": s["sec"],
-            "dur": s["dur"],
-            "ia_dur": s["ia_dur"],
-            "render_mode": mode,
-            "type": s["type"],
-            "action": s["action"],
-            "prompt": STYLE_PREFIX + s["visual_en"],
-            "fallback_prompt": STYLE_PREFIX + s["fallback_en"],
-        })
-    return shots
+    return build_story_aware_shots(
+        style_prefix=STYLE_PREFIX,
+        is_aviation=is_aviation,
+        is_cyber=is_cyber,
+        is_ai=is_ai,
+        is_space=is_space,
+        title=title,
+        summary=summary,
+        script=script,
+        genre_label=genre_label,
+        active_mode=active_mode,
+        dynamic_visuals=dynamic_visuals,
+        story_metrics=story_metrics,
+    )
 
 
 def generate_dynamic_news_script(news: Dict[str, Any], genre_label: str) -> str:
     """
-    Genera un guión periodístico ágil, intrigante y de alto impacto para TikTok Noticias
-    siguiendo la fórmula explicativa por primeros principios de Veritasium:
-    1. Paradoja o misterio de entrada (0-10s): plantea un hecho contra-intuitivo que despierta curiosidad.
-    2. El peligro real y las apuestas tangibles (10-25s): consecuencias críticas, datos y cifras concretas.
-    3. Deconstrucción por primeros principios con analogía simple (25-45s).
-    4. La solución maestra o giro técnico (45-55s).
-    5. Cierre filosófico y reflexión profunda sobre el futuro o impacto en la humanidad (55-62s).
-    Longitud calibrada: 145-160 palabras para asegurar >60s de locución monetizable en TikTok.
+    Genera un guión periodístico Misconception-First de alta retención (estilo Veritasium / Vox)
+    anclado al texto completo del artículo:
+    1. HOOK PARADOJA (0-3s, 1 frase corta in medias res sin intros suaves).
+    2. PRUEBA / RECEIPT (3-12s): fuente oficial y dato verificable del artículo.
+    3. MECANISMO + ANALOGÍA FÍSICA (12-36s): primeros principios ligados al caso.
+    4. REVELACIÓN / GIRO (36-48s): dato o decisión contra-intuitiva (preparado para Music Drop).
+    5. RESOLUCIÓN + CIERRE (48-62s): desenlace real y reflexión sobria sin pedir comentarios.
+    Longitud calibrada: 134-145 palabras para superar 61s con locución costarricense moderada.
     """
     title = news.get("title", "")
     source = news.get("source_name", "Prensa Oficial")
-    summary = news.get("summary", "")
+    summary = news.get("summary_full") or news.get("summary", "")
+    article_excerpt = str(news.get("article_text") or summary)[:1800]
+    receipt_quote = str(news.get("receipt_quote") or "")
+    extracted_nums = ", ".join(str(x) for x in (news.get("extracted_numbers") or [])[:6]) or "Sin cifras adicionales"
+    technical_cause = str(news.get("technical_cause") or "")
     key = os.getenv("GEMINI_API_KEY")
 
     if key:
-        prompt = f"""Eres el mejor guionista de divulgación científica y periodismo explicativo de alta retención del mundo (con el estándar exacto de Veritasium).
-Escribe un guión de locución para un vídeo vertical de TikTok de exactamente 61 a 64 segundos (entre 145 y 160 palabras exactas para superar 60 segundos de locución).
+        prompt = f"""Eres el mejor guionista de divulgación científica y periodismo explicativo de alta retención del mundo (estilo Veritasium y Vox).
+Escribe un guión de locución para un vídeo vertical de TikTok de exactamente 61 a 65 segundos (entre 134 y 145 palabras exactas para superar 60 segundos con dicción moderada y muy entendible).
 
 Noticia: {title}
 Fuente oficial: {source}
 Categoría: {genre_label}
-Resumen / Datos clave: {summary}
+Texto completo / extracto verificado: {article_excerpt}
+Cita factual (receipt): {receipt_quote}
+Cifras o códigos reales detectados: {extracted_nums}
+Causa técnica reportada: {technical_cause}
 
-ESTRUCTURA EXPLICATIVA VERITASIUM (OBLIGATORIA):
-1. PARADOJA O MISTERIO VISUAL (0-10s): Abre planteando una paradoja desconcertante, una anomalía o un hecho contra-intuitivo que despierte curiosidad voraz. Haz que el espectador sienta que lo que está ocurriendo desafía el sentido común.
-2. EL PELIGRO REAL Y QUÉ ESTÁ EN JUEGO (10-25s): Conecta de inmediato con las consecuencias críticas del mundo real (daños multimillonarios, vidas, seguridad nacional, colapso de infraestructura o hitos históricos). Cita los datos reales, cifras concretas, nombres de instituciones, empresas o regiones de la noticia.
-3. DECONSTRUCCIÓN POR PRIMEROS PRINCIPIOS CON ANALOGÍA SIMPLE (25-45s): Desarma el problema capa por capa desde lo elemental. Usa una analogía física cotidiana o visual para que cualquiera entienda el fenómeno sin perderse en tecnicismos vacíos.
-4. LA SOLUCIÓN MAESTRA O GIRO INGENIOSO (45-55s): Explica la solución técnica, la decisión humana o el descubrimiento que resolvió el dilema.
-5. CIERRE FILOSÓFICO O PREGUNTA PROFUNDA (55-62s): Termina con una reflexión impactante sobre el ingenio humano, el futuro de la sociedad o el rumbo de la tecnología.
-   ESTRICTAMENTE PROHIBIDO decir "deja tus comentarios", "déjamelo en los comentarios", "comenta abajo" ni frases clichés similares. Cierra con altura, sobriedad y contundencia.
+ESTRUCTURA VERITASIUM MISCONCEPTION-FIRST (OBLIGATORIA):
+1. HOOK PARADOJA (0-3s, primera oración muy corta): Abre rompiendo una creencia intuitiva o lanzando la anomalía exacta in medias res.
+   PROHIBIDO empezar con "Imagine que...", "A simple vista...", "Última hora..." ni saludos.
+2. PRUEBA / RECEIPT (3-12s): Cita la fuente oficial y los datos o cifras reales verificadas en el artículo completo.
+3. MECANISMO + ANALOGÍA FÍSICA (12-36s): Explica la causa técnica real desde primeros principios con una analogía física cotidiana concreta ligada a este caso.
+4. REVELACIÓN / GIRO TÉCNICO (36-48s): Presenta el giro contra-intuitivo o la maniobra crítica que cambia por completo cómo entendemos el incidente.
+5. RESOLUCIÓN Y CIERRE (48-62s): Desenlace real reportado y reflexión sobria de cierre.
+   ESTRICTAMENTE PROHIBIDO decir "deja tus comentarios", "déjamelo en los comentarios", "comenta abajo" ni frases clichés similares.
 
-REGLAS DE ESTILO:
-- En español neutro, apasionado, con convicción, ritmo dinámico y pausas dramáticas.
-- Longitud estricta: entre 145 y 160 palabras.
-- Cero muletillas de "deja tus comentarios" o "comenta abajo".
+REGLAS DE ESTILO Y CLARIDAD:
+- Español latinoamericano natural compatible con locución costarricense (usa siempre trato de "usted" o "ustedes", nunca "vosotros", sin modismos mexicanos ni españoles).
+- Frases directas, bien puntuadas y fáciles de entender al oído (evita guiones entre ciudades o siglas difíciles; escribe "de Múnich a Bangkok", no "Múnich-Bangkok").
+- Longitud estricta: entre 134 y 145 palabras (crítico para durar 61.5 a 64.5 segundos).
+- No inventes cifras, muertes, incendios ni causas no presentes en el texto verificado.
 - Devuelve ÚNICAMENTE el texto que leerá el locutor en voz alta, sin encabezados, sin corchetes, sin etiquetas de tiempo."""
 
-        for model in ["gemini-3.1-flash-lite", "gemini-3.5-flash-lite", "gemini-3.5-flash"]:
+        def _call_gemini_script(model_name: str, prompt_text: str) -> str:
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={key}"
+            body = {"contents": [{"parts": [{"text": prompt_text}]}]}
+            req = urllib.request.Request(url, data=json.dumps(body).encode(), headers={"Content-Type": "application/json"})
+            with urllib.request.urlopen(req, timeout=25) as resp:
+                data = json.load(resp)
+                return data["candidates"][0]["content"]["parts"][0]["text"].strip()
+
+        for model in ["gemini-3.5-flash-lite", "gemini-3.5-flash", "gemini-flash-lite-latest", "gemini-2.5-flash"]:
             try:
-                url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={key}"
-                body = {"contents": [{"parts": [{"text": prompt}]}]}
-                req = urllib.request.Request(url, data=json.dumps(body).encode(), headers={"Content-Type": "application/json"})
-                with urllib.request.urlopen(req, timeout=20) as resp:
-                    data = json.load(resp)
-                    text = data["candidates"][0]["content"]["parts"][0]["text"].strip()
-                    words = text.split()
-                    if len(words) >= 140:
-                        print(f"[PIPELINE-AI] ✅ Guión Veritasium generado por {model} ({len(words)} palabras)", flush=True)
-                        return text
+                text = _call_gemini_script(model, prompt)
+                words = text.split()
+                if len(words) > 143:
+                    condense_prompt = (
+                        "Recorta el siguiente guión para que tenga estrictamente entre 132 y 140 palabras "
+                        "(sin encabezados ni notas, conservando el hook directo sin 'Imagine que', los datos reales, la analogía y el cierre sobrio, "
+                        "usando trato de 'usted' y oraciones claras sin guiones entre palabras para locución costarricense muy entendible):\n\n"
+                        f"{text}"
+                    )
+                    condensed = _call_gemini_script(model, condense_prompt)
+                    c_words = condensed.split()
+                    if 126 <= len(c_words) < len(words):
+                        text, words = condensed, c_words
+                elif 95 <= len(words) < 130:
+                    expand_prompt = (
+                        "Amplía ligeramente el siguiente guión para que tenga estrictamente entre 134 y 140 palabras "
+                        "sin inventar cifras, muertes ni hechos nuevos, profundizando brevemente la analogía física y manteniendo trato de 'usted':\n\n"
+                        f"{text}"
+                    )
+                    expanded = _call_gemini_script(model, expand_prompt)
+                    e_words = expanded.split()
+                    if 126 <= len(e_words) <= 145:
+                        text, words = expanded, e_words
+                if len(words) >= 124:
+                    print(f"[PIPELINE-AI] ✅ Guión documental generado por {model} ({len(words)} palabras)", flush=True)
+                    return text
+                print(f"[PIPELINE-AI] ⚠️ {model} devolvió guión muy corto ({len(words)} palabras), probando siguiente modelo...", flush=True)
             except Exception as e:
                 print(f"[PIPELINE-AI] ⚠️ Error generando guión con {model}: {e}", flush=True)
                 time.sleep(1.0)
 
-    # Fallback explicativo estilo Veritasium (152 palabras calibradas a 62.0s)
-    title_clean = re.sub(r"^[¿\s]+|[?!\s]+$", "", title)
+    # Fallback explicativo neutral y fiel (~136 palabras calibradas a ~61.5-63.5s, sin apertura suave)
     return (
-        f"A simple vista esto parece un error imposible o un fenómeno sacado de la ciencia ficción, pero detrás se esconde un mecanismo fundamental que desafía lo que creíamos seguro. "
-        f"Lo que acaba de confirmarse pone en alerta máxima a la comunidad internacional: {title_clean}. "
-        f"De acuerdo con los reportes contrastados directamente por la redacción de {source}, el verdadero peligro no es solo lo que vemos en superficie, sino la reacción en cadena desatada en los sistemas críticos. "
-        f"Pensemos en esto como un efecto dominó a escala masiva, donde una pequeña anomalía física multiplica su fuerza hasta empujar a los protocolos de emergencia al límite operativo. "
-        f"Para resolverlo, los especialistas tuvieron que recurrir a una maniobra técnica de altísima precisión, aislando el punto de falla antes de que el colapso fuera inevitable. "
-        f"Este suceso nos recuerda una verdad inquietante sobre el mundo moderno: cuanto más compleja es la tecnología que nos rodea, más frágil resulta la línea que nos separa del caos."
+        f"Lo que acaba de ocurrir desafía lo que todos asumíamos como seguro en esta operación. "
+        f"Los reportes oficiales publicados por {source} confirman un incidente crítico que ya analizan a fondo los equipos técnicos. "
+        f"Lejos de iniciar con una falla obvia en la superficie, los registros disponibles apuntan a una desviación silenciosa dentro de los parámetros operativos principales. "
+        f"Cuando un sistema complejo trabaja cerca de su límite, funciona como una torre bajo tensión invisible: un pequeño desajuste en un punto crítico altera el equilibrio completo en cuestión de segundos. "
+        f"Por eso cada investigación técnica se concentra en reconstruir la cadena exacta de señales y registros previos, paso a paso, antes de emitir conclusiones. "
+        f"Al final, en cualquier operación de alto riesgo, entender dónde cedió el margen de seguridad es la clave para evitar que se repita."
     )
-
-
-def extract_story_metrics(title: str, script: str, source: str, genre_label: str) -> Dict[str, Any]:
-    """
-    Extrae métricas, identificadores y anclas reales directamente desde el titular y guión
-    (nunca inventa cifras falsas) para contextualizar las composiciones Remotion.
-    """
-    combined = f"{title}. {script}"
-    metrics: Dict[str, Any] = {
-        "sourceTag": f"FUENTE: {(source or 'PRENSA OFICIAL').upper()[:28]}",
-    }
-
-    # Identificadores aeronáuticos / vuelos / aeronaves reales (evita preposiciones/meses como "En 1971" o "Nov 13")
-    flight_m = re.search(
-        r"\b(?!(?:EN|DE|EL|LA|AL|UN|IN|ON|AT|TO|BY|OF|AS|OR|NO|SI|SE|ES|SU|LO|DEL|LOS|LAS|CON|POR|SIN|JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)\b)"
-        r"(?:[A-Z]{2,3}[-\s]?\d{2,4}|(?i:Flight\s+\d{1,4}|Vuelo\s+\d{1,4}|Boeing\s+7\d{2}[A-Z0-9-]*|Airbus\s+A3\d{2}[A-Za-z0-9-]*|A3\d{2}neo|Sikorsky\s+S-?\d{2}))\b",
-        combined,
-    )
-    if flight_m:
-        metrics["flightNumber"] = flight_m.group(0).upper()[:22]
-
-    # Altitudes reales si aparecen en pies/metros
-    alt_vals: List[int] = []
-    for raw_num in re.findall(r"\b(\d{1,2}[.,]\d{3}|\d{3,5})\s*(?:ft|pies|feet)\b", combined, re.IGNORECASE):
-        try:
-            alt_vals.append(int(raw_num.replace(".", "").replace(",", "")))
-        except ValueError:
-            pass
-    if len(alt_vals) >= 2:
-        metrics["initialAlt"] = alt_vals[0]
-        metrics["finalAlt"] = alt_vals[1]
-    elif len(alt_vals) == 1:
-        metrics["initialAlt"] = alt_vals[0]
-
-    # Cifras de silicio/IA (nanómetros, TFLOPS, TOPS, porcentajes)
-    nm_m = re.search(r"\b(\d+(?:\.\d+)?)\s*nm\b", combined, re.IGNORECASE)
-    if nm_m:
-        metrics["nodeSize"] = f"{nm_m.group(1)} NM"
-
-    # CVE / severidad real en ciberseguridad
-    cve_m = re.search(r"\b(CVE-\d{4}-\d{4,7})\b", combined, re.IGNORECASE)
-    if cve_m:
-        metrics["cveSeverity"] = cve_m.group(1).upper()
-
-    # Ancla cuantitativa general real en el texto (porcentaje, velocidad, pisos, años, millones, etc.)
-    quant_m = re.search(
-        r"\b(\d+(?:[.,]\d+)?\s*(?:%|km/h|mph|nm|GHz|TFLOPS|TOPS|GB|TB|GW|MW|pisos|millones|billones|personas|pasajeros|satélites|vuelos|días|horas)|(?:Flight|Vuelo)\s+\d{1,4})\b",
-        combined,
-        re.IGNORECASE,
-    )
-    if quant_m:
-        metrics["multiplierTag"] = f"DATO DETECTADO: {quant_m.group(1).upper()[:24]}"
-
-    if "AVIACION" in (genre_label or "").upper() and title:
-        metrics["warningText"] = f"ALERTA: {title[:34].upper()}"
-
-    return metrics
 
 
 def generate_monetizable_storyboard(news: Dict[str, Any]) -> Dict[str, Any]:
     """
-    Genera el desglose editorial completo para 61–65 segundos (13 planos, 145-160 palabras)
-    siguiendo la fórmula de Noticiero 3D Estilizado para Google Flow / Veo con contexto previo y curiosidad.
+    Genera el desglose editorial completo para 61–65 segundos (13 planos, 136-148 palabras)
+    con visuales dinámicos 2.5D y prompts específicos por noticia.
     """
     title = news.get("title", "Alerta de Última Hora")
     source = news.get("source_name") or news.get("source", "PRENSA OFICIAL")
+    summary = news.get("summary", "")
     link = news.get("link", "")
     title_low = title.lower()
     raw_genre = (news.get("genre") or "").upper()
@@ -526,21 +298,49 @@ def generate_monetizable_storyboard(news: Dict[str, Any]) -> Dict[str, Any]:
         genre_label = "G1_AVIACION"
         is_aviation = True
 
-    # Generación dinámica del guión con contexto y emoción (Vox/Johnny Harris / Veritasium)
-    script = generate_dynamic_news_script(news, genre_label)
+    news_enriched = news if "article_text" in news else enrich_news_item(news, fetch_remote=False)
+    article_text = str(news_enriched.get("article_text") or "")
+    receipt_facts = {
+        "numbers": news_enriched.get("extracted_numbers") or [],
+        "receipt_quote": news_enriched.get("receipt_quote") or "",
+        "highlight_phrase": news_enriched.get("highlight_phrase") or "",
+        "technical_cause": news_enriched.get("technical_cause") or "",
+        "fetched_ok": bool(news_enriched.get("fetched_ok", False)),
+    }
+
+    script = generate_dynamic_news_script(news_enriched, genre_label)
     words = script.split()
     word_count = len(words)
     est_duration = round(word_count / 2.3, 1)
+
+    story_metrics = extract_story_metrics(
+        title=title,
+        script=script,
+        source=source,
+        genre_label=genre_label,
+        article_text=article_text,
+        receipt_facts=receipt_facts,
+    )
+    dynamic_visuals = (
+        build_dynamic_story_visuals(news_enriched, script, genre_label, story_metrics=story_metrics)
+        if word_count >= 50
+        else None
+    )
+
     shots = build_shot_prompts(
         is_aviation=is_aviation,
         is_cyber=is_cyber,
         is_ai=is_ai,
         is_space=is_space,
         title=title,
+        summary=summary,
+        script=script,
+        genre_label=genre_label,
+        dynamic_visuals=dynamic_visuals,
+        story_metrics=story_metrics,
     )
 
-    # Extraer anclas y cifras reales del titular/guión para personalizar placas Remotion sin inventar datos
-    story_metrics = extract_story_metrics(title=title, script=script, source=source, genre_label=genre_label)
+    beats = build_narrative_beat_sheet(script, shots, news=news_enriched, genre_label=genre_label)
 
     def _truncate_words(text: str, limit: int = 110) -> str:
         t = (text or "").strip()
@@ -549,16 +349,24 @@ def generate_monetizable_storyboard(news: Dict[str, Any]) -> Dict[str, Any]:
         cut = t[:limit].rsplit(" ", 1)[0].rstrip(" ,;:-")
         return cut if cut else t[:limit]
 
-    # Asociar fragmento narrativo real del guión a cada plano (evita placas genéricas idénticas)
+    beat_texts_by_shot: Dict[str, List[str]] = {}
+    for b in beats:
+        sid = str(b.get("shot_id") or "")
+        if sid and b.get("text"):
+            beat_texts_by_shot.setdefault(sid, []).append(str(b["text"]).strip())
+
     script_sentences = [s.strip() for s in re.split(r"(?<=[.!?])\s+", script) if s.strip()]
     total_shots = len(shots) or 13
     for idx, shot in enumerate(shots):
-        if script_sentences:
+        linked = beat_texts_by_shot.get(str(shot.get("id") or ""))
+        if linked:
+            shot["narrative_excerpt"] = _truncate_words(" ".join(linked), 110)
+        elif script_sentences:
             s_idx = min(len(script_sentences) - 1, int(idx * len(script_sentences) / total_shots))
             shot["narrative_excerpt"] = _truncate_words(script_sentences[s_idx], 110)
         else:
             shot["narrative_excerpt"] = _truncate_words(title, 110)
-        if shot.get("render_mode") == "infographic":
+        if shot.get("render_mode") == "infographic" and not shot.get("remotion_props"):
             shot["remotion_props"] = dict(story_metrics)
 
     return {
@@ -569,8 +377,10 @@ def generate_monetizable_storyboard(news: Dict[str, Any]) -> Dict[str, Any]:
         "script": script,
         "word_count": word_count,
         "est_duration": est_duration,
+        "receipt_facts": receipt_facts,
         "story_metrics": story_metrics,
         "shots": shots,
+        "beats": beats,
     }
 
 
@@ -602,24 +412,38 @@ def _rescale_sentence_boundaries(audio_path: Path, factor: float) -> None:
         print(f"[PIPELINE] ✅ Marcas temporales reescaladas x{scale:.4f} para mantener sincronía.", flush=True)
 
 
-async def synthesize_voiceover(script: str, output_path: Path, voice: str = "Fenrir") -> float:
+async def synthesize_voiceover(script: str, output_path: Path, voice: Optional[str] = None) -> float:
     """
-    Sintetiza la voz del locutor periodístico con Gemini 3.8 Flash TTS (con fallback a Edge-TTS)
-    con dirección actoral de alta energía, emoción dramática y ritmo ágil para TikTok.
+    Sintetiza la voz del locutor con acento netamente costarricense (es-CR-JuanNeural por defecto,
+    ritmo pausado y claro) y fallback automático a Gemini TTS con dirección tica.
     Garantiza que la duración supere los 61.0 segundos para cumplir siempre con el requisito
     de monetización de TikTok Creator Rewards (>60s).
     """
-    style = (
-        "Locución apasionada, vibrante y con profunda emoción dramática para noticiero de última hora en TikTok. "
-        "Ritmo enérgico y acelerado, con inflexiones vivas de asombro y tensión periodística en las cifras y exclamaciones. "
-        "Cero monotonía, cero tono plano o robótico; locución llena de convicción, nervio y adrenalina."
+    loc_cfg = load_locucion_config()
+    motor = str(loc_cfg.get("motor_principal", "edge_tts")).lower()
+    prefer_edge = motor != "gemini"
+    voice_edge = str(loc_cfg.get("voz_edge", "es-CR-JuanNeural"))
+    rate_edge = str(loc_cfg.get("rate_edge", "-4%"))
+    pitch_edge = str(loc_cfg.get("pitch_edge", "+0Hz"))
+    voice_gemini = str(voice or loc_cfg.get("voz_gemini_fallback", "Orus"))
+    tighten = bool(loc_cfg.get("tighten_silencios", False))
+
+    dur = generate_speech(
+        script,
+        output_path,
+        voice_gemini=voice_gemini,
+        voice_edge=voice_edge,
+        style=DEFAULT_COSTA_RICA_STYLE,
+        tighten=tighten,
+        prefer_edge=prefer_edge,
+        rate_edge=rate_edge,
+        pitch_edge=pitch_edge,
     )
-    dur = generate_speech(script, output_path, voice_gemini=voice, voice_edge="es-MX-JorgeNeural", style=style)
 
     # Si la lectura queda por debajo de 61.1s, calibrar tempo suavemente y asegurar piso >= 61.1s
     # para cumplir siempre con TikTok Creator Rewards (>60.1s) manteniendo naturalidad vocal.
     if 0 < dur < 61.1:
-        factor = max(0.89, dur / 61.6)
+        factor = max(0.92, dur / 61.6)
         if 0.5 <= factor <= 0.99:
             print(f"[PIPELINE] Calibrando tempo sutil ({factor:.3f}) para garantizar >61.0s de monetización sin alterar tono...", flush=True)
             adjusted_path = output_path.with_suffix(".adj.mp3")
@@ -713,6 +537,7 @@ def run_pipeline(genre_key: Optional[str] = None, rank_index: int = 0) -> Path:
     print(f"\n2. Noticia seleccionada para [{top_news.get('genre_label', genre_key)}]:")
     print(f"   [{top_news['source_name']}] {top_news['title']}")
 
+    top_news = enrich_news_item(top_news, fetch_remote=True)
     storyboard = generate_monetizable_storyboard(top_news)
 
     # Derivar sufijo canónico exacto para la carpeta de entrega
@@ -741,7 +566,8 @@ def run_pipeline(genre_key: Optional[str] = None, rank_index: int = 0) -> Path:
     (delivery_dir / "shots").mkdir(parents=True, exist_ok=True)
 
     audio_file = delivery_dir / "LOCUCION_NOTICIERO_62S.mp3"
-    print("\n3. Sintetizando locución periodística con Gemini 3.8 Flash TTS / Edge-TTS...", flush=True)
+    loc_cfg = load_locucion_config()
+    print("\n3. Sintetizando locución periodística costarricense (es-CR pausada)...", flush=True)
     real_dur = asyncio.run(synthesize_voiceover(storyboard["script"], audio_file))
     mon_status = "Cumple >60s para TikTok Monetización" if real_dur >= 60.1 else f"⚠️ Bajo mínimo 60.1s ({real_dur:.2f}s)"
     print(f"   Audio generado con éxito: {audio_file.name} ({real_dur:.2f} s | {mon_status})")
@@ -796,9 +622,19 @@ def run_pipeline(genre_key: Optional[str] = None, rank_index: int = 0) -> Path:
         "duration_seconds": real_dur,
         "is_monetizable": real_dur >= 60.1,
         "audio_file": audio_file.name,
+        "voice_profile": {
+            "motor_principal": loc_cfg.get("motor_principal", "edge_tts"),
+            "acento": loc_cfg.get("acento", "es-CR (Costa Rica)"),
+            "voz_edge": loc_cfg.get("voz_edge", "es-CR-JuanNeural"),
+            "rate_edge": loc_cfg.get("rate_edge", "-4%"),
+            "pitch_edge": loc_cfg.get("pitch_edge", "+0Hz"),
+        },
+        "receipt_facts": storyboard.get("receipt_facts", {}),
         "story_metrics": storyboard.get("story_metrics", {}),
         "shots_count": len(storyboard["shots"]),
         "shots": storyboard["shots"],
+        "beats_count": len(storyboard.get("beats", [])),
+        "beats": storyboard.get("beats", []),
         "hashtags": tag_info["hashtags"],
         "hashtags_str": tag_info["hashtags_str"],
         "tiktok_caption": tag_info["tiktok_caption"],

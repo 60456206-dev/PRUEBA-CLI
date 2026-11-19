@@ -166,44 +166,46 @@ class TestRemotionRenderer(unittest.TestCase):
 
     def test_composition_selection_disambiguates_infographics_by_shot(self):
         genre = "G1_AVIACION_CATASTROFES"
-        self.assertEqual(remotion_renderer.get_composition_for_shot(genre, "SH01", "Infografía Táctica 3D"), "VeritasiumAltimeter")
-        self.assertEqual(remotion_renderer.get_composition_for_shot(genre, "SH03", "Infografía Táctica 3D"), "VeritasiumAltimeter")
-        self.assertEqual(remotion_renderer.get_composition_for_shot(genre, "SH10", "Infografía Táctica 3D"), "VeritasiumBlueprint")
-        self.assertEqual(remotion_renderer.get_composition_for_shot(genre, "SH11", "Infografía Táctica 3D"), "VeritasiumStatComparison")
-        self.assertEqual(remotion_renderer.get_composition_for_shot(genre, "SH13", "Infografía Táctica 3D"), "VeritasiumDocumentaryOutro")
+        self.assertEqual(remotion_renderer.get_composition_for_shot(genre, "SH01", "Mapa Editorial 2.5D", has_geo=True), "Editorial25DMap")
+        self.assertEqual(remotion_renderer.get_composition_for_shot(genre, "SH01", "Mapa Editorial 2.5D", has_geo=False), "Editorial25DFactSheet")
+        self.assertEqual(remotion_renderer.get_composition_for_shot(genre, "SH03", "Dato Clave 2.5D", has_geo=True), "Editorial25DFactSheet")
+        self.assertEqual(remotion_renderer.get_composition_for_shot(genre, "SH10", "Diagrama Progresivo 2.5D"), "Editorial25DDiagram")
+        self.assertEqual(remotion_renderer.get_composition_for_shot(genre, "SH11", "Evidencia Documental 2.5D"), "Editorial25DFactSheet")
+        self.assertEqual(remotion_renderer.get_composition_for_shot(genre, "SH13", "Cierre Documental 2.5D"), "Editorial25DOutro")
 
-    def test_disaster_genre_maps_away_from_altimeter(self):
-        self.assertEqual(remotion_renderer.get_composition_for_genre("G1_CATASTROFES"), "VeritasiumStatComparison")
-        self.assertEqual(remotion_renderer.get_composition_for_genre("G1_AVIACION"), "VeritasiumAltimeter")
+    def test_disaster_genre_maps_away_from_aircraft_diagram(self):
+        self.assertEqual(remotion_renderer.get_composition_for_genre("G1_CATASTROFES"), "Editorial25DFactSheet")
+        self.assertEqual(remotion_renderer.get_composition_for_genre("G1_AVIACION"), "Editorial25DMap")
         props = remotion_renderer.build_category_props(
             "G3_IA_HARDWARE",
             title="Chip de 2nm",
-            composition_id="VeritasiumBlueprint",
+            composition_id="Editorial25DDiagram",
         )
-        self.assertEqual(props["theme"], "hardware")
-        self.assertIn("2 NM", props["metricA"])
+        self.assertEqual(props["diagramKind"], "chip")
+        self.assertNotIn("VERITASIUM", json.dumps(props).upper())
 
-    def test_genre_mapping_avoids_ia_substring_false_positives(self):
-        self.assertEqual(remotion_renderer.get_composition_for_genre("G4_ESPACIO_CIENCIA"), "VeritasiumStatComparison")
+    def test_genre_mapping_avoids_ia_substring_false_positives_and_fake_metrics(self):
+        self.assertEqual(remotion_renderer.get_composition_for_genre("G4_ESPACIO_CIENCIA"), "Editorial25DMap")
         self.assertEqual(
-            remotion_renderer.get_composition_for_shot("G4_ESPACIO_CIENCIA", "SH03", "Telemetría de Descenso"),
-            "VeritasiumBlueprint",
+            remotion_renderer.get_composition_for_shot("G4_ESPACIO_CIENCIA", "SH10", "Diagrama de Sonda"),
+            "Editorial25DDiagram",
         )
         props_space = remotion_renderer.build_category_props(
             "G4_ESPACIO_CIENCIA",
             title="Telescopio detecta señal en órbita",
-            composition_id="VeritasiumStatComparison",
+            composition_id="Editorial25DFactSheet",
         )
-        self.assertEqual(props_space["theme"], "space")
         self.assertNotIn("$4.2B", json.dumps(props_space))
+        self.assertNotIn("VERITASIUM", json.dumps(props_space).upper())
+        self.assertNotIn("35,000", json.dumps(props_space))
 
-        self.assertEqual(remotion_renderer.get_composition_for_genre("G3_IA_ROBOTICA"), "VeritasiumTechChip")
+        self.assertEqual(remotion_renderer.get_composition_for_genre("G3_IA_ROBOTICA"), "Editorial25DDiagram")
         props_ai = remotion_renderer.build_category_props(
             "G3_IA_ROBOTICA",
             title="Nuevo chip autónomo",
-            composition_id="VeritasiumTechChip",
+            composition_id="Editorial25DDiagram",
         )
-        self.assertEqual(props_ai["theme"], "hardware")
+        self.assertEqual(props_ai["diagramKind"], "chip")
 
     def test_verified_source_card_renders_cleanly_across_genres(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -266,9 +268,10 @@ class TestPipelineAndSubtitles(unittest.TestCase):
                 sentence_boundaries_file=bounds,
             )
             content = ass_path.read_text(encoding="utf-8")
-            # CapCutBouncing MarginV=560 & HookPill MarginV=175
-            self.assertIn(",560,1", content)
-            self.assertIn(",175,1", content)
+            # CapCutBouncing MarginV=560 & MarginR=170 (Safe Zone derecha); sin HookPill invasivo
+            self.assertIn(",65,170,560,1", content)
+            self.assertNotIn("HookPill", content)
+            self.assertNotIn("ÚLTIMA HORA", content)
             # Second sentence starts near 0:00:30.00, not linearly compressed
             self.assertIn("0:00:30.00", content)
 
@@ -433,11 +436,100 @@ class TestRenderAndSyncUpgrades(unittest.TestCase):
         props_chip = remotion_renderer.build_category_props(
             "G3_IA_HARDWARE",
             title="Nuevo procesador TSMC 2nm supera el 40%",
-            composition_id="VeritasiumTechChip",
-            extra_props={**metrics_av, "nodeSize": "2 NM"},
+            composition_id="Editorial25DDiagram",
+            extra_props={**metrics_av, "diagramKind": "chip"},
         )
-        self.assertEqual(props_chip["nodeSize"], "2 NM")
+        self.assertEqual(props_chip["diagramKind"], "chip")
         self.assertNotIn("flightNumber", props_chip)
+
+        props_fact = remotion_renderer.build_category_props(
+            "G3_IA_HARDWARE",
+            title="Nuevo procesador TSMC 2nm supera el 40%",
+            composition_id="Editorial25DFactSheet",
+            extra_props={"nodeSize": "2 NM"},
+        )
+        self.assertEqual(props_fact["mode"], "metric")
+        self.assertEqual(props_fact["heroValue"], "2 NM")
+
+    def test_geo_resolver_and_story_aware_prompts_avoid_recycled_florida_boats(self):
+        import editorial_director
+
+        geo_div = editorial_director.resolve_geo_context(
+            "Un Airbus A350 de Thai Airways volando de Múnich a Bangkok se desvía de emergencia a Nueva Delhi.",
+            "G1_AVIACION",
+        )
+        self.assertTrue(geo_div["has_geo"])
+        self.assertEqual(geo_div["mapMode"], "diversion")
+        self.assertEqual(geo_div["origin"]["code"], "MUC")
+        self.assertEqual(geo_div["plannedDest"]["code"], "BKK")
+        self.assertEqual(geo_div["diversionDest"]["code"], "DEL")
+
+        geo_none = editorial_director.resolve_geo_context(
+            "Nuevo algoritmo de compresión reduce el consumo energético de centros de datos.",
+            "G3_IA_HARDWARE",
+        )
+        self.assertFalse(geo_none["has_geo"])
+
+        shots = pipeline_autonomo.build_shot_prompts(
+            is_aviation=True,
+            title="Thai Airways Airbus A350 flight TG925 from Munich to Bangkok diverts safely to New Delhi",
+            summary="Precautionary diversion with safe runway landing.",
+            genre_label="G1_AVIACION",
+        )
+        joined = json.dumps(shots, ensure_ascii=False).lower()
+        self.assertIn("airbus a350", joined)
+        self.assertNotIn("florida", joined)
+        self.assertNotIn("rescue boats", joined)
+        self.assertNotIn("twin-engine private jet", joined)
+        self.assertNotIn("veritasium", joined)
+
+    def test_dynamic_story_visuals_gemini_merges_into_storyboard(self):
+        import io
+        long_script = " ".join([f"palabra{i}." if i % 14 == 0 else f"palabra{i}" for i in range(1, 141)])
+        mock_visuals = {
+            "flow_shots": {
+                "SH02": {
+                    "action": "Airbus A350 sobre nubes al atardecer",
+                    "visual_en": "Airbus A350 widebody cruising over warm dusk clouds",
+                    "fallback_en": "Commercial airliner over dusk clouds",
+                }
+            },
+            "editorial_graphics": {
+                "SH01": {
+                    "has_geo": True,
+                    "mapMode": "diversion",
+                    "kicker": "CORREDOR AÉREO",
+                    "headline": "DESVÍO PREVENTIVO DEL VUELO TG925",
+                    "origin": {"name": "MÚNICH", "code": "MUC", "lon": 11.582, "lat": 48.135},
+                    "plannedDest": {"name": "BANGKOK", "code": "BKK", "lon": 100.502, "lat": 13.756},
+                    "diversionDest": {"name": "NUEVA DELHI", "code": "DEL", "lon": 77.209, "lat": 28.614},
+                    "highlightCountries": ["Germany", "India", "Thailand"],
+                    "stampText": "DESVÍO EN VUELO",
+                    "cardKicker": "THAI AIRWAYS",
+                    "cardHeadline": "VUELO TG925 · A350",
+                    "cardLines": ["RUTA MÚNICH A BANGKOK", "ATERRIZAJE SEGURO EN DELHI"],
+                },
+                "SH10": {
+                    "diagramKind": "aircraft",
+                    "headline": "¿POR QUÉ DESVIAR ANTES DE UN FALLO?",
+                },
+            },
+        }
+        payload = json.dumps({"candidates": [{"content": {"parts": [{"text": json.dumps(mock_visuals)}]}}]}).encode("utf-8")
+        with mock.patch.dict(os.environ, {"GEMINI_API_KEY": "fake-key"}), \
+             mock.patch.object(pipeline_autonomo, "generate_dynamic_news_script", return_value=long_script), \
+             mock.patch("urllib.request.urlopen", return_value=io.BytesIO(payload)):
+            sb = pipeline_autonomo.generate_monetizable_storyboard({
+                "title": "Thai Airways A350 TG925 Munich to Bangkok diverts to New Delhi",
+                "source_name": "Aviation24 Global",
+                "link": "https://example.com/tg925",
+                "genre": "G1_AVIACION_CATASTROFES",
+            })
+        sh02 = next(s for s in sb["shots"] if s["id"] == "SH02")
+        sh01 = next(s for s in sb["shots"] if s["id"] == "SH01")
+        self.assertIn("Airbus A350 widebody cruising", sh02["prompt"])
+        self.assertEqual(sh01["remotion_props"]["headline"], "DESVÍO PREVENTIVO DEL VUELO TG925")
+        self.assertEqual(sh01["remotion_props"]["diversionDest"]["code"], "DEL")
 
     def test_remotion_batch_worker_payload_and_crf(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -447,15 +539,15 @@ class TestRenderAndSyncUpgrades(unittest.TestCase):
                 batch_json = Path(cmd[2])
                 data = json.loads(batch_json.read_text(encoding="utf-8"))
                 self.assertEqual(data["jobs"][0]["crf"], 14)
-                self.assertEqual(data["jobs"][0]["compositionId"], "VeritasiumStatComparison")
+                self.assertEqual(data["jobs"][0]["compositionId"], "Editorial25DFactSheet")
                 out_mp4.write_bytes(b"0" * 15_000)
                 return mock.Mock(returncode=0, stdout="[REMOTION-BATCH] ✅ SH01.mp4")
 
             with mock.patch("subprocess.run", side_effect=fake_run):
                 res = remotion_renderer.render_remotion_batch([{
-                    "compositionId": "VeritasiumStatComparison",
+                    "compositionId": "Editorial25DFactSheet",
                     "outputLocation": str(out_mp4),
-                    "inputProps": {"title": "TEST"},
+                    "inputProps": {"headline": "TEST"},
                 }], crf=14)
             self.assertEqual(res[str(out_mp4)], out_mp4)
 
@@ -554,6 +646,7 @@ class TestRenderAndSyncUpgrades(unittest.TestCase):
 
             with mock.patch.dict("os.environ", {"FLOW_PROFILE_DIRS": f"{p1}:{p2}", "FLOW_STATE_FILE": str(state_file)}), \
                  mock.patch.object(flow_generator, "async_playwright", new=object()), \
+                 mock.patch.object(flow_generator, "generate_story_style_anchor", return_value=None), \
                  mock.patch.object(flow_generator, "verify_mp4", side_effect=fake_verify), \
                  mock.patch.object(flow_generator, "_run_single_profile_session", side_effect=fake_session), \
                  mock.patch("asyncio.sleep", new=mock.AsyncMock()):
@@ -672,6 +765,332 @@ class TestRenderAndSyncUpgrades(unittest.TestCase):
                 parts = ln.split(",", 4)
                 dur = _to_sec(parts[2]) - _to_sec(parts[1])
                 self.assertGreaterEqual(dur, 0.30, f"Subtitle flash too short: {ln}")
+
+    def test_costa_rican_locucion_config_and_active_loop_tts(self):
+        import asyncio
+        cfg = json.loads((TOOLS_DIR.parent / "config_produccion.json").read_text(encoding="utf-8"))
+        loc = cfg["locucion"]
+        self.assertEqual(loc["motor_principal"], "edge_tts")
+        self.assertEqual(loc["voz_edge"], "es-CR-JuanNeural")
+        self.assertEqual(loc["rate_edge"], "-4%")
+        self.assertEqual(loc["pitch_edge"], "+0Hz")
+        self.assertFalse(loc["tighten_silencios"])
+
+        with tempfile.TemporaryDirectory() as tmp:
+            d = Path(tmp)
+            out_mp3 = d / "LOCUCION_NOTICIERO_62S.mp3"
+            stale_wb = d / "WORD_BOUNDARIES.json"
+            stale_wb.write_text('[{"text":"viejo","start":0,"end":1}]', encoding="utf-8")
+            calls = []
+
+            async def fake_edge(text, output_path, voice="es-CR-JuanNeural", rate="-4%", pitch="+0Hz"):
+                calls.append((voice, rate, pitch))
+                audio_generator._clear_stale_boundaries(output_path)
+                output_path.write_bytes(b"mp3")
+                (output_path.parent / "WORD_BOUNDARIES.json").write_text("[]", encoding="utf-8")
+                return True
+
+            async def call_from_loop():
+                return await pipeline_autonomo.synthesize_voiceover("Texto de prueba tico.", out_mp3)
+
+            with mock.patch.object(audio_generator, "_generate_speech_edge_async", side_effect=fake_edge), \
+                 mock.patch.object(audio_generator, "generate_speech_gemini") as m_gem, \
+                 mock.patch.object(audio_generator, "tighten_audio_dead_air") as m_tight, \
+                 mock.patch.object(audio_generator, "probe_duration", return_value=62.5), \
+                 mock.patch.object(pipeline_autonomo, "probe_duration", return_value=62.5):
+                dur = asyncio.run(call_from_loop())
+
+            self.assertEqual(dur, 62.5)
+            self.assertEqual(calls, [("es-CR-JuanNeural", "-4%", "+0Hz")])
+            m_gem.assert_not_called()
+            m_tight.assert_not_called()
+            self.assertEqual(stale_wb.read_text(encoding="utf-8"), "[]")
+
+            # Si Edge-TTS falla, cae automáticamente a Gemini con dirección costarricense
+            with mock.patch.object(audio_generator, "_generate_speech_edge_async", return_value=False), \
+                 mock.patch.object(audio_generator, "generate_speech_gemini", return_value=True) as m_gem_fb, \
+                 mock.patch.object(audio_generator, "probe_duration", return_value=62.1), \
+                 mock.patch.object(audio_generator, "extract_word_boundaries_whisper"):
+                (d / "WORD_BOUNDARIES.json").unlink(missing_ok=True)
+                dur_fb = audio_generator.generate_speech("Texto fallback.", out_mp3)
+            self.assertEqual(dur_fb, 62.1)
+            m_gem_fb.assert_called_once()
+            self.assertEqual(m_gem_fb.call_args.kwargs["voice"], "Orus")
+            self.assertIn("costarricense", m_gem_fb.call_args.kwargs["style"].lower())
+
+    def test_generate_dynamic_news_script_condenses_overlong_output(self):
+        import io
+        long_text = " ".join([f"palabra{i}" for i in range(185)])
+        condensed_text = " ".join([f"palabra{i}" for i in range(136)])
+        responses = [
+            io.BytesIO(json.dumps({"candidates": [{"content": {"parts": [{"text": long_text}]}}]}).encode("utf-8")),
+            io.BytesIO(json.dumps({"candidates": [{"content": {"parts": [{"text": condensed_text}]}}]}).encode("utf-8")),
+        ]
+        with mock.patch.dict(os.environ, {"GEMINI_API_KEY": "fake-key"}), \
+             mock.patch("urllib.request.urlopen", side_effect=responses) as m_open:
+            out = pipeline_autonomo.generate_dynamic_news_script(
+                {"title": "Prueba vuelo TG925", "source_name": "Aviation24", "summary": "Alerta en cabina."},
+                "G1_AVIACION",
+            )
+        self.assertEqual(m_open.call_count, 2)
+        self.assertEqual(len(out.split()), 136)
+
+
+class TestVeritasiumBroadcastUpgrade(unittest.TestCase):
+    def test_news_radar_extracts_html_text_and_verified_receipt_facts(self):
+        html_doc = """
+        <html><body>
+          <nav>Inicio | Suscríbete ahora | Cookies</nav>
+          <script>var secret = "ignore me";</script>
+          <article>
+            <p>Boeing 787 flight BA117 carrying 242 passengers diverted to Reykjavik after sensors reported a 35% hydraulic pressure drop.</p>
+            <p>FAA investigators confirmed the precautionary diversion occurred due to a faulty bypass valve seal in the right manifold.</p>
+          </article>
+          <footer>Copyright 2026</footer>
+        </body></html>
+        """
+        extracted = news_radar.extract_article_text_from_html(html_doc, max_chars=2000)
+        self.assertNotIn("Suscríbete", extracted)
+        self.assertNotIn("ignore me", extracted)
+        self.assertIn("242 passengers", extracted)
+        self.assertIn("faulty bypass valve seal", extracted)
+
+        facts = news_radar.extract_verified_receipt_facts(
+            extracted,
+            title="Boeing 787 flight BA117 diverts over hydraulic alert",
+            source="AeroTime",
+        )
+        self.assertTrue(any("242" in n or "35%" in n or "Boeing 787" in n for n in facts["numbers"]))
+        self.assertTrue(facts["receipt_quote"])
+        self.assertTrue(facts["highlight_phrase"])
+        self.assertIn(facts["highlight_phrase"].lower(), facts["receipt_quote"].lower())
+
+    def test_veritasium_beat_sheet_and_audio_first_alignment(self):
+        import editorial_director
+
+        sentences = [
+            "Todos asumimos que perder un sensor obliga al piloto a aterrizar de inmediato.",
+            "En realidad, el Boeing 787 del vuelo BA117 siguió volando con total control manual.",
+            "Según AeroTime, los 242 pasajeros cruzaban el Atlántico cuando cayó la presión hidráulica.",
+            "El sistema derecho perdió 35% de presión en pleno ascenso sobre el océano.",
+            "Pero los ingenieros diseñan tres circuitos hidráulicos independientes desde el principio.",
+            "Cada circuito alimenta superficies de control críticas sin compartir el mismo fluido.",
+            "Cuando una válvula falla, una compuerta mecánica aísla la fuga en milisegundos.",
+            "Así evita que una sola pérdida vacíe el resto de los acumuladores del avión.",
+            "Sin embargo, las listas de verificación prohíben ignorar una degradación múltiple.",
+            "Si aparece una segunda anomalía en ruta oceánica, el margen legal cambia por completo.",
+            "Ahí está el verdadero motivo del desvío: no fue pánico, fue redundancia preventiva.",
+            "Incluso con dos sistemas sanos, cruzar sin alternativa cercana reduce el margen de seguridad.",
+            "Por eso el comandante viró hacia Islandia aunque la cabina mostraba estabilidad total.",
+            "Los reportes de la FAA confirman que la válvula de desvío activó el aviso preventivo.",
+            "Ese equilibrio entre autonomía y prudencia separa un susto de una emergencia real.",
+            "Cuando un sistema complejo avisa antes del fallo, ese desvío en calma es el diseño funcionando.",
+        ]
+        script = " ".join(sentences)
+        shots = [{"id": f"SH{i:02d}", "shot_type": "Escena"} for i in range(1, 14)]
+        beats = editorial_director.build_narrative_beat_sheet(script, shots, genre_label="AVIACIÓN")
+
+        self.assertGreaterEqual(len(beats), 14)
+        self.assertLessEqual(len(beats), 20)
+        hard_cuts = sum(1 for b in beats[1:] if b.get("transition_in") == "cut")
+        self.assertGreaterEqual(hard_cuts / max(1, len(beats) - 1), 0.75)
+        for idx in range(1, len(beats)):
+            if beats[idx]["transition_in"] == "dissolve":
+                self.assertNotEqual(beats[idx]["act"], beats[idx - 1]["act"])
+        self.assertEqual(sum(1 for b in beats if b.get("music_drop")), 1)
+        self.assertTrue(any(b.get("variant") == "punch_in" for b in beats))
+
+        words = script.split()
+        total_dur = 64.0
+        dt = total_dur / len(words)
+        wb = [
+            {"text": w, "start": round(i * dt, 3), "end": round((i + 1) * dt - 0.01, 3)}
+            for i, w in enumerate(words)
+        ]
+        aligned = ensamblador_final.align_beats_to_audio(beats, wb, [], total_dur, script=script)
+        self.assertEqual(len(aligned), len(beats))
+        self.assertLessEqual(max(b["sync_delta_sec"] for b in aligned), 0.15)
+        self.assertAlmostEqual(aligned[-1]["end_sec"], total_dur, places=2)
+
+    def test_music_drop_window_attenuates_music_at_least_20db(self):
+        import math
+        import shutil
+        import struct
+        import subprocess
+        import wave
+
+        if shutil.which("ffmpeg") is None:
+            self.skipTest("ffmpeg no disponible")
+
+        with tempfile.TemporaryDirectory() as tmp:
+            d = Path(tmp)
+            voice_wav = d / "voice_ref.wav"
+            sr = 48000
+            total_dur = 7.5
+            n_samples = int(sr * total_dur)
+            # Pulso de referencia breve solo al inicio (0.15-0.35s) y silencio después para medir la caída limpia de música
+            with wave.open(str(voice_wav), "wb") as wf:
+                wf.setnchannels(1)
+                wf.setsampwidth(2)
+                wf.setframerate(sr)
+                frames = bytearray()
+                for i in range(n_samples):
+                    t = i / sr
+                    val = int(12000 * math.sin(2.0 * math.pi * 440.0 * t)) if (0.15 <= t <= 0.35) else 0
+                    frames.extend(struct.pack("<h", val))
+                wf.writeframes(bytes(frames))
+
+            master_m4a = d / "master.m4a"
+            ensamblador_final.synthesize_broadcast_audio_master(
+                voice_mp3=voice_wav,
+                total_dur=total_dur,
+                transition_times=[],
+                master_m4a=master_m4a,
+                genre="G1",
+                sfx_events=[],
+                music_drop_window=(2.6, 5.4),
+            )
+            self.assertTrue(master_m4a.exists())
+
+            decoded_wav = d / "decoded.wav"
+            subprocess.run(
+                ["ffmpeg", "-y", "-i", str(master_m4a), "-ac", "1", "-ar", "48000", str(decoded_wav)],
+                check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            )
+            with wave.open(str(decoded_wav), "rb") as wf:
+                raw = wf.readframes(wf.getnframes())
+            samples = struct.unpack(f"<{len(raw) // 2}h", raw)
+
+            def rms_db(t0: float, t1: float) -> float:
+                seg = samples[int(t0 * sr):int(t1 * sr)]
+                mean_sq = sum(s * s for s in seg) / max(1, len(seg))
+                return 10.0 * math.log10(max(1e-12, mean_sq / (32768.0 ** 2)))
+
+            normal_db = rms_db(0.9, 2.2)
+            drop_db = rms_db(3.1, 4.9)
+            self.assertGreaterEqual(normal_db - drop_db, 20.0)
+
+    def test_editorial_receipt_routing_and_factsheet_no_fake_ratios(self):
+        comp_receipt = remotion_renderer.get_composition_for_shot(
+            genre="G1", shot_id="SH03", shot_type="Recibo Documental 2.5D", has_geo=True, has_receipt=True
+        )
+        self.assertEqual(comp_receipt, "Editorial25DReceipt")
+
+        receipt_props = remotion_renderer.build_category_props(
+            genre="G1",
+            title="Vuelo BA117 desviado a Islandia",
+            subtitle="Alerta de sensor hidráulico confirmada",
+            duration_frames=108,
+            composition_id="Editorial25DReceipt",
+            extra_props={
+                "sourceName": "AeroTime",
+                "receiptQuote": "El sensor reportó caída de presión en el circuito hidráulico derecho.",
+                "highlightPhrase": "presión en el circuito hidráulico",
+                "keyMetricBadge": "35% PRESIÓN",
+            },
+        )
+        self.assertEqual(receipt_props["sourceName"], "AeroTime")
+        self.assertIn("presión", receipt_props["highlightPhrase"].lower())
+
+        fact_props = remotion_renderer.build_category_props(
+            genre="G2",
+            title="Incidente en nodo de red",
+            subtitle="Aislamiento preventivo confirmado",
+            duration_frames=108,
+            composition_id="Editorial25DFactSheet",
+        )
+        self.assertNotIn("leftRatio", fact_props)
+        self.assertNotIn("rightRatio", fact_props)
+        tsx_src = (
+            Path(__file__).resolve().parent.parent / "motion_engine" / "src" / "Editorial25DFactSheet.tsx"
+        ).read_text(encoding="utf-8")
+        self.assertIn("hasNumericPair", tsx_src)
+
+    def test_minimalist_cover_and_elevenlabs_timestamps_mocked(self):
+        from PIL import Image, ImageDraw
+
+        with tempfile.TemporaryDirectory() as tmp:
+            d = Path(tmp)
+            (d / "metadata.json").write_text(json.dumps({
+                "title": "El fallo silencioso que obligó a desviar un Boeing 787",
+                "genre": "G1",
+                "source": "AeroTime",
+            }), encoding="utf-8")
+            drawn_texts = []
+            orig_draw_text = ImageDraw.ImageDraw.text
+
+            def spy_text(self_draw, xy, text, *args, **kwargs):
+                drawn_texts.append(str(text))
+                return orig_draw_text(self_draw, xy, text, *args, **kwargs)
+
+            dark_bg = Image.new("RGBA", (1080, 1920), (14, 18, 28, 255))
+            with mock.patch.object(generador_portada, "generate_ai_cover_background", return_value=dark_bg), \
+                 mock.patch.object(ImageDraw.ImageDraw, "text", spy_text):
+                out_cover = generador_portada.generate_tiktok_cover(d)
+
+            self.assertTrue(out_cover.exists())
+            joined = " | ".join(drawn_texts).upper()
+            self.assertNotIn("INFORME EN 60S", joined)
+            self.assertNotIn("FUENTE ·", joined)
+            self.assertNotIn("ÚLTIMA HORA", joined)
+
+            # ElevenLabs /with-timestamps mockeado -> WORD_BOUNDARIES.json y SENTENCE_BOUNDARIES.json
+            import base64
+            text_tts = "Hola mundo."
+            chars = list(text_tts)
+            starts = [round(i * 0.12, 3) for i in range(len(chars))]
+            ends = [round(i * 0.12 + 0.10, 3) for i in range(len(chars))]
+            fake_resp = {
+                "audio_base64": base64.b64encode(b"\xff\xfb\x90\x00" * 260).decode("ascii"),
+                "alignment": {
+                    "characters": chars,
+                    "character_start_times_seconds": starts,
+                    "character_end_times_seconds": ends,
+                },
+            }
+
+            class FakeCtxResp:
+                def __enter__(self):
+                    return self
+
+                def __exit__(self, exc_type, exc, tb):
+                    return False
+
+            out_mp3 = d / "LOCUCION_VOZ.mp3"
+            with mock.patch.object(audio_generator.urllib.request, "urlopen", return_value=FakeCtxResp()), \
+                 mock.patch.object(audio_generator.json, "load", return_value=fake_resp):
+                ok = audio_generator.generate_speech_elevenlabs(
+                    text_tts, out_mp3, voice_id="voice123", api_key="test-key"
+                )
+            self.assertTrue(ok)
+            wb = json.loads((d / "WORD_BOUNDARIES.json").read_text(encoding="utf-8"))
+            sb = json.loads((d / "SENTENCE_BOUNDARIES.json").read_text(encoding="utf-8"))
+            self.assertEqual([w["text"] for w in wb], ["Hola", "mundo."])
+            self.assertEqual(len(sb), 1)
+
+    def test_flow_style_anchor_reuse_and_attach_reference_mocked(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            d = Path(tmp)
+            portada_ai = d / "PORTADA_AI_BASE.jpg"
+            portada_ai.write_bytes(b"\xff\xd8\xff" + b"\x00" * 30_000)
+
+            anchor = flow_generator.generate_story_style_anchor(d, "Título prueba", "G1")
+            self.assertIsNotNone(anchor)
+            self.assertTrue(anchor.exists())
+            self.assertEqual(anchor.name, "FLOW_STYLE_ANCHOR.jpg")
+
+            fake_input = mock.MagicMock()
+            fake_input.count = mock.AsyncMock(return_value=1)
+            fake_input.set_input_files = mock.AsyncMock()
+            fake_page = mock.MagicMock()
+            fake_locator = mock.MagicMock()
+            fake_locator.first = fake_input
+            fake_page.locator = mock.MagicMock(return_value=fake_locator)
+
+            with mock.patch("asyncio.sleep", new=mock.AsyncMock()):
+                attached = flow_generator.asyncio.run(flow_generator.attach_reference_image_to_flow(fake_page, anchor))
+            self.assertTrue(attached)
+            fake_input.set_input_files.assert_awaited_once_with(str(anchor))
 
 
 if __name__ == "__main__":

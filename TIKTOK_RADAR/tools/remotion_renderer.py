@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 """
 TIKTOK RADAR · Remotion Motion Graphic Renderer (Puente Python -> React/Chromium Headless)
-Permite renderizar animaciones vectoriales, gráficos y HUDs técnicos estilo Veritasium
-usando componentes de React a 1080x1920 (9:16 vertical) a 24 fps.
+Renderiza animaciones editoriales 2.5D táctiles (cartografía real, diagramas progresivos,
+fichas de evidencia y cierres documentales) a 1080x1920 (9:16 vertical) a 24 fps.
 
-Composiciones Disponibles:
-  - VeritasiumAltimeter: Telemetría de aviación, altitud barométrica, PFD attitude, alerta pull-up.
-  - VeritasiumTechChip: Arquitectura de silicio 2nm, transistores GAA nanosheet, fotones EUV.
-  - VeritasiumCyberRadar: Radar de ciberataques, flujo de paquetes DDoS, mapa de nodos, CVE severidad.
-  - VeritasiumStatComparison: Comparativa proporcional de inversión/impacto con multiplicador.
-  - VeritasiumBlueprint: Desglose de arquitectura crítica, blueprint vectorial 3D y láser de escaneo.
-  - VeritasiumDocumentaryOutro: Cierre documental solemne por primeros principios con cita y sello oficial.
+Composiciones Principales (Estilo Editorial 2.5D):
+  - Editorial25DMap: Cartografía vectorial real (d3-geo + world-atlas) en perspectiva 2.5D,
+    rutas/desvíos/epicentros animados y ficha de papel archival en paralaje.
+  - Editorial25DDiagram: Croquis técnico progresivo sobre papel archival (avión, chip, red,
+    nave espacial o impacto sísmico) con cotas animadas y conclusión legible en móvil.
+  - Editorial25DFactSheet: Lámina editorial de magnitud verificada o contraste factual sin cajas UI.
+  - Editorial25DOutro: Cierre documental en papel archival y tinta editorial por primeros principios.
 """
 
 import json
@@ -26,6 +26,39 @@ TOOLS_DIR = Path(__file__).resolve().parent
 ROOT_DIR = TOOLS_DIR.parent
 MOTION_ENGINE_DIR = ROOT_DIR / "motion_engine"
 BATCH_WORKER_JS = MOTION_ENGINE_DIR / "render_batch.mjs"
+
+THEME_VISUALS: Dict[str, Dict[str, str]] = {
+    "aviation": {
+        "accentColor": "#E5A93C",
+        "alertColor": "#E63946",
+        "diagramKind": "aircraft",
+        "markerIcon": "plane",
+    },
+    "cyber": {
+        "accentColor": "#F4A261",
+        "alertColor": "#E63946",
+        "diagramKind": "network",
+        "markerIcon": "pulse",
+    },
+    "hardware": {
+        "accentColor": "#38BDF8",
+        "alertColor": "#F59E0B",
+        "diagramKind": "chip",
+        "markerIcon": "chip",
+    },
+    "space": {
+        "accentColor": "#FFB703",
+        "alertColor": "#A855F7",
+        "diagramKind": "spacecraft",
+        "markerIcon": "rocket",
+    },
+    "universal": {
+        "accentColor": "#E5A93C",
+        "alertColor": "#E63946",
+        "diagramKind": "seismic",
+        "markerIcon": "pulse",
+    },
+}
 
 
 def is_remotion_available() -> bool:
@@ -62,51 +95,64 @@ def _resolve_genre_theme(genre: str) -> str:
 
 
 def get_composition_for_genre(genre: str) -> str:
-    """Mapea la categoría editorial al componente Remotion óptimo."""
+    """Mapea la categoría editorial al componente Remotion 2.5D óptimo."""
     theme = _resolve_genre_theme(genre)
     theme_to_comp = {
-        "aviation": "VeritasiumAltimeter",
-        "cyber": "VeritasiumCyberRadar",
-        "hardware": "VeritasiumTechChip",
-        "space": "VeritasiumStatComparison",
-        "universal": "VeritasiumStatComparison",
+        "aviation": "Editorial25DMap",
+        "cyber": "Editorial25DDiagram",
+        "hardware": "Editorial25DDiagram",
+        "space": "Editorial25DMap",
+        "universal": "Editorial25DFactSheet",
     }
-    return theme_to_comp.get(theme, "VeritasiumStatComparison")
+    return theme_to_comp.get(theme, "Editorial25DFactSheet")
 
 
-def get_composition_for_shot(genre: str, shot_id: str = "", shot_type: str = "") -> str:
+def get_composition_for_shot(
+    genre: str,
+    shot_id: str = "",
+    shot_type: str = "",
+    has_geo: bool = True,
+    has_receipt: bool = False,
+) -> str:
     """
-    Selecciona la composición Remotion especializada según el plano y su función narrativa:
-    - SH13 / Cierre: VeritasiumDocumentaryOutro (conclusión por primeros principios).
-    - SH10 / Blueprint / Arquitectura: VeritasiumBlueprint.
-    - SH11 / Evidencia / Comparativa: VeritasiumStatComparison.
-    - SH01 / SH03 / Radar / Telemetría: Composición principal del género (o StatComparison en datos puros).
+    Selecciona la composición Editorial 2.5D especializada según el plano y su función narrativa:
+    - SH13 / Cierre: Editorial25DOutro (conclusión documental en papel archival).
+    - SH10 / Diagrama / Esquema: Editorial25DDiagram (croquis técnico progresivo).
+    - SH11 / Evidencia / Comparativa: Editorial25DFactSheet (contraste o cifra verificada).
+    - SH01 / Contexto: Editorial25DMap si existe ancla geográfica real, o Editorial25DFactSheet.
+    - SH03 / Recibo: Editorial25DReceipt si es Recibo Documental / `has_receipt=True`, sino FactSheet/Diagram.
     """
     s_id = (shot_id or "").upper().strip()
     s_type = (shot_type or "").upper().strip()
 
-    # 1. Prioridad por rol estructural del shot_id para evitar colisiones por etiquetas genéricas
-    if s_id == "SH13" or any(k in s_type for k in ["CIERRE", "DOCUMENTAL", "OUTRO"]):
-        return "VeritasiumDocumentaryOutro"
+    if s_id == "SH13":
+        return "Editorial25DOutro"
     if s_id == "SH10":
-        return "VeritasiumBlueprint"
+        return "Editorial25DDiagram"
+    if has_receipt or any(k in s_type for k in ["RECIBO", "RECEIPT", "PRUEBA DOCUMENTAL"]):
+        return "Editorial25DReceipt"
     if s_id == "SH11":
-        return "VeritasiumStatComparison"
+        return "Editorial25DFactSheet"
     if s_id == "SH01":
-        return get_composition_for_genre(genre)
+        if has_geo:
+            return "Editorial25DMap"
+        return "Editorial25DFactSheet"
     if s_id == "SH03":
-        hero = get_composition_for_genre(genre)
-        if any(k in s_type for k in ["DATOS", "ESTADISTICA", "COMPARATIVA", "METRICAS", "MÉTRICAS"]):
-            return "VeritasiumStatComparison" if hero != "VeritasiumStatComparison" else "VeritasiumBlueprint"
-        if hero == "VeritasiumStatComparison":
-            return "VeritasiumBlueprint"
-        return hero
+        if any(k in s_type for k in ["BLUEPRINT", "ARQUITECTURA", "TOPOLOGÍA", "TOPOLOGIA", "ESQUEMA", "DIAGRAMA"]):
+            return "Editorial25DDiagram"
+        if not has_geo:
+            return "Editorial25DDiagram"
+        return "Editorial25DFactSheet"
 
-    # 2. Heurística secundaria por shot_type explícito (sin atrapar etiqueta genérica "INFOGRAFÍA")
-    if any(k in s_type for k in ["BLUEPRINT", "ARQUITECTURA", "TOPOLOGÍA", "ESQUEMA", "DIAGRAMA"]):
-        return "VeritasiumBlueprint"
+    if any(k in s_type for k in ["CIERRE", "OUTRO", "CIERRE DOCUMENTAL"]):
+        return "Editorial25DOutro"
+
+    if any(k in s_type for k in ["MAPA", "RUTA", "CORREDOR", "EPICENTRO"]):
+        return "Editorial25DMap" if has_geo else "Editorial25DFactSheet"
+    if any(k in s_type for k in ["BLUEPRINT", "ARQUITECTURA", "TOPOLOGÍA", "TOPOLOGIA", "ESQUEMA", "DIAGRAMA"]):
+        return "Editorial25DDiagram"
     if any(k in s_type for k in ["EVIDENCIA", "ESTADISTICA", "DATOS", "COMPARATIVA", "FORENSE", "BENCHMARK"]):
-        return "VeritasiumStatComparison"
+        return "Editorial25DFactSheet"
     return get_composition_for_genre(genre)
 
 
@@ -118,183 +164,236 @@ def build_category_props(
     composition_id: Optional[str] = None,
     extra_props: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
-    """Genera las propiedades de animación contextualizadas a la categoría y noticia."""
+    """
+    Genera propiedades editoriales 2.5D contextualizadas a la categoría y noticia real.
+    Nunca inventa cifras técnicas ni imprime marcas ajenas.
+    """
     theme = _resolve_genre_theme(genre)
-
+    vis = THEME_VISUALS.get(theme, THEME_VISUALS["universal"])
     comp_id = composition_id or get_composition_for_genre(genre)
-    base_props: Dict[str, Any] = {
-        "durationInFrames": duration_frames,
-        "title": truncate_clean(title or "ANÁLISIS TÉCNICO VERITASIUM", 60).upper(),
-        "subtitle": truncate_clean(subtitle or "RECONSTRUCCIÓN POR PRIMEROS PRINCIPIOS", 82).upper(),
-        "theme": theme,
-    }
+    clean_title = truncate_clean(title or "ANÁLISIS DEL REPORTE", 58).upper()
+    clean_sub = truncate_clean(subtitle or "CONTEXTO TÉCNICO Y PRIMEROS PRINCIPIOS", 84).upper()
+    ex = dict(extra_props or {})
 
-    if comp_id == "VeritasiumAltimeter":
-        base_props.update({
-            "initialAlt": 35000,
-            "finalAlt": 3200,
-            "flightNumber": "FLIGHT SAFETY DATA",
-            "warningText": "ALERTA: TASA DE DESCENSO CRÍTICA",
-            "descentRate": "-3,400 FPM",
-        })
-    elif comp_id == "VeritasiumTechChip":
-        base_props.update({
-            "nodeSize": "2 NM",
-            "transistorCount": "33.7 BILLONES",
-            "efficiencyGain": "+30% EFICIENCIA / +15% VELOCIDAD",
-            "architectureTag": "GAA NANOSHEET 3D",
-        })
-    elif comp_id == "VeritasiumCyberRadar":
-        base_props.update({
-            "packetRate": "14.8 M PPS",
-            "cveSeverity": "CVSS 9.8 · CRÍTICO",
-            "threatVector": "ZERO-DAY EXPLOITATION",
-            "targetCount": "184 NODOS COMPROMETIDOS",
-        })
-    elif comp_id == "VeritasiumStatComparison":
-        stat_presets = {
-            "space": {
-                "labelA": "MISIÓN CONVENCIONAL",
-                "valA": "1 USO",
-                "percentA": 28,
-                "labelB": "SISTEMA REUTILIZABLE",
-                "valB": "CICLO CONTINUO",
-                "percentB": 94,
-                "multiplierTag": "EFICIENCIA DE ARQUITECTURA ESPACIAL",
-                "sourceTag": "TELEMETRÍA DE MISIÓN · DEEP SPACE",
-            },
+    if comp_id == "Editorial25DMap":
+        kicker_map = {
+            "aviation": "CORREDOR AÉREO",
+            "cyber": "INFRAESTRUCTURA GLOBAL",
+            "hardware": "CADENA DE SILICIO",
+            "space": "TRAYECTORIA DE MISIÓN",
+            "universal": "LOCALIZACIÓN DEL REPORTE",
+        }
+        props: Dict[str, Any] = {
+            "durationInFrames": duration_frames,
+            "kicker": kicker_map.get(theme, "LOCALIZACIÓN DEL REPORTE"),
+            "headline": clean_title,
+            "markerIcon": vis["markerIcon"],
+            "accentColor": vis["accentColor"],
+            "alertColor": vis["alertColor"],
+            "stampText": "REPORTE ACTIVO",
+            "cardKicker": "REGISTRO GEOGRÁFICO",
+            "cardHeadline": truncate_clean(ex.get("flightNumber") or ex.get("sourceTag") or clean_title, 34).upper(),
+            "cardLines": [
+                truncate_clean(subtitle or clean_title, 44).upper(),
+                "UBICACIÓN CONTRASTADA EN PRENSA OFICIAL",
+            ],
+        }
+        allowed = {
+            "durationInFrames", "kicker", "headline", "mapMode", "markerIcon",
+            "origin", "plannedDest", "diversionDest", "diversionRatio",
+            "highlightCountries", "stampText", "cardKicker", "cardHeadline",
+            "cardLines", "accentColor", "alertColor",
+        }
+    elif comp_id == "Editorial25DDiagram":
+        diag_defaults = {
             "aviation": {
-                "labelA": "MARGEN NOMINAL",
-                "valA": "ESTÁNDAR",
-                "percentA": 88,
-                "labelB": "EVENTO REPORTADO",
-                "valB": "DESVIACIÓN",
-                "percentB": 34,
-                "multiplierTag": "AUDITORÍA DE SEGURIDAD AÉREA",
-                "sourceTag": "REGISTRO AERONÁUTICO VERIFICADO",
+                "kicker": "DECONSTRUCCIÓN TÉCNICA",
+                "calloutTitle": "SISTEMA CRÍTICO",
+                "calloutDetail": "ALERTA PREVENTIVA",
+                "secondaryLabel": "RESPUESTA EN VUELO",
+                "secondaryCallout": "PROTOCOLO DE SEGURIDAD",
+                "bottomStamp": "CLAVE OPERATIVA",
+                "bottomTakeaway": "ACTUAR ANTES DE PERDER EL MARGEN",
             },
             "cyber": {
-                "labelA": "EXPOSICIÓN INICIAL",
-                "valA": "CRÍTICA",
-                "percentA": 95,
-                "labelB": "CON MITIGACIÓN",
-                "valB": "CONTENIDO",
-                "percentB": 22,
-                "multiplierTag": "REDUCCIÓN DE SUPERFICIE DE ATAQUE",
-                "sourceTag": "TELEMETRÍA SOC · THREAT INTEL",
+                "kicker": "ANATOMÍA DEL INCIDENTE",
+                "calloutTitle": "VECTOR DE ENTRADA",
+                "calloutDetail": "NODO EXPUESTO",
+                "secondaryLabel": "CONTENCIÓN",
+                "secondaryCallout": "AISLAMIENTO DE RED",
+                "bottomStamp": "LECCIÓN DIGITAL",
+                "bottomTakeaway": "UN SOLO ESLABÓN EXPONE TODA LA RED",
             },
             "hardware": {
-                "labelA": "ARQUITECTURA PREVIA",
-                "valA": "1.0X BASE",
-                "percentA": 45,
-                "labelB": "NUEVA GENERACIÓN",
-                "valB": "+40% EFIC.",
-                "percentB": 92,
-                "multiplierTag": "SALTO EN DENSIDAD Y EFICIENCIA",
-                "sourceTag": "BENCHMARK TÉCNICO VERIFICADO",
+                "kicker": "ARQUITECTURA INTERNA",
+                "calloutTitle": "NÚCLEO DE CÓMPUTO",
+                "calloutDetail": "LÍMITE FÍSICO",
+                "secondaryLabel": "ESCALA Y DISEÑO",
+                "secondaryCallout": "EFICIENCIA TÉRMICA",
+                "bottomStamp": "CLAVE DE INGENIERÍA",
+                "bottomTakeaway": "MÁS DENSIDAD EXIGE NUEVA ARQUITECTURA",
+            },
+            "space": {
+                "kicker": "MECÁNICA DE MISIÓN",
+                "calloutTitle": "FASE CRÍTICA",
+                "calloutDetail": "VENTANA ORBITAL",
+                "secondaryLabel": "CONTROL DE NAVE",
+                "secondaryCallout": "CORRECCIÓN EN RUTA",
+                "bottomStamp": "CLAVE DE MISIÓN",
+                "bottomTakeaway": "PRECISIÓN MILIMÉTRICA EN EL VACÍO",
             },
             "universal": {
-                "labelA": "PARÁMETRO BASE",
-                "valA": "FASE 01",
-                "percentA": 35,
-                "labelB": "UMBRAL REPORTADO",
-                "valB": "FASE 02",
-                "percentB": 92,
-                "multiplierTag": "EVOLUCIÓN DEL EVENTO REPORTADO",
-                "sourceTag": "REGISTRO DOCUMENTAL VERIFICADO",
+                "kicker": "DECONSTRUCCIÓN DEL CASO",
+                "calloutTitle": "PUNTO DE TENSIÓN",
+                "calloutDetail": "FACTOR DETONANTE",
+                "secondaryLabel": "RESPUESTA",
+                "secondaryCallout": "MEDIDA PREVENTIVA",
+                "bottomStamp": "CLAVE DEL REPORTE",
+                "bottomTakeaway": "ENTENDER LA CAUSA EVITA EL COLAPSO",
             },
         }
-        base_props.update(stat_presets.get(theme, stat_presets["universal"]))
-    elif comp_id == "VeritasiumBlueprint":
-        if theme == "cyber":
-            base_props.update({
-                "componentA": "GATEWAY DE ENRUTAMIENTO BGP",
-                "statusA": "SATURACIÓN DDOS",
-                "metricA": "14.8M PPS (ANOMALÍA)",
-                "componentB": "INFRAESTRUCTURA DNS ROOT",
-                "statusB": "TRÁFICO MALICIOSO",
-                "metricB": "940 GBPS DE PICO",
-                "componentC": "FIREWALL PERIMETRAL CORE",
-                "statusC": "MITIGACIÓN DEFCON 2",
-                "metricC": "FILTRADO ACTIVO",
-                "blueprintTag": "TOPOLOGÍA DE RED · INTEL SOC",
-            })
-        elif theme == "hardware":
-            base_props.update({
-                "componentA": "CANALES GAA NANOSHEET 3D",
-                "statusA": "CORRIENTE DE FUGA 0.02nA",
-                "metricA": "ESCALA 2 NM",
-                "componentB": "LÁSER EUV ALTA APERTURA NUMÉRICA",
-                "statusB": "POTENCIA ÓPTIMA",
-                "metricB": "LONGITUD 13.5 NM",
-                "componentC": "INTERCONEXIÓN ÓPTICA CO-EMPAQUETADA",
-                "statusC": "EFICIENCIA MÁXIMA",
-                "metricC": "+30% ANCHO BANDA",
-                "blueprintTag": "ARQUITECTURA DE SILICIO · SEMICONDUCTORES",
-            })
-        elif theme == "space":
-            base_props.update({
-                "componentA": "ESCUDO TÉRMICO ABLATIVO",
-                "statusA": "RESISTENCIA TÉRMICA",
-                "metricA": "TOLERANCIA 2800°C",
-                "componentB": "CONTROL DE ACTITUD (RCS)",
-                "statusB": "PROPULSIÓN FRÍA",
-                "metricB": "IMPULSO 285s",
-                "componentC": "ARRAY SOLAR MULTI-UNIÓN",
-                "statusC": "DESPLIEGUE EXITOSO",
-                "metricC": "POTENCIA 18.5 kW",
-                "blueprintTag": "BLUEPRINT DE MISIÓN · DEEP SPACE",
-            })
-        elif theme == "aviation":
-            base_props.update({
-                "componentA": "SUPERFICIE DE CONTROL VERTICAL",
-                "statusA": "DEFLEXIÓN NO COMANDADA",
-                "metricA": "DESVIACIÓN 18.4°",
-                "componentB": "SISTEMA HIDRÁULICO PRIMARIO",
-                "statusB": "PÉRDIDA DE PRESIÓN",
-                "metricB": "850 PSI (CRÍTICO)",
-                "componentC": "COMPUTADORA DE GESTIÓN DE VUELO",
-                "statusC": "ALERTA GPWS ACTIVA",
-                "metricC": "LATENCIA 12ms",
-                "blueprintTag": "BLUEPRINT AERONÁUTICO · NTSB/FAA",
-            })
-        else:
-            base_props.update({
-                "componentA": "EPICENTRO DE ANOMALÍA CRÍTICA",
-                "statusA": "IMPACTO EN INFRAESTRUCTURA",
-                "metricA": "ESCALA VERIFICADA",
-                "componentB": "RED DE RESPUESTA Y SENSORES",
-                "statusB": "MONITOREO CONTINUO",
-                "metricB": "CANAL ACTIVO",
-                "componentC": "PROTOCOLO DE CONTENCIÓN",
-                "statusC": "MITIGACIÓN EN CURSO",
-                "metricC": "RESPUESTA INMEDIATA",
-                "blueprintTag": "ANÁLISIS ESTRUCTURAL · TIKTOK RADAR",
-            })
-    elif comp_id == "VeritasiumDocumentaryOutro":
-        base_props.update({
+        props = {
+            "durationInFrames": duration_frames,
+            "headline": clean_title,
+            "diagramKind": vis["diagramKind"],
+            "accentColor": vis["accentColor"],
+            "alertColor": vis["alertColor"],
+            **diag_defaults.get(theme, diag_defaults["universal"]),
+        }
+        allowed = {
+            "durationInFrames", "kicker", "headline", "diagramKind",
+            "calloutTitle", "calloutDetail", "secondaryLabel", "secondaryCallout",
+            "bottomStamp", "bottomTakeaway", "accentColor", "alertColor",
+        }
+    elif comp_id == "Editorial25DReceipt":
+        raw_quote = str(ex.get("receiptQuote") or clean_sub or clean_title).strip()
+        raw_hl = str(ex.get("highlightPhrase") or "").strip()
+        if not raw_hl or raw_hl.lower() not in raw_quote.lower():
+            rw = raw_quote.split()
+            raw_hl = " ".join(rw[:min(5, len(rw))]).strip(".,;:")
+        props = {
+            "durationInFrames": duration_frames,
+            "kicker": "EVIDENCIA DOCUMENTAL",
+            "headline": truncate_clean(ex.get("headline") or clean_title, 54).upper(),
+            "sourceName": truncate_clean(str(ex.get("sourceName") or ex.get("sourceTag") or "PRENSA OFICIAL").replace("FUENTE:", "").strip(), 28).upper(),
+            "publicationDate": truncate_clean(str(ex.get("publicationDate") or "REGISTRO CONTRASTADO"), 24).upper(),
+            "articleTitle": truncate_clean(str(ex.get("articleTitle") or title or clean_title), 84),
+            "receiptQuote": truncate_clean(raw_quote, 168),
+            "highlightPhrase": raw_hl,
+            "keyMetricBadge": str(ex.get("keyMetricBadge") or "").upper()[:20],
+            "bottomTakeaway": truncate_clean(str(ex.get("bottomTakeaway") or clean_sub), 58).upper(),
+            "accentColor": vis["accentColor"],
+            "alertColor": vis["alertColor"],
+        }
+        allowed = {
+            "durationInFrames", "kicker", "headline", "sourceName", "publicationDate",
+            "articleTitle", "receiptQuote", "highlightPhrase", "keyMetricBadge",
+            "bottomTakeaway", "accentColor", "alertColor",
+        }
+    elif comp_id == "Editorial25DFactSheet":
+        # Promover un identificador o cifra real si existe en extra_props sin inventar datos
+        real_hero = ex.get("heroValue") or ex.get("nodeSize") or ex.get("cveSeverity") or ex.get("flightNumber")
+        fact_mode = ex.get("mode") or ("metric" if real_hero and not ex.get("leftValue") else "comparison")
+        fact_defaults = {
+            "aviation": {
+                "leftLabel": "OPERACIÓN ESTÁNDAR",
+                "leftValue": "RUTA PLANIFICADA",
+                "rightLabel": "DECISIÓN REPORTADA",
+                "rightValue": "MANIOBRA PREVENTIVA",
+                "bottomTakeaway": "EL MARGEN DE SEGURIDAD DEFINE LA MANIOBRA",
+            },
+            "cyber": {
+                "leftLabel": "SUPERFICIE EXPUESTA",
+                "leftValue": "BRECHA REPORTADA",
+                "rightLabel": "RESPUESTA ACTIVA",
+                "rightValue": "AISLAMIENTO Y PARCHE",
+                "bottomTakeaway": "CONTENER A TIEMPO FRENA LA PROPAGACIÓN",
+            },
+            "hardware": {
+                "leftLabel": "ARQUITECTURA PREVIA",
+                "leftValue": "GENERACIÓN ANTERIOR",
+                "rightLabel": "NUEVO ESTÁNDAR",
+                "rightValue": "SALTO EN CÓMPUTO",
+                "bottomTakeaway": "EL REDISEÑO CAMBIA EL TECHO DE RENDIMIENTO",
+            },
+            "space": {
+                "leftLabel": "MARGEN PREVISTO",
+                "leftValue": "VENTANA NOMINAL",
+                "rightLabel": "HITO REPORTADO",
+                "rightValue": "FASE COMPLETADA",
+                "bottomTakeaway": "CADA FASE DEPENDE DE CÁLCULO EXACTO",
+            },
+            "universal": {
+                "leftLabel": "CONDICIÓN INICIAL",
+                "leftValue": "ESTADO PREVIO",
+                "rightLabel": "HECHO CONFIRMADO",
+                "rightValue": "IMPACTO REPORTADO",
+                "bottomTakeaway": "LOS DATOS CONFIRMAN EL GIRO DEL CASO",
+            },
+        }.get(theme, {})
+
+        props = {
+            "durationInFrames": duration_frames,
+            "kicker": "EVIDENCIA VERIFICADA",
+            "headline": clean_title,
+            "mode": fact_mode,
+            "heroValue": str(real_hero or "HECHO CLAVE").upper()[:24],
+            "heroUnit": str(ex.get("heroUnit") or "DATO CONTRASTADO EN EL REPORTE").upper()[:40],
+            "heroCaption": truncate_clean(ex.get("heroCaption") or clean_sub, 86).upper(),
+            "sourceStamp": truncate_clean(ex.get("sourceTag") or "FUENTE OFICIAL VERIFICADA", 36).upper(),
+            "accentColor": vis["accentColor"],
+            "alertColor": vis["alertColor"],
+            **fact_defaults,
+        }
+        allowed = {
+            "durationInFrames", "kicker", "headline", "mode",
+            "heroValue", "heroUnit", "heroCaption",
+            "leftLabel", "leftValue", "leftRatio",
+            "rightLabel", "rightValue", "rightRatio",
+            "sourceStamp", "bottomTakeaway", "accentColor", "alertColor",
+        }
+    elif comp_id == "Editorial25DOutro":
+        props = {
+            "durationInFrames": duration_frames,
+            "kicker": "PRIMEROS PRINCIPIOS",
+            "headline": truncate_clean(ex.get("headline") or "LO QUE DEJA ESTE CASO", 46).upper(),
             "quote": (
-                "La tecnología avanzada no elimina el error humano ni la incertidumbre física: "
-                "diseña sistemas capaces de sobrevivir a ambos."
+                "Los sistemas modernos no buscan eliminar toda incertidumbre, "
+                "sino detectar las señales a tiempo para conservar el margen de seguridad."
             ),
-            "takeaway": "INGENIO Y RESILIENCIA ANTE LO IMPREVISTO",
-            "sourceTag": "AUDITORÍA TÉCNICA VERIFICADA · TIKTOK RADAR",
-        })
+            "takeaway": "CRITERIO PREVENTIVO ANTE LO IMPREVISTO",
+            "sourceTag": truncate_clean(ex.get("sourceTag") or "PRENSA OFICIAL VERIFICADA", 38).upper(),
+            "accentColor": vis["accentColor"],
+            "alertColor": vis["alertColor"],
+        }
+        allowed = {
+            "durationInFrames", "kicker", "headline", "quote",
+            "takeaway", "sourceTag", "accentColor", "alertColor",
+        }
+    else:
+        # Fallback limpio para composiciones legadas si se invocan explícitamente por ID
+        props = {
+            "durationInFrames": duration_frames,
+            "title": clean_title,
+            "subtitle": clean_sub,
+            "theme": theme,
+        }
+        allowed = {
+            "title", "subtitle", "durationInFrames", "theme",
+            "initialAlt", "finalAlt", "flightNumber", "warningText", "descentRate",
+            "nodeSize", "transistorCount", "efficiencyGain", "architectureTag",
+            "packetRate", "cveSeverity", "threatVector", "targetCount",
+            "labelA", "valA", "percentA", "labelB", "valB", "percentB", "multiplierTag", "sourceTag",
+            "componentA", "statusA", "metricA", "componentB", "statusB", "metricB",
+            "componentC", "statusC", "metricC", "blueprintTag",
+            "quote", "takeaway",
+        }
 
-    if extra_props:
-        allowed_per_comp = {
-            "VeritasiumAltimeter": {"initialAlt", "finalAlt", "flightNumber", "warningText", "descentRate"},
-            "VeritasiumTechChip": {"nodeSize", "transistorCount", "efficiencyGain", "architectureTag"},
-            "VeritasiumCyberRadar": {"packetRate", "cveSeverity", "threatVector", "targetCount"},
-            "VeritasiumStatComparison": {"labelA", "valA", "percentA", "labelB", "valB", "percentB", "multiplierTag", "sourceTag"},
-            "VeritasiumBlueprint": {"componentA", "statusA", "metricA", "componentB", "statusB", "metricB", "componentC", "statusC", "metricC", "blueprintTag"},
-            "VeritasiumDocumentaryOutro": {"quote", "takeaway", "sourceTag"},
-        }.get(comp_id, set()) | {"title", "subtitle", "durationInFrames", "theme"}
-        for k, v in extra_props.items():
-            if v not in (None, "") and k in allowed_per_comp:
-                base_props[k] = v
+    for k, v in ex.items():
+        if v not in (None, "", [], {}) and k in allowed:
+            props[k] = v
 
-    return base_props
+    return props
 
 
 def render_remotion_batch(
@@ -306,8 +405,7 @@ def render_remotion_batch(
 ) -> Dict[str, Optional[Path]]:
     """
     Renderiza múltiples composiciones en una sola sesión de navegador y bundle cacheado
-    mediante `render_batch.mjs` (@remotion/bundler + @remotion/renderer), evitando recompilar
-    Webpack 5 veces seguidas y reduciendo compresión intermedia con CRF configurable.
+    mediante `render_batch.mjs` (@remotion/bundler + @remotion/renderer).
     """
     results: Dict[str, Optional[Path]] = {str(j["outputLocation"]): None for j in jobs}
     if not jobs or not is_remotion_available() or not BATCH_WORKER_JS.exists():
@@ -361,7 +459,7 @@ def render_remotion_batch(
 
 
 def render_remotion_scene(
-    composition_id: str = "VeritasiumAltimeter",
+    composition_id: str = "Editorial25DMap",
     output_path: Optional[Path] = None,
     props: Optional[Dict[str, Any]] = None,
     concurrency: int = 2,
@@ -433,9 +531,8 @@ def render_remotion_scene(
         if res.returncode == 0 and out_file.exists() and out_file.stat().st_size > 10_000:
             print(f"[REMOTION] ✅ Renderizado completado: {out_file.name} ({out_file.stat().st_size / 1024:.1f} KB)", flush=True)
             return out_file
-        else:
-            print(f"[REMOTION] ❌ Error en renderizado (code {res.returncode}):\n{res.stdout[-1200:]}", file=sys.stderr)
-            return None
+        print(f"[REMOTION] ❌ Error en renderizado (code {res.returncode}):\n{res.stdout[-1200:]}", file=sys.stderr)
+        return None
     except Exception as e:
         print(f"[REMOTION] ❌ Excepción al renderizar: {e}", file=sys.stderr)
         return None
@@ -448,15 +545,14 @@ def render_remotion_scene(
 
 
 def render_remotion_still(
-    composition_id: str = "VeritasiumAltimeter",
+    composition_id: str = "Editorial25DMap",
     output_path: Optional[Path] = None,
-    frame_number: int = 45,
+    frame_number: int = 60,
     props: Optional[Dict[str, Any]] = None,
     timeout_sec: int = 60,
 ) -> Optional[Path]:
     """
-    Renderiza un único fotograma de la composición a JPG/PNG en ~1-2 segundos.
-    Ideal para inspección visual instantánea, portadas o tarjetas de verificación.
+    Renderiza un único fotograma de la composición a JPG/PNG para inspección visual o portadas.
     """
     if not is_remotion_available():
         return None
@@ -518,10 +614,21 @@ def render_category_motion_graphic(
     extra_props: Optional[Dict[str, Any]] = None,
 ) -> Optional[Path]:
     """
-    Función de alto nivel para invocar desde el ensamblador final o el pipeline.
-    Selecciona la composición adecuada según el género y el plano, y compila el vídeo vertical 9:16.
+    Selecciona la composición Editorial 2.5D adecuada según género y plano y compila el vídeo vertical 9:16.
     """
-    comp_id = composition_id or get_composition_for_shot(genre, shot_id=shot_id, shot_type=shot_type)
+    has_geo = bool(
+        extra_props and (
+            extra_props.get("origin")
+            or extra_props.get("has_geo")
+        )
+    )
+    comp_id = composition_id or get_composition_for_shot(
+        genre,
+        shot_id=shot_id,
+        shot_type=shot_type,
+        has_geo=has_geo if (extra_props and "has_geo" in extra_props) else True,
+        has_receipt=bool(extra_props and extra_props.get("has_receipt")),
+    )
     frames = max(24, int(target_duration_sec * fps))
     props = build_category_props(
         genre=genre,
@@ -540,17 +647,15 @@ def render_category_motion_graphic(
 
 
 if __name__ == "__main__":
-    # Test directo CLI para las 6 composiciones
-    print("Probando renderizado rápido still para las 6 composiciones...")
+    print("Probando renderizado still para las 5 composiciones Editorial 2.5D...")
     all_comps = [
-        "VeritasiumAltimeter",
-        "VeritasiumTechChip",
-        "VeritasiumCyberRadar",
-        "VeritasiumStatComparison",
-        "VeritasiumBlueprint",
-        "VeritasiumDocumentaryOutro",
+        "Editorial25DMap",
+        "Editorial25DReceipt",
+        "Editorial25DDiagram",
+        "Editorial25DFactSheet",
+        "Editorial25DOutro",
     ]
     for comp in all_comps:
         out = Path(f"/tmp/test_{comp}.jpg")
-        r = render_remotion_still(comp, output_path=out, frame_number=45)
+        r = render_remotion_still(comp, output_path=out, frame_number=72)
         print(f" Still {comp}: {'✅' if r and out.exists() else '❌'} -> {out}")

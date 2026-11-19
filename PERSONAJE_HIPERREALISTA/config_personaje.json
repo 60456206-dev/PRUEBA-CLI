@@ -8,20 +8,45 @@
     "adn_json": "02_adn_biometrico/PERSONAJE_OFICIAL_MASTER_dna.json",
     "adn_embedding": "02_adn_biometrico/PERSONAJE_OFICIAL_MASTER_embedding_512d.npy",
     "kf1_normal": "03_character_sheet/KF1_FRONTAL_HABLANDO_85MM.jpg",
-    "kf2_genjutsu": "03_character_sheet/KF2_GENJUTSU_LIVEACTION_85MM.jpg"
+    "kf2_genjutsu": "03_character_sheet/KF2_GENJUTSU_LIVEACTION_85MM.jpg",
+    "kf3_plano_medio": "03_character_sheet/KF3_PLANO_MEDIO_EXPLICANDO_50MM.jpg"
   },
   "video": {
     "width": 1080,
     "height": 1920,
     "fps": 24,
-    "crf": 16,
-    "preset": "slow",
+    "crf": 18,
+    "preset": "medium",
+    "maxrate": "12M",
+    "bufsize": "24M",
     "profile": "high",
     "pix_fmt": "yuv420p",
-    "temporal_grain_sigma": 2.2,
+    "temporal_grain_sigma": 1.6,
     "pore_restoration_strength": 0.48,
     "transition_window_sec": 0.9,
     "slow_push_in_zoom": 0.06
+  },
+  "studio_apis": {
+    "prefer_elevenlabs": false,
+    "elevenlabs_voice_id": "pNInz6obpgDQGcFmaJgB",
+    "elevenlabs_model_id": "eleven_multilingual_v2",
+    "elevenlabs_act1_settings": {
+      "stability": 0.42,
+      "similarity_boost": 0.78,
+      "style": 0.45,
+      "use_speaker_boost": true,
+      "speed": 1.02
+    },
+    "elevenlabs_act2_settings": {
+      "stability": 0.62,
+      "similarity_boost": 0.80,
+      "style": 0.25,
+      "use_speaker_boost": true,
+      "speed": 0.92
+    },
+    "fal_default_model": "fal_omnihuman",
+    "fal_omnihuman_resolution": "1080p",
+    "heygen_avatar_id": ""
   },
   "audio": {
     "tts_primary": "gemini",

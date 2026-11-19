@@ -126,12 +126,33 @@ def restore_high_frequency_pores(
     """
     Separación de frecuencias: extrae la banda de alta frecuencia de la referencia 85mm RAW
     (poros, folículos y micro-textura) y la reinyecta suavemente en los tonos medios
-    del fotograma de vídeo para revertir el suavizado plástico de modelos 3D VAE.
+    de fotogramas estáticos alineados para revertir el suavizado plástico.
     """
     if strength <= 0.0:
         return frame_arr
     high_freq = compute_high_frequency_band(ref_arr)
     return apply_high_frequency_band(frame_arr, high_freq, strength=strength)
+
+
+def enhance_moving_frame_microtexture(
+    frame_arr: np.ndarray,
+    strength: float = 0.45,
+) -> np.ndarray:
+    """
+    Realza micro-textura de piel y barba calculada sobre el PROPIO fotograma en movimiento
+    (multi-escala local en tonos medios, sin superponer mapas estáticos ni causar texture sticking).
+    """
+    if strength <= 0.0:
+        return frame_arr
+    frame_u8 = np.clip(frame_arr, 0, 255).astype(np.uint8)
+    frame_img = Image.fromarray(frame_u8, mode="RGB")
+    blur_fine = np.asarray(frame_img.filter(ImageFilter.GaussianBlur(radius=1.0)), dtype=np.float32)
+    blur_med = np.asarray(frame_img.filter(ImageFilter.GaussianBlur(radius=2.0)), dtype=np.float32)
+    detail = np.clip((frame_arr - blur_fine) * 0.72 + (blur_fine - blur_med) * 0.38, -22.0, 22.0)
+
+    luma = 0.299 * frame_arr[:, :, 0] + 0.587 * frame_arr[:, :, 1] + 0.114 * frame_arr[:, :, 2]
+    mid_mask = np.clip(1.0 - np.abs(luma - 130.0) / 108.0, 0.15, 1.0)[:, :, None]
+    return np.clip(frame_arr + detail * (strength * 1.75 * mid_mask), 0.0, 255.0)
 
 
 def compute_transition_state(
@@ -211,12 +232,14 @@ def encode_frames_to_mp4(
     frames_dir: Path,
     out_mp4: Path,
     fps: int = 24,
-    crf: int = 16,
-    preset: str = "slow",
+    crf: int = 18,
+    preset: str = "medium",
     audio_path: Optional[Path] = None,
     subtitle_path: Optional[Path] = None,
+    maxrate: str = "12M",
+    bufsize: str = "24M",
 ) -> Path:
-    """Codifica una secuencia frame_%04d.jpg a MP4 H.264 High Profile CRF 16 con audio y ASS opcionales."""
+    """Codifica una secuencia frame_%04d.jpg a MP4 H.264 High Profile con bitrate broadcast acotado."""
     out_mp4.parent.mkdir(parents=True, exist_ok=True)
     cmd = [
         "ffmpeg",
@@ -247,6 +270,10 @@ def encode_frames_to_mp4(
             str(crf),
             "-preset",
             preset,
+            "-maxrate",
+            str(maxrate),
+            "-bufsize",
+            str(bufsize),
             "-pix_fmt",
             "yuv420p",
         ]
@@ -339,10 +366,12 @@ def render_genjutsu_master_video(
     transition_window_sec: float = 0.9,
     audio_path: Optional[Path] = None,
     subtitle_path: Optional[Path] = None,
-    crf: int = 16,
-    preset: str = "slow",
-    grain_sigma: float = 2.2,
+    crf: int = 18,
+    preset: str = "medium",
+    grain_sigma: float = 1.6,
     pore_strength: float = 0.30,
+    maxrate: str = "12M",
+    bufsize: str = "24M",
 ) -> Path:
     """
     Renderiza el vídeo maestro 1080x1920 @ 24fps (H.264 High Profile CRF 16) desde KF1 -> KF2,
@@ -402,6 +431,8 @@ def render_genjutsu_master_video(
             preset=preset,
             audio_path=audio_path,
             subtitle_path=subtitle_path,
+            maxrate=maxrate,
+            bufsize=bufsize,
         )
     finally:
         shutil.rmtree(tmp_dir, ignore_errors=True)
@@ -419,16 +450,18 @@ def process_i2v_video_with_pore_restoration(
     audio_path: Optional[Path] = None,
     subtitle_path: Optional[Path] = None,
     fps: int = 24,
-    crf: int = 16,
-    preset: str = "slow",
-    grain_sigma: float = 2.2,
+    crf: int = 18,
+    preset: str = "medium",
+    grain_sigma: float = 1.6,
     pore_strength: float = 0.48,
     transition_window_sec: float = 0.9,
+    maxrate: str = "12M",
+    bufsize: str = "24M",
 ) -> Path:
     """
-    Postprocesa un clip crudo generado por Flow Veo 3.1 / Kling / Hallo2 / LivePortrait:
-    normaliza a 1080x1920 @ 24fps, restaura micro-poros mediante separación de frecuencias
-    usando KF1/KF2, inyecta la fractura Genjutsu en cue_sec y muxea audio + subtítulos.
+    Postprocesa un clip crudo generado por Flow Veo 3.1 / OmniHuman / Kling Avatar / HeyGen / Hallo2:
+    normaliza a 1080x1920 @ 24fps, realza micro-textura adaptativa por frame (cero texture sticking),
+    inyecta la fractura Genjutsu en cue_sec y muxea audio + subtítulos con bitrate broadcast acotado.
     """
     if not input_video.exists():
         raise FileNotFoundError(f"No existe el vídeo I2V de entrada: {input_video}")
@@ -472,10 +505,6 @@ def process_i2v_video_with_pore_restoration(
             if aud_dur > 0:
                 target_frames = max(target_frames, int(round(aud_dur * fps)))
 
-        ref1 = np.asarray(fit_vertical_cover(Image.open(kf1_path).convert("RGB"), W, H), dtype=np.float32)
-        ref2 = np.asarray(fit_vertical_cover(Image.open(kf2_path).convert("RGB"), W, H), dtype=np.float32)
-        hf1 = compute_high_frequency_band(ref1)
-        hf2 = compute_high_frequency_band(ref2)
         rng = np.random.default_rng(seed=2026)
 
         for f in range(target_frames):
@@ -484,8 +513,7 @@ def process_i2v_video_with_pore_restoration(
             src_arr = np.asarray(Image.open(extracted[src_idx]).convert("RGB"), dtype=np.float32)
 
             alpha, glitch_amp = compute_transition_state(t, cue_sec, transition_window_sec)
-            hf_blend = hf1 * (1.0 - alpha) + hf2 * alpha
-            restored = apply_high_frequency_band(src_arr, hf_blend, strength=pore_strength)
+            restored = enhance_moving_frame_microtexture(src_arr, strength=pore_strength)
 
             frame_out = apply_genjutsu_optical_vfx(
                 restored,
@@ -509,6 +537,8 @@ def process_i2v_video_with_pore_restoration(
             preset=preset,
             audio_path=audio_path,
             subtitle_path=subtitle_path,
+            maxrate=maxrate,
+            bufsize=bufsize,
         )
     finally:
         shutil.rmtree(work_dir, ignore_errors=True)
@@ -551,6 +581,8 @@ def main() -> None:
             grain_sigma=float(vcfg["temporal_grain_sigma"]),
             pore_strength=float(vcfg["pore_restoration_strength"]),
             transition_window_sec=float(vcfg["transition_window_sec"]),
+            maxrate=str(vcfg.get("maxrate", "12M")),
+            bufsize=str(vcfg.get("bufsize", "24M")),
         )
     else:
         render_genjutsu_master_video(
@@ -567,6 +599,8 @@ def main() -> None:
             preset=str(vcfg["preset"]),
             grain_sigma=float(vcfg["temporal_grain_sigma"]),
             pore_strength=float(vcfg["pore_restoration_strength"]),
+            maxrate=str(vcfg.get("maxrate", "12M")),
+            bufsize=str(vcfg.get("bufsize", "24M")),
         )
 
 

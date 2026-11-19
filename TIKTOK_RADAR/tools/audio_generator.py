@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 """
 TIKTOK RADAR · Generador y Gestor de Audio de Alta Fidelidad (Broadcast)
-1. Locución: Google Gemini 3.8 Flash TTS con dirección actoral periodística y auto-fallback a Edge-TTS.
+1. Locución: Voz costarricense nativa (Edge-TTS `es-CR-JuanNeural` a ritmo pausado y claro,
+   con marcas reales WordBoundary/SentenceBoundary) y fallback automático a Gemini 3.8 Flash TTS.
 2. Música y Foley: Epidemic Sound MCP API con descarga y caché de stems (BASS + INSTRUMENTS) y SFX de estudio.
 """
 
 import asyncio
 import base64
+import concurrent.futures
 import json
 import os
 import re
@@ -16,11 +18,16 @@ import sys
 import time
 import urllib.error
 import urllib.request
+import wave
 from pathlib import Path
 from typing import Dict, Any, List, Optional, Tuple
 
 # Cargar .env si existe
-for env_path in [Path.home() / ".api_keys.env", Path(__file__).resolve().parent.parent / ".env"]:
+for env_path in [
+    Path.home() / ".api_keys.env",
+    Path(__file__).resolve().parent.parent / ".env",
+    Path(__file__).resolve().parent.parent.parent / ".env",
+]:
     if env_path.exists():
         for line in env_path.read_text(encoding="utf-8").splitlines():
             line = line.strip()
@@ -34,8 +41,71 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 EPIDEMIC_SOUND = os.getenv("EPIDEMIC_SOUND", "")
 
 MCP_URL = "https://www.epidemicsound.com/a/mcp-service/mcp"
-DEFAULT_ASSETS_DIR = Path(__file__).resolve().parent.parent / "audio_assets"
+ROOT_DIR = Path(__file__).resolve().parent.parent
+CONFIG_PATH = ROOT_DIR / "config_produccion.json"
+DEFAULT_ASSETS_DIR = ROOT_DIR / "audio_assets"
 DEFAULT_ASSETS_DIR.mkdir(parents=True, exist_ok=True)
+
+DEFAULT_LOCUCION_CONFIG: Dict[str, Any] = {
+    "motor_principal": "edge_tts",
+    "acento": "es-CR (Costa Rica)",
+    "voz_edge": "es-CR-JuanNeural",
+    "rate_edge": "-4%",
+    "pitch_edge": "+0Hz",
+    "voz_gemini_fallback": "Orus",
+    "tighten_silencios": False,
+    "palabras_objetivo": "134-145",
+    "elevenlabs_enabled": False,
+    "elevenlabs_voice_id": "pNInz6obpgDQGcFmaJgB",
+    "elevenlabs_model_id": "eleven_multilingual_v2",
+    "elevenlabs_stability": 0.45,
+    "elevenlabs_similarity_boost": 0.78,
+    "elevenlabs_style": 0.35,
+    "elevenlabs_speed": 0.96,
+}
+
+DEFAULT_COSTA_RICA_STYLE = (
+    "Locutor masculino nacido y criado en San José, Costa Rica, hablando con acento netamente costarricense "
+    "(acento tico auténtico del Valle Central: erre suave retrofleja, erre doble arrastrada característica de Costa Rica, "
+    "ese final clara sin aspirar y cadencia cálida costarricense). "
+    "Rapidez moderada y dicción muy entendible (alrededor de 140 palabras por minuto), sin correr ni arrastrar palabras, "
+    "con pausas claras en comas y puntos y tono periodístico cercano."
+)
+
+
+def load_locucion_config() -> Dict[str, Any]:
+    """Lee la configuración de locución desde config_produccion.json con valores seguros costarricenses."""
+    cfg = dict(DEFAULT_LOCUCION_CONFIG)
+    if CONFIG_PATH.exists():
+        try:
+            raw = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
+            loc = raw.get("locucion")
+            if isinstance(loc, dict):
+                cfg.update(loc)
+        except Exception:
+            pass
+    return cfg
+
+
+def _clear_stale_boundaries(output_path: Path) -> None:
+    """Elimina marcas previas de palabras/oraciones antes de una nueva síntesis."""
+    for stale_name in ("SENTENCE_BOUNDARIES.json", "WORD_BOUNDARIES.json"):
+        stale_bounds = output_path.parent / stale_name
+        if stale_bounds.exists():
+            try:
+                stale_bounds.unlink()
+            except Exception:
+                pass
+
+
+def _run_coro_sync(coro: Any) -> Any:
+    """Ejecuta una corrutina incluso si ya existe un event loop activo en el hilo actual."""
+    try:
+        asyncio.get_running_loop()
+    except RuntimeError:
+        return asyncio.run(coro)
+    with concurrent.futures.ThreadPoolExecutor(max_workers=1) as pool:
+        return pool.submit(asyncio.run, coro).result()
 
 # ==============================================================================
 # Catálogo Maestro de Soundtracks Virales Epidemic Sound por Categoría
@@ -187,29 +257,18 @@ def probe_duration(path: Path) -> float:
 def generate_speech_gemini(
     text: str,
     output_path: Path,
-    voice: str = "Fenrir",
+    voice: str = "Orus",
     style: Optional[str] = None
 ) -> bool:
-    """Genera locución con Gemini 3.8 Flash TTS y metadatos de dirección dramática y apasionada."""
+    """Genera locución con Gemini 3.8 Flash TTS con dirección de acento costarricense y ritmo pausado."""
     key = os.getenv("GEMINI_API_KEY") or GEMINI_API_KEY
     if not key:
         return False
 
-    # Limpiar marcas previas para evitar desincronización si cambia el motor de voz
-    for stale_name in ("SENTENCE_BOUNDARIES.json", "WORD_BOUNDARIES.json"):
-        stale_bounds = output_path.parent / stale_name
-        if stale_bounds.exists():
-            try:
-                stale_bounds.unlink()
-            except Exception:
-                pass
+    _clear_stale_boundaries(output_path)
 
     if not style:
-        style = (
-            "Locución apasionada, vibrante y con profunda emoción dramática para noticiero de última hora en TikTok. "
-            "Ritmo dinámico, enérgico y acelerado, con inflexiones vivas de asombro y tensión periodística en las cifras y exclamaciones. "
-            "Cero monotonía, cero tono plano o robótico; locución llena de convicción, nervio y adrenalina."
-        )
+        style = DEFAULT_COSTA_RICA_STYLE
 
     models_to_try = ["gemini-3.8-flash-tts", "gemini-3.8-flash-lite-tts", "gemini-3.1-flash-tts-preview"]
 
@@ -270,6 +329,134 @@ def generate_speech_gemini(
             print(f"[AUDIO-TTS] ⚠️ Error con {model}: {e}. Probando alternativa...", flush=True)
 
     return False
+
+
+def _alignment_chars_to_word_boundaries(alignment: Dict[str, Any]) -> List[Dict[str, Any]]:
+    """Convierte alignment carácter a carácter de ElevenLabs en marcas de palabra exactas."""
+    chars = alignment.get("characters") or []
+    starts = alignment.get("character_start_times_seconds") or []
+    ends = alignment.get("character_end_times_seconds") or []
+    n = min(len(chars), len(starts), len(ends))
+    if n == 0:
+        return []
+
+    words: List[Dict[str, Any]] = []
+    buf: List[str] = []
+    w_start: Optional[float] = None
+    w_end: float = 0.0
+
+    for i in range(n):
+        ch = str(chars[i])
+        st = float(starts[i])
+        en = float(ends[i])
+        if ch.isspace():
+            if buf and w_start is not None:
+                words.append({
+                    "text": "".join(buf),
+                    "start": round(w_start, 3),
+                    "end": round(max(w_start + 0.05, w_end), 3),
+                })
+                buf = []
+                w_start = None
+                w_end = 0.0
+        else:
+            if w_start is None:
+                w_start = st
+            buf.append(ch)
+            w_end = max(w_end, en)
+
+    if buf and w_start is not None:
+        words.append({
+            "text": "".join(buf),
+            "start": round(w_start, 3),
+            "end": round(max(w_start + 0.05, w_end), 3),
+        })
+    return words
+
+
+def generate_speech_elevenlabs(
+    text: str,
+    output_path: Path,
+    voice_id: str,
+    model_id: str = "eleven_multilingual_v2",
+    voice_settings: Optional[Dict[str, Any]] = None,
+    api_key: Optional[str] = None,
+) -> bool:
+    """
+    Sintetiza locución con ElevenLabs (`/with-timestamps`) y escribe WORD_BOUNDARIES.json
+    y SENTENCE_BOUNDARIES.json directamente desde el alineamiento oficial de la respuesta.
+    """
+    key = (api_key or os.getenv("ELEVENLABS_API_KEY", "")).strip()
+    if not key or not text.strip() or not voice_id.strip():
+        return False
+
+    _clear_stale_boundaries(output_path)
+    loc_cfg = load_locucion_config()
+    settings = dict(voice_settings or {
+        "stability": float(loc_cfg.get("elevenlabs_stability", 0.45)),
+        "similarity_boost": float(loc_cfg.get("elevenlabs_similarity_boost", 0.78)),
+        "style": float(loc_cfg.get("elevenlabs_style", 0.35)),
+        "use_speaker_boost": True,
+        "speed": float(loc_cfg.get("elevenlabs_speed", 0.96)),
+    })
+
+    url = f"https://api.elevenlabs.io/v1/text-to-speech/{voice_id}/with-timestamps"
+    payload = {
+        "text": text,
+        "model_id": model_id,
+        "voice_settings": settings,
+        "apply_text_normalization": "auto",
+    }
+    req = urllib.request.Request(
+        url,
+        data=json.dumps(payload).encode("utf-8"),
+        headers={
+            "xi-api-key": key,
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+        },
+        method="POST",
+    )
+    try:
+        print(f"[AUDIO-TTS] Generando locución ElevenLabs ({model_id} | voice={voice_id})...", flush=True)
+        with urllib.request.urlopen(req, timeout=45) as resp:
+            data = json.load(resp)
+        b64_audio = data.get("audio_base64") or ""
+        if not b64_audio:
+            return False
+        raw = base64.b64decode(b64_audio)
+        if len(raw) < 512:
+            return False
+
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        if output_path.suffix.lower() == ".wav":
+            tmp_mp3 = output_path.with_suffix(".el_tmp.mp3")
+            tmp_mp3.write_bytes(raw)
+            subprocess.run(
+                ["ffmpeg", "-y", "-i", str(tmp_mp3), "-ar", "48000", "-ac", "2", str(output_path)],
+                check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+            )
+            tmp_mp3.unlink(missing_ok=True)
+        else:
+            output_path.write_bytes(raw)
+
+        alignment = data.get("alignment") or data.get("normalized_alignment") or {}
+        word_entries = _alignment_chars_to_word_boundaries(alignment) if isinstance(alignment, dict) else []
+        if word_entries:
+            (output_path.parent / "WORD_BOUNDARIES.json").write_text(
+                json.dumps(word_entries, indent=2, ensure_ascii=False), encoding="utf-8"
+            )
+            sentences = _reconstruct_sentences_from_words(word_entries)
+            if sentences:
+                (output_path.parent / "SENTENCE_BOUNDARIES.json").write_text(
+                    json.dumps(sentences, indent=2, ensure_ascii=False), encoding="utf-8"
+                )
+        dur = probe_duration(output_path)
+        print(f"[AUDIO-TTS] ✅ Locución ElevenLabs completada ({len(word_entries)} palabras): {output_path.name} ({dur:.2f} s)", flush=True)
+        return True
+    except Exception as e:
+        print(f"[AUDIO-TTS] ⚠️ Error ElevenLabs TTS: {e}. Activando fallback local...", flush=True)
+        return False
 
 
 def _reconstruct_sentences_from_words(word_entries: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
@@ -351,11 +538,25 @@ def extract_word_boundaries_whisper(audio_path: Path, language: str = "es") -> O
     return None
 
 
-async def _generate_speech_edge_async(text: str, output_path: Path, voice: str = "es-MX-JorgeNeural") -> bool:
+async def _generate_speech_edge_async(
+    text: str,
+    output_path: Path,
+    voice: str = "es-CR-JuanNeural",
+    rate: str = "-4%",
+    pitch: str = "+0Hz",
+) -> bool:
     try:
         import edge_tts
+
+        _clear_stale_boundaries(output_path)
         # Capturar WordBoundary reales además de reconstruir SentenceBoundary
-        communicate = edge_tts.Communicate(text, voice, rate="+12%", pitch="+1Hz", boundary="WordBoundary")
+        communicate = edge_tts.Communicate(
+            text,
+            voice,
+            rate=rate,
+            pitch=pitch,
+            boundary="WordBoundary",
+        )
         word_entries: List[Dict[str, Any]] = []
         sentences: List[Dict[str, Any]] = []
         audio_data = bytearray()
@@ -378,8 +579,20 @@ async def _generate_speech_edge_async(text: str, output_path: Path, voice: str =
                     "end": round((chunk.get("offset", 0) + chunk.get("duration", 0)) / 10_000_000, 3)
                 })
 
+        if not audio_data:
+            raise RuntimeError("Edge-TTS devolvió stream de audio vacío.")
+
         output_path.parent.mkdir(parents=True, exist_ok=True)
-        output_path.write_bytes(audio_data)
+        if output_path.suffix.lower() == ".wav":
+            tmp_mp3 = output_path.with_suffix(".tmp.mp3")
+            tmp_mp3.write_bytes(audio_data)
+            subprocess.run(
+                ["ffmpeg", "-y", "-i", str(tmp_mp3), "-ar", "48000", "-ac", "1", str(output_path)],
+                check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+            )
+            tmp_mp3.unlink(missing_ok=True)
+        else:
+            output_path.write_bytes(audio_data)
 
         if word_entries:
             (output_path.parent / "WORD_BOUNDARIES.json").write_text(
@@ -393,7 +606,11 @@ async def _generate_speech_edge_async(text: str, output_path: Path, voice: str =
             bounds_file.write_text(json.dumps(sentences, indent=2, ensure_ascii=False), encoding="utf-8")
 
         dur = probe_duration(output_path)
-        print(f"[AUDIO-TTS] ✅ Locución Edge-TTS completada con marcas ({len(word_entries)} palabras): {output_path.name} ({dur:.2f} s)", flush=True)
+        print(
+            f"[AUDIO-TTS] ✅ Locución Edge-TTS ({voice} | rate={rate}) completada con marcas "
+            f"({len(word_entries)} palabras): {output_path.name} ({dur:.2f} s)",
+            flush=True,
+        )
         return True
     except Exception as e:
         print(f"[AUDIO-TTS] ❌ Falló Edge-TTS: {e}", flush=True)
@@ -454,24 +671,137 @@ def tighten_audio_dead_air(
 def generate_speech(
     text: str,
     output_path: Path,
-    voice_gemini: str = "Fenrir",
-    voice_edge: str = "es-MX-JorgeNeural",
+    voice_gemini: Optional[str] = None,
+    voice_edge: Optional[str] = None,
     style: Optional[str] = None,
-    tighten: bool = True
+    tighten: Optional[bool] = None,
+    prefer_edge: Optional[bool] = None,
+    rate_edge: Optional[str] = None,
+    pitch_edge: Optional[str] = None,
 ) -> float:
-    """Genera locución intentando primero Gemini TTS y con fallback automático a Edge-TTS."""
-    # 1. Intentar Gemini Flash TTS
-    ok = generate_speech_gemini(text, output_path, voice=voice_gemini, style=style)
+    """Genera locución (ElevenLabs si está activado y hay clave, Edge-TTS es-CR principal por defecto y fallback a Gemini TTS)."""
+    loc_cfg = load_locucion_config()
+    motor = str(loc_cfg.get("motor_principal", "edge_tts")).lower()
+    use_edge_first = prefer_edge if prefer_edge is not None else (motor != "gemini")
+    edge_voice = voice_edge or str(loc_cfg.get("voz_edge", "es-CR-JuanNeural"))
+    edge_rate = rate_edge or str(loc_cfg.get("rate_edge", "-4%"))
+    edge_pitch = pitch_edge or str(loc_cfg.get("pitch_edge", "+0Hz"))
+    gem_voice = voice_gemini or str(loc_cfg.get("voz_gemini_fallback", "Orus"))
+    resolved_style = style or DEFAULT_COSTA_RICA_STYLE
+    should_tighten = bool(loc_cfg.get("tighten_silencios", False)) if tighten is None else tighten
+
+    ok = False
+    el_enabled = motor == "elevenlabs" or bool(loc_cfg.get("elevenlabs_enabled", False))
+    if el_enabled and os.getenv("ELEVENLABS_API_KEY", "").strip():
+        ok = generate_speech_elevenlabs(
+            text,
+            output_path,
+            voice_id=str(loc_cfg.get("elevenlabs_voice_id", "pNInz6obpgDQGcFmaJgB")),
+            model_id=str(loc_cfg.get("elevenlabs_model_id", "eleven_multilingual_v2")),
+        )
+
     if not ok:
-        print("[AUDIO-TTS] Activando fallback gratuito Edge-TTS...", flush=True)
-        asyncio.run(_generate_speech_edge_async(text, output_path, voice=voice_edge))
+        if use_edge_first:
+            print(f"[AUDIO-TTS] Generando locución costarricense ({edge_voice} | rate={edge_rate})...", flush=True)
+            ok = _run_coro_sync(
+                _generate_speech_edge_async(text, output_path, voice=edge_voice, rate=edge_rate, pitch=edge_pitch)
+            )
+            if not ok:
+                print("[AUDIO-TTS] Activando fallback Gemini TTS con dirección costarricense...", flush=True)
+                generate_speech_gemini(text, output_path, voice=gem_voice, style=resolved_style)
+        else:
+            ok = generate_speech_gemini(text, output_path, voice=gem_voice, style=resolved_style)
+            if not ok:
+                print(f"[AUDIO-TTS] Activando fallback Edge-TTS ({edge_voice} | rate={edge_rate})...", flush=True)
+                _run_coro_sync(
+                    _generate_speech_edge_async(text, output_path, voice=edge_voice, rate=edge_rate, pitch=edge_pitch)
+                )
 
     dur = probe_duration(output_path)
-    if tighten:
+    if should_tighten:
         dur = tighten_audio_dead_air(output_path)
     if not (output_path.parent / "WORD_BOUNDARIES.json").exists():
         extract_word_boundaries_whisper(output_path)
     return dur
+
+
+def _write_stereo_wav(path: Path, sig_l: Any, sig_r: Any, sample_rate: int = 48000) -> Path:
+    import numpy as np
+    path.parent.mkdir(parents=True, exist_ok=True)
+    peak = max(float(np.max(np.abs(sig_l))), float(np.max(np.abs(sig_r))), 1e-8)
+    scale = min(1.0, 0.72 / peak)
+    pcm = np.stack([sig_l * scale, sig_r * scale], axis=1)
+    pcm_i16 = np.clip(pcm * 32767.0, -32768, 32767).astype(np.int16)
+    with wave.open(str(path), "wb") as wf:
+        wf.setnchannels(2)
+        wf.setsampwidth(2)
+        wf.setframerate(sample_rate)
+        wf.writeframes(pcm_i16.tobytes())
+    return path
+
+
+def ensure_editorial_sfx_palette(assets_dir: Optional[Path] = None) -> Dict[str, Path]:
+    """
+    Garantiza una paleta de SFX diegéticos sutiles en audio_assets/ junto al boom/riser existentes:
+    - SFX_PAPER_FLIP.wav (~0.32s): roce táctil de papel archival.
+    - SFX_HIGHLIGHTER_SWIPE.wav (~0.45s): barrido de marcador fieltro sobre papel.
+    - SFX_TECH_CLICK.wav (~0.12s): clic mecánico de relé / obturador.
+    """
+    import numpy as np
+
+    out_dir = Path(assets_dir) if assets_dir else DEFAULT_ASSETS_DIR
+    out_dir.mkdir(parents=True, exist_ok=True)
+    sr = 48000
+    rng = np.random.default_rng(seed=2026)
+
+    paper_wav = out_dir / "SFX_PAPER_FLIP.wav"
+    if not (paper_wav.exists() and paper_wav.stat().st_size > 1000):
+        dur = 0.32
+        n = int(round(dur * sr))
+        t = np.linspace(0.0, dur, n, endpoint=False)
+        noise = rng.normal(0.0, 1.0, n)
+        # Paso-banda simple por diferencia de medias móviles para textura de fibra de papel
+        k_short = np.ones(6) / 6.0
+        k_long = np.ones(48) / 48.0
+        bp = np.convolve(noise, k_short, mode="same") - np.convolve(noise, k_long, mode="same")
+        env = np.sin(np.pi * np.clip(t / dur, 0.0, 1.0)) ** 1.4 * np.exp(-5.0 * np.maximum(0.0, t - 0.07))
+        thump = 0.18 * np.sin(2 * np.pi * 135.0 * t) * np.exp(-32.0 * np.abs(t - 0.06))
+        sig_l = bp * env * 0.75 + thump
+        sig_r = np.roll(bp, 11) * env * 0.75 + thump
+        _write_stereo_wav(paper_wav, sig_l, sig_r, sr)
+
+    highlighter_wav = out_dir / "SFX_HIGHLIGHTER_SWIPE.wav"
+    if not (highlighter_wav.exists() and highlighter_wav.stat().st_size > 1000):
+        dur = 0.45
+        n = int(round(dur * sr))
+        t = np.linspace(0.0, dur, n, endpoint=False)
+        noise = rng.normal(0.0, 1.0, n)
+        felt = np.convolve(noise, np.ones(14) / 14.0, mode="same") - np.convolve(noise, np.ones(70) / 70.0, mode="same")
+        env = np.sin(np.pi * np.clip(t / dur, 0.0, 1.0)) ** 1.15
+        sweep = 0.22 * np.sin(2 * np.pi * (420.0 + 360.0 * (t / dur)) * t) * env
+        sig_l = (felt * 0.65 * env) + sweep
+        sig_r = (np.roll(felt, 19) * 0.65 * env) + sweep * 0.92
+        _write_stereo_wav(highlighter_wav, sig_l, sig_r, sr)
+
+    click_wav = out_dir / "SFX_TECH_CLICK.wav"
+    if not (click_wav.exists() and click_wav.stat().st_size > 1000):
+        dur = 0.12
+        n = int(round(dur * sr))
+        t = np.linspace(0.0, dur, n, endpoint=False)
+        impulse = (
+            0.55 * np.sin(2 * np.pi * 1650.0 * t) * np.exp(-65.0 * t)
+            + 0.35 * np.sin(2 * np.pi * 420.0 * t) * np.exp(-42.0 * t)
+            + 0.20 * rng.normal(0.0, 1.0, n) * np.exp(-90.0 * t)
+        )
+        _write_stereo_wav(click_wav, impulse, impulse * 0.96, sr)
+
+    return {
+        "boom": out_dir / "SFX_DARK_BOOM.wav",
+        "riser": out_dir / "SFX_RISER_LOW.wav",
+        "paper": paper_wav,
+        "highlighter": highlighter_wav,
+        "click": click_wav,
+    }
 
 
 # -----------------------------------------------------------------------------

@@ -6,23 +6,161 @@ import { VeritasiumCyberRadar, CyberRadarProps } from "./VeritasiumCyberRadar";
 import { VeritasiumStatComparison, StatComparisonProps } from "./VeritasiumStatComparison";
 import { VeritasiumDocumentaryOutro, DocumentaryOutroProps } from "./VeritasiumDocumentaryOutro";
 import { VeritasiumBlueprint, BlueprintProps } from "./VeritasiumBlueprint";
+import { Editorial25DMap, Editorial25DMapProps } from "./Editorial25DMap";
+import { Editorial25DDiagram, Editorial25DDiagramProps } from "./Editorial25DDiagram";
+import { Editorial25DFactSheet, Editorial25DFactSheetProps } from "./Editorial25DFactSheet";
+import { Editorial25DOutro, Editorial25DOutroProps } from "./Editorial25DOutro";
+import { Editorial25DReceipt, Editorial25DReceiptProps } from "./Editorial25DReceipt";
 
 export const Root: React.FC = () => {
   return (
     <>
-      {/* 1. G1 AVIACIÓN / TELEMETRÍA */}
+      {/* SUITE PRINCIPAL: ANIMACIÓN EDITORIAL 2.5D TÁCTIL */}
+      <Composition
+        id="Editorial25DMap"
+        component={Editorial25DMap}
+        durationInFrames={120}
+        fps={24}
+        width={1080}
+        height={1920}
+        calculateMetadata={({ props }) => {
+          const customProps = props as Editorial25DMapProps & { durationInFrames?: number };
+          return { durationInFrames: customProps.durationInFrames || 120 };
+        }}
+        defaultProps={{
+          kicker: "LOCALIZACIÓN DEL REPORTE",
+          headline: "MAPA EDITORIAL EN PERSPECTIVA",
+          markerIcon: "plane",
+          origin: { name: "MADRID", code: "MAD", lon: -3.7038, lat: 40.4168 },
+          highlightCountries: ["Spain"],
+          stampText: "REGISTRO ACTIVO",
+          cardKicker: "COORDENADAS VERIFICADAS",
+          cardHeadline: "CONTEXTO GEOGRÁFICO",
+          cardLines: [
+            "UBICACIÓN REPORTADA EN PRENSA OFICIAL",
+            "SEGUIMIENTO CARTOGRÁFICO EN TIEMPO REAL",
+          ],
+          accentColor: "#E5A93C",
+          alertColor: "#E63946",
+        }}
+      />
+
+      <Composition
+        id="Editorial25DDiagram"
+        component={Editorial25DDiagram}
+        durationInFrames={120}
+        fps={24}
+        width={1080}
+        height={1920}
+        calculateMetadata={({ props }) => {
+          const customProps = props as Editorial25DDiagramProps & { durationInFrames?: number };
+          return { durationInFrames: customProps.durationInFrames || 120 };
+        }}
+        defaultProps={{
+          kicker: "DECONSTRUCCIÓN TÉCNICA",
+          headline: "EL MECANISMO DETRÁS DE LA NOTICIA",
+          diagramKind: "aircraft",
+          calloutTitle: "PUNTO CRÍTICO",
+          calloutDetail: "ALERTA PREVENTIVA",
+          secondaryLabel: "RESPUESTA TÉCNICA",
+          secondaryCallout: "PROTOCOLO DE SEGURIDAD",
+          bottomStamp: "CLAVE OPERATIVA",
+          bottomTakeaway: "PRIORIZAR EL MARGEN ANTE LO INCIERTO",
+          accentColor: "#E5A93C",
+          alertColor: "#E63946",
+        }}
+      />
+
+      <Composition
+        id="Editorial25DFactSheet"
+        component={Editorial25DFactSheet}
+        durationInFrames={120}
+        fps={24}
+        width={1080}
+        height={1920}
+        calculateMetadata={({ props }) => {
+          const customProps = props as Editorial25DFactSheetProps & { durationInFrames?: number };
+          return { durationInFrames: customProps.durationInFrames || 120 };
+        }}
+        defaultProps={{
+          kicker: "EVIDENCIA DEL REPORTE",
+          headline: "EL DATO QUE EXPLICA EL CASO",
+          mode: "comparison",
+          heroValue: "CLAVE",
+          heroUnit: "DATO REPORTADO",
+          heroCaption: "PARÁMETRO CONTRASTADO EN EL REPORTE",
+          leftLabel: "CONDICIÓN PREVISTA",
+          leftValue: "OPERACIÓN ESTÁNDAR",
+          leftRatio: 42,
+          rightLabel: "HECHO CONFIRMADO",
+          rightValue: "MANIOBRA PREVENTIVA",
+          rightRatio: 88,
+          sourceStamp: "FUENTE OFICIAL",
+          bottomTakeaway: "EL MARGEN DE SEGURIDAD DEFINE EL DESENLACE",
+          accentColor: "#E5A93C",
+          alertColor: "#E63946",
+        }}
+      />
+
+      <Composition
+        id="Editorial25DReceipt"
+        component={Editorial25DReceipt}
+        durationInFrames={120}
+        fps={24}
+        width={1080}
+        height={1920}
+        calculateMetadata={({ props }) => {
+          const customProps = props as Editorial25DReceiptProps & { durationInFrames?: number };
+          return { durationInFrames: customProps.durationInFrames || 120 };
+        }}
+        defaultProps={{
+          kicker: "EVIDENCIA DOCUMENTAL",
+          headline: "LO QUE CONFIRMA EL REPORTE",
+          sourceName: "PRENSA OFICIAL",
+          publicationDate: "REGISTRO CONTRASTADO",
+          articleTitle: "Reporte técnico verificado en fuentes primarias",
+          receiptQuote: "Los registros operativos confirman la detección temprana de una anomalía antes de comprometer la seguridad del sistema.",
+          highlightPhrase: "detección temprana de una anomalía",
+          keyMetricBadge: "",
+          bottomTakeaway: "LA EVIDENCIA DOCUMENTAL EXPLICA EL GIRO DEL CASO",
+          accentColor: "#E5A93C",
+          alertColor: "#E63946",
+        }}
+      />
+
+      <Composition
+        id="Editorial25DOutro"
+        component={Editorial25DOutro}
+        durationInFrames={144}
+        fps={24}
+        width={1080}
+        height={1920}
+        calculateMetadata={({ props }) => {
+          const customProps = props as Editorial25DOutroProps & { durationInFrames?: number };
+          return { durationInFrames: customProps.durationInFrames || 144 };
+        }}
+        defaultProps={{
+          kicker: "PRIMEROS PRINCIPIOS",
+          headline: "LO QUE DEJA ESTE CASO",
+          quote: "La seguridad moderna no depende de esperar la falla, sino de actuar antes de perder el margen.",
+          takeaway: "CRITERIO PREVENTIVO ANTE LO IMPREVISTO",
+          sourceTag: "PRENSA OFICIAL VERIFICADA",
+          accentColor: "#E5A93C",
+          alertColor: "#E63946",
+        }}
+      />
+
+      {/* ALIAS DE COMPATIBILIDAD LEGADA (NO USADOS POR EL ROUTER POR DEFECTO) */}
       <Composition
         id="VeritasiumAltimeter"
         component={VeritasiumAltimeter}
-        durationInFrames={120} // 5.0 segundos a 24 fps
+        durationInFrames={120}
         fps={24}
         width={1080}
         height={1920}
         calculateMetadata={({ props }) => {
           const customProps = props as AltimeterProps & { durationInFrames?: number };
-          return {
-            durationInFrames: customProps.durationInFrames || 120,
-          };
+          return { durationInFrames: customProps.durationInFrames || 120 };
         }}
         defaultProps={{
           title: "REGISTRO DE TELEMETRÍA DE CABINA",
@@ -34,8 +172,6 @@ export const Root: React.FC = () => {
           descentRate: "-3,400 FPM",
         }}
       />
-
-      {/* 2. G3 TECH / HARDWARE / CHIPS 2NM / IA */}
       <Composition
         id="VeritasiumTechChip"
         component={VeritasiumTechChip}
@@ -45,9 +181,7 @@ export const Root: React.FC = () => {
         height={1920}
         calculateMetadata={({ props }) => {
           const customProps = props as TechChipProps & { durationInFrames?: number };
-          return {
-            durationInFrames: customProps.durationInFrames || 120,
-          };
+          return { durationInFrames: customProps.durationInFrames || 120 };
         }}
         defaultProps={{
           title: "ARQUITECTURA DE SILICIO 2NM",
@@ -58,8 +192,6 @@ export const Root: React.FC = () => {
           architectureTag: "GAA NANOSHEET 3D",
         }}
       />
-
-      {/* 3. G2 CIBERATAQUES / ZERO-DAY / GUERRA DIGITAL */}
       <Composition
         id="VeritasiumCyberRadar"
         component={VeritasiumCyberRadar}
@@ -69,9 +201,7 @@ export const Root: React.FC = () => {
         height={1920}
         calculateMetadata={({ props }) => {
           const customProps = props as CyberRadarProps & { durationInFrames?: number };
-          return {
-            durationInFrames: customProps.durationInFrames || 120,
-          };
+          return { durationInFrames: customProps.durationInFrames || 120 };
         }}
         defaultProps={{
           title: "ATAQUE DDOS MULTIVECTORIAL DETECTADO",
@@ -82,8 +212,6 @@ export const Root: React.FC = () => {
           targetCount: "184 NODOS COMPROMETIDOS",
         }}
       />
-
-      {/* 4. G4 / UNIVERSAL: COMPARATIVA DE DATOS Y ESCALA */}
       <Composition
         id="VeritasiumStatComparison"
         component={VeritasiumStatComparison}
@@ -93,9 +221,7 @@ export const Root: React.FC = () => {
         height={1920}
         calculateMetadata={({ props }) => {
           const customProps = props as StatComparisonProps & { durationInFrames?: number };
-          return {
-            durationInFrames: customProps.durationInFrames || 120,
-          };
+          return { durationInFrames: customProps.durationInFrames || 120 };
         }}
         defaultProps={{
           title: "ESCALA DE IMPACTO Y TELEMETRÍA",
@@ -111,8 +237,6 @@ export const Root: React.FC = () => {
           theme: "universal",
         }}
       />
-
-      {/* 5. BLUEPRINT / WIREFRAME / ARQUITECTURA TÉCNICA */}
       <Composition
         id="VeritasiumBlueprint"
         component={VeritasiumBlueprint}
@@ -122,9 +246,7 @@ export const Root: React.FC = () => {
         height={1920}
         calculateMetadata={({ props }) => {
           const customProps = props as BlueprintProps & { durationInFrames?: number };
-          return {
-            durationInFrames: customProps.durationInFrames || 120,
-          };
+          return { durationInFrames: customProps.durationInFrames || 120 };
         }}
         defaultProps={{
           title: "DESGLOSE DE ARQUITECTURA CRÍTICA",
@@ -142,20 +264,16 @@ export const Root: React.FC = () => {
           theme: "aviation",
         }}
       />
-
-      {/* 6. CIERRE DOCUMENTAL / CONCLUSIÓN VERITASIUM */}
       <Composition
         id="VeritasiumDocumentaryOutro"
         component={VeritasiumDocumentaryOutro}
-        durationInFrames={144} // 6.0 segundos a 24 fps
+        durationInFrames={144}
         fps={24}
         width={1080}
         height={1920}
         calculateMetadata={({ props }) => {
           const customProps = props as DocumentaryOutroProps & { durationInFrames?: number };
-          return {
-            durationInFrames: customProps.durationInFrames || 144,
-          };
+          return { durationInFrames: customProps.durationInFrames || 144 };
         }}
         defaultProps={{
           title: "CONCLUSIÓN Y PRIMEROS PRINCIPIOS",
