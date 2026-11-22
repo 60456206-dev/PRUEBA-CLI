@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
 """
 TIKTOK RADAR · Generador y Gestor de Audio de Alta Fidelidad (Broadcast)
-1. Locución: Voz costarricense nativa (Edge-TTS `es-CR-JuanNeural` a ritmo pausado y claro,
-   con marcas reales WordBoundary/SentenceBoundary) y fallback automático a Gemini 3.8 Flash TTS.
+1. Locución: Voz humana de estudio vía Gemini TTS (`gemini-3.8-flash-tts`, voz `Charon` con
+   respaldo automático `gemini-3.1-flash-tts-preview` / `gemini-2.5-flash-preview-tts`),
+   alineación acústica DP palabra a palabra (`WORD_BOUNDARIES.json`) y fallback Edge-TTS / ElevenLabs.
 2. Música y Foley: Epidemic Sound MCP API con descarga y caché de stems (BASS + INSTRUMENTS) y SFX de estudio.
 """
 
 import asyncio
 import base64
 import concurrent.futures
+import io
 import json
 import os
 import re
@@ -47,34 +49,45 @@ DEFAULT_ASSETS_DIR = ROOT_DIR / "audio_assets"
 DEFAULT_ASSETS_DIR.mkdir(parents=True, exist_ok=True)
 
 DEFAULT_LOCUCION_CONFIG: Dict[str, Any] = {
-    "motor_principal": "edge_tts",
-    "acento": "es-CR (Costa Rica)",
-    "voz_edge": "es-CR-JuanNeural",
-    "rate_edge": "-4%",
+    "motor_principal": "gemini",
+    "acento": "es-PE (Peruano coloquial cercano)",
+    "voz_gemini": "Puck",
+    "voz_gemini_fallback": "Puck",
+    "gemini_models": [
+        "gemini-3.8-flash-tts",
+        "gemini-3.8-flash-lite-tts",
+        "gemini-3.1-flash-tts-preview",
+        "gemini-2.5-flash-preview-tts",
+    ],
+    "voz_edge": "en-US-AndrewMultilingualNeural",
+    "rate_edge": "+6%",
     "pitch_edge": "+0Hz",
-    "voz_gemini_fallback": "Orus",
     "tighten_silencios": False,
-    "palabras_objetivo": "134-145",
+    "palabras_objetivo": "220-236",
     "elevenlabs_enabled": False,
     "elevenlabs_voice_id": "pNInz6obpgDQGcFmaJgB",
     "elevenlabs_model_id": "eleven_multilingual_v2",
-    "elevenlabs_stability": 0.45,
+    "elevenlabs_stability": 0.40,
     "elevenlabs_similarity_boost": 0.78,
-    "elevenlabs_style": 0.35,
-    "elevenlabs_speed": 0.96,
+    "elevenlabs_style": 0.42,
+    "elevenlabs_speed": 1.04,
 }
 
-DEFAULT_COSTA_RICA_STYLE = (
-    "Locutor masculino nacido y criado en San José, Costa Rica, hablando con acento netamente costarricense "
-    "(acento tico auténtico del Valle Central: erre suave retrofleja, erre doble arrastrada característica de Costa Rica, "
-    "ese final clara sin aspirar y cadencia cálida costarricense). "
-    "Rapidez moderada y dicción muy entendible (alrededor de 140 palabras por minuto), sin correr ni arrastrar palabras, "
-    "con pausas claras en comas y puntos y tono periodístico cercano."
+DEFAULT_PERUVIAN_COLLOQUIAL_STYLE = (
+    "Chico peruano de Lima (28 a 32 años) con acento peruano 100% auténtico, natural y coloquial — "
+    "cadencia limeña/peruana genuina, cálida, cercana y súper familiar, como conversando en confianza con un amigo "
+    "o contando una historia increíble frente a cámara en YouTube/TikTok (cero locutor acartonado de noticiero, "
+    "cero formalidad rígida, cero acento mexicano, colombiano ni español). "
+    "Habla con energía real, ágil y fluida (alrededor de 185 a 195 palabras por minuto; NADA lento ni arrastrado, "
+    "tampoco atropellado), con entonación viva y expresiva en cada giro de la historia, énfasis orgánico en los datos clave "
+    "y respiraciones suaves y limpias en micrófono de estudio sin jadeos ruidosos."
 )
+DEFAULT_COSTA_RICA_STYLE = DEFAULT_PERUVIAN_COLLOQUIAL_STYLE
+DEFAULT_HUMAN_NARRATOR_STYLE = DEFAULT_PERUVIAN_COLLOQUIAL_STYLE
 
 
 def load_locucion_config() -> Dict[str, Any]:
-    """Lee la configuración de locución desde config_produccion.json con valores seguros costarricenses."""
+    """Lee la configuración de locución desde config_produccion.json con valores peruanos coloquiales."""
     cfg = dict(DEFAULT_LOCUCION_CONFIG)
     if CONFIG_PATH.exists():
         try:
@@ -108,46 +121,50 @@ def _run_coro_sync(coro: Any) -> Any:
         return pool.submit(asyncio.run, coro).result()
 
 # ==============================================================================
-# Catálogo Maestro de Soundtracks Virales Epidemic Sound por Categoría
-# Seleccionados para máxima retención, ritmo bailable/tensionante y empoderamiento
+# Catálogo Maestro de Soundtracks Cinematográficos Epidemic Sound por Categoría
+# Seleccionados y arreglados a ~65s FULL (tambores + cuerdas + clímax)
 # ==============================================================================
 GENRE_SOUNDTRACK_CATALOG = {
     "G3_IA_HARDWARE": {
-        "title": "STYLE",
-        "artist": "Ballpoint",
-        "bpm": 118,
-        "style": "Dark Synth / Modern Viral Empowerment Beat (Washing Machine / Tech Energy)",
-        "id": "03e71f7f-ad6f-4845-9fbd-9fce110cfa5e",
+        "title": "Observatory",
+        "artist": "Out To The World",
+        "bpm": 128,
+        "style": "Modern Investigative Documentary / Energetic Tech Synth & Crisp Drums",
+        "id": "0c47304b-4e50-43b2-8230-2397e7991316",
+        "full_file": "G3_TECH_OBSERVATORY_64S_FULL.mp3",
         "bass_file": "G3_TECH_STYLE_BASS.mp3",
-        "inst_file": "G3_TECH_STYLE_INSTRUMENTS.mp3"
+        "inst_file": "G3_TECH_STYLE_INSTRUMENTS.mp3",
     },
     "G2_CIBERATAQUES": {
-        "title": "Deadlock",
-        "artist": "Lennon Hutton",
-        "bpm": 115,
-        "style": "Cyberpunk Dark Electro Pulse / Urgent Hacker Investigation",
-        "id": "db0a04d3-c17d-4601-8e8a-454ef7698454",
+        "title": "Dark Future Rock Beat",
+        "artist": "Def Lev",
+        "bpm": 100,
+        "style": "Cyberpunk Dark Thriller / Driving Electronic Pulse & Heavy Drums",
+        "id": "db5e6eb9-deb3-46dc-85a8-664f08902fb8",
+        "full_file": "G2_CYBER_DARKFUTURE_64S_FULL.mp3",
         "bass_file": "G2_CYBER_DEADLOCK_BASS.mp3",
-        "inst_file": "G2_CYBER_DEADLOCK_INSTRUMENTS.mp3"
+        "inst_file": "G2_CYBER_DEADLOCK_INSTRUMENTS.mp3",
     },
     "G1_AVIACION": {
-        "title": "Trace",
-        "artist": "Lennon Hutton",
-        "bpm": 156,
-        "style": "Cinematic Action Thriller / High Altitude Tension Pulse",
-        "id": "3c1ad0de-8456-4677-86fe-bb3153624738",
+        "title": "One",
+        "artist": "Hampus Naeselius",
+        "bpm": 125,
+        "style": "Cinematic Action Thriller / Hans Zimmer Style Tension Strings & Drums",
+        "id": "171be0bd-6cbe-4932-bff8-1b8129c471f0",
+        "full_file": "G1_AVIATION_ONE_64S_FULL.mp3",
         "bass_file": "G1_AVIATION_TRACE_BASS.mp3",
-        "inst_file": "G1_AVIATION_TRACE_INSTRUMENTS.mp3"
+        "inst_file": "G1_AVIATION_TRACE_INSTRUMENTS.mp3",
     },
     "G4_ESPACIO": {
-        "title": "Mindscape",
-        "artist": "Lennon Hutton",
-        "bpm": 108,
-        "style": "Cosmic Atmospheric Synthwave / Futuristic Orbit Drive",
-        "id": "4cb08b97-fa28-4f38-9b9c-3e71a2d98b5f",
+        "title": "Last Frontier",
+        "artist": "Hampus Naeselius",
+        "bpm": 87,
+        "style": "Epic Cosmic Documentary / Interstellar Style Strings & Orchestral Climax",
+        "id": "10cdcb7d-e251-444a-af68-4f989b23a593",
+        "full_file": "G4_SPACE_LASTFRONTIER_64S_FULL.mp3",
         "bass_file": "G4_SPACE_MINDSCAPE_BASS.mp3",
-        "inst_file": "G4_SPACE_MINDSCAPE_INSTRUMENTS.mp3"
-    }
+        "inst_file": "G4_SPACE_MINDSCAPE_INSTRUMENTS.mp3",
+    },
 }
 
 # Stems y SFX complementarios
@@ -166,25 +183,169 @@ EPIDEMIC_PRESETS = {
 }
 
 
+def _resolve_genre_soundtrack_key(genre: str) -> str:
+    """Mapea el género o titular de noticia a la clave canónica de GENRE_SOUNDTRACK_CATALOG."""
+    genre_upper = (genre or "G1").upper()
+    if any(k in genre_upper for k in ["G1", "AVIACION", "AVIACIÓN", "MAYDAY", "VUELO", "AEREO", "AÉREO", "AVION", "AVIÓN", "ACCIDENTE"]):
+        return "G1_AVIACION"
+    if any(k in genre_upper for k in ["G2", "CIBER", "HACKER", "CYBER", "RANSOMWARE"]):
+        return "G2_CIBERATAQUES"
+    if any(k in genre_upper for k in ["G4", "ESPACIO", "NASA", "ORBITA", "ÓRBITA", "CIENCIA", "STARSHIP"]):
+        return "G4_ESPACIO"
+    if any(k in genre_upper for k in ["G3", "ROBOTICA", "ROBÓTICA", "HARDWARE", "CHIP", "SEMICONDUCTOR"]) or re.search(r"\bIA\b|\bAI\b", genre_upper):
+        return "G3_IA_HARDWARE"
+    return "G3_IA_HARDWARE"
+
+
+def _extract_mcp_json_data(res: Dict[str, Any]) -> Dict[str, Any]:
+    txt = res.get("result", {}).get("content", [{}])[0].get("text", "{}")
+    return json.loads(txt) if isinstance(txt, str) and txt.strip().startswith("{") else {}
+
+
+def download_arranged_soundtrack_65s(
+    recording_id: str,
+    dest_path: Path,
+    target_ms: int = 65000,
+    session_id: Optional[str] = None,
+) -> bool:
+    """
+    Solicita un arreglo automático de ~65s en Epidemic Sound (`EditRecording`) con intro, cuerpo y
+    clímax comprimido para TikTok; descarga el máster FULL editado con respaldo automático a `DownloadRecording(FULL)`.
+    """
+    key_env = os.getenv("EPIDEMIC_SOUND") or EPIDEMIC_SOUND
+    if not key_env:
+        return False
+
+    try:
+        sid = session_id
+        if not sid:
+            sid, _ = mcp_call({
+                "jsonrpc": "2.0",
+                "id": 1,
+                "method": "initialize",
+                "params": {
+                    "protocolVersion": "2024-11-05",
+                    "capabilities": {},
+                    "clientInfo": {"name": "tiktok_radar", "version": "2.0.0"},
+                },
+            })
+
+        dest_path.parent.mkdir(parents=True, exist_ok=True)
+        _, edit_res = mcp_call({
+            "jsonrpc": "2.0",
+            "id": 81,
+            "method": "tools/call",
+            "params": {
+                "name": "EditRecording",
+                "arguments": {
+                    "id": recording_id,
+                    "input": {
+                        "targetDurationMs": int(target_ms),
+                        "downloadAudioFormat": "MP3",
+                        "skipStems": True,
+                        "maxResults": 1,
+                    },
+                },
+            },
+        }, sid)
+        edit_data = _extract_mcp_json_data(edit_res)
+        job_id = ((edit_data.get("data") or {}).get("recordingEdit") or {}).get("id")
+
+        asset_url: Optional[str] = None
+        if job_id:
+            for _ in range(15):
+                _, poll_res = mcp_call({
+                    "jsonrpc": "2.0",
+                    "id": 82,
+                    "method": "tools/call",
+                    "params": {"name": "PollEditRecordingJob", "arguments": {"id": job_id}},
+                }, sid)
+                poll_data = _extract_mcp_json_data(poll_res)
+                job_obj = (poll_data.get("data") or {}).get("recordingEditJob") or {}
+                status = str(job_obj.get("status") or "").upper()
+                if status == "COMPLETED":
+                    edit_obj = job_obj.get("edit") or (job_obj.get("edits") or [None])[0] or {}
+                    edit_id = edit_obj.get("id")
+                    if edit_id:
+                        try:
+                            _, dl_res = mcp_call({
+                                "jsonrpc": "2.0",
+                                "id": 83,
+                                "method": "tools/call",
+                                "params": {
+                                    "name": "DownloadRecordingEdit",
+                                    "arguments": {"input": {"jobId": job_id, "editId": edit_id}},
+                                },
+                            }, sid)
+                            dl_data = _extract_mcp_json_data(dl_res).get("data") or {}
+                            for k in ("recordingEditDownload", "downloadRecordingEdit", "recordingDownload"):
+                                if isinstance(dl_data.get(k), dict) and dl_data[k].get("assetUrl"):
+                                    asset_url = dl_data[k]["assetUrl"]
+                                    break
+                            if not asset_url:
+                                m_url = re.search(r"https://[^\s\"']+\.(?:mp3|wav)[^\s\"']*", json.dumps(dl_data))
+                                if m_url:
+                                    asset_url = m_url.group(0)
+                        except Exception:
+                            asset_url = None
+                    if not asset_url:
+                        asset_url = edit_obj.get("fullMixPreviewUrl")
+                    break
+                if status in ("FAILED", "ERROR"):
+                    break
+                time.sleep(1.5)
+
+        if not asset_url:
+            _, full_res = mcp_call({
+                "jsonrpc": "2.0",
+                "id": 84,
+                "method": "tools/call",
+                "params": {
+                    "name": "DownloadRecording",
+                    "arguments": {"id": recording_id, "options": {"fileType": "MP3", "stemType": "FULL"}},
+                },
+            }, sid)
+            full_data = _extract_mcp_json_data(full_res)
+            asset_url = ((full_data.get("data") or {}).get("recordingDownload") or {}).get("assetUrl")
+
+        if asset_url:
+            tmp_dl = dest_path.with_suffix(".dl.tmp.mp3")
+            download_file(asset_url, tmp_dl)
+            if tmp_dl.exists() and tmp_dl.stat().st_size > 20_000:
+                tmp_dl.replace(dest_path)
+                return True
+            tmp_dl.unlink(missing_ok=True)
+    except Exception as e:
+        print(f"[AUDIO-EPIDEMIC] Aviso al arreglar/descargar soundtrack 65s ({recording_id}): {e}", flush=True)
+    return False
+
+
+def get_genre_full_soundtrack(genre: str, target_dir: Optional[Path] = None) -> Optional[Path]:
+    """
+    Devuelve la ruta local del soundtrack FULL arreglado a ~65s (`*_64S_FULL.mp3`) para la categoría.
+    Si no existe localmente y hay clave `EPIDEMIC_SOUND`, lo arregla y descarga vía MCP.
+    """
+    assets_dir = target_dir or DEFAULT_ASSETS_DIR
+    key = _resolve_genre_soundtrack_key(genre)
+    entry = GENRE_SOUNDTRACK_CATALOG[key]
+    full_name = entry.get("full_file")
+    if not full_name:
+        return None
+    full_path = assets_dir / full_name
+    if full_path.exists() and full_path.stat().st_size > 20_000:
+        return full_path
+    if download_arranged_soundtrack_65s(entry["id"], full_path, target_ms=65000):
+        return full_path
+    return None
+
+
 def get_genre_soundtrack(genre: str, target_dir: Optional[Path] = None) -> Tuple[Path, Path]:
     """
     Devuelve las rutas locales de los stems (BASS, INSTRUMENTS) oficiales de Epidemic Sound
     para el género de noticia seleccionado. Si no existen localmente, intenta descargarlos vía MCP.
     """
     assets_dir = target_dir or DEFAULT_ASSETS_DIR
-    genre_upper = (genre or "G1").upper()
-
-    # Selección de categoría musical
-    if any(k in genre_upper for k in ["G1", "AVIACION", "AVIACIÓN", "MAYDAY", "VUELO", "AEREO", "AÉREO", "AVION", "AVIÓN", "ACCIDENTE"]):
-        key = "G1_AVIACION"
-    elif any(k in genre_upper for k in ["G2", "CIBER", "HACKER", "CYBER", "RANSOMWARE"]):
-        key = "G2_CIBERATAQUES"
-    elif any(k in genre_upper for k in ["G4", "ESPACIO", "NASA", "ORBITA", "ÓRBITA", "CIENCIA", "STARSHIP"]):
-        key = "G4_ESPACIO"
-    elif any(k in genre_upper for k in ["G3", "ROBOTICA", "ROBÓTICA", "HARDWARE", "CHIP", "SEMICONDUCTOR"]) or re.search(r"\bIA\b|\bAI\b", genre_upper):
-        key = "G3_IA_HARDWARE"
-    else:
-        key = "G3_IA_HARDWARE"
+    key = _resolve_genre_soundtrack_key(genre)
 
     entry = GENRE_SOUNDTRACK_CATALOG[key]
     bass_path = assets_dir / entry["bass_file"]
@@ -251,47 +412,143 @@ def probe_duration(path: Path) -> float:
 
 
 # -----------------------------------------------------------------------------
-# 1. Locución Profesional con Gemini 3.8 Flash TTS
+# 1. Locución Profesional Hiperhumana con Gemini TTS
 # -----------------------------------------------------------------------------
+
+def _clean_text_for_tts(text: str) -> str:
+    """Limpia marcas Markdown simples sin alterar palabras ni signos de puntuación."""
+    cleaned = re.sub(r"[*_`~]+", "", text or "")
+    return re.sub(r"\s+", " ", cleaned).strip()
+
+
+def _wrap_pcm_as_wav(raw: bytes, mime_type: str = "") -> bytes:
+    """Envuelve PCM L16 crudo en una cabecera WAV válida si la respuesta no trae RIFF."""
+    if raw[:4] == b"RIFF":
+        return raw
+    rate_m = re.search(r"rate=(\d+)", mime_type or "", flags=re.IGNORECASE)
+    sample_rate = int(rate_m.group(1)) if rate_m else 24000
+    ch_m = re.search(r"channels=(\d+)", mime_type or "", flags=re.IGNORECASE)
+    channels = int(ch_m.group(1)) if ch_m else 1
+    buf = io.BytesIO()
+    with wave.open(buf, "wb") as wf:
+        wf.setnchannels(channels)
+        wf.setsampwidth(2)
+        wf.setframerate(sample_rate)
+        wf.writeframes(raw)
+    return buf.getvalue()
+
+
+def _finalize_voice_audio(raw_wav: bytes, output_path: Path) -> None:
+    """
+    Recorta únicamente silencio muerto inicial y final (preservando respiraciones internas)
+    y exporta la locución limpia a 48 kHz de alta fidelidad.
+    """
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    tmp_wav = output_path.with_suffix(".gemini_raw.wav")
+    tmp_wav.write_bytes(raw_wav)
+    af_trim = (
+        "silenceremove=start_periods=1:start_duration=0.04:start_threshold=-46dB,"
+        "areverse,silenceremove=start_periods=1:start_duration=0.04:start_threshold=-46dB,areverse,"
+        "afade=t=in:st=0:d=0.008"
+    )
+    try:
+        if output_path.suffix.lower() == ".wav":
+            cmd = [
+                "ffmpeg", "-y", "-i", str(tmp_wav),
+                "-af", af_trim,
+                "-ar", "48000", "-ac", "2", "-c:a", "pcm_s16le",
+                str(output_path),
+            ]
+        else:
+            cmd = [
+                "ffmpeg", "-y", "-i", str(tmp_wav),
+                "-af", af_trim,
+                "-ar", "48000", "-ac", "1", "-b:a", "256k",
+                str(output_path),
+            ]
+        subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    except Exception:
+        if output_path.suffix.lower() == ".mp3":
+            subprocess.run(
+                ["ffmpeg", "-y", "-i", str(tmp_wav), "-ar", "48000", "-b:a", "256k", str(output_path)],
+                check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+            )
+        else:
+            output_path.write_bytes(raw_wav)
+    finally:
+        tmp_wav.unlink(missing_ok=True)
+
 
 def generate_speech_gemini(
     text: str,
     output_path: Path,
-    voice: str = "Orus",
-    style: Optional[str] = None
+    voice: str = "Puck",
+    style: Optional[str] = None,
+    models: Optional[List[str]] = None,
 ) -> bool:
-    """Genera locución con Gemini 3.8 Flash TTS con dirección de acento costarricense y ritmo pausado."""
+    """Genera locución hiperhumana con Gemini TTS soportando esquemas 3.8 y 3.1/2.5 + PCM crudo."""
     key = os.getenv("GEMINI_API_KEY") or GEMINI_API_KEY
-    if not key:
+    if not key or not (text or "").strip():
         return False
 
     _clear_stale_boundaries(output_path)
+    clean_text = _clean_text_for_tts(text)
 
     if not style:
         style = DEFAULT_COSTA_RICA_STYLE
 
-    models_to_try = ["gemini-3.8-flash-tts", "gemini-3.8-flash-lite-tts", "gemini-3.1-flash-tts-preview"]
+    loc_cfg = load_locucion_config()
+    models_to_try = list(
+        models
+        or loc_cfg.get("gemini_models")
+        or [
+            "gemini-3.8-flash-tts",
+            "gemini-3.8-flash-lite-tts",
+            "gemini-3.1-flash-tts-preview",
+            "gemini-2.5-flash-preview-tts",
+        ]
+    )
 
     for model in models_to_try:
-        body = {
-            "contents": [{
-                "role": "user",
-                "parts": [{
-                    "text": text,
-                    "speech_metadata": {
-                        "style": style
-                    }
-                }]
-            }],
-            "generationConfig": {
-                "responseModalities": ["AUDIO"],
-                "speechConfig": {
-                    "voiceConfig": {
-                        "voice": voice
+        is_v38 = "3.8" in model
+        if is_v38:
+            body: Dict[str, Any] = {
+                "contents": [{
+                    "role": "user",
+                    "parts": [{
+                        "text": clean_text,
+                        "speech_metadata": {
+                            "style": style
+                        }
+                    }]
+                }],
+                "generationConfig": {
+                    "responseModalities": ["AUDIO"],
+                    "speechConfig": {
+                        "voiceConfig": {
+                            "voice": voice
+                        }
                     }
                 }
             }
-        }
+        else:
+            prompt_text = f"{style}\n\nLee exactamente el siguiente guion con voz humana natural:\n\n{clean_text}"
+            body = {
+                "contents": [{
+                    "role": "user",
+                    "parts": [{"text": prompt_text}]
+                }],
+                "generationConfig": {
+                    "responseModalities": ["AUDIO"],
+                    "speechConfig": {
+                        "voiceConfig": {
+                            "prebuiltVoiceConfig": {
+                                "voiceName": voice
+                            }
+                        }
+                    }
+                }
+            }
 
         url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={key}"
         req = urllib.request.Request(
@@ -302,29 +559,23 @@ def generate_speech_gemini(
 
         try:
             print(f"[AUDIO-TTS] Generando locución con {model} (Voz: {voice})...", flush=True)
-            with urllib.request.urlopen(req, timeout=45) as resp:
+            with urllib.request.urlopen(req, timeout=90) as resp:
                 data = json.load(resp)
             parts = data["candidates"][0]["content"]["parts"]
             inline = next(p["inlineData"] for p in parts if "inlineData" in p)
             raw = base64.b64decode(inline["data"])
-
-            output_path.parent.mkdir(parents=True, exist_ok=True)
-            # Si el destino es mp3 pero gemini devuelve wav, convertir con ffmpeg
-            if output_path.suffix.lower() == ".mp3" and raw[:4] == b"RIFF":
-                tmp_wav = output_path.with_suffix(".tmp.wav")
-                tmp_wav.write_bytes(raw)
-                subprocess.run(
-                    ["ffmpeg", "-y", "-i", str(tmp_wav), "-b:a", "192k", str(output_path)],
-                    check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
-                )
-                if tmp_wav.exists():
-                    tmp_wav.unlink()
-            else:
-                output_path.write_bytes(raw)
+            if len(raw) < 1024:
+                raise RuntimeError("Respuesta de audio demasiado corta.")
+            raw_wav = _wrap_pcm_as_wav(raw, inline.get("mimeType", ""))
+            _finalize_voice_audio(raw_wav, output_path)
 
             dur = probe_duration(output_path)
             print(f"[AUDIO-TTS] ✅ Locución Gemini completada: {output_path.name} ({dur:.2f} s)", flush=True)
             return True
+        except urllib.error.HTTPError as e:
+            print(f"[AUDIO-TTS] ⚠️ Error HTTP {e.code} con {model}: {e}. Probando alternativa...", flush=True)
+            if e.code == 429:
+                time.sleep(2.0)
         except Exception as e:
             print(f"[AUDIO-TTS] ⚠️ Error con {model}: {e}. Probando alternativa...", flush=True)
 
@@ -668,6 +919,226 @@ def tighten_audio_dead_air(
     return curr_dur
 
 
+def _phonetic_word_weight(word: str) -> float:
+    """Estima peso temporal fonético de una palabra en español según sílabas, longitud y puntuación."""
+    clean = re.sub(r"[^\wáéíóúüñ]", "", (word or "").lower(), flags=re.UNICODE)
+    syllables = max(1, len(re.findall(r"[aeiouáéíóúü]+", clean)))
+    punct_bonus = 0.45 if word.endswith((".", "?", "!")) else (0.25 if word.endswith((",", ";", ":")) else 0.0)
+    return max(0.5, 0.65 * syllables + 0.12 * len(clean) + punct_bonus)
+
+
+def _speech_pos_to_timeline(pos_in_speech: float, spans: List[Tuple[float, float]], is_start: bool) -> float:
+    """Mapea una posición acumulada de habla activa a tiempo real en el audio."""
+    rem = max(0.0, pos_in_speech)
+    for idx, (s_start, s_end) in enumerate(spans):
+        dur = max(0.01, s_end - s_start)
+        if is_start:
+            if rem < dur - 1e-6 or idx == len(spans) - 1:
+                return min(s_end, s_start + rem)
+        else:
+            if rem <= dur + 1e-6 or idx == len(spans) - 1:
+                return min(s_end, s_start + rem)
+        rem -= dur
+    return spans[-1][1]
+
+
+def extract_word_boundaries_acoustic(audio_path: Path, script: str) -> Optional[Path]:
+    """
+    Alinea palabras del guion a la envolvente RMS real del audio mediante programación dinámica
+    monotónica anclada a pausas acústicas reales (>=0.14s), generando WORD_BOUNDARIES.json y
+    SENTENCE_BOUNDARIES.json con conteo exacto 1:1 respecto a `script.split()`.
+    """
+    words = (script or "").split()
+    if not audio_path.exists() or not words:
+        return None
+    try:
+        import numpy as np
+    except ImportError:
+        return None
+
+    try:
+        sr = 16000
+        hop = 160  # 10 ms por cuadro
+        pcm_bytes = subprocess.check_output(
+            [
+                "ffmpeg", "-v", "error", "-i", str(audio_path),
+                "-ac", "1", "-ar", str(sr), "-f", "s16le", "-",
+            ],
+            stderr=subprocess.PIPE,
+            timeout=30,
+        )
+        samples = np.frombuffer(pcm_bytes, dtype=np.int16).astype(np.float32) / 32768.0
+        total_dur = len(samples) / float(sr)
+        if len(samples) < sr * 0.2:
+            return None
+
+        n_frames = len(samples) // hop
+        if n_frames < 5:
+            return None
+        frames = samples[: n_frames * hop].reshape(n_frames, hop)
+        rms = np.sqrt(np.mean(frames * frames, axis=1) + 1e-12)
+        db = 20.0 * np.log10(rms + 1e-9)
+
+        active_db = db[db > -65.0]
+        if active_db.size == 0:
+            return None
+        ref_db = float(np.percentile(active_db, 95))
+        thresh_db = max(-55.0, ref_db - 26.0)
+        mask = (db >= thresh_db).copy()
+
+        # Cerrar micro-huecos < 90ms (oclusivas sordas /p, t, k/)
+        idx = 0
+        while idx < n_frames:
+            if not mask[idx]:
+                j = idx
+                while j < n_frames and not mask[j]:
+                    j += 1
+                if idx > 0 and j < n_frames and (j - idx) < 9:
+                    mask[idx:j] = True
+                idx = j
+            else:
+                idx += 1
+
+        # Extraer tramos activos descartando ráfagas aisladas < 60ms
+        raw_spans: List[Tuple[float, float]] = []
+        idx = 0
+        while idx < n_frames:
+            if mask[idx]:
+                j = idx
+                while j < n_frames and mask[j]:
+                    j += 1
+                if (j - idx) >= 6:
+                    raw_spans.append((round(idx * 0.01, 3), round(min(total_dur, j * 0.01), 3)))
+                idx = j
+            else:
+                idx += 1
+
+        speech_spans = raw_spans if raw_spans else [(0.0, round(total_dur, 3))]
+        span_durs = [max(0.02, e - s) for s, e in speech_spans]
+        total_speech_dur = sum(span_durs)
+
+        # Identificar pausas reales (>= 0.14s) entre tramos activos
+        gaps: List[Dict[str, float]] = []
+        cum_s = 0.0
+        for i in range(len(speech_spans) - 1):
+            cum_s += span_durs[i]
+            g_dur = speech_spans[i + 1][0] - speech_spans[i][1]
+            if g_dur >= 0.14:
+                gaps.append({"cum_speech": cum_s, "dur": g_dur})
+
+        weights = [_phonetic_word_weight(w) for w in words]
+        total_w = max(1e-6, sum(weights))
+        cum_w: List[float] = []
+        acc_w = 0.0
+        for wt in weights:
+            acc_w += wt
+            cum_w.append(acc_w)
+        exp_speech_t = [(cw / total_w) * total_speech_dur for cw in cum_w]
+
+        # Alinear finales de oración fuerte con silencios reales mediante DP monotónica
+        sent_ends = [i for i, w in enumerate(words[:-1]) if w.endswith((".", "?", "!", ";", ":"))]
+        matched_pairs: List[Tuple[int, float]] = []
+        if sent_ends and gaps:
+            tol = max(2.5, 0.09 * total_speech_dur)
+            n_s, n_g = len(sent_ends), len(gaps)
+            dp = [[0.0] * (n_g + 1) for _ in range(n_s + 1)]
+            choice = [[0] * (n_g + 1) for _ in range(n_s + 1)]  # 1: skip s, 2: skip g, 3: match
+
+            for i in range(1, n_s + 1):
+                w_idx = sent_ends[i - 1]
+                exp_t = exp_speech_t[w_idx]
+                for j in range(1, n_g + 1):
+                    best = dp[i - 1][j]
+                    act = 1
+                    if dp[i][j - 1] > best:
+                        best = dp[i][j - 1]
+                        act = 2
+                    drift = abs(gaps[j - 1]["cum_speech"] - exp_t)
+                    if drift <= tol:
+                        cand = dp[i - 1][j - 1] + 1.0 + min(0.6, gaps[j - 1]["dur"]) * 2.0 - 0.8 * (drift / tol)
+                        if cand > best:
+                            best = cand
+                            act = 3
+                    dp[i][j] = best
+                    choice[i][j] = act
+
+            raw_matches: List[Tuple[int, float]] = []
+            i, j = n_s, n_g
+            while i > 0 and j > 0:
+                act = choice[i][j]
+                if act == 3:
+                    raw_matches.append((sent_ends[i - 1], gaps[j - 1]["cum_speech"]))
+                    i -= 1
+                    j -= 1
+                elif act == 1:
+                    i -= 1
+                else:
+                    j -= 1
+            raw_matches.reverse()
+
+            # Filtrar anclas cuya relación de palabras/tiempo sea físicamente coherente
+            prev_w_excl = 0
+            prev_s = 0.0
+            n_words = len(words)
+            for w_end_idx, g_cum in raw_matches:
+                w_excl = w_end_idx + 1
+                rem_words = n_words - w_excl
+                seg_words = w_excl - prev_w_excl
+                if (
+                    seg_words >= 1
+                    and (g_cum - prev_s) >= 0.04 * seg_words
+                    and (total_speech_dur - g_cum) >= 0.04 * max(1, rem_words)
+                ):
+                    matched_pairs.append((w_excl, g_cum))
+                    prev_w_excl = w_excl
+                    prev_s = g_cum
+
+        anchors: List[Tuple[int, float]] = [(0, 0.0), *matched_pairs, (len(words), total_speech_dur)]
+        word_entries: List[Dict[str, Any]] = []
+        prev_end = 0.0
+
+        for a_idx in range(len(anchors) - 1):
+            w0, s0 = anchors[a_idx]
+            w1, s1 = anchors[a_idx + 1]
+            if w1 <= w0:
+                continue
+            seg_wt = max(1e-6, sum(weights[w0:w1]))
+            cur_s = s0
+            for k in range(w0, w1):
+                dur_s = (weights[k] / seg_wt) * max(0.01, s1 - s0)
+                t_start = _speech_pos_to_timeline(cur_s, speech_spans, is_start=True)
+                t_end = _speech_pos_to_timeline(cur_s + dur_s, speech_spans, is_start=False)
+                t_start = max(prev_end, min(total_dur - 0.04, t_start))
+                t_end = max(t_start + 0.04, min(total_dur, t_end))
+                word_entries.append({
+                    "text": words[k],
+                    "start": round(t_start, 3),
+                    "end": round(t_end, 3),
+                })
+                prev_end = t_end
+                cur_s += dur_s
+
+        if len(word_entries) != len(words):
+            return None
+
+        wb_path = audio_path.parent / "WORD_BOUNDARIES.json"
+        wb_path.write_text(json.dumps(word_entries, indent=2, ensure_ascii=False), encoding="utf-8")
+        sentences = _reconstruct_sentences_from_words(word_entries)
+        if sentences:
+            (audio_path.parent / "SENTENCE_BOUNDARIES.json").write_text(
+                json.dumps(sentences, indent=2, ensure_ascii=False), encoding="utf-8"
+            )
+        print(
+            f"[AUDIO-TTS] ✅ Alineación acústica DP completada ({len(word_entries)} palabras, "
+            f"{len(matched_pairs)} pausas ancladas).",
+            flush=True,
+        )
+        return wb_path
+    except Exception as e:
+        print(f"[AUDIO-TTS] Aviso alineación acústica omitida: {e}", flush=True)
+        return None
+
+
 def generate_speech(
     text: str,
     output_path: Path,
@@ -679,14 +1150,14 @@ def generate_speech(
     rate_edge: Optional[str] = None,
     pitch_edge: Optional[str] = None,
 ) -> float:
-    """Genera locución (ElevenLabs si está activado y hay clave, Edge-TTS es-CR principal por defecto y fallback a Gemini TTS)."""
+    """Genera locución hiperhumana (ElevenLabs si está activado y hay clave, Gemini TTS por defecto y fallback Edge-TTS)."""
     loc_cfg = load_locucion_config()
-    motor = str(loc_cfg.get("motor_principal", "edge_tts")).lower()
-    use_edge_first = prefer_edge if prefer_edge is not None else (motor != "gemini")
-    edge_voice = voice_edge or str(loc_cfg.get("voz_edge", "es-CR-JuanNeural"))
-    edge_rate = rate_edge or str(loc_cfg.get("rate_edge", "-4%"))
+    motor = str(loc_cfg.get("motor_principal", "gemini")).lower()
+    use_edge_first = prefer_edge if prefer_edge is not None else (motor == "edge_tts")
+    edge_voice = voice_edge or str(loc_cfg.get("voz_edge", "en-US-AndrewMultilingualNeural"))
+    edge_rate = rate_edge or str(loc_cfg.get("rate_edge", "+6%"))
     edge_pitch = pitch_edge or str(loc_cfg.get("pitch_edge", "+0Hz"))
-    gem_voice = voice_gemini or str(loc_cfg.get("voz_gemini_fallback", "Orus"))
+    gem_voice = voice_gemini or str(loc_cfg.get("voz_gemini") or loc_cfg.get("voz_gemini_fallback", "Puck"))
     resolved_style = style or DEFAULT_COSTA_RICA_STYLE
     should_tighten = bool(loc_cfg.get("tighten_silencios", False)) if tighten is None else tighten
 
@@ -702,13 +1173,13 @@ def generate_speech(
 
     if not ok:
         if use_edge_first:
-            print(f"[AUDIO-TTS] Generando locución costarricense ({edge_voice} | rate={edge_rate})...", flush=True)
+            print(f"[AUDIO-TTS] Generando locución Edge-TTS ({edge_voice} | rate={edge_rate})...", flush=True)
             ok = _run_coro_sync(
                 _generate_speech_edge_async(text, output_path, voice=edge_voice, rate=edge_rate, pitch=edge_pitch)
             )
             if not ok:
-                print("[AUDIO-TTS] Activando fallback Gemini TTS con dirección costarricense...", flush=True)
-                generate_speech_gemini(text, output_path, voice=gem_voice, style=resolved_style)
+                print("[AUDIO-TTS] Activando fallback Gemini TTS con dirección humana de estudio...", flush=True)
+                ok = generate_speech_gemini(text, output_path, voice=gem_voice, style=resolved_style)
         else:
             ok = generate_speech_gemini(text, output_path, voice=gem_voice, style=resolved_style)
             if not ok:
@@ -722,6 +1193,8 @@ def generate_speech(
         dur = tighten_audio_dead_air(output_path)
     if not (output_path.parent / "WORD_BOUNDARIES.json").exists():
         extract_word_boundaries_whisper(output_path)
+    if not (output_path.parent / "WORD_BOUNDARIES.json").exists():
+        extract_word_boundaries_acoustic(output_path, text)
     return dur
 
 

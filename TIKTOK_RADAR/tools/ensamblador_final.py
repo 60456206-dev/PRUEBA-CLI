@@ -1350,7 +1350,7 @@ def _render_two_pass_loudnorm(
     """
     pass1_fc = ";".join([
         *fc_parts,
-        f"{raw_label}loudnorm=I=-14.0:TP=-1.0:LRA=7:print_format=json[aout]",
+        f"{raw_label}loudnorm=I=-14.0:TP=-1.1:LRA=7:print_format=json[aout]",
     ])
     cmd_p1 = [
         "ffmpeg", "-y",
@@ -1373,13 +1373,13 @@ def _render_two_pass_loudnorm(
 
     if measured:
         ln_filter = (
-            f"{raw_label}loudnorm=I=-14.0:TP=-1.0:LRA=7:"
+            f"{raw_label}loudnorm=I=-14.0:TP=-1.1:LRA=7:"
             f"measured_I={measured['input_i']}:measured_TP={measured['input_tp']}:"
             f"measured_LRA={measured['input_lra']}:measured_thresh={measured['input_thresh']}:"
             f"offset={measured['target_offset']}:linear=true:print_format=summary[aout]"
         )
     else:
-        ln_filter = f"{raw_label}loudnorm=I=-14.0:TP=-1.0:LRA=7[aout]"
+        ln_filter = f"{raw_label}loudnorm=I=-14.0:TP=-1.1:LRA=7[aout]"
 
     pass2_fc = ";".join([*fc_parts, ln_filter])
     cmd_p2 = [
@@ -1433,8 +1433,14 @@ def synthesize_broadcast_audio_master(
     4. Masterización EBU R128 de 2 pasadas a -14.0 LUFS en estéreo espacial 48kHz.
     """
     assets_dir = ROOT_DIR / "audio_assets"
+    full_ost: Optional[Path] = None
     try:
-        from audio_generator import ensure_editorial_sfx_palette, get_genre_soundtrack
+        from audio_generator import (
+            ensure_editorial_sfx_palette,
+            get_genre_full_soundtrack,
+            get_genre_soundtrack,
+        )
+        full_ost = get_genre_full_soundtrack(genre, assets_dir)
         bass_file, inst_file = get_genre_soundtrack(genre, assets_dir)
         sfx_palette = ensure_editorial_sfx_palette(assets_dir)
     except Exception:
@@ -1452,31 +1458,63 @@ def synthesize_broadcast_audio_master(
     whoosh_sfx = assets_dir / "SFX_WHOOSH_CINEMATIC.wav"
     drop_expr = _build_music_drop_expression(music_drop_window, total_dur)
 
-    # Si los stems de Epidemic Sound están presentes, usarlos con ducking suave y music drop narrativo
-    if bass_file.exists() and inst_file.exists():
-        inputs = [
-            "-i", str(voice_mp3),
-            "-stream_loop", "-1", "-i", str(bass_file),
-            "-stream_loop", "-1", "-i", str(inst_file),
-        ]
-        fc_parts = [
-            f"[0:a]aformat=channel_layouts=stereo,highpass=f=90,equalizer=f=3000:width_type=q:w=1.2:g=2.5,"
-            f"acompressor=threshold=-16dB:ratio=3:attack=10:release=100:makeup=2,"
-            f"asplit=2[voice_main][voice_sidechain]",
-            f"[1:a]atrim=0:{total_dur:.3f},asetpts=PTS-STARTPTS,volume=0.72,"
-            f"afade=t=in:st=0:d=0.5,afade=t=out:st={max(0.0, total_dur-2.0):.2f}:d=2.0[bass]",
-            f"[2:a]atrim=0:{total_dur:.3f},asetpts=PTS-STARTPTS,volume=0.62,"
-            f"afade=t=in:st=0:d=0.5,afade=t=out:st={max(0.0, total_dur-2.0):.2f}:d=2.0[inst]",
-            f"[bass][inst]amix=inputs=2:duration=first:normalize=0[bg_music]",
-        ]
+    use_full_ost = bool(full_ost and full_ost.exists() and full_ost.stat().st_size > 20_000)
+    use_legacy_stems = (not use_full_ost) and bass_file.exists() and inst_file.exists()
+
+    # Usar soundtrack cinematográfico FULL arreglado a ~65s o fallback a stems BASS+INSTRUMENTS
+    if use_full_ost or use_legacy_stems:
+        voice_chain = (
+            f"[0:a]aformat=channel_layouts=stereo,highpass=f=75,"
+            f"equalizer=f=150:width_type=q:w=1.0:g=1.4,"
+            f"equalizer=f=380:width_type=q:w=1.4:g=-1.2,"
+            f"equalizer=f=3200:width_type=q:w=1.1:g=1.8,"
+            f"equalizer=f=6800:width_type=q:w=1.8:g=-1.5,"
+            f"highshelf=f=10500:g=1.0,"
+            f"acompressor=threshold=-18dB:ratio=2.4:attack=12:release=140:makeup=2,"
+            f"asplit=2[voice_main][voice_sidechain]"
+        )
+        if use_full_ost and full_ost is not None:
+            inputs = [
+                "-i", str(voice_mp3),
+                "-stream_loop", "-1", "-i", str(full_ost),
+            ]
+            fc_parts = [
+                voice_chain,
+                f"[1:a]aresample=48000,aformat=channel_layouts=stereo,atrim=0:{total_dur:.3f},asetpts=PTS-STARTPTS,"
+                f"acompressor=threshold=-20dB:ratio=2.0:attack=25:release=250:makeup=1.5,"
+                f"equalizer=f=90:width_type=q:w=1.1:g=1.2,"
+                f"equalizer=f=900:width_type=q:w=1.2:g=-1.8,"
+                f"equalizer=f=2200:width_type=q:w=1.0:g=-3.5,"
+                f"volume=0.54,afade=t=in:st=0:d=0.35,afade=t=out:st={max(0.0, total_dur-1.8):.2f}:d=1.8[bg_music]",
+            ]
+            sc_params = "sidechaincompress=threshold=0.075:ratio=2.8:attack=18:release=240"
+            cur_idx = 2
+            music_label = full_ost.name
+        else:
+            inputs = [
+                "-i", str(voice_mp3),
+                "-stream_loop", "-1", "-i", str(bass_file),
+                "-stream_loop", "-1", "-i", str(inst_file),
+            ]
+            fc_parts = [
+                voice_chain,
+                f"[1:a]atrim=0:{total_dur:.3f},asetpts=PTS-STARTPTS,volume=0.72,"
+                f"afade=t=in:st=0:d=0.5,afade=t=out:st={max(0.0, total_dur-2.0):.2f}:d=2.0[bass]",
+                f"[2:a]atrim=0:{total_dur:.3f},asetpts=PTS-STARTPTS,volume=0.62,"
+                f"afade=t=in:st=0:d=0.5,afade=t=out:st={max(0.0, total_dur-2.0):.2f}:d=2.0[inst]",
+                f"[bass][inst]amix=inputs=2:duration=first:normalize=0[bg_music]",
+            ]
+            sc_params = "sidechaincompress=threshold=0.18:ratio=2.5:attack=15:release=240"
+            cur_idx = 3
+            music_label = f"{bass_file.name} + {inst_file.name}"
+
         if drop_expr:
             fc_parts.append(f"[bg_music]volume='{drop_expr}':eval=frame[bg_dropped]")
-            fc_parts.append(f"[bg_dropped][voice_sidechain]sidechaincompress=threshold=0.18:ratio=2.5:attack=15:release=240[bg_ducked]")
+            fc_parts.append(f"[bg_dropped][voice_sidechain]{sc_params}[bg_ducked]")
         else:
-            fc_parts.append(f"[bg_music][voice_sidechain]sidechaincompress=threshold=0.18:ratio=2.5:attack=15:release=240[bg_ducked]")
+            fc_parts.append(f"[bg_music][voice_sidechain]{sc_params}[bg_ducked]")
 
         sfx_labels = []
-        cur_idx = 3
 
         if sfx_events is not None:
             cue_gains = {"boom": 0.42, "riser": 0.28, "paper": 0.25, "highlighter": 0.27, "click": 0.22}
@@ -1546,7 +1584,7 @@ def synthesize_broadcast_audio_master(
         else:
             fc_parts.append(f"[voice_main][bg_ducked]amix=inputs=2:duration=first:normalize=0[mixed]")
 
-        log(f"Mezclando diseño sonoro editorial + Epidemic Sound ({bass_file.name} + {inst_file.name}) con loudnorm 2 pasadas (-14.0 LUFS)...")
+        log(f"Mezclando diseño sonoro editorial + Epidemic Sound ({music_label}) con loudnorm 2 pasadas (-14.0 LUFS)...")
         _render_two_pass_loudnorm(inputs, fc_parts, "[mixed]", total_dur, master_m4a)
         return
 
@@ -1573,8 +1611,13 @@ def synthesize_broadcast_audio_master(
     bg_chain += "[bg]"
 
     fc_fallback = [
-        f"[0:a]aformat=channel_layouts=stereo,highpass=f=90,equalizer=f=3000:width_type=q:w=1.2:g=2.5,"
-        f"acompressor=threshold=-18dB:ratio=3:attack=10:release=120:makeup=2[voice]",
+        f"[0:a]aformat=channel_layouts=stereo,highpass=f=75,"
+        f"equalizer=f=150:width_type=q:w=1.0:g=1.4,"
+        f"equalizer=f=380:width_type=q:w=1.4:g=-1.2,"
+        f"equalizer=f=3200:width_type=q:w=1.1:g=1.8,"
+        f"equalizer=f=6800:width_type=q:w=1.8:g=-1.5,"
+        f"highshelf=f=10500:g=1.0,"
+        f"acompressor=threshold=-18dB:ratio=2.4:attack=12:release=140:makeup=2[voice]",
         bg_chain,
         f"[voice][bg]amix=inputs=2:duration=first:dropout_transition=2:weights='1.0 0.45'[mixed]",
     ]
@@ -1904,7 +1947,7 @@ def assemble_final_video(
     audio_manifest_path = work_dir / "audio_cache_manifest.json"
     v_stat = voice_mp3.stat()
     audio_hash = hashlib.sha256(json.dumps({
-        "version": "veritasium_audio_v6",
+        "version": "veritasium_audio_v9_pe_ost",
         "voice_size": v_stat.st_size,
         "voice_mtime_ns": v_stat.st_mtime_ns,
         "genre": genre,

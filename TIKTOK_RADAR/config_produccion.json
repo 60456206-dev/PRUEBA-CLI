@@ -40,21 +40,28 @@
     "perfiles_extra": []
   },
   "locucion": {
-    "motor_principal": "edge_tts",
-    "acento": "es-CR (Costa Rica)",
-    "voz_edge": "es-CR-JuanNeural",
-    "rate_edge": "-4%",
+    "motor_principal": "gemini",
+    "acento": "es-PE (Peruano coloquial cercano)",
+    "voz_gemini": "Puck",
+    "voz_gemini_fallback": "Puck",
+    "gemini_models": [
+      "gemini-3.8-flash-tts",
+      "gemini-3.8-flash-lite-tts",
+      "gemini-3.1-flash-tts-preview",
+      "gemini-2.5-flash-preview-tts"
+    ],
+    "voz_edge": "en-US-AndrewMultilingualNeural",
+    "rate_edge": "+6%",
     "pitch_edge": "+0Hz",
-    "voz_gemini_fallback": "Orus",
     "tighten_silencios": false,
-    "palabras_objetivo": "134-145",
+    "palabras_objetivo": "220-236",
     "elevenlabs_enabled": false,
     "elevenlabs_voice_id": "pNInz6obpgDQGcFmaJgB",
     "elevenlabs_model_id": "eleven_multilingual_v2",
-    "elevenlabs_stability": 0.45,
+    "elevenlabs_stability": 0.40,
     "elevenlabs_similarity_boost": 0.78,
-    "elevenlabs_style": 0.35,
-    "elevenlabs_speed": 0.96
+    "elevenlabs_style": 0.42,
+    "elevenlabs_speed": 1.04
   },
   "consistencia_visual": {
     "estilo_maestro": "Vertical 9:16, tactile 2.5D editorial documentary illustration and chiaroscuro diorama aesthetic, directional warm study lamp rim light against deep carbon slate shadows, subtle archival paper fiber patina and analog 35mm film grain, layered paper-cutout depth parallax, shallow depth of field, slow continuous camera push-in, no plastic CGI gloss, no uncanny valley, no on-screen text overlays, no watermarks",
@@ -100,32 +107,36 @@
     "intro_cinematica": true
   },
   "diseno_sonoro_epidemic_sound": {
-    "motor_audio": "Stems Multicapa (BASS + INSTRUMENTS) con Ducking Suave y Presencia Musical TikTok en Estéreo Espacial",
+    "motor_audio": "Soundtrack FULL 65s arreglado (Epidemic Sound EditRecording) con Hueco Vocal EQ, Sidechain Ducking Dinámico y Music Drop (-14.0 LUFS)",
     "estandar_lufs": -14.0,
     "ducking_suave_db": -4.0,
     "pistas_por_categoria": {
       "G3_IA_HARDWARE": {
-        "titulo": "STYLE - Ballpoint",
-        "bpm": 118,
-        "estilo": "Dark Synth / Modern Viral Empowerment Beat (Washing Machine / Tech Energy)",
+        "titulo": "Observatory - Out To The World",
+        "bpm": 128,
+        "estilo": "Modern Investigative Documentary / Energetic Tech Synth & Crisp Drums",
+        "full_file": "G3_TECH_OBSERVATORY_64S_FULL.mp3",
         "stems": ["G3_TECH_STYLE_BASS.mp3", "G3_TECH_STYLE_INSTRUMENTS.mp3"]
       },
       "G2_CIBERATAQUES": {
-        "titulo": "Deadlock - Lennon Hutton",
-        "bpm": 115,
-        "estilo": "Cyberpunk Dark Electro Pulse / Urgent Hacker Investigation",
+        "titulo": "Dark Future Rock Beat - Def Lev",
+        "bpm": 100,
+        "estilo": "Cyberpunk Dark Thriller / Driving Electronic Pulse & Heavy Drums",
+        "full_file": "G2_CYBER_DARKFUTURE_64S_FULL.mp3",
         "stems": ["G2_CYBER_DEADLOCK_BASS.mp3", "G2_CYBER_DEADLOCK_INSTRUMENTS.mp3"]
       },
       "G1_AVIACION": {
-        "titulo": "Trace - Lennon Hutton",
-        "bpm": 156,
-        "estilo": "Cinematic Action Thriller / High Altitude Tension Pulse",
+        "titulo": "One - Hampus Naeselius",
+        "bpm": 125,
+        "estilo": "Cinematic Action Thriller / Hans Zimmer Style Tension Strings & Drums",
+        "full_file": "G1_AVIATION_ONE_64S_FULL.mp3",
         "stems": ["G1_AVIATION_TRACE_BASS.mp3", "G1_AVIATION_TRACE_INSTRUMENTS.mp3"]
       },
       "G4_ESPACIO": {
-        "titulo": "Mindscape - Lennon Hutton",
-        "bpm": 108,
-        "estilo": "Cosmic Atmospheric Synthwave / Futuristic Orbit Drive",
+        "titulo": "Last Frontier - Hampus Naeselius",
+        "bpm": 87,
+        "estilo": "Epic Cosmic Documentary / Interstellar Style Strings & Orchestral Climax",
+        "full_file": "G4_SPACE_LASTFRONTIER_64S_FULL.mp3",
         "stems": ["G4_SPACE_MINDSCAPE_BASS.mp3", "G4_SPACE_MINDSCAPE_INSTRUMENTS.mp3"]
       }
     }

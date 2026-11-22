@@ -9,6 +9,7 @@ cama atmosférica con sidechain ducking) y masteriza a -14.0 LUFS / -1.0 dBTP en
 import argparse
 import asyncio
 import base64
+import io
 import json
 import os
 import re
@@ -100,7 +101,12 @@ def normalize_audio_to_pcm_wav(
         raise FileNotFoundError(f"Archivo de audio no encontrado: {src_path}")
     dst_wav.parent.mkdir(parents=True, exist_ok=True)
 
-    filters = ["highpass=f=75"]
+    filters = [
+        "highpass=f=75",
+        "equalizer=f=150:width_type=q:w=1.0:g=1.2",
+        "equalizer=f=3200:width_type=q:w=1.2:g=1.5",
+        "equalizer=f=6800:width_type=q:w=1.8:g=-1.2",
+    ]
     if trim_silence:
         filters.append(
             "silenceremove=start_periods=1:start_duration=0.04:start_threshold=-45dB,"
@@ -129,6 +135,23 @@ def normalize_audio_to_pcm_wav(
     return dst_wav
 
 
+def _wrap_pcm_l16_wav(raw: bytes, mime_type: str = "") -> bytes:
+    """Envuelve PCM crudo L16 en cabecera WAV si la respuesta no contiene RIFF."""
+    if raw[:4] == b"RIFF":
+        return raw
+    rate_m = re.search(r"rate=(\d+)", mime_type or "", flags=re.IGNORECASE)
+    sample_rate = int(rate_m.group(1)) if rate_m else 24000
+    ch_m = re.search(r"channels=(\d+)", mime_type or "", flags=re.IGNORECASE)
+    channels = int(ch_m.group(1)) if ch_m else 1
+    buf = io.BytesIO()
+    with wave.open(buf, "wb") as wf:
+        wf.setnchannels(channels)
+        wf.setsampwidth(2)
+        wf.setframerate(sample_rate)
+        wf.writeframes(raw)
+    return buf.getvalue()
+
+
 def _synthesize_gemini_tts(
     text: str,
     out_wav: Path,
@@ -136,29 +159,44 @@ def _synthesize_gemini_tts(
     style: str,
     models: List[str],
 ) -> bool:
-    """Genera audio hablado vía Gemini TTS REST API devolviendo True si tuvo éxito."""
+    """Genera audio hablado vía Gemini TTS REST API soportando esquemas 3.8 y 3.1/2.5 + PCM crudo."""
     key = os.getenv("GEMINI_API_KEY", "").strip()
     if not key or not text.strip():
         return False
 
     for model in models:
-        body = {
-            "contents": [
-                {
-                    "role": "user",
-                    "parts": [
-                        {
-                            "text": text,
-                            "speech_metadata": {"style": style},
-                        }
-                    ],
-                }
-            ],
-            "generationConfig": {
-                "responseModalities": ["AUDIO"],
-                "speechConfig": {"voiceConfig": {"voice": voice}},
-            },
-        }
+        if "3.8" in model:
+            body: Dict[str, Any] = {
+                "contents": [
+                    {
+                        "role": "user",
+                        "parts": [
+                            {
+                                "text": text,
+                                "speech_metadata": {"style": style},
+                            }
+                        ],
+                    }
+                ],
+                "generationConfig": {
+                    "responseModalities": ["AUDIO"],
+                    "speechConfig": {"voiceConfig": {"voice": voice}},
+                },
+            }
+        else:
+            prompt_text = f"{style}\n\nLee exactamente el siguiente texto con voz humana natural:\n\n{text}" if style else text
+            body = {
+                "contents": [
+                    {
+                        "role": "user",
+                        "parts": [{"text": prompt_text}],
+                    }
+                ],
+                "generationConfig": {
+                    "responseModalities": ["AUDIO"],
+                    "speechConfig": {"voiceConfig": {"prebuiltVoiceConfig": {"voiceName": voice}}},
+                },
+            }
         url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={key}"
         req = urllib.request.Request(
             url,
@@ -166,15 +204,16 @@ def _synthesize_gemini_tts(
             headers={"Content-Type": "application/json"},
         )
         try:
-            with urllib.request.urlopen(req, timeout=45) as resp:
+            with urllib.request.urlopen(req, timeout=60) as resp:
                 data = json.load(resp)
             parts = data["candidates"][0]["content"]["parts"]
             inline = next(p["inlineData"] for p in parts if "inlineData" in p)
             raw = base64.b64decode(inline["data"])
             if len(raw) < 1024:
                 continue
+            raw_wav = _wrap_pcm_l16_wav(raw, inline.get("mimeType", ""))
             raw_path = out_wav.with_suffix(".gemini_raw.wav")
-            raw_path.write_bytes(raw)
+            raw_path.write_bytes(raw_wav)
             normalize_audio_to_pcm_wav(raw_path, out_wav)
             raw_path.unlink(missing_ok=True)
             if probe_audio_duration(out_wav) >= 0.35:

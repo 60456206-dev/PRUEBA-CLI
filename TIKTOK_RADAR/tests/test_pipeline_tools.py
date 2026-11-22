@@ -766,62 +766,189 @@ class TestRenderAndSyncUpgrades(unittest.TestCase):
                 dur = _to_sec(parts[2]) - _to_sec(parts[1])
                 self.assertGreaterEqual(dur, 0.30, f"Subtitle flash too short: {ln}")
 
-    def test_costa_rican_locucion_config_and_active_loop_tts(self):
+    def test_human_voice_locucion_config_gemini_primary_pcm_and_active_loop_fallback(self):
         import asyncio
+        import base64
+        import io
+        import struct
+        import subprocess
+
         cfg = json.loads((TOOLS_DIR.parent / "config_produccion.json").read_text(encoding="utf-8"))
         loc = cfg["locucion"]
-        self.assertEqual(loc["motor_principal"], "edge_tts")
-        self.assertEqual(loc["voz_edge"], "es-CR-JuanNeural")
-        self.assertEqual(loc["rate_edge"], "-4%")
-        self.assertEqual(loc["pitch_edge"], "+0Hz")
+        self.assertEqual(loc["motor_principal"], "gemini")
+        self.assertEqual(loc["voz_gemini"], "Puck")
+        self.assertIn("es-PE", loc["acento"])
+        self.assertEqual(loc["palabras_objetivo"], "220-236")
+        self.assertEqual(loc["voz_edge"], "en-US-AndrewMultilingualNeural")
+        self.assertEqual(loc["rate_edge"], "+6%")
         self.assertFalse(loc["tighten_silencios"])
+
+        # Verificar resolución de los 4 soundtracks FULL arreglados a ~65s
+        assets_dir = TOOLS_DIR.parent / "audio_assets"
+        expected_full = {
+            "G1_AVIACION": "G1_AVIATION_ONE_64S_FULL.mp3",
+            "G2_CIBERATAQUES": "G2_CYBER_DARKFUTURE_64S_FULL.mp3",
+            "G3_IA_HARDWARE": "G3_TECH_OBSERVATORY_64S_FULL.mp3",
+            "G4_ESPACIO": "G4_SPACE_LASTFRONTIER_64S_FULL.mp3",
+        }
+        for g_key, fname in expected_full.items():
+            resolved = audio_generator.get_genre_full_soundtrack(g_key, assets_dir)
+            self.assertIsNotNone(resolved)
+            self.assertEqual(resolved.name, fname)
 
         with tempfile.TemporaryDirectory() as tmp:
             d = Path(tmp)
             out_mp3 = d / "LOCUCION_NOTICIERO_62S.mp3"
             stale_wb = d / "WORD_BOUNDARIES.json"
             stale_wb.write_text('[{"text":"viejo","start":0,"end":1}]', encoding="utf-8")
-            calls = []
 
-            async def fake_edge(text, output_path, voice="es-CR-JuanNeural", rate="-4%", pitch="+0Hz"):
-                calls.append((voice, rate, pitch))
-                audio_generator._clear_stale_boundaries(output_path)
-                output_path.write_bytes(b"mp3")
-                (output_path.parent / "WORD_BOUNDARIES.json").write_text("[]", encoding="utf-8")
-                return True
+            # 1) Gemini primario: devuelve PCM crudo L16 (gemini-3.1-flash-tts-preview) -> _wrap_pcm_as_wav + alineación acústica
+            raw_pcm = b"".join(struct.pack("<h", int(8000 * ((i % 40) / 40.0 - 0.5))) for i in range(24000))
+            fake_gem_payload = json.dumps({
+                "candidates": [{
+                    "content": {
+                        "parts": [{
+                            "inlineData": {
+                                "mimeType": "audio/l16; rate=24000; channels=1",
+                                "data": base64.b64encode(raw_pcm).decode("ascii"),
+                            }
+                        }]
+                    }
+                }]
+            }).encode("utf-8")
+
+            with mock.patch.dict(os.environ, {"GEMINI_API_KEY": "fake-key"}, clear=False), \
+                 mock.patch("urllib.request.urlopen", return_value=io.BytesIO(fake_gem_payload)), \
+                 mock.patch.object(audio_generator, "_generate_speech_edge_async") as m_edge, \
+                 mock.patch.object(audio_generator, "extract_word_boundaries_whisper", return_value=None):
+                ok = audio_generator.generate_speech_gemini(
+                    "Prueba humana clara.", out_mp3, voice="Puck", models=["gemini-3.1-flash-tts-preview"]
+                )
+            self.assertTrue(ok)
+            self.assertTrue(out_mp3.exists() and out_mp3.stat().st_size > 1000)
+            self.assertFalse(stale_wb.exists())
+            m_edge.assert_not_called()
+
+            # 2) Desde un event loop activo: Gemini va primero (Puck es-PE) y genera WORD_BOUNDARIES.json acústicos
+            out_loop = d / "LOCUCION_LOOP.mp3"
+            subprocess.run(
+                ["ffmpeg", "-y", "-f", "lavfi", "-i", "sine=frequency=220:duration=2.0", "-b:a", "64k", str(out_loop)],
+                check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+            )
 
             async def call_from_loop():
-                return await pipeline_autonomo.synthesize_voiceover("Texto de prueba tico.", out_mp3)
+                return await pipeline_autonomo.synthesize_voiceover("Uno dos. Tres cuatro.", out_loop)
 
-            with mock.patch.object(audio_generator, "_generate_speech_edge_async", side_effect=fake_edge), \
-                 mock.patch.object(audio_generator, "generate_speech_gemini") as m_gem, \
-                 mock.patch.object(audio_generator, "tighten_audio_dead_air") as m_tight, \
+            with mock.patch.object(audio_generator, "generate_speech_gemini", return_value=True) as m_gem_ok, \
+                 mock.patch.object(audio_generator, "_generate_speech_edge_async") as m_edge_skip, \
+                 mock.patch.object(audio_generator, "extract_word_boundaries_whisper", return_value=None), \
                  mock.patch.object(audio_generator, "probe_duration", return_value=62.5), \
                  mock.patch.object(pipeline_autonomo, "probe_duration", return_value=62.5):
                 dur = asyncio.run(call_from_loop())
 
             self.assertEqual(dur, 62.5)
-            self.assertEqual(calls, [("es-CR-JuanNeural", "-4%", "+0Hz")])
-            m_gem.assert_not_called()
-            m_tight.assert_not_called()
-            self.assertEqual(stale_wb.read_text(encoding="utf-8"), "[]")
+            m_gem_ok.assert_called_once()
+            self.assertEqual(m_gem_ok.call_args.kwargs["voice"], "Puck")
+            self.assertIn("peruano", m_gem_ok.call_args.kwargs["style"].lower())
+            m_edge_skip.assert_not_called()
+            wb_data = json.loads((d / "WORD_BOUNDARIES.json").read_text(encoding="utf-8"))
+            self.assertEqual(len(wb_data), 4)
 
-            # Si Edge-TTS falla, cae automáticamente a Gemini con dirección costarricense
-            with mock.patch.object(audio_generator, "_generate_speech_edge_async", return_value=False), \
-                 mock.patch.object(audio_generator, "generate_speech_gemini", return_value=True) as m_gem_fb, \
+            # 3) Si Gemini falla dentro del event loop activo, cae a Edge-TTS (en-US-AndrewMultilingualNeural | +6%)
+            edge_calls = []
+
+            async def fake_edge(text, output_path, voice="en-US-AndrewMultilingualNeural", rate="+6%", pitch="+0Hz"):
+                edge_calls.append((voice, rate, pitch))
+                (output_path.parent / "WORD_BOUNDARIES.json").write_text("[]", encoding="utf-8")
+                return True
+
+            (d / "WORD_BOUNDARIES.json").unlink(missing_ok=True)
+            with mock.patch.object(audio_generator, "generate_speech_gemini", return_value=False) as m_gem_fail, \
+                 mock.patch.object(audio_generator, "_generate_speech_edge_async", side_effect=fake_edge), \
                  mock.patch.object(audio_generator, "probe_duration", return_value=62.1), \
-                 mock.patch.object(audio_generator, "extract_word_boundaries_whisper"):
-                (d / "WORD_BOUNDARIES.json").unlink(missing_ok=True)
-                dur_fb = audio_generator.generate_speech("Texto fallback.", out_mp3)
+                 mock.patch.object(pipeline_autonomo, "probe_duration", return_value=62.1):
+                dur_fb = asyncio.run(call_from_loop())
             self.assertEqual(dur_fb, 62.1)
-            m_gem_fb.assert_called_once()
-            self.assertEqual(m_gem_fb.call_args.kwargs["voice"], "Orus")
-            self.assertIn("costarricense", m_gem_fb.call_args.kwargs["style"].lower())
+            m_gem_fail.assert_called_once()
+            self.assertEqual(edge_calls, [("en-US-AndrewMultilingualNeural", "+6%", "+0Hz")])
+
+    def test_extract_word_boundaries_acoustic_aligns_sentences_with_pauses(self):
+        import math
+        import struct
+        import wave
+
+        script = "Primer dato clave. Segundo giro técnico. Cierre final seguro."
+        with tempfile.TemporaryDirectory() as tmp:
+            d = Path(tmp)
+            wav_p = d / "voice_3s.wav"
+            sr = 16000
+            total_s = 6.0
+            n_samp = int(sr * total_s)
+            # 3 ráfagas de voz separadas por pausas reales de 0.45s: [0.2-1.5], [1.95-3.45], [3.90-5.4]
+            active_windows = [(0.20, 1.50), (1.95, 3.45), (3.90, 5.40)]
+            with wave.open(str(wav_p), "wb") as wf:
+                wf.setnchannels(1)
+                wf.setsampwidth(2)
+                wf.setframerate(sr)
+                buf = bytearray()
+                for i in range(n_samp):
+                    t = i / sr
+                    speaking = any(a <= t <= b for a, b in active_windows)
+                    val = int(14000 * math.sin(2.0 * math.pi * 220.0 * t)) if speaking else 0
+                    buf.extend(struct.pack("<h", val))
+                wf.writeframes(bytes(buf))
+
+            wb_path = audio_generator.extract_word_boundaries_acoustic(wav_p, script)
+            self.assertIsNotNone(wb_path)
+            wb = json.loads(wb_path.read_text(encoding="utf-8"))
+            sb = json.loads((d / "SENTENCE_BOUNDARIES.json").read_text(encoding="utf-8"))
+            self.assertEqual([w["text"] for w in wb], script.split())
+            self.assertEqual(len(sb), 3)
+            # La segunda oración debe iniciar después de la primera pausa (cerca de 1.95s)
+            self.assertGreaterEqual(sb[1]["start"], 1.80)
+            self.assertLessEqual(sb[1]["start"], 2.15)
+            for idx in range(1, len(wb)):
+                self.assertGreaterEqual(wb[idx]["start"], wb[idx - 1]["end"] - 0.001)
+
+    def test_synthesize_voiceover_clamps_long_audio_and_preserves_natural_floor(self):
+        import asyncio
+        import subprocess
+
+        with tempfile.TemporaryDirectory() as tmp:
+            d = Path(tmp)
+            # Caso 1: audio largo >65.2s se compacta suavemente <= 65.0s y reescala marcas
+            long_mp3 = d / "LONG.mp3"
+            subprocess.run(
+                ["ffmpeg", "-y", "-f", "lavfi", "-i", "anullsrc=r=24000:cl=mono", "-t", "66.8", "-b:a", "64k", str(long_mp3)],
+                check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+            )
+            (d / "WORD_BOUNDARIES.json").write_text(
+                json.dumps([{"text": "fin", "start": 64.0, "end": 66.5}]),
+                encoding="utf-8",
+            )
+            with mock.patch.object(pipeline_autonomo, "generate_speech", return_value=66.8):
+                adj_dur = asyncio.run(pipeline_autonomo.synthesize_voiceover("Guion largo.", long_mp3))
+            self.assertLessEqual(adj_dur, 65.0)
+            self.assertGreaterEqual(adj_dur, 61.1)
+            rescaled = json.loads((d / "WORD_BOUNDARIES.json").read_text(encoding="utf-8"))
+            self.assertLess(rescaled[0]["end"], 66.0)
+
+            # Caso 2: audio ligeramente corto (<61.1s) usa factor >= 0.96 sin ralentizar de más
+            short_mp3 = d / "SHORT.mp3"
+            subprocess.run(
+                ["ffmpeg", "-y", "-f", "lavfi", "-i", "anullsrc=r=24000:cl=mono", "-t", "54.0", "-b:a", "64k", str(short_mp3)],
+                check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+            )
+            with mock.patch.object(pipeline_autonomo, "generate_speech", return_value=54.0):
+                short_dur = asyncio.run(pipeline_autonomo.synthesize_voiceover("Guion corto.", short_mp3))
+            # 54.0 / 0.96 = 56.25s + apad hasta 61.5s (nunca 54/0.85 ralentizado)
+            self.assertGreaterEqual(short_dur, 61.1)
+            self.assertLessEqual(short_dur, 62.0)
 
     def test_generate_dynamic_news_script_condenses_overlong_output(self):
         import io
-        long_text = " ".join([f"palabra{i}" for i in range(185)])
-        condensed_text = " ".join([f"palabra{i}" for i in range(136)])
+        long_text = " ".join([f"palabra{i}" for i in range(265)])
+        condensed_text = " ".join([f"palabra{i}" for i in range(228)])
         responses = [
             io.BytesIO(json.dumps({"candidates": [{"content": {"parts": [{"text": long_text}]}}]}).encode("utf-8")),
             io.BytesIO(json.dumps({"candidates": [{"content": {"parts": [{"text": condensed_text}]}}]}).encode("utf-8")),
@@ -833,7 +960,7 @@ class TestRenderAndSyncUpgrades(unittest.TestCase):
                 "G1_AVIACION",
             )
         self.assertEqual(m_open.call_count, 2)
-        self.assertEqual(len(out.split()), 136)
+        self.assertEqual(len(out.split()), 228)
 
 
 class TestVeritasiumBroadcastUpgrade(unittest.TestCase):

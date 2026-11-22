@@ -5,7 +5,7 @@ TIKTOK RADAR · Pipeline 100% Autónomo de Producción (Calidad 10/10 · Monetiz
 2. Selecciona automáticamente la noticia de mayor impacto por categoría y orden cronológico.
 3. Genera el guion dinámico con contexto inicial, cifras duras y pregunta polarizante (estilo Vox/Johnny Harris, 61-65s).
 4. Genera el storyboard híbrido de 13 planos (8 Flow Cinemáticos Raytracing + 5 FFmpeg Glassmorphic HUD).
-5. Sintetiza la locución costarricense pausada y clara (`es-CR-JuanNeural`, fallback Gemini TTS) + auto-ajuste >61.0s.
+5. Sintetiza la locución peruana coloquial hiperhumana (Gemini `Puck`, fallback Edge-TTS) + auto-ajuste >61.0s.
 6. Exporta el paquete listo con género canónico exacto en entregas/<fecha>_<genero>/.
 """
 
@@ -137,13 +137,13 @@ def build_shot_prompts(
 def generate_dynamic_news_script(news: Dict[str, Any], genre_label: str) -> str:
     """
     Genera un guión periodístico Misconception-First de alta retención (estilo Veritasium / Vox)
-    anclado al texto completo del artículo:
+    en español peruano coloquial cercano (`es-PE`, trato de «tú», cero formalidad acartonada):
     1. HOOK PARADOJA (0-3s, 1 frase corta in medias res sin intros suaves).
     2. PRUEBA / RECEIPT (3-12s): fuente oficial y dato verificable del artículo.
     3. MECANISMO + ANALOGÍA FÍSICA (12-36s): primeros principios ligados al caso.
     4. REVELACIÓN / GIRO (36-48s): dato o decisión contra-intuitiva (preparado para Music Drop).
     5. RESOLUCIÓN + CIERRE (48-62s): desenlace real y reflexión sobria sin pedir comentarios.
-    Longitud calibrada: 134-145 palabras para superar 61s con locución costarricense moderada.
+    Longitud calibrada: 220-236 palabras para durar 61.5-64.5s nativos con locución peruana ágil (~215-220 WPM).
     """
     title = news.get("title", "")
     source = news.get("source_name", "Prensa Oficial")
@@ -155,8 +155,8 @@ def generate_dynamic_news_script(news: Dict[str, Any], genre_label: str) -> str:
     key = os.getenv("GEMINI_API_KEY")
 
     if key:
-        prompt = f"""Eres el mejor guionista de divulgación científica y periodismo explicativo de alta retención del mundo (estilo Veritasium y Vox).
-Escribe un guión de locución para un vídeo vertical de TikTok de exactamente 61 a 65 segundos (entre 134 y 145 palabras exactas para superar 60 segundos con dicción moderada y muy entendible).
+        prompt = f"""Eres el mejor guionista de divulgación científica y storytelling viral del Perú (estilo Veritasium en español, pero contado de forma súper cercana y natural).
+Escribe un guión hablado para un vídeo vertical de TikTok de exactamente 61 a 64 segundos (entre 220 y 236 palabras exactas para durar poco más de 61 segundos sin relleno al ritmo real ágil y natural de locución peruana: ~215 palabras por minuto).
 
 Noticia: {title}
 Fuente oficial: {source}
@@ -175,12 +175,15 @@ ESTRUCTURA VERITASIUM MISCONCEPTION-FIRST (OBLIGATORIA):
 5. RESOLUCIÓN Y CIERRE (48-62s): Desenlace real reportado y reflexión sobria de cierre.
    ESTRICTAMENTE PROHIBIDO decir "deja tus comentarios", "déjamelo en los comentarios", "comenta abajo" ni frases clichés similares.
 
-REGLAS DE ESTILO Y CLARIDAD:
-- Español latinoamericano natural compatible con locución costarricense (usa siempre trato de "usted" o "ustedes", nunca "vosotros", sin modismos mexicanos ni españoles).
-- Frases directas, bien puntuadas y fáciles de entender al oído (evita guiones entre ciudades o siglas difíciles; escribe "de Múnich a Bangkok", no "Múnich-Bangkok").
-- Longitud estricta: entre 134 y 145 palabras (crítico para durar 61.5 a 64.5 segundos).
+REGLAS DE ESTILO PERUANO COLOQUIAL Y FAMILIARIZACIÓN (MUY IMPORTANTE):
+- Español peruano coloquial, cálido y natural (de Lima): habla SIEMPRE de "tú" (jamás "usted", jamás "vosotros"), como explicándole algo alucinante frente a frente a un amigo con total confianza.
+- CERO tono formal, cero teleprompter rígido, cero redacción de noticiero antiguo ni comunicado burocrático. Usa conectores naturales como "mira", "fíjate", "la verdad es que", "tal cual", "pues" con moderación orgánica.
+- PROHIBIDO usar muletillas forzadas tipo "mano" o "causa", y si la noticia involucra víctimas o tragedias mantén respeto natural en las analogías sin chistes fuera de lugar.
+- Escribe horas, medidas y cifras exactamente como se hablan en conversación (ej. "a las siete y quince de la noche", NO "a las diecinueve horas con quince minutos"; "de Múnich a Bangkok", NO "Múnich-Bangkok").
+- Ritmo hablado vivo: mezcla frases cortas de impacto con explicaciones fluidas y puntuación expresiva.
+- Longitud estricta: entre 220 y 236 palabras (crítico para durar 61.5 a 64.5 segundos reales sin silencio mudo al final).
 - No inventes cifras, muertes, incendios ni causas no presentes en el texto verificado.
-- Devuelve ÚNICAMENTE el texto que leerá el locutor en voz alta, sin encabezados, sin corchetes, sin etiquetas de tiempo."""
+- Devuelve ÚNICAMENTE el texto que dirá el locutor en voz alta, sin encabezados, sin corchetes, sin etiquetas de tiempo ni asteriscos."""
 
         def _call_gemini_script(model_name: str, prompt_text: str) -> str:
             url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={key}"
@@ -194,28 +197,28 @@ REGLAS DE ESTILO Y CLARIDAD:
             try:
                 text = _call_gemini_script(model, prompt)
                 words = text.split()
-                if len(words) > 143:
+                if len(words) > 240:
                     condense_prompt = (
-                        "Recorta el siguiente guión para que tenga estrictamente entre 132 y 140 palabras "
+                        "Recorta el siguiente guión para que tenga estrictamente entre 220 y 234 palabras "
                         "(sin encabezados ni notas, conservando el hook directo sin 'Imagine que', los datos reales, la analogía y el cierre sobrio, "
-                        "usando trato de 'usted' y oraciones claras sin guiones entre palabras para locución costarricense muy entendible):\n\n"
+                        "en español peruano coloquial hablando de 'tú', nada formal, sin muletillas tipo 'mano' o 'causa', con horas habladas y sin guiones entre palabras):\n\n"
                         f"{text}"
                     )
                     condensed = _call_gemini_script(model, condense_prompt)
                     c_words = condensed.split()
-                    if 126 <= len(c_words) < len(words):
+                    if 208 <= len(c_words) < len(words):
                         text, words = condensed, c_words
-                elif 95 <= len(words) < 130:
+                elif 95 <= len(words) < 214:
                     expand_prompt = (
-                        "Amplía ligeramente el siguiente guión para que tenga estrictamente entre 134 y 140 palabras "
-                        "sin inventar cifras, muertes ni hechos nuevos, profundizando brevemente la analogía física y manteniendo trato de 'usted':\n\n"
+                        "Amplía el siguiente guión para que tenga estrictamente entre 220 y 234 palabras "
+                        "sin inventar cifras, muertes ni hechos nuevos, profundizando la explicación física y la analogía cotidiana con tono peruano coloquial cercano hablando de 'tú' (nada formal, sin 'mano' ni 'causa'):\n\n"
                         f"{text}"
                     )
                     expanded = _call_gemini_script(model, expand_prompt)
                     e_words = expanded.split()
-                    if 126 <= len(e_words) <= 145:
+                    if 210 <= len(e_words) <= 242:
                         text, words = expanded, e_words
-                if len(words) >= 124:
+                if len(words) >= 205:
                     print(f"[PIPELINE-AI] ✅ Guión documental generado por {model} ({len(words)} palabras)", flush=True)
                     return text
                 print(f"[PIPELINE-AI] ⚠️ {model} devolvió guión muy corto ({len(words)} palabras), probando siguiente modelo...", flush=True)
@@ -223,14 +226,16 @@ REGLAS DE ESTILO Y CLARIDAD:
                 print(f"[PIPELINE-AI] ⚠️ Error generando guión con {model}: {e}", flush=True)
                 time.sleep(1.0)
 
-    # Fallback explicativo neutral y fiel (~136 palabras calibradas a ~61.5-63.5s, sin apertura suave)
+    # Fallback explicativo neutral y fiel (~226 palabras en tono peruano coloquial cercano en «tú»)
     return (
-        f"Lo que acaba de ocurrir desafía lo que todos asumíamos como seguro en esta operación. "
-        f"Los reportes oficiales publicados por {source} confirman un incidente crítico que ya analizan a fondo los equipos técnicos. "
-        f"Lejos de iniciar con una falla obvia en la superficie, los registros disponibles apuntan a una desviación silenciosa dentro de los parámetros operativos principales. "
-        f"Cuando un sistema complejo trabaja cerca de su límite, funciona como una torre bajo tensión invisible: un pequeño desajuste en un punto crítico altera el equilibrio completo en cuestión de segundos. "
-        f"Por eso cada investigación técnica se concentra en reconstruir la cadena exacta de señales y registros previos, paso a paso, antes de emitir conclusiones. "
-        f"Al final, en cualquier operación de alto riesgo, entender dónde cedió el margen de seguridad es la clave para evitar que se repita."
+        f"¿Te imaginas confiar en que todo está bajo control cuando en realidad un sistema ya empezó a ceder por dentro? "
+        f"Mira, lo que acaba de pasar rompe por completo con lo que casi todos asumimos como seguro en este tipo de operaciones de alta precisión. "
+        f"Según los reportes oficiales publicados por {source}, se confirmó un incidente crítico que ahorita mismo los equipos especialistas están revisando al detalle para entender cada movimiento previo. "
+        f"Y fíjate en lo más clave de todo el caso: la cosa no arrancó con una falla obvia que cualquiera pudiera detectar a simple vista, sino con una desviación silenciosa justo dentro de los parámetros principales de operación. "
+        f"Para que te hagas una idea bien clara, funciona tal cual una torre altísima aguantando una carga invisible constante: desde afuera tú la ves firme, estable y tranquila, pero basta un desajuste pequeño en un solo punto de apoyo para que se pierda el equilibrio completo en cuestión de segundos. "
+        f"Cuando un sistema complejo trabaja pegado a su límite físico real, las primeras alertas aparecen en sus sensores y registros internos mucho antes de notarse afuera. "
+        f"Por eso ahora los peritos reconstruyen segundo a segundo cada señal previa antes de soltar conclusiones rápidas. "
+        f"Al final, en cualquier maniobra donde el margen es mínimo, descubrir exactamente dónde cedió ese límite es lo único que evita que vuelva a ocurrir."
     )
 
 
@@ -311,7 +316,7 @@ def generate_monetizable_storyboard(news: Dict[str, Any]) -> Dict[str, Any]:
     script = generate_dynamic_news_script(news_enriched, genre_label)
     words = script.split()
     word_count = len(words)
-    est_duration = round(word_count / 2.3, 1)
+    est_duration = round(word_count / 3.6, 1)
 
     story_metrics = extract_story_metrics(
         title=title,
@@ -414,18 +419,17 @@ def _rescale_sentence_boundaries(audio_path: Path, factor: float) -> None:
 
 async def synthesize_voiceover(script: str, output_path: Path, voice: Optional[str] = None) -> float:
     """
-    Sintetiza la voz del locutor con acento netamente costarricense (es-CR-JuanNeural por defecto,
-    ritmo pausado y claro) y fallback automático a Gemini TTS con dirección tica.
-    Garantiza que la duración supere los 61.0 segundos para cumplir siempre con el requisito
-    de monetización de TikTok Creator Rewards (>60s).
+    Sintetiza la voz del locutor con calidad humana peruana coloquial (Gemini TTS `Puck` por defecto,
+    fallback automático a Edge-TTS) preservando la agilidad natural y garantizando duración
+    monetizable de TikTok Creator Rewards (>61.1s, ideal <= 65.0s).
     """
     loc_cfg = load_locucion_config()
-    motor = str(loc_cfg.get("motor_principal", "edge_tts")).lower()
-    prefer_edge = motor != "gemini"
-    voice_edge = str(loc_cfg.get("voz_edge", "es-CR-JuanNeural"))
-    rate_edge = str(loc_cfg.get("rate_edge", "-4%"))
+    motor = str(loc_cfg.get("motor_principal", "gemini")).lower()
+    prefer_edge = (motor == "edge_tts")
+    voice_edge = str(loc_cfg.get("voz_edge", "en-US-AndrewMultilingualNeural"))
+    rate_edge = str(loc_cfg.get("rate_edge", "+6%"))
     pitch_edge = str(loc_cfg.get("pitch_edge", "+0Hz"))
-    voice_gemini = str(voice or loc_cfg.get("voz_gemini_fallback", "Orus"))
+    voice_gemini = str(voice or loc_cfg.get("voz_gemini") or loc_cfg.get("voz_gemini_fallback", "Puck"))
     tighten = bool(loc_cfg.get("tighten_silencios", False))
 
     dur = generate_speech(
@@ -440,17 +444,16 @@ async def synthesize_voiceover(script: str, output_path: Path, voice: Optional[s
         pitch_edge=pitch_edge,
     )
 
-    # Si la lectura queda por debajo de 61.1s, calibrar tempo suavemente y asegurar piso >= 61.1s
-    # para cumplir siempre con TikTok Creator Rewards (>60.1s) manteniendo naturalidad vocal.
+    # Si queda por debajo de 61.1s, aplicar ajuste máximo 0.96 (imperceptible, sin volverla lenta) y pad de cierre
     if 0 < dur < 61.1:
-        factor = max(0.92, dur / 61.6)
-        if 0.5 <= factor <= 0.99:
-            print(f"[PIPELINE] Calibrando tempo sutil ({factor:.3f}) para garantizar >61.0s de monetización sin alterar tono...", flush=True)
+        factor = max(0.96, dur / 61.4)
+        if 0.96 <= factor <= 0.992:
+            print(f"[PIPELINE] Ajuste sutil de tempo ({factor:.3f}) sin perder naturalidad vocal...", flush=True)
             adjusted_path = output_path.with_suffix(".adj.mp3")
             cmd = [
                 "ffmpeg", "-y", "-i", str(output_path),
                 "-filter:a", f"atempo={factor:.4f}",
-                "-b:a", "192k",
+                "-b:a", "256k",
                 str(adjusted_path)
             ]
             subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -465,7 +468,7 @@ async def synthesize_voiceover(script: str, output_path: Path, voice: Optional[s
             cmd = [
                 "ffmpeg", "-y", "-i", str(output_path),
                 "-af", f"apad=pad_dur={pad_s:.3f}",
-                "-b:a", "192k",
+                "-b:a", "256k",
                 str(padded_path)
             ]
             subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -473,6 +476,22 @@ async def synthesize_voiceover(script: str, output_path: Path, voice: Optional[s
             dur = probe_duration(output_path)
 
         print(f"[PIPELINE] ✅ Duración final monetizable asegurada: {dur:.2f}s", flush=True)
+    elif dur > 65.2:
+        factor = min(1.06, dur / 63.8)
+        if factor >= 1.01:
+            print(f"[PIPELINE] Compactación sutil ({factor:.3f}) para mantener rango óptimo <=65.0s...", flush=True)
+            adjusted_path = output_path.with_suffix(".adj.mp3")
+            cmd = [
+                "ffmpeg", "-y", "-i", str(output_path),
+                "-filter:a", f"atempo={factor:.4f}",
+                "-b:a", "256k",
+                str(adjusted_path)
+            ]
+            subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            adjusted_path.replace(output_path)
+            _rescale_sentence_boundaries(output_path, factor)
+            dur = probe_duration(output_path)
+            print(f"[PIPELINE] ✅ Duración ajustada a rango óptimo: {dur:.2f}s", flush=True)
 
     return dur
 
@@ -567,7 +586,7 @@ def run_pipeline(genre_key: Optional[str] = None, rank_index: int = 0) -> Path:
 
     audio_file = delivery_dir / "LOCUCION_NOTICIERO_62S.mp3"
     loc_cfg = load_locucion_config()
-    print("\n3. Sintetizando locución periodística costarricense (es-CR pausada)...", flush=True)
+    print("\n3. Sintetizando locución peruana coloquial hiperhumana (Gemini Puck)...", flush=True)
     real_dur = asyncio.run(synthesize_voiceover(storyboard["script"], audio_file))
     mon_status = "Cumple >60s para TikTok Monetización" if real_dur >= 60.1 else f"⚠️ Bajo mínimo 60.1s ({real_dur:.2f}s)"
     print(f"   Audio generado con éxito: {audio_file.name} ({real_dur:.2f} s | {mon_status})")
@@ -623,10 +642,11 @@ def run_pipeline(genre_key: Optional[str] = None, rank_index: int = 0) -> Path:
         "is_monetizable": real_dur >= 60.1,
         "audio_file": audio_file.name,
         "voice_profile": {
-            "motor_principal": loc_cfg.get("motor_principal", "edge_tts"),
-            "acento": loc_cfg.get("acento", "es-CR (Costa Rica)"),
-            "voz_edge": loc_cfg.get("voz_edge", "es-CR-JuanNeural"),
-            "rate_edge": loc_cfg.get("rate_edge", "-4%"),
+            "motor_principal": loc_cfg.get("motor_principal", "gemini"),
+            "voz_gemini": loc_cfg.get("voz_gemini") or loc_cfg.get("voz_gemini_fallback", "Puck"),
+            "acento": loc_cfg.get("acento", "es-PE (Peruano coloquial cercano)"),
+            "voz_edge": loc_cfg.get("voz_edge", "en-US-AndrewMultilingualNeural"),
+            "rate_edge": loc_cfg.get("rate_edge", "+6%"),
             "pitch_edge": loc_cfg.get("pitch_edge", "+0Hz"),
         },
         "receipt_facts": storyboard.get("receipt_facts", {}),
